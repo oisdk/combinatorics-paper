@@ -1,0 +1,2101 @@
+\begin{refsection}
+\newcommand{\pifun}[2]{\prod_{\left( \mathit{ #1 } : #2 \right)}}
+\chapter{Combinatorics}
+\begin{quote}
+  \textbf{Abstract}
+  We explore five notions of finiteness in Homotopy Type Theory \cite{hottbook}.
+  We prove closure properties about all of these notions, culminating in a proof
+  that decidable Kuratowski-finite sets form a topos.
+
+  We extend the definitions to include infinite types, developing a similar
+  classification of countable types.
+
+  We use the definition of finiteness to formalise \emph{species}, in much
+  the same way as in \cite{yorgeyCombinatorialSpeciesLabelled2014}.
+  A clear duality with containers
+  \cite{abbottContainersConstructingStrictly2005} falls out naturally from our
+  definition.
+
+  We formalise our work in Cubical Agda
+  \cite{vezzosiCubicalAgdaDependently2019}, and we implement a library for proof
+  search (including combinators for level-polymorphic fully generic currying),
+  and demonstrate how it can be used to both prove properties and synthesise
+  full functions given desired properties.
+\end{quote}
+\section{Introduction}
+Proofs in a constructive setting are more substantial things than their
+classical counterparts.
+Rather than just evidence for some fact, they are objects in their own right,
+which we can manipulate and extract information from.
+
+Sometimes, the extra detail can reveal interesting subtleties: fissures which
+divide homogeneous-seeming definitions into a variety of related concepts.
+Finiteness is a prime example of this phenomenon: in classical set theory, a
+finite set is a finite set, and there's not much else that we can say.
+In constructive type theory, we start the bidding at no fewer than \emph{four}
+different predicates representing finiteness
+\cite{spiwackConstructivelyFinite2010}, upped to eight in
+\cite{firsovVariationsNoetherianness2016a}: all of which differ in significant
+and interesting ways.
+
+Other times, the extra baggage is unwanted.
+Maybe we want to enforce that a particular piece of information should be
+hidden, or treated as irrelevant: ``yes, I have proven that there is a
+particular number with this property, but I don't want to reveal \emph{which}
+number.''
+
+This is where Homotopy Type Theory \cite{hottbook} can step in.
+Through primarily a generalisation of equality, we gain access to a number of
+exotic types which can, among other things, allow us to perform this ``hiding''.
+In the context of finiteness, the act of hiding is worth studying in its own
+right, and further delineates several new finiteness predicates which collapse
+even in standard Martin-Löf type theory
+\cite{martin-lofIntuitionisticTypeTheory1980}.
+
+The other headline feature of HoTT's generalised equality is univalence: put
+simply, it allows us to treat isomorphic types as equal, giving us in the
+constructive world access to a technique that is commonplace classically.
+It turns out that finite types have a lot to say about isomorphisms, and we will
+rely heavily on this aspect of HoTT to work with them.
+\subsection{Contributions}
+In this work, we will explore finite types in Cubical Type Theory
+\cite{cohenCubicalTypeTheory2016}, and expose their relationship to infinite
+types, species, and demonstrate their practical uses for proofs in dependently
+typed programming languages.
+
+In section~\ref{strong-finiteness}, we will explore the ``strong'' notions of
+finiteness (i.e. those at least as strong as Kuratowski finiteness
+\cite{kuratowskiNotionEnsembleFini1920}), with a special focus on cardinal
+finiteness.
+We will delineate some subtly different finiteness predicates, and prove the
+relationship between each.
+We will prove, then, that every discrete Kuratowski finite type is cardinal
+finite, and subsequently will show that discrete Kuratowski finite sets form a
+topos.
+
+In section~\ref{species-and-containers}, we will redefine our finiteness
+predicates using \emph{containers}, and prove that the new definitions are
+equivalent to the old.
+Using this, we will prove much stronger relationships between our finiteness
+predicates and relation-based definitions of finiteness.
+Finally, We will show how the species-container duality falls out naturally from
+these new definitions.
+
+In section~\ref{infinite-cardinalities}, we will extend our study of finite
+types to infinite but countable types.
+We will see that the finiteness predicates are mirrored with countable
+counterparts, and we will prove closure under the Kleene star and plus.
+
+Proofs of finiteness have well-known practical applications in
+constructive mathematics \cite{firsovDependentlyTypedProgramming2015}.
+In section~\ref{practical}, we build a library which exploits these uses in
+Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}, allowing automation of
+complex proofs over finite types.
+We frame this in terms of the principle of omniscience for finite types.
+Thanks to the flexibility afforded to us by Cubical Type Theory, we are able to
+go further than the usual examples of this kind of proof automation: as well as
+proving properties about functions, we can synthesise functions whole-cloth from
+their desired properties.
+Through the unified interface for finite and countable types, we can
+reuse the automation machinery for \emph{partial} proof search over infinite
+search spaces.
+Along the way, we extend the work in \cite{allaisGenericLevelPolymorphic2019} to
+prove isomorphisms between the curried and uncurried forms of \(n\)-ary
+dependent functions.
+\section{Strong Finiteness} \label{strong-finiteness}
+\begin{figure}[h]
+  \centering
+  \begin{tikzcd}[cramped, row sep=small]
+    &
+    \ar[ddddd, dash, start anchor={[yshift=4ex]}, end anchor={[yshift=-4ex]}] &
+    \text{Ordered} &
+    \ar[ddddd, dash, dashed, start anchor={[yshift=4ex]}, end anchor={[yshift=-4ex]}] &
+    \text{Unordered}
+    \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \ar[rrrr, dash, start anchor={[xshift=-6ex]}, end anchor={[xshift=10ex]}] &
+    &
+    &
+    &
+    {}
+    \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    &
+    &
+    \text{Split Enumerable}
+      \; \ref{split-enumerable}
+      \ar[d, xshift=-1ex, bend right=30]
+      &
+    &
+    \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \text{Discrete} &
+    &
+    \text{Manifest Bishop}
+      \ar[u, xshift=1ex, bend right=30]
+      \ar[rr, end anchor=south west, start anchor=south east, bend right=10, crossing over]
+      \; \ref{manifest-bishop}
+      &
+    &
+    \text{Cardinal}
+      \; \ref{cardinal}
+      \ar[ll, start anchor=north west, end anchor=north east, bend right=10, "\text{linOrd}" description]
+    \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \ar[rrrr, dash, dashed, start anchor={[xshift=-6ex]}, end anchor={[xshift=10ex]}] &
+    &
+    &
+    &
+    {}
+    \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \text{Non Discrete} &
+    {} &
+    \text{Manifest Enumerable}
+      \; \ref{manifest-enumerability}
+      \ar[from=uu, xshift=-1ex, bend right=30, crossing over]
+      \ar[uu, bend right=30,  "\text{Discrete}" description]
+      \ar[rr, start anchor=south east, end anchor=south west, bend right=10, crossing over]
+      &
+    {}
+    &
+    \text{Kuratowski}
+      \; \ref{kuratowski}
+      \ar[ll, start anchor=north west, end anchor=north east, bend right=10,  "\text{linOrd}" description]
+      \ar[uu, xshift=1ex, bend right=30,  "\text{Discrete}" description]
+      \ar[from=uu, xshift=-1ex, bend right=30, crossing over]
+  \end{tikzcd}
+  \caption{Classification of the strong definitions of finiteness, according to
+    whether they are discrete (imply decidable equality) and whether they induce
+    a linear order.}
+  \label{finite-classification}
+\end{figure}
+
+In this section, we will explore five predicates for finiteness, classified in
+figure~\ref{finite-classification}.
+Of these, manifest enumerability is new, to our knowledge.
+
+Figure~\ref{finite-classification} organises the predicates according to
+their ``strength''; i.e. how much information they provide about a conforming
+type.
+For instance, a proof that some type \(A\) is manifestly Bishop finite (the
+strongest of the notions, explored in section~\ref{manifest-bishop}) also tells
+us that \(A\) is discrete (has decidable equality), and gives us a linear order
+on the type.
+A type that is Kuratowski finite (section~\ref{kuratowski}) has no such extra
+features: indeed, we will see examples of Kuratowski finite types which are not
+even sets, never mind discrete ones.
+
+In the following sections, we will go through each of the predicates, proving
+how to weaken each (i.e. we will provide a proof that every cardinally finite
+type is Kuratowski finite), and how to strengthen them, given the required
+property.
+In terms of figure~\ref{finite-classification}, this amounts to providing proofs
+for each arrow.
+
+For each predicate, we will also prove its closure over sums and products in
+both dependent and non-dependent forms, if such a closure exists.
+This will culminate in our main result for this section: the formal proof that
+decidable Kuratowski finite sets form a topos. \todo[noline]{reference for this}
+More specifically, we show that cardinal finite sets form a topos, that
+decidable Kuratowski finite sets are equivalent in strength to cardinal finite
+sets, and carry the proof over.
+This result relies on proofs on each of the other finiteness predicates.
+\subsection{Split Enumerability} \label{split-enumerable}
+We will start with the simplest definition of finiteness: we say a set is
+enumerable if there is a list of its elements which contains every element in
+the set.
+More formally:
+\begin{definition}[Split Enumerable Set]
+  \begin{equation}
+    \mathcal{E}!(A) = \sum_{(\mathit{xs} : \textbf{List} A)} , \prod_{(x : A)} , x \in xs
+  \end{equation}
+  We call the first component of this pair the ``support'' list, and the second
+  component the ``cover'' proof.
+\end{definition}
+
+The term \(x \in \mathit{xs}\) hides a subtle detail of this definition.
+Depending on how we choose to represent \(x \in \mathit{xs}\), the resulting
+predicate will be equivalent in strength to either manifest Bishop finiteness
+(section~\ref{manifest-bishop}) or manifest enumerability
+(section~\ref{manifest-enumerability}).
+For now, we will define it like so:
+
+\begin{definition}[List Membership] \label{list-membership}
+  \begin{equation}
+    x \in \mathit{xs} = \sum_{(i : \mathbf{Fin}(\text{length}(\mathit{xs})))} , \mathit{xs} \ind i \equiv x
+  \end{equation}
+  Here, \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\),
+  and \(\ind\) is an indexing function.
+  In other words, to say that some item \(x\) is in some list \(\mathit{xs}\),
+  we say that there is an index into \(\mathit{xs}\) which selects an element of
+  \(\mathit{xs}\) which is equivalent to \(x\).
+\end{definition}
+
+Clearly, this definition of list membership tells us not just that an item is in
+a list, but also its \emph{position} in that list.
+That piece of information gives use decidable equality, restricting the
+predicate to discrete sets.
+In section~\ref{manifest-enumerability}, we will show how to hide the position,
+giving us a variant of the predicate which allows for non-set finite types.
+\subsubsection{Decidable Equality}
+We will now prove that split enumerability implies decidable equality.
+We first need to prove a lemma regarding surjections to split enumerable types.
+\begin{lemma} \label{split-enum-surj}
+  Any split enumerable type has a split surjection from a finite prefix of the
+  natural numbers.
+\end{lemma}
+\begin{proof} 
+  Let \(E\) be a proof of type \(\mathcal{E}!(A)\) for some type \(A\), and
+  \(n\) be the length of the support list of \(E\).
+  Then let \(f : \textbf{Fin}(n) \rightarrow A\) be defined as the indexing
+  function into the support list of \(E\).
+
+  We then prove this function to be a split surjection by providing a fiber over
+  all of the elements of its domain: this fiber is the second component of \(E\).
+
+  In Agda:
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{to-surj}
+\end{proof}
+
+Because of careful arrangement of previous definitions, this proof is only three
+lines of Agda.
+It is not difficult to derive decidable equality from this fact.
+\begin{lemma} \label{split-enum-discrete}
+  Any split enumerable type has decidable equality (is discrete).
+\end{lemma}
+\begin{proof}
+  We use a corollary, proven in the appendix, that if there is a
+  split-surjection from \(A\) to \(B\), and \(A\) is discrete, then \(B\) is
+  also discrete.
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{discrete}
+\end{proof}
+
+This also tells us that any split enumerable type must be a set.
+\begin{lemma}
+  Any split enumerable type is a set.
+\end{lemma}
+\begin{proof}
+  By Hedberg's theorem \cite{hedbergCoherenceTheoremMartinLof1998}, since split
+  enumerable types have decidable equality
+  (proposition~\ref{split-enum-discrete}), they are sets.
+\end{proof}
+
+Though it's not strictly needed for the rest of the construction, it is
+instructive to also prove inverse regarding surjections; i.e. that we can
+derive \(\mathcal{E}!\) from a surjection from another finite type.
+\begin{lemma} \label{split-enum-from-surj}
+  Any type with a split surjection from another split enumerable type is itself
+  split enumerable.
+\end{lemma}
+\begin{proof}
+  Let \(E\) be a proof of split enumerability for some set \(A\), and let \(f\)
+  be a surjection from \(A\) to \(B\).
+  The support list for the proof of split enumerability over \(B\) can be
+  obtained by mapping the surjective function over the support list of \(E\).
+
+  To obtain the cover proof, let \(f^{-1}\) be the inverse function of \(f\)
+  (which we can obtain because it is a split-surjection).
+  Using the cover proof of \(E\), we can show that, for all \(y : B\), \(f^{-1}(y)\)
+  is in the support list for \(E\).
+  Using the following lemma (proven in the appendix):
+  \begin{equation}
+    x \in xs \rightarrow f (x) \in \text{map} \; f \; \mathit{xs}
+  \end{equation}
+  We obtain a proof that:
+  \begin{equation}
+    \forall (y : B). f (f^{-1}(y)) \in \text{map} \; f \; \mathit{xs}
+  \end{equation}
+  And, since \(f (f^{-1}(y)) \equiv y\) (by the definition of a surjection), we
+  have proven our goal.
+
+  In Agda:
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{from-surj}
+\end{proof}
+\subsubsection{Closure}
+In this section we will prove closure under various operations for split
+enumerable sets.
+We are working towards a topos proof, which requires us to prove closure under
+a variety of operations: for now, we only have enough machinery to demonstrate
+the semiring operations, and dependent sums.
+in order to show closure under exponentials (function arrows), we will need an
+equivalence with \(\mathbf{Fin}\), which will be provided in
+section~\ref{manifest-bishop}.
+\begin{lemma}
+  \(\bot\) is split enumerable.
+\end{lemma}
+\begin{proof}
+  The support list for \(\bot\) is the empty list.
+  The cover proof is present via the principle of explosion.
+\end{proof}
+\begin{lemma}
+  \(\top\) is split enumerable.
+\end{lemma}
+\begin{proof}
+  The support list for \(\top\) is the singleton list containing \(\text{tt}\).
+  The cover proof is a constant function which returns an index into the first
+  item in the list.
+\end{proof}
+Both of those cases were relatively simple.
+Next, we will look into how to combine proofs of split enumerability.
+\begin{theorem}
+  Split-enumerability is closed under \(\sum\).
+\end{theorem}
+\begin{proof}
+  Let \(E_A\) be a proof of split enumerability for some type \(A\), and \(E_U\)
+  be a function of the type:
+  \begin{equation}
+    E_U : \prod_{(x : A)} , \mathcal{E}!(U(x))
+  \end{equation}
+  In other words, a function which returns a proof of split enumerability for
+  each member of the family \(U\).
+
+  To obtain the support list, we concatenate the support lists of all the proofs
+  of split-finiteness for \(U\) over the support list of \(E_A\).
+  In Agda:
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{sigma-enum}
+  ``do-notation'' is available to us as we're working in the list monad.
+
+  The cover proof follows in a simple, if tedious, way.
+\end{proof}
+\begin{lemma}
+  Split-enumerability is closed under Cartesian product (non-dependent product).
+\end{lemma} 
+\begin{proof}
+  Since non-dependent products are simply a special case of the \(\sum\) type,
+  we can reuse the proof of closure over \(\sum\) here.
+\end{proof}
+\begin{lemma}
+  Split-enumerability is closed under disjoint union (non-dependent sum).
+\end{lemma}
+\begin{proof}
+  Again, this can be derived from closure of the \(\sum\) type.
+  Disjoint union between two types \(A\) and \(B\) can be represented by the
+  following type:
+  \begin{equation}
+    A + B = \sum_{(x : \mathbf{Bool})} , \text{if} \; x \; \text{then} \; A \; \text{else} \; B
+  \end{equation}
+  Then, since all of \(\mathbf{Bool}\), \(A\), and \(B\) are split enumerable,
+  the type \(A + B\) is split enumerable.
+\end{proof}
+The final case can be derived from the previous closures; we give it here anyway
+for clarity.
+\begin{lemma} \label{fin-split-enum}
+  Any finite prefix of the natural numbers (what we have been calling
+  \(\textbf{Fin}\)) is split enumerable.
+\end{lemma}
+\begin{proof}
+  For the support list, we will make use of the function tabulate, which returns
+  a list consisting of the application of \(f\) to every \(\textbf{Fin}(n)\),
+  given \(n\).
+  \begin{equation}
+    \text{tabulate}(n , f) = \left[ f(0) , f(1) \dots f(n - 1) \right]
+  \end{equation}
+  In Agda:
+  \ExecuteMetaData[agda/Data/List.tex]{tabulate}
+  Tabulation with the identity function gives us our cover list.
+
+  The cover proof is obviously true given the definition of tabulate above; in
+  Agda it requires a little more work to show.
+  \ExecuteMetaData[agda/Data/List/Membership.tex]{fin-in-tabulate}
+\end{proof}
+\subsection{Manifest Bishop Finiteness} \label{manifest-bishop}
+\begin{definition}[Manifest Bishop Finiteness]
+  \begin{equation}
+    \mathcal{B}(A) = \sum_{(\mathit{xs} : \textbf{List}(A))} , \prod_{(x : A)} , x \inunique xs
+  \end{equation}
+\end{definition}
+The only difference between this predicate and split enumerability is the list
+membership term: we use \(\inunique\) here, where \(x \inunique \mathit{xs}\) is
+to be read as ``\(x\) occurs exactly once in \(\mathit{xs}\)''.
+It is defined in terms of our previous list membership term
+(definition~\ref{list-membership}).
+\begin{definition}[Unique List Membership]
+  We say an item \(x\) is ``uniquely in'' some list \(\mathit{xs}\) if its
+  membership in that list is a \emph{contraction}; i.e. its membership proof
+  exists, and all such proofs are equal.
+  \begin{equation}
+    x \inunique \mathit{xs} = \text{isContr}(x \in \mathit{xs})
+  \end{equation}
+\end{definition}
+
+A nice consequence of prohibiting duplicates is that now the length of the
+support list is the same as the cardinality of the set.
+\subsubsection{Equivalence}
+While manifest Bishop finiteness may seem stricter than split enumerability, we
+will see soon that it is actually equivalent in strength.
+Why study it separately to split enumerability at all, then?
+What purpose does it serve on our road to Kuratowski finiteness?
+Those questions are answered by the following theorem:
+\begin{lemma} \label{bishop-equiv}
+  Any manifestly Bishop finite type has an equivalence with a finite prefix of
+  the natural numbers.
+\end{lemma}
+\begin{proof}
+  There are many equivalent definitions of equivalence in HoTT.
+  Here we take the version preferred in the Cubical Agda library: contractible
+  maps \cite[Definition~4.4.1]{hottbook}. \todo[noline]{Need this in appendix also}
+  Because of the parallels between contractible maps and split surjections,
+  the proof proceeds much the same as \ref{split-enum-surj}.
+
+  First, we define the map as the indexing function into the support list.
+  Proving this map is a contraction is precisely the cover proof.
+
+  \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{equiv}
+\end{proof}
+
+As we can see, our list-based definition of manifest Bishop finiteness is really
+an equivalence with \(\mathbf{Fin}\) in disguise.
+This will be the key component in establishing closure under exponentials.
+
+We would like to draw attention to the ``power-to-weight ratio'' of this proof.
+We have mentioned how important the equivalence will be for our later proofs: in
+general, the ability to transport via univalence opens up many opportunities 
+
+In Cubical Type Theory, equivalences are much more useful than their counterpart
+(isomorphisms) in Martin-Löf  Type Theory: arbitrary proofs and functions can be
+\emph{transported} along equivalences, giving a constructive justification for
+an intuitive and useful technique which is commonplace classically.
+The proof itself, however, is three lines long: thanks to careful definitions,
+the fact that manifest Bishop finiteness is the ``same'' as equivalences to
+\(\mathbf{Fin}\) becomes obviously true.
+Later we will see, by defining lists as containers, a proof that manifest Bishop
+finiteness is equivalent (in the formal sense) to equivalences with
+\(\mathbf{Fin}\). \todo[noline]{This needs to be added to the containers
+  section.}
+\todo[noline]{More on this? }
+\subsubsection{Relationship to Split Enumerability}
+We now show that manifest Bishop finiteness has equal strength to split
+enumerability.
+\begin{lemma}
+  Any manifest Bishop finite set is split enumerable.
+\end{lemma}
+\begin{proof}
+  The support set carries over simply, and the cover proof can be taken from the
+  first component of the cover proof from the proof of manifest Bishop
+  finiteness.
+  \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{bishop-to-split-enum}
+\end{proof}
+\begin{theorem} \label{split-enum-to-manifest-bishop}
+  Any split enumerable set is manifest Bishop finite.
+\end{theorem}
+\begin{proof}
+  Let \(E\) be a proof of split enumerability for some set \(A\).
+  From proposition~\ref{split-enum-discrete} we can derive decidable equality on
+  \(A\), and using this we can define a function \(\text{uniques}\) which filters
+  out duplicates from lists of \(A\)s.
+  \begin{equation}
+    \text{uniques} : \textbf{List}(A) \rightarrow \textbf{List}(A)
+  \end{equation}
+  This gives us our support list.
+
+  It suffices now to prove the following:
+  \begin{equation}
+    \prod_{(x : A)} , \prod_{(\mathit{xs} : \textbf{List}(A))} , x \in \mathit{xs} \rightarrow x \inunique \text{uniques}(\mathit{xs})
+  \end{equation}
+  And from that we can generate our cover proof.
+
+  Full details of the formal proof are provided in the appendix.
+\end{proof}
+Note that while manifest Bishop finiteness as split enumerability are equivalent
+in ``strength'', the two types are not equivalent.
+In particular, there are infinitely many inhabitants of \(\mathcal{E}!\), while
+for a type \(A\) with \(n\) inhabitants, there are only \(n!\) inhabitants of
+\(\mathcal{B}(A)\).
+\subsubsection{Closure}
+Proving equal strength of split enumerability and manifest Bishop finiteness
+allows us to carry all of the previous proofs of closure over to manifest Bishop
+finite sets (and vice-versa).
+Missing from our previous proofs was a proof of closure of functions.
+We remedy that here.
+\begin{theorem}
+  Manifest bishop finiteness is closed over dependent functions (\(\prod\)-types).
+
+  Formally, given a type \(A\) and a type family \(B\) on \(A\), when \(A\) is
+  manifestly Bishop finite:
+  \begin{equation}
+    \mathcal{B}\left( A \right)
+  \end{equation}
+  And \(B\) is manifestly Bishop finite over all points of \(A\):
+  \begin{equation}
+    \prod_{(x : A)} , \mathcal{B}\left( B(x) \right)
+  \end{equation}
+  Then we have the following:
+  \begin{equation}
+    \mathcal{B}\left(\prod_{(x : A)} , B(x)\right)
+  \end{equation}
+\end{theorem}
+\begin{proof}
+  This proof is essentially the composition of two transport operations, made
+  available to us via univalence.
+  
+  First, we will simplify things slightly by working only with split
+  enumerability.
+  As this is equal in strength to manifest Bishop finiteness, any closure proofs
+  carry over.
+
+  Secondly, we will replace \(A\) in all places with \(\mathbf{Fin}(n)\).
+  Since we have already seen an equivalence between these two types, we are
+  permitted to transport along these lines.
+  This is the first transport operation.
+
+  The bulk of the proof now is concerned with proving the following:
+  \begin{equation}
+    \left( \prod_{(x : \mathbf{Fin}(n))} , \mathcal{E}!(A(x)) \right) \rightarrow \mathcal{E}!\left( \prod_{(x : \mathbf{Fin}(n))} , A(x) \right)
+  \end{equation}
+  Our strategy to accomplish this will be to consider functions from
+  \(\mathbf{Fin}(n)\) as \(n\)-tuples over some type family \(T\).
+  \begin{equation}
+    \begin{aligned}
+      \mathbf{Tuple}(T, 0)   &= \top \\
+      \mathbf{Tuple}(T, n+1) &= A(0) \times \mathbf{Tuple}(T \circ \text{suc}, n)
+    \end{aligned}
+  \end{equation}
+  This type is manifestly Bishop finite, as it is constructed only from products
+  and the unit type.
+  
+  We then prove an isomorphism between this representation and \(\Pi\)-types.
+  \begin{equation}
+    \mathbf{Tuple}(T, n) \iff \prod_{(x : \mathbf{Fin}(n))} , T(x)
+  \end{equation}
+  This allows us to transport our proof of finiteness on tuples to one on
+  functions from \(\mathbf{Fin}\) (our second transport operation), proving our
+  goal.
+  
+  \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{pi-clos}
+\end{proof}
+\subsection{Manifest Enumerability} \label{manifest-enumerability}
+As we said in section~\ref{split-enumerable}, we will now retrieve a distinction
+between enumerability and manifest Bishop finiteness.
+We do so by propositionally truncating the membership proof:
+\begin{definition}[Manifest Enumerability]
+  \begin{equation}
+    \mathcal{E}(A) = \sum_{(\mathit{xs} : \mathbf{List}(A))} , \prod_{(x : A)} , \lVert x \in \mathit{xs} \rVert
+  \end{equation}
+  \ExecuteMetaData[agda/Cardinality/Finite/ManifestEnumerable.tex]{def}
+\end{definition}
+
+There is another definition, which lies between manifest enumerability and
+bishop finiteness, where we would truncate just the equality, but reveal the
+position in the membership proof.
+\begin{equation}
+  \mathcal{E}'(A) = \sum_{(\mathit{xs} : \mathbf{List}(A))} , \prod_{(x : A)} , \sum_{(i : \textbf{Fin}(\text{length}(\mathit{xs})))} , \lVert \mathit{xs} \ind i \equiv x \rVert
+\end{equation}
+However, this simply amounts to a proof of manifest Bishop finiteness over
+set-truncated types, rather than a significantly different construction, so it
+does not interest us here.
+\subsubsection{Higher Homotopy Levels}
+By hiding the position, we have essentially removed the ``decidable'' component
+from split enumerability.
+Our predicate now becomes general enough to work with non-sets: we will show
+here that the circle is manifestly enumerable.
+\begin{theorem}
+  The circle \(S^1\) is manifestly enumerable.
+\end{theorem}
+\begin{proof}
+  As the cover proof is a truncated proposition, we need only consider the point
+  constructors, making this poof the same as the proof of split enumerability on
+  \(\top\).
+
+  The support list will be a singleton list containing the single point in the
+  type, and the cover proof will be an index pointing at the first element in
+  the support list.
+
+  \ExecuteMetaData[agda/Cardinality/Finite/ManifestEnumerable.tex]{circ-inst}
+\end{proof}
+\subsubsection{Surjections}
+This predicates relation to surjectivity is much the same as split
+enumerability's relation to \emph{split} surjectivity.
+Deriving a surjection from \(\mathbf{Fin}\) is straightforward:
+\begin{lemma}
+  If a type \(A\) is manifestly enumerable, then there is a surjection from
+  \(\mathbf{Fin}\) into \(A\).
+\end{lemma}
+\begin{proof}
+  \todo[inline]{Proof}
+\end{proof}
+And building from a surjection is similarly not too difficult:
+\begin{lemma}
+  If there is a surjection from a manifestly enumerable type \(A\) to another
+  type \(B\), then \(B\) is manifestly enumerable.
+\end{lemma}
+\begin{proof}
+  The proof proceeds in much the same way as in
+  proposition~\ref{split-enum-from-surj}.
+  The only difference is that the second component contains a truncation, but
+  since we can always eliminate from a truncation into a truncation this is not
+  a problem.
+
+  In Agda:
+  \ExecuteMetaData[agda/Cardinality/Finite/ManifestEnumerable.tex]{from-surj}
+\end{proof}
+\subsubsection{Relation to Split Enumerability}
+As split enumerability is stronger than manifest enumerability, we can convert
+from one to the other easily.
+\begin{lemma}
+  Any split enumerable type is also manifestly enumerable.
+\end{lemma}
+\begin{proof}
+  The proof carries over via truncation of the cover proof.
+\end{proof}
+The main missing piece from manifest enumerability is decidable equality: by
+truncating the membership proof, we have removed the ability to distinguish
+(decidably) between members of the type.
+Indeed, resupplying decidable equality is precisely sufficient to recover split
+enumerability.
+
+\begin{theorem} \label{manifest-enum-to-split}
+  A manifestly enumerable type with decidable equality is split enumerable.
+\end{theorem}
+\begin{proof}
+  The support list stays the same between both enumerability proofs.
+
+  For the cover proof, we need a way to get the contents out of a truncated
+  value.
+  We can do exactly that with the following lemma, called recompute:
+  Given a decision procedure for some type \(A\), and a truncation for the
+  proposition \(A\), we can discount the possibility of \(A\) being false, and
+  therefore extract the true decision.
+
+  For the cover proof, our obligation now becomes constructing a decision for
+  membership of the support list.
+  This is straightforward given decidable equality.
+
+  \ExecuteMetaData[agda/Cardinality/Finite/ManifestEnumerable.tex]{to-split-enum}
+\end{proof}
+By theorem~\ref{split-enum-to-manifest-bishop}, we also can derive that any
+manifestly enumerable type with decidable equality is Bishop finite.
+\subsubsection{Closure}
+\begin{lemma}
+  Manifest enumerability is closed under dependent sum, disjoint union
+  (non-dependent sum), and Cartesian product (non-dependent product).
+\end{lemma}
+\begin{proof}
+  For these three closures, the proofs on split enumerability consisted of a
+  list manipulation followed by a proof that membership was preserved by the
+  list manipulation.
+  Because we separate these two concerns, the proofs carry over onto manifest
+  enumerability: the support list manipulation stays the same, and the
+  cover proofs are performed ``under'' the truncation.
+\end{proof}
+Notice that we do not have closure under functions: without decidability,
+manifest enumerability is not closed under function arrows.
+\subsection{Cardinal Finiteness} \label{cardinal}
+We now turn our attention to notions of finiteness which do not induce a linear
+order.
+\begin{definition}[Cardinal Finiteness]
+  A type \(A\) is cardinally finite, \(\mathcal{C}\), if it has a
+  propositionally-truncated proof of bishop finiteness.
+  \begin{equation}
+    \mathcal{C}(A) = \lVert \mathcal{B}(A) \rVert
+  \end{equation}
+\end{definition}
+\subsubsection{Characterisation}
+Though we have chosen Bishop finiteness as our underlying finiteness proof to
+truncate, we could have in fact used any equal-strength proof
+(lemma~\ref{equal-strength}).
+Because this predicate is a mere proposition, what we called before ``equal
+strength'' now implies full equivalence.
+With this proven, we can use any one of our equal-strength finite definitions
+(\(\mathcal{E}!\), \(\mathcal{B}\)).
+In particular, we have:
+\begin{lemma}
+  Cardinal finiteness is equivalent to a propositionally truncated equivalence
+  with some \(\textbf{Fin}\).
+  \begin{equation}
+    \mathcal{C}(A) \simeq \lVert \sum_{(n : \mathbb{N})} , \textbf{Fin}(n) \simeq A \rVert
+  \end{equation}
+\end{lemma}
+\begin{proof}
+  By proposition~\ref{equal-strength}, we only need to provide conversion
+  functions between the two sides of the equivalence.
+  For left to right, we have proposition~\ref{bishop-equiv}.
+  For right to left, we can transport along the equivalence, meaning we need
+  only prove that \(\textbf{Fin}(n)\) is Bishop finite.
+  We know this to be true, since it is split enumerable
+  (proposition-\ref{fin-split-enum}).
+\end{proof}
+\subsubsection{Closure}
+The closure proofs for cardinal finiteness are especially easy.
+In contrast to manifest enumerability, under the propositional truncation we
+have a full proof of bishop finiteness, meaning that all of the closure proofs
+carry over.
+\begin{lemma}
+  Cardinal finiteness is closed under dependent and non-dependent sums,
+  products, and functions.
+\end{lemma}
+\begin{proof}
+  All closure functions can be lifted under propositional truncation.
+  Therefore, cardinal finiteness has the same closure properties as manifest
+  bishop finiteness.
+\end{proof}
+\subsubsection{Strength}
+We can eliminate from cardinal finiteness in a coherently constant way:
+effectively, anything which doesn't ``notice'' the order of the internal support
+list is usable.
+
+First, even though the cardinality of the type is hidden under the truncation,
+we can pull it out, as it is constant through permutations of the list.
+\begin{theorem}
+  Given a cardinally finite type, we can derive the type's cardinality, as well
+  as a propositionally truncated proof of equivalence with \(\textbf{Fin}\)s of
+  the same cardinality.
+  \begin{equation}
+    \mathcal{C}(A) \rightarrow \sum_{(n : \mathbb{N})} , \lVert \textbf{Fin}(n) \simeq A \rVert
+  \end{equation}
+\end{theorem}
+\begin{proof}
+  We eliminate from the proof of cardinal finiteness via the eliminator
+  described in proposition~\ref{elim-non-prop}.
+  We pass a function \(\text{alg}\) which preserves the first part of the pair,
+  and truncates the second.
+  In Agda:
+  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{trunc-alg}
+
+  It remains only to show that this function is coherently constant.
+  \begin{equation}
+    \prod_{(x : \sum_{(n : \mathbb{N})} , \textbf{Fin}(n) \simeq A)} ,
+    \prod_{(y : \sum_{(m : \mathbb{N})} , \textbf{Fin}(m) \simeq A)} ,
+    \text{alg}(x) \equiv \text{alg}(y)
+  \end{equation}
+
+  We will first address the first component of the output.
+  To show that \(n\) and \(m\) are equal, we first observe that
+  \begin{equation}
+    \textbf{Fin}(n) \equiv \textbf{Fin}(m)
+  \end{equation}
+  since both are equivalent to \(A\).
+  Relying on the fact that \(\textbf{Fin}\) is injective
+  (proposition~\ref{fin-inj}), we can derive that \(n\) and \(m\) are equal.
+
+  Since the second components of the output are propositions, they are
+  definitionally equal.
+  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{const-alg}
+\end{proof}
+
+\begin{lemma} \label{fin-inj}
+  \(\textbf{Fin}\) is injective.
+\end{lemma}
+\begin{proof}
+  Let \(n\) and \(m\) be natural numbers.
+  We want to derive a proof of \(n \equiv m\) from \(\textbf{Fin}(n) \equiv
+  \textbf{Fin}(m)\).
+
+  We prove by contradiction (since the property we are interested in is
+  decidable, this is valid constructively).
+  When \(n\) does not equal \(m\), there are two possible cases.
+  \begin{equation}
+    \neg (n \equiv m) \implies
+    \begin{cases}
+      m \equiv 1 + n + k, n < m  \\
+      n \equiv 1 + m + k, m < n
+    \end{cases}
+  \end{equation}
+  Take the first case, without loss of generality.
+  \todo[inline]{Finish prose for this proof}
+
+  The Agda version of this proof is in the appendix (\ref{agda-fin}).
+\end{proof}
+
+Another property which does not rely on an internal order is decidable equality.
+\begin{theorem} \label{cardinal-finite-discrete}
+  Any cardinal-finite set has decidable equality.
+\end{theorem}
+\begin{proof}
+  We first show that decidable equality is a proposition itself.
+  We know that if a type \(A\) is a proposition, then the decision over that
+  type is also a proposition.
+  Then, via Hedberg's theorem, we know that any type with decidable equality is
+  a set, meaning that paths in that type are themselves propositions.
+  Therefore we can derive that a decision of equality on elements with decidable
+  equality is a proposition, and by function extensionality we see that
+  decidable equality is itself a proposition.
+
+  That is enough to pull it out of the truncation: since any Bishop-finite type
+  has decidable equality, and decidable equality is a proposition, we conclude
+  that cardinal-finite types have decidable equality.
+\end{proof}
+\subsubsection{Relation to Manifest Bishop Finiteness}
+Cardinal finiteness tells us that there is an isomorphism between a type and
+\(\mathbf{Fin}\); it just doesn't tell us \emph{which} isomorphism.
+To take a simple example, \(\mathbf{Bool}\) has 2 possible isomorphisms with the
+set \(\mathbf{Fin}(2)\): one where false maps to 0, and true to 1; and another
+where false maps to 1 and true to 0.
+
+To convert from Cardinal finiteness to Bishop finiteness, then, requires that we
+supply enough information to identity a particular isomorphism.
+A total order is sufficient here: it will give us enough to uniquely order the
+support list invariant under permutations.
+This tells us what we already knew in the introduction: manifest Bishop
+finiteness is cardinal finiteness plus an order.
+
+\begin{theorem}
+  Any cardinal finite type with a (decidable) total order is manifestly Bishop
+  finite.
+\end{theorem}
+\begin{proof}
+  This proof is quite involved, and will rely on several subsequent lemmas, so
+  we will give only its outline here.
+  \begin{itemize}
+    \item First, we will convert to manifest enumerability: knowing that the
+      underlying type is discrete (theorem~\ref{cardinal-finite-discrete}) we can
+      go from manifest enumerability to split enumerability
+      (lemma~\ref{manifest-enum-to-split}), and subsequently to manifest Bishop
+      finiteness (lemma~\ref{split-enum-to-manifest-bishop}).
+    \item To convert to manifest enumerability, we need to provide a support
+      list: this cannot simply be the support list hidden under the truncation,
+      since that would violate the hiding promised by the truncation.
+      Instead, we sort the list (using insertion sort).
+      We must, therefore, prove that insertion sort is invariant under all
+      support lists in cardinal finiteness proofs.
+    \item We show that all support lists in cardinal finiteness proofs are
+      permutations of each other.
+    \item And then we show that insertion sort is invariant under permutations.
+  \end{itemize} 
+\end{proof}
+Now we will build up the toolkit we need to perform the above steps.
+First, permutations.
+\begin{definition}[List Permutations]
+  We say that two lists are permutations of each other if there is an
+  isomorphism between membership proofs.
+  \begin{equation}
+    \mathit{xs} \leftrightsquigarrow \mathit{ys} = \prod_{(x : A)} , x \in \mathit{xs} \iff x \in \mathit{ys}
+  \end{equation}
+\end{definition}
+We also prove some of the identities you might expect with regards to
+permutations, all in the appendix.
+In particular, we prove that they form an equivalence relation.
+
+Next, we will use the following definition of insertion sort:
+\ExecuteMetaData[agda/Data/List/Sort.tex]{sort}
+\begin{lemma}
+  Insertion sort is invariant under permutations.
+  \begin{equation}
+    \mathit{xs} \leftrightsquigarrow \mathit{ys} \implies \text{sort}(\mathit{xs}) \equiv \text{sort}(\mathit{ys})
+  \end{equation}
+\end{lemma}
+\begin{proof}
+  We first prove that insertion sort does indeed sort its input: i.e. it returns
+  a sorted list that is a permutation of its input.
+  Then we show that any two sorted lists which are permutations of each other
+  are equal.
+\end{proof}
+\todo[inline]{Agda code for proofs}
+\subsection{Kuratowski Finiteness} \label{kuratowski}
+Finally we arrive at Kuratowski finiteness
+\cite{kuratowskiNotionEnsembleFini1920}.
+\subsubsection{The Kuratowski Set as a Higher Inductive Type}
+We start with the Kuratowski finite sets, which are free join semilattices (or,
+equivalently, free commutative idempotent monoids).
+HITs are required to define this type
+\cite{altenkirchDefinableQuotientsType2011}; however we have two possible
+candidates for the definition.
+The first is a direct translation of ``free commutative idempotent monoid'' into
+a type:
+\begin{equation}
+\begin{aligned}
+  \mathcal{K}(A) &=  \\
+    &\left\vert \; \text{singleton} : A \rightarrow \mathcal{K}(A) \right; \\
+    &\left\vert \; \cdot \cup \cdot : \mathcal{K}(A) \times \mathcal{K}(A) \rightarrow \mathcal{K}(A) \right; \\
+    &\left\vert \; \emptyset : \mathcal{K}(A) \right; \\
+    &\left\vert \; \cup \text{-assoc} : \Pi \left( \mathit{xs}, \mathit{ys}, \mathit{zs}:\mathcal{K}(A)\right) , (\mathit{xs} \cup \mathit{ys}) \cup \mathit{zs} \equiv \mathit{xs} \cup (\mathit{ys} \cup \mathit{zs}) \right; \\
+    &\left\vert \; \cup \text{-commutative} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \mathit{xs} \cup \mathit{ys} \equiv \mathit{ys} \cup \mathit{xs} \right; \\
+    &\left\vert \; \cup \text{-idempotent} : \Pi (\mathit{xs}: \mathcal{K}(A)) , \mathit{xs} \cup \mathit{xs} \equiv \mathit{xs} \right; \\
+    &\left\vert \; \cup \text{-identity} : \Pi (\mathit{xs}: \mathcal{K}(A)) , \emptyset \cup \mathit{xs} \equiv \mathit{xs} \right; \\
+    &\left\vert \; \text{trunc} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q \right;
+\end{aligned}
+\end{equation}
+\todo[inline]{Have we already described the trunc constructor?}
+
+However this proves cumbersome to work with.
+Instead, we build on the free monoid (the list), and add the required equations
+we need.
+\begin{equation}
+\begin{aligned}
+  \mathcal{K}(A) &=  \\
+    &\left\vert \; \cdot \dblcolon \cdot : A \times \mathcal{K}(A) \rightarrow \mathcal{K}(A) \right; \\
+    &\left\vert \; [] : \mathcal{K}(A) \right; \\
+    &\left\vert \; \text{com} : \Pi (x, y: A) , \Pi (\mathit{xs}: \mathcal{K}(A)) , x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} \right; \\
+    &\left\vert \; \text{dup} : \Pi (\mathit{x}: A) , \Pi (\mathit{xs}: \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} \right; \\
+    &\left\vert \; \text{trunc} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q \right;
+\end{aligned}
+\end{equation}
+Since associativity and identity (the monoid laws) are automatically satisfied
+by the list structure, we do not need to specify them as paths.
+Furthermore, it is simpler to specify the rest of the paths on the heads of the
+lists, rather than on the whole structure.
+That said, the two definitions are equivalent.
+\todo[inline]{Maybe add sketch of proof here?}
+\subsubsection{Elimination}
+With Agda's dependent pattern matching, we get an eliminator automatically from
+the definition of an inductive type.
+We will define two further eliminators here.
+
+\begin{equation}
+  \begin{aligned}
+    \phi &: \mathcal{K}(A) \rightarrow \text{Type} \\
+    \text{trunc}^\phi &: \pifun{x}{\mathcal{K}(A)} , \text{isSet}(\phi(x)) \\
+    []^\phi &: \phi([]) \\
+    \dblcolon^\phi &: \pifun{x}{A} , \pifun{xs}{\mathcal{K}(A)} , \pifun{p}{\phi(\mathit{xs})} , \phi(x \dblcolon \mathit{xs}) \\
+    \text{com}^\phi &: \prod_{(x , y : A)} , \pifun{xs}{\mathcal{K}(A)} , \pifun{p}{\phi(\matit{xs})} , x \dblcolon^\phi (y \dblcolon \mathit{xs}) (y \dblcolon^\phi \mathit{xs} \; p) \equiv y \dblcolon^\phi (x \dblcolon \mathit{xs}) (x \dblcolon^\phi \mathit{xs} \; p) \\
+    \text{dup}^\phi &: \pifun{x}{A} , \pifun{xs}{\mathcal{K}(A)} , \pifun{p}{\phi(\mathit{xs})} , x \dblcolon^\phi (x \dblcolon \mathit{xs}) (x \dblcolon^\phi \mathit{xs} \; p) \equiv x \dblcolon^\phi \mathi{xs} \; p
+  \end{aligned}
+\end{equation}
+
+\begin{equation} \label{kuratowski-rec}
+  \text{rec} \left\{ \begin{aligned}
+    \phi &: \text{Type} \\
+    \text{trunc}^\phi &: \text{isSet}(\phi) \\
+    []^\phi &: \phi \\
+    \dblcolon^\phi &: \pifun{x}{A} , \pifun{xs}{\mathcal{K}(A)} , \phi \\
+    \text{com}^\phi &: \prod_{(x , y : A)} , \pifun{xs}{\mathcal{K}(A)} , x \dblcolon^\phi (y \dblcolon^\phi \mathit{xs}) \equiv y \dblcolon^\phi (x \dblcolon^\phi \mathit{xs}) \\
+    \text{dup}^\phi &: \pifun{x}{A} , \pifun{xs}{\mathcal{K}(A)} , x \dblcolon^\phi (x \dblcolon^\phi \mathit{xs}) \equiv x \dblcolon^\phi \mathit{xs}
+  \end{aligned} \right.
+\end{equation}
+
+\todo[inline]{Expand on these eliminators}
+
+\subsubsection{Membership}
+We can define membership of a Kuratowski set using these eliminators.
+First we define the \(\Diamond\) type, described in the appendix.
+\begin{equation}
+  \Diamond P = \left\{ \begin{aligned}
+    \phi &= \sum_{(x : \text{Type})} , \text{isProp}(x) \\
+    \text{trunc}^\phi &= \text{isSetHProp} \\
+    []^\phi &= \bot , \text{isProp}\bot \\
+    x \dblcolon^\phi \mathit{xs} &= \lVert P(x) \uplus \text{fst}(\mathit{xs}) \rVert , \text{squash} \\
+    \text{com}^\phi &= \dots \\
+    \text{dup}^\phi &= \dots
+  \end{aligned} \right.
+\end{equation}
+We can define membership then in terms of this.
+\begin{definition}[Kuratowski Membership]
+  \begin{equation}
+    x \in \mathit{xs} = \Diamond (\equiv x) \mathit{xs}
+  \end{equation}
+\end{definition}
+
+From this we can define Kuratowski finiteness.
+\begin{definition}[Kuratowski Finiteness]
+  A type is Kuratowski finite iff there exists a Kuratowski Set which contains
+  all of its elements.
+  \begin{equation}
+    \mathcal{K}^{f}(A) = \sum_{(\text{support} : \mathcal{K}(A))} , \pifun{x}{A} , x \in \text{support}
+  \end{equation}
+\end{definition}
+
+\subsubsection{Strength}
+Since the Kuratowski set is a departure in structure from our previous
+list-based notions of finiteness, it makes sense to first look for the closest
+list-based analogue.
+As it turns out, that analogue is manifestly enumerable finiteness, with the
+order removed.
+\begin{theorem}
+  A proof of Kuratowski finiteness is equivalent to a propositionally truncated
+  proof of enumerability.
+  \begin{equation}
+    \mathcal{K}^f(A) \simeq \lVert \mathcal{E}(A) \rVert
+  \end{equation}
+\end{theorem}
+\begin{proof}
+  We prove by way of an isomorphism.
+  In the first direction (from \(\mathcal{K}\) to \(\mathcal{E}\)), we use the
+  eliminator in \ref{kuratowski-rec}.
+  Because we are eliminating into a proposition, we need not prove that the
+  function obeys the path constructors.
+  The remaining cases to deal with involve converting the Kuratowski set to a
+  list, and the cover proof to its equivalent cover proof on lists.
+  \ExecuteMetaData[agda/Cardinality/Finite/Kuratowski.tex]{to-enum}
+
+  To go the other direction, we first need to prove that a proof of Kuratowski
+  finiteness is a proposition.
+  \todo[inline]{Explain rest of this proof}
+\end{proof}
+Based on previous proofs, we can derive that if we add decidability to a
+Kuratowski finite type we retrieve cardinal finiteness.
+\begin{lemma}
+  Any Kuratowski finite set with decidable equality is cardinally finite.
+\end{lemma}
+\begin{proof}
+  \todo[inline]{Proof}
+\end{proof}
+\begin{lemma}
+  Kuratowski finiteness is equivalent to a truncated surjection from some prefix
+  of the natural numbers.
+  \begin{equation}
+    \mathcal{K}^f(A) \simeq \left\Vert \sum_{(n : \mathbb{N})} , \left(  \mathbf{Fin}(n) \twoheadrightarrow A \right) \right\Vert
+  \end{equation}
+\end{lemma}
+\begin{proof}
+  \todo[inline]{Prose for proof}
+\end{proof}
+\subsubsection{Topos}
+At this point, we see that a ``decidable Kuratowski finite set'' is precisely
+equivalent to a cardinal finite set.
+From this, we can lift over all of the properties of cardinal finite sets.
+In particular, we see that decidable Kuratowski finite sets form a \emph{topos}.
+\todo[inline]{Fill in rest}
+\subsubsection{Closure}
+\begin{theorem}
+  Kuratowski finite sets are closed under \(\sum\).
+\end{theorem}
+\begin{proof}
+  \todo[inline]{Proof}
+\end{proof}
+\section{Species and Containers} \label{species-and-containers}
+Containers \cite{abbottContainersConstructingStrictly2005} give us a general way
+to construct functors from generic building-blocks.
+\begin{definition}[Container]
+  A container is a dependent pair of shapes, and positions indexed by those
+  shapes.
+  \begin{equation}
+    \mathbf{Container} = \sum_{(\text{shape} : \text{Type})} , \text{shape} \rightarrow \text{Type}
+  \end{equation}
+  \ExecuteMetaData[agda/Data/Container.tex]{def}
+  We ``interpret'' a container into a pair of a specific shape, and a function
+  which goes from positions to contents.
+  \begin{equation}
+    \llbracket S , P \rrbracket = \prod_{(X : \text{Type})} , \sum_{(s : S)} , \left( P(s) \rightarrow X \right)
+  \end{equation}
+  \ExecuteMetaData[agda/Data/Container.tex]{interp}
+\end{definition}
+For instance, the shape of lists is given by \(\Nat\), and the positions are then
+\(\AgdaDatatype{Fin}\)s indexed by that \(\Nat\).
+\ExecuteMetaData[agda/Data/Container/List.tex]{def}
+And here is the definition of foldr for container-defined lists:
+\ExecuteMetaData[agda/Data/Container/List.tex]{foldr}
+\subsection{Containers For Finiteness}
+The definition for the container-based finiteness predicates are almost
+identical to their list-based counterparts.
+\ExecuteMetaData[agda/Cardinality/Container/Finite.tex]{split-enum}
+One advantage that they have, however, is that conversion back and forth between
+the relation-based finiteness predicates is very straightforward.
+This allows us to prove the following.
+\begin{theorem}
+  Manifest bishop finiteness is equivalent to an equivalence with some \(\mathbf{Fin}\).
+  \begin{equation}
+    \mathcal{B}(A) \simeq \sum_{(n : \mathbb{N})} , \mathbf{Fin}(n) \simeq A
+  \end{equation}
+\end{theorem}
+\begin{proof}
+  This proof is the composition of two equivalences.
+  First, we must show that the list-based manifest Bishop finiteness is
+  equivalent to the container-based definition, and then we must show that the
+  container-based definition of manifest Bishop finiteness is equivalent to the
+  equivalence.
+  \todo[inline]{proof}
+\end{proof}
+
+\begin{lemma}
+  Manifest enumerability is equivalent to a surjection from some \(\mathbf{Fin}\).
+  \begin{equation}
+    \mathcal{E}(A) \simeq \sum_{(n : \mathbb{N})} , \left(  \mathbf{Fin}(n) \twoheadrightarrow A \right)
+  \end{equation}
+\end{lemma}
+\begin{proof}
+\end{proof}
+
+\begin{lemma}
+  Split enumerability is equivalent to a split surjection from some \(\mathbf{Fin}\).
+  \begin{equation}
+    \mathcal{E}!(A) \simeq \sum_{(n : \mathbb{N})} , \left(  \mathbf{Fin}(n) \twoheadrightarrow ! A \right)
+  \end{equation}
+\end{lemma}
+\begin{proof}
+\end{proof}
+
+\section{Infinite Cardinalities} \label{infinite-cardinalities}
+While the previous section purported to be about finite sets, we can now see
+that it was really only studying surjections and isomorphisms of different
+flavours between types and \(\mathbf{Fin}\).
+The natural next question which arises, then, is if we can extend that work to
+surjections and isomorphisms with \(\mathbb{N}\).
+In more standard language, what we're referring to here is of course
+countable infinity and related concepts.
+However, as with finite types, the ``countably infinite'' types have more
+varieties in constructive mathematics than their classical counterparts.
+\subsection{Split Countable Types}
+Our first foray into the world of countable types will be a straightforward
+analogue to the split enumerable types.
+We need change only one element: instead of a support \emph{list}, we instead
+have a support \emph{stream}, which is its infinite, coinductive counterpart.
+\begin{definition}[Stream]
+  We will work with two isomorphic definitions of streams.
+  The first is the following:
+  \begin{equation}
+    \mathbf{Stream}(A) = \mathbb{N} \rightarrow A
+  \end{equation}
+  Conceptually, a stream is like a list without an end.
+  Of course, such a type can not be defined in the same way as a list: it would
+  be impossible to construct a value, as inductive types do not admit
+  infinitely-sized inhabitants.
+\end{definition}
+We can now define the split countable types.
+\begin{definition}[Split Countability]
+  \begin{equation}
+    \mathcal{E}!(A) = \sum_{(\mathit{xs} : \mathbf{Stream}(A))} , \prod_{(x : A)} , x \in \mathit{xs}
+  \end{equation}
+\end{definition}
+\subsubsection{\(\Sigma\) Closure}
+We know that countable infinity is not closed under the exponential (function
+arrow), so the only closure we need to prove is \(\Sigma\) to cover all of
+what's left.
+To do this we have to take a slightly different approach to the functions we
+defined before.
+Figure~\ref{pairings} illustrates the reason why: previously, we used the
+``Cartesian'' product pairing for each support list.
+This diverges if the first list is infinite, never exploring anything other than
+the first element in the second list.
+Instead, we use here the cantor pairing function, which performs a breadth-first
+search of the pairings of both lists.
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{.5\linewidth}
+    \begin{tikzcd}[sep=tiny,font=\footnotesize]
+      (1,e) \ar[rdddd, out=-45, in=135] & (2,e) \ar[rdddd, out=-45, in=135] & (3,e) \ar[rdddd, out=-45, in=135] & (4,e) \ar[rdddd, out=-45, in=135] & (5,e)        \\
+      (1,d) \ar[u]     & (2,d) \ar[u]    & (3,d) \ar[u]    & (4,d) \ar[u]    & (5,d) \ar[u] \\
+      (1,c) \ar[u]     & (2,c) \ar[u]    & (3,c) \ar[u]    & (4,c) \ar[u]    & (5,c) \ar[u] \\
+      (1,b) \ar[u]     & (2,b) \ar[u]    & (3,b) \ar[u]    & (4,b) \ar[u]    & (5,b) \ar[u] \\
+      (1,a) \ar[u]     & (2,a) \ar[u]    & (3,a) \ar[u]    & (4,a) \ar[u]    & (5,a) \ar[u]
+    \end{tikzcd}
+    \caption{Cartesian}
+    \label{cartesian}
+  \end{subfigure}%
+  \begin{subfigure}[b]{.5\linewidth}
+    \begin{tikzcd}[sep=tiny,font=\footnotesize]
+      (1,e) \ar[dr] & (2,e) \ar[dr]  & (3,e) \ar[dr]    & (4,e) \ar[dr] & (5,e) \\
+      (1,d) \ar[dr] & (2,d) \ar[dr]  & (3,d) \ar[dr]    & (4,d) \ar[dr] & (5,d) \ar[u] \\
+      (1,c) \ar[dr] & (2,c) \ar[dr]  & (3,c) \ar[dr]    & (4,c) \ar[dr] & (5,c) \ar[uul] \\
+      (1,b) \ar[dr] & (2,b) \ar[dr]  & (3,b) \ar[dr]    & (4,b) \ar[dr] & (5,b) \ar[uuull, out=130, in=-50] \\
+      (1,a) \ar[u]  & (2,a) \ar[uul, out=130, in=-50] & (3,a) \ar[uuull, out=130, in=-50] & (4,a) \ar[uuuulll, out=130, in=-50] & (5,a) \ar[uuuulll, out=130, in=-50]
+    \end{tikzcd}
+    \caption{Cantor}
+    \label{cantor}
+  \end{subfigure}
+  \caption{Two possible products for the sets \(\left[ 1 \dots 5 \right]\) and
+    \(\left[  a \dots e \right]\)}
+  \label{pairings}
+\end{figure}
+\begin{theorem} \label{split-countability-sigma}
+  Split countability is closed under \(\Sigma\).
+\end{theorem}
+\begin{proof}
+  Let \(\mathcal{X}\) be the proof of split countability on \(A\), and
+  \(\mathcal{Y}\) be a function of the following type:
+  \begin{equation}
+    \mathcal{Y} : \prod_{(x : A)} , \mathcal{E}!(U(x))
+  \end{equation}
+  Where \(U\) is a type family on \(A\).
+  Our task is to provide the following:
+  \begin{equation}
+    \mathcal{E}!\left(\sum_{(x : A)} , U(x)\right)
+  \end{equation}
+
+  This final proof consists of the support stream, and the proof that the
+  support stream covers the input.
+
+  As mentioned, we will have to use a more sophisticated pairing function than
+  the Cartesian product we used before.
+  We instead will mirror the pattern in figure~\ref{cantor}.
+  To greatly simplify the algorithm, we will produce an intermediate stream of
+  lists which consists of the diagonals in the diagram.
+  We then concatenate these streams into the final support stream.
+
+  Here is the algorithm in Agda:
+  \ExecuteMetaData[agda/Cardinality/Container/Infinite.tex]{conv}
+  \todo[inline]{Finish prose for this proof}
+\end{proof}
+\begin{lemma}
+  Split countability is closed under non-dependent product and sum.
+\end{lemma}
+\begin{proof}
+  Follows from theorem~\ref{split-countability-sigma}.
+\end{proof}
+\subsubsection{Kleene Star and Plus}
+While we lose some closures with the inclusion of infinite types, we gain some
+others.
+In particular, we have the Kleene star and plus.
+These allow us to introduce recursion into countable types, by way of lists.
+\begin{definition}[Kleene Lists]
+  It is often useful to have two mutually-defined list types (one for
+  possibly-empty lists and one for nonempty lists).
+  Such a definition closely mirrors the Kleene star and plus.
+  \begin{equation}
+    \begin{aligned}
+      A^+ &= \\
+          &\left\vert \; \text{head} : A^+ \rightarrow A \right; \\
+          &\left\vert \; \text{tail} : A^+ \rightarrow A^\star \right; \\
+      A^\star &= \\
+          &\left\vert \; [] : A^\star \right; \\
+          &\left\vert \; [\cdot] : A^+ \rightarrow A^\star \right;
+    \end{aligned}
+  \end{equation}
+\end{definition}
+Our definition of split countability is closed under these types in particular.
+\begin{theorem}
+  Split countability is closed under Kleene star and plus.
+\end{theorem}
+\begin{proof}
+  \tot[inline]{Proof}
+\end{proof}
+\subsection{Manifest Countability}
+As we can quotient out the position information with finite types, so can we with
+countable types.
+\todo[inline]{fill in rest here}
+\section{Practical Uses} \label{practical}
+\todo[inline]{%
+\begin{itemize}
+  \item Synthesize functions according to specifications.
+  \item Nonexhaustive search for the infinite types.
+  \item Lift quantifiers over types other than bishop (i.e. K). Show that
+    quantifiers have to be different (i.e. existence has to be unique).
+  \item Big operators\cite{gustafssonCountingTypeIsomorphisms}
+    \cite{gustafssonFoldableContainersDependent}
+\end{itemize}
+}
+The theory of finite types in constructive mathematics, and in HoTT in
+particular, is rich and interesting, as we hope we have demonstrated thus far.
+As well as being theoretically interesting, however, the proofs and combinators
+we have defined here are \emph{practically} useful.
+\subsection{Omniscience}
+\todo[inline]{Put definition for decidable somewhere}
+In this section we are interested in restricted forms of the limited principle
+of omniscience \cite{myhillErrettBishopFoundations1972}.
+\begin{definition}[Limited Principle of Omniscience]
+  For any type \(A\) and predicate \(P\) on \(A\), the limited principle of
+  omniscience is as follows:
+  \begin{equation}
+    \left( \prod_{(x : A)} , \mathbf{Dec}(P(x)) \right) \rightarrow \mathbf{Dec} \left( \sum_{(x : A)} , P(x) \right)
+  \end{equation}
+  In other words, for any decidable predicate the existential quantification of
+  that predicate is also decidable.
+\end{definition}
+The limited principle of omniscience is non-constructive, but individual types
+can themselves satisfy omniscience.
+In particular, \emph{finite} types are omniscient.
+Omniscience is defined in Agda like so:
+\ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{omniscient}
+
+There is also a universal form of omniscience, which we call exhaustibility.
+\begin{definition}[Exhaustibility]
+  We say a type \(A\) is exhaustible if, for any decidable predicate \(P\) on
+  \(A\), the universal quantification of the predicate is decidable.
+  \begin{equation}
+    \left( \prod_{(x : A)} , \mathbf{Dec}(P(x)) \right) \rightarrow \mathbf{Dec} \left( \prod_{(x : A)} , P(x) \right)
+  \end{equation}
+  \ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{exhaustible}
+\end{definition}
+Omniscience is stronger than exhaustibility, as we can derive the latter from
+the former:
+\begin{lemma} \label{omniscient-is-exhaustible}
+  Any omniscient type is exhaustible.
+\end{lemma}
+\begin{proof}
+  \todo[inline]{Proof}
+  \ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{weaken}
+  \todo[noline]{stability in appendix}
+\end{proof}
+We cannot derive, however, that any exhaustible type is omniscient: to do so
+would require us to choose a representative from an arbitrary type, which is not
+possible constructively.
+
+\subsubsection{Split Enumerability}
+We now show that split enumerable types are omniscient.
+\begin{theorem}
+  Any split enumerable type is omniscient.
+\end{theorem}
+\begin{proof}
+  Let \(E_A\) be a proof of split enumerability on a type \(A\), and \(P\) be a
+  decidable predicate on the type \(A\).
+  First, we lift the decidable predicate onto one on lists, using the
+  \(\Diamond\) type described earlier.
+  Then, we run the predicate on the support list of \(E_A\).
+
+  In the case that it is true for any member of the list, we return that element
+  along with its proof.
+
+  If the predicate fails for every member of the list, we say that the whole
+  test has failed.
+  To support this conclusion, we reason that if a predicate is false for every
+  item in a list \(\mathit{xs}\), and some element \(x\) is in that list, then
+  the predicate must be false for that item.
+
+  In Agda:
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{exists-quant}
+\end{proof}
+\begin{theorem}
+  Any split enumerable type is exhaustible.
+\end{theorem}
+\begin{proof}
+  Via lemma~\ref{omniscient-is-exhaustible}.
+\end{proof}
+
+\subsubsection{Manifest Enumerability}
+We now reach for the same quantification combinators we used for
+split enumerable types.
+Because neither of these quantifications ``care'' about the specific proof of
+membership used, they can both be used.
+\begin{theorem}
+  For a decidable predicate \(P\) on a type \(A\), if the type is manifestly
+  enumerable, then we can decide the existential of \(P\).
+\end{theorem}
+\begin{proof}
+  \todo[inline]{Proof}
+\end{proof}
+
+\begin{theorem}
+  For a decidable predicate \(P\) on a type \(A\), if the type is manifestly
+  enumerable, then we can decide the universal of \(P\).
+\end{theorem}
+\begin{proof}
+  \todo[inline]{Proof}
+\end{proof}
+\subsubsection{Cardinal Finiteness}
+The quantification operations partially carry over.
+\begin{theorem}
+  For a decidable predicate \(P\) on a type \(A\), if the type is cardinal
+  finite, then we can decide the universal of \(P\).
+\end{theorem}
+\begin{proof}
+  \todo[inline]{Proof}
+\end{proof}
+
+An existential predicate is harder to express.
+In previous sections, we simply tested each member of the set in turn, and
+returned the first member which passed the test.
+Clearly this operation can depend on the underlying order.
+\begin{theorem}
+  For a decidable predicate \(P\) on a type \(A\), if the type is cardinal
+  finite, then we can decide the propositionally truncated existential of \(P\).
+\end{theorem}
+\begin{proof}
+  \todo[inline]{proof}
+\end{proof}
+\begin{theorem}
+  For a decidable predicate \(P\) on a type \(A\), which uniquely determines an
+  input, we can decide the existential of \(P\).
+\end{theorem}
+\begin{proof}
+  \todo[inline]{proof}
+\end{proof}
+\subsubsection{Kuratowski}
+\begin{itemize}
+\item Forall
+\item Exists
+\end{itemize}
+
+\subsection{Synthesising Pattern-Matching Proofs}
+In particular, they can automate large proofs by analysing every possible case.
+In \cite{firsovDependentlyTypedProgramming2015}, the \(\AgdaDatatype{Pauli}\)
+group is used as an example.
+\ExecuteMetaData[agda/Data/Pauli.tex]{def}
+For this type, there are several practical tasks we hope to achieve with the
+help of our finiteness combinators:
+\begin{itemize}
+  \item Define decidable equality on the type
+  \item Define the group operation on the type
+  \item Prove properties about the group operation
+\end{itemize}
+Unfortunately, the simple pattern-matching way to do many of these tasks is
+prohibitively verbose.
+As \(\AgdaDatatype{Pauli}\) has 4 constructors, \(n\)-ary functions on
+\(\AgdaDatatype{Pauli}\) may require up to \(4^n\) cases.
+A proof of decidable equality is one such function: it can be seen fully
+worked-through in the appendix.
+
+The alternative is to derive the things we need from \(\Enum\) somehow.
+First, then, we need an instance for \(\AgdaDatatype{Pauli}\):
+\ExecuteMetaData[agda/Data/Pauli.tex]{inst}
+From here we can already derive decidable equality:
+\ExecuteMetaData[agda/Data/Pauli.tex]{good-eq}
+
+Next, we want to prove some things about the group operation itself:
+\ExecuteMetaData[agda/Data/Pauli.tex]{group-op}
+The first property is the following:
+\ExecuteMetaData[agda/Data/Pauli.tex]{cancel}
+Tough the proof is simple enough to write by hand, it's a good place to start
+for demonstrating the automation technique.
+
+First, we will witness the fact that if a property is true for every element in
+a finite type's support list, it is true for every element in the type (and vice
+versa).
+\ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{all-comb}
+We can also lift a decidable property on elements of the type to a decidable
+property on \emph{lists} of elements of the type.
+\ExecuteMetaData[agda/Data/List/Relation/Unary.tex]{dec-all}
+Combining these, we can turn a decidable predicate on a set into a decidable
+\emph{universal property} on the set.
+\ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{lift-forall}
+
+To use this as a proof, we can run the decision procedure at type checking,
+using the following:
+\ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{auto}
+This function uses the \(\AgdaDatatype{True}\) type, defined like so:
+\ExecuteMetaData[agda/Relation/Nullary.tex]{true-def}
+For a decision \(d\), \(\AgdaDatatype{True}\; d\) will resolve to \(\top\) when
+the decision is \(\AgdaInductiveConstructor{yes}\) (i.e. when the proposition is
+true), or \(\bot\) if the decision is \(\AgdaInductiveConstructor{no}\).
+Then, we require an instance of the resulting type to be in scope: this
+requirement can only be satisfied for \(\top\), thereby providing a proof that
+the decision was indeed \(\AgdaInductiveConstructor{yes}\).
+
+And finally we can prove the property we wanted to on \(\AgdaDatatype{Pauli}\)
+like so:
+\ExecuteMetaData[agda/Data/Pauli.tex]{noninst-prf} 
+
+As a quick aside, when the property is \emph{not} true, for instance:
+\ExecuteMetaData[agda/Data/Pauli.tex]{contra}
+Agda will fail by not finding an instance of \(\bot\).
+The error message specifically is:
+\begin{displayquote}
+  \verb+No instance of type ⊥ was found in scope.+
+\end{displayquote}
+We can actually display a counterexample, by defining a custom empty type
+parameterised by the counterexample itself.
+\ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{counterexample-def}
+Combined with some other changes to the combinators, this will give the
+following more helpful error message:
+\begin{displayquote}
+  \verb+No instance of type Counterexample X was found in scope.+
+\end{displayquote}
+\subsection{Instances}
+Running decision procedures during typechecking isn't the only use of instances:
+we can also use them similarly to how typeclasses are used in Haskell, to
+automate simple derivation procedures.
+For instance, in Haskell we can define a class for generating textual
+representations of data:
+\ExecuteMetaData[haskell/Introduction.tex]{show-cls}
+With instances that look like this:
+\ExecuteMetaData[haskell/Introduction.tex]{show-inst}
+We can have instances \emph{depend} on other instances, like the following:
+\ExecuteMetaData[haskell/Introduction.tex]{show-deriv}
+In this way, it gets rid of a tremendous about of boilerplate for more complex
+types, automatically picking out the correct instance when it can.
+
+In Agda, as in Haskell, the problem of overlapping instances often presents
+itself when more complex typeclass-based machinery is used.
+While there are ways to deal with overlapping instances, it is usually better to
+avoid them altogether, which is precisely what we do in our approach.
+We provide instances for the semiring-based combinators we defined in
+\todo[noline]{reference here}
+, and require the user to provide an instance for their own type.
+We don't, for example, provide an instance that itself searches for surjections
+from other instances: this instance is not uniquely determined.
+
+After all of that, the change to our \(\AgdaFunction{∀↯}\) is simple: we just
+change the first parameter from explicit to an instance.
+\ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{auto-inst}
+
+The change to the \(\AgdaDatatype{Pauli}\) proof of cancellation isn't
+groundbreaking at first:
+\ExecuteMetaData[agda/Data/Pauli.tex]{cancel-auto}
+But the real benefit is now we can automate proofs over \emph{tuples}, allowing
+us to prove, for instance, commutativity.
+\ExecuteMetaData[agda/Data/Pauli.tex]{comm-uncurried}
+\subsection{Generic Currying and Uncurrying}
+While we have arguably removed the bulk of the boilerplate from the automated
+proofs, there is still the case of the ugly noise of currying and uncurrying.
+In this section, we take inspiration from
+\cite{allaisGenericLevelPolymorphic2019} to develop a small interface to generic
+\(n\)-ary functions and properties.
+What we provide here differs from that work in the following ways:
+\begin{itemize}
+  \item Our generic representation can handle dependent \(\sum\) and \(\prod\)
+    types (rather than their non-dependent counterparts, \(\times\) and
+    \(\rightarrow\)).
+    This extension was necessary for our use case: it is mentioned in the paper
+    as the obvious next step. 
+  \item We implement the curry-uncurry combinators as (verified) isomorphisms.
+    Since we are in a cubical setting, this gives us equivalences between the
+    types, a feature not available in standard Agda.
+  \item We deal with implicit and instance arguments generically.
+\end{itemize}
+A full explanation of our implementation is beyond the scope of this work, but
+we will mention the key parts here.
+First, we define a function arrow generic over the application method:
+\ExecuteMetaData[agda/Data/Product/N-ary.tex]{fun-arr}
+Then, we prove that it is isomorphic to the normal function arrow:
+\ExecuteMetaData[agda/Data/Product/N-ary.tex]{fun-iso}
+This step will allow us to write the curry-uncurry proofs once, and then extend
+them to the three different argument forms without difficulty.
+
+We do the same with dependent function types:
+\ExecuteMetaData[agda/Data/Product/N-ary.tex]{pi-iso}
+
+Next, we need to make our machinery for multiple arguments.
+Here we will define a generic tuple, indexed by some \(\Nat\).
+As observed in \cite{allaisGenericLevelPolymorphic2019}, it's important to
+\emph{not} implement this as an inductively defined vector, e.g.
+\ExecuteMetaData[agda/Data/Vec.tex]{def}
+As this will not give us the correct \(\eta\)-equality we need for unification.
+\todo[noline]{Stick reference to iterated Vec definition}
+Once we have a unification-friendly vector type, we can use it to implement our
+generic (and level-polymorphic) tuples.
+\ExecuteMetaData[agda/Data/Product/N-ary.tex]{tuple}
+We decided against \(\top\)-terminated tuples, as the actual contents of the
+tuple type are exposed in the interface.
+
+Finally, we can prove isomorphisms between the curried and uncurried versions of
+functions:
+\ExecuteMetaData[agda/Data/Product/N-ary.tex]{curry-n-iso}
+And dependent functions:
+\ExecuteMetaData[agda/Data/Product/N-ary.tex]{curry-n-pi-iso}
+With these combinators, we can implement the search functions in an
+arity-generic way:
+\ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{all-nary}
+And automate away our proofs:
+\ExecuteMetaData[agda/Data/Pauli.tex]{prf-curried}
+
+\begin{subappendices}
+
+\section{Notation, Cubical Type Theory, and Agda}
+Our chosen setting is Cubical Type Theory (CuTT)
+\cite{cohenCubicalTypeTheory2016}, which is closely related to Homotopy Type
+Theory (HoTT) \cite{hottbook}.
+We will go through the basics and some notation here.
+\subsection{Martin-Löf Type Theory}
+CuTT has its roots in Martin-Löf intuitionistic type theory
+\cite{martin-lofIntuitionisticTypeTheory1980}.
+We will describe our notation for the MLTT parts of CuTT here (although our
+notation is quite standard).
+
+The empty or \(\mathbf{0}\) type will be denoted by \(\bot\), and the
+\(\mathb{1}\) type by \(\top\).
+The single inhabitant of \(\top\) is called \(\text{tt}\).
+
+``not'' is expressed as follows:
+\begin{equation}
+  \neg A = A \rightarrow \bot
+\end{equation}
+In other words, to say a type is impossible we say we can derive \(\bot\) from
+it.
+
+We also use the \(\mathbf{2}\) type, which we call \(\textbf{Bool}\).
+Its two canonical inhabitants are \(\text{true}\) and \(\text{false}\).
+
+We will use the term type family (or simply ``family'') to mean a non-dependent
+function with a codomain in Type.
+
+
+
+
+
+Dependent function types, or \(\prod\)-types, use the following notation:
+\begin{equation}
+  \prod_{(x : A)} , B (x)
+\end{equation}
+In Agda we use a single arrow to denote the same:
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{pi}
+When the type of the left-hand-side can be inferred, we are permitted to use the
+following notation:
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{forall}
+For non-dependent functions we use the single arrow (\(\rightarrow\)).
+
+Dependent pairs, or \(\sum\)-types, use a similar notation to \(\prod\)-types.
+\begin{equation}
+  \sum_{(x : A)} , B (x)
+\end{equation}
+In Agda:
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma}
+Again, we get a shorthand when the type of the first element can be inferred:
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{exists}
+For non-dependent pairs we use the \(\times\) symbol.
+We access the two fields of \(\sum\) types with \(\text{fst}\) and
+\(\text{snd}\):
+\begin{align}
+  \text{fst} &: \sum_{(x : A)} , B (x) \rightarrow A \\
+  \text{snd} &: \prod_{(x : \sum_{(y : A)} , B (y))} , B (\text{fst}(x))
+\end{align}
+
+Finally, the identity type is denoted by the triple equals (\(\equiv\)).
+The normal equals (\(=\)) is reserved for definitions.
+
+
+\subsection{Agda Basics}
+Agda \cite{norellDependentlyTypedProgramming2008} is a dependently-typed
+functional programming language, with roots in Haskell and ML.
+The core type theory is based on MLTT, though support for CuTT was added in the
+last year \cite{vezzosiCubicalAgdaDependently2019}.
+\subsubsection{Declarations}
+The anatomy of a simple Agda declaration is thus:
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{abool}
+We first have a type signature: the name of the variable is to the left of the
+colon, and its type to the right.
+Below, we give an equation: as Agda is pure, it suffices to imagine that
+everywhere the name on the left of the equals sign is seen, we can replace it
+with the value on the right.
+\subsubsection{Functions}
+Functions are usually declared with pattern matching.
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{not}
+Again, each clause is an equation.
+Agda's purity will ensure that these clauses hold true definitionally\footnotemark.
+\footnotetext{
+  Actually, it is possible to construct functions whose equations
+  hold propositionally, but not definitionally.
+  An example might be the following:
+  \ExecuteMetaData[agda/Snippets/Introduction.tex]{non-exact-split}
+  This is actually attempted by a lot of Agda beginners: often the compiler will
+  complain ``couldn't match type \(n\) with \(n + 0\)'', so the programmer will
+  simply add it as a clause.
+  Unfortunately, this actually over complicates things in the long run.
+  Neither the second nor third clause here will be definitionally equal: if you
+  have an obligation \(n \oplus 0 \qeq n\), the first pattern (\(0 \oplus m = m\))
+  has to be ruled out first, which means you'll have to do a manual pattern
+  match in your proof.
+  Similarly for the third pattern: to prove the obligation (\((1 + n) \oplus m
+  \qeq 1 + (n \oplus m)\)), \emph{both} preceding patterns have to be checked
+  against first.
+
+  This ordering requirement is introduced by overlapping patterns, and Agda
+  warns against it.
+  Knowing when to avoid it and when it doesn't matter is one of the aspects of
+  programming and proving in Agda which is more of an art form.
+}
+
+As Agda is a functional language, functions can also be defined with lambda
+expressions.
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{id}
+
+Finally, ``mixfix'' operators play a large role in Agda's syntax.
+We can have binary operators:
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{add}
+Unary operators (here, a prefix increment operator):
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{unary-inc}
+Ternary operators:
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{ifte}
+And so on.
+\subsubsection{Data Type Definitions}
+We can define new data types in Agda by listing their constructors:
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{maybe}
+\subsubsection{Termination}
+\todo[inline]{Coinductive types, termination checking, etc.}
+\subsubsection{Universe Levels}
+All dependently-typed programming languages have to contend, at some point or
+another, with Girard's paradox
+\cite{girardInterpretationFonctionelleElimination1972}.
+The paradox concerns the type of types: it's the type-theory analogue of
+Russell's paradox.
+
+Unfortunately, most of the ways to avoid the paradox add significant clutter to
+the type theory, and increase the complexity of even simple declarations.
+Agda's answer is no exception.
+
+In Agda, every type is tagged with a ``universe level''.
+The basic types like \(\AgdaDatatype{Bool}\) live in universe level 0, the type
+of types lives in universe level 1, the type of types in universe level 1 lives
+in universe level 2, and so on.
+We won't go into it much more than that: usually there is an obvious way to
+handle the universe level of a given expression ``properly'', and cases where
+universe levels do something interesting come up rarely (although
+section~\ref{practical} does touch on one).
+We only mention it here to explain the expressions like \(A :
+\AgdaDatatype{Type} \; a\) which show up in many examples: \(a\) there is the
+universe level of the type \(A\).
+\subsection{Cubical Basics}
+This will not serve as an introduction CuTT,
+but rather a brief overview of the parts of the theory we will be using.
+For a fuller reference we direct the reader first to the ``HoTT Book''
+\cite{hottbook}, then the paper on Cubical Type Theory
+\cite{cohenCubicalTypeTheory2016}, and finally the paper on Cubical Agda
+\cite{vezzosiCubicalAgdaDependently2019}.
+\subsubsection{Paths}
+Central to CuTT is the \emph{path} type.
+This is a path in the topological sense, although we use it as a representation
+for equality (which makes sense: central to HoTT is the
+equivalence of these two concepts).
+In most of the code presented here this will not behave in any different way to
+the traditional identity type in Martin-Löf type theory: one exception to this
+is pattern-matching, which is not available on paths in Cubical Agda currently.
+As a result, we have to use its eliminator directly (if needed), although
+usually higher-level combinators like \(\AgdaFunction{subst}\) are sufficient.
+
+We will use \(\equiv\) as a notation for path types as well as the identity
+types.
+Although an identity type does exist in Cubical Type Theory, we will not use it,
+so we do not fear much confusion on this point.
+\subsubsection{Homotopy Levels}
+Next, we have the concept of ``homotopy levels''.
+These classify types in homotopy type theory according to their degree of
+truncation.
+Homotopy level 1, for instance, is the ``mere propositions'': the types for
+which every element is equal to every other.
+As a predicate, we can define \(\AgdaFunction{isProp}\) like so:
+\begin{equation}
+  \text{isProp}(A) = \prod_{(x : A)} , \prod_{(y : A)} , x \equiv y
+\end{equation}
+In Agda:
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{isProp}
+
+One level up from the propositions are the (homotopy) sets.
+These are types for which all paths are themselves propositions.
+\begin{equation}
+  \text{isSet}(A) = \prod_{(x : A)} , \prod_{(y : A)} , \text{isProp}(x \equiv y)
+\end{equation}
+In Agda:
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{isSet}
+
+Finally, one level down from the propositions are the contractions.
+These are types for which every element is equal to some specific element.
+\begin{equation}
+  \text{isContr}(A) = \sum_{(x : A)} , \prod_{(y : A)} , x \equiv y
+\end{equation}
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{isContr}
+\subsubsection{Univalence}
+\todo[inline]{Flesh out}
+To describe this we first need fibers:
+\begin{equation}
+  \text{fiber}_f(y) = \sum_{(x : A)} , f (x) \equiv y
+\end{equation}
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{fiber}
+From this we build the notion of an ``equivalence'': a function whose fibers are
+all contractions.
+\begin{equation}
+  A \simeq B = \sum_{(f : A \rightarrow B)}, \prod_{(y : B)} , \text{isContr}(\text{fiber}_f(y))
+\end{equation}
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{equiv}
+The univalence axiom is that all equivalences are equivalent to the identity
+type.
+\begin{definition}[The Univalence Axiom]
+  \begin{equation}
+    \simeq \; \simeq \; \equiv
+  \end{equation}
+\end{definition}
+In practice this means that we can prove equivalence between two types and then
+transport code on one to code on the other.
+It also means that isomorphisms can be upgraded to fully-fledged equalities.
+\begin{definition}[Isomorphism]
+  An isomorphism between two types \(A\) and \(B\) is a pair of functions:
+  \begin{align}
+    f : A \rightarrow B \\
+    g : B \rightarrow A
+  \end{align}
+  Such that they are inverses of each other.
+  \begin{align}
+    \prod_{(x : A)} , g(f(x)) \equiv x \\
+    \prod_{(y : B)} , f(g(y)) \equiv y
+  \end{align}
+\end{definition}
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{iso}
+\subsubsection{Higher Inductive Types}
+Along with univalence, the other significant benefit we get from path types is
+the ability to define new paths on types.
+A direct use of this feature is synthetic topology.
+We can, for instance, define the circle \(S^1\) as a higher-inductive type.
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{circle}
+
+Another important use of higher inductive types is quotient types.
+These types are unavailable in ML type theory, but in Cubical Type Theory we can
+declare a quotient (here, the type of Kuratowski finite sets) like so:
+\ExecuteMetaData[agda/Algebra/Construct/Free/Semilattice.tex]{def}
+The first two constructors are standard data constructors, which mimic those for
+the list in Haskell.
+The next two add the equations we want our type to obey: we don't want it to
+care about order or duplicates.
+The last constructor \emph{truncates} the type, ensuring that it is a set.
+If we hadn't included it paths would not be mere propositions: there would be
+more than one path between any given elements of a type.
+The ability to have multiple paths is what allows Cubical Type Theory to do the
+more advanced things in topology etc., but we don't need its power here.
+
+One HIT in particular will be of great use to us: the HIT for propositional
+truncation, denoted with \(\lVert \cdot \rVert\).
+We will go through it in detail in section~\ref{prop-trunc}.
+\section{Supplementary Definitions}
+This section will serve as a reference for any definitions used in the text
+which are either not important enough to be examined inline, or common enough to
+justify elision.
+Many of the definitions come straight from the ``HoTT Book'' \cite{hottbook}.
+\subsection{Decidable Types}
+It is important to be able to talk about ``decisions'' for things like decidable
+equality, and so on.
+\begin{definition}[Decision]
+  A decision for some type \(P\) is represented by the type \(\mathbf{Dec}(A)\),
+  which has two constructors:
+  \begin{equation}
+    \begin{alignedat}{2}
+      \text{yes} &:      &A \rightarrow \mathbf{Dec}(A) \\
+      \text{no}  &: \neg &A \rightarrow \mathbf{Dec}(A)
+    \end{alignedat}
+  \end{equation}
+\end{definition}
+
+Internally, we actually use a rather more complicated type, which has preferable
+computational behaviour.
+The interface is the same, however.
+\subsection{Propositional Truncation} \label{prop-trunc}
+Essentially, a value of type \(\lVert A \rVert\) proof that an \(A\) exists,
+without revealing which \(A\) in particular.
+In HoTT, it allows us to work in a setting similar to classical logic.
+In Agda its definition is:
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{prop-trunc}
+Any eliminators from this type must not distinguish between different values of
+\(A\).
+
+\begin{lemma}[Propositional Elimination]
+  We can eliminate from the type \(\lVert A \rVert\) to \(B\) with a function
+  \(A \rightarrow B\) if B is a proposition.
+\end{lemma}
+\begin{proof}
+  By case-analysis on \(\lVert A \rVert\).
+  In the first case, we apply our function.
+  In the second, we are required to show that that application agrees on any two
+  values of \(\lVert A \rVert\) \(\lVert A \rVert\).
+  This is true as \(B\) is a proposition.
+  In Agda:
+  \ExecuteMetaData[agda/HITs/PropositionalTruncation/Proofs.tex]{rec}
+\end{proof}
+
+Since \(\lVert A \rVert\) is itself a proposition, we can work ``under'' the
+truncation as much as we like.
+In fact the type \(\lVert \cdot \rVert\) itself forms a monad, allowing us to
+use monadic notation.
+\begin{lemma}
+  \(\lVert \cdot \rVert\) is a monad, with bind being the eliminator defined
+  above, and return being the \(\lvert \cdot \rvert\) constructor.
+\end{lemma}
+\begin{proof}
+  The monad laws are satisfied trivially, as \(\lVert \cdot \rVert\) is a
+  proposition.
+\end{proof}
+
+We can further eliminate into a type that isn't a proposition, as long as we
+prove that the function used in the eliminator doesn't discriminate between
+different \(A\)s in \(\lVert A \rVert\).
+\begin{lemma}[Propositional Elimination by Coherence] \label{elim-non-prop}
+  We can eliminate from a propositionally-truncated type into a non-proposition,
+  as long as the function is coherently constant
+  \cite{krausGeneralUniversalProperty2015}.
+\end{lemma}
+\begin{proof}
+  \todo[inline]{sketch proof}
+\end{proof}
+
+From these eliminators, we can derive some useful lemmas.
+\begin{lemma}[Propositional Refutation]
+  While a propositionally truncated proof is not enough to prove the
+  non-truncated type, it is enough to \emph{refute} the non-truncated negation
+  of the type.
+  \begin{equation}
+    \lVert A \rVert \rightarrow \neg (\neg A)
+  \end{equation}
+\end{lemma}
+\begin{proof}
+  We will use propositional elimination.
+  First, to go from \(A\) to \((A \rightarrow \bot) \rightarrow \bot\) is
+  trivial.
+  Secondly, to show that \((A \rightarrow \bot) \rightarrow \bot\) is a
+  proposition, we can use the fact that \(\bot\) is a proposition, and then
+  derive (via function extensionality) that any \(A \rightarrow \bot\) is also a
+  proposition.
+\end{proof}
+
+\begin{lemma}[Recomputation]
+  If a type \(A\) is decidable, and there exists a proof of the type \(\lVert A
+  \rVert\), we can derive a proof of \(A\).
+  In other words, the following function exists:
+  \begin{equation}
+    \text{recompute} : \textbf{Dec}(A) \times \lVert A \rVert \rightarrow A
+  \end{equation}
+\end{lemma}
+\begin{proof}
+  By case analysis of the decision over \(A\), we know that the false case must
+  be untrue (since we can refute it using propositional refutation), and we can
+  therefore extract the true case.
+\end{proof}
+
+Occasionally we will call families ``predicates'' when we mean to treat the
+family as a property on the domain.
+Formally this might imply that the codomain is a proposition (i.e. isomorphic to
+either \(\top\) or \(\bot\)), but it is not always necessary to prove this fact,
+and indeed occasionally we will want to use some of the information stored in
+the predicate, making it not propositional.
+For instance, a natural number being ``not prime'' we would refer to as a
+predicate, but the proof of this fact may be a list of the number's prime
+factors, so we will not truncate it away.
+
+When we say that two predicates \(P\) and \(Q\) are ``equal strength'', we mean
+there are a pair of functions \(P \rightarrow Q\) and \(Q \rightarrow P\).
+This is distinct from \(P\) and \(Q\) being isomorphic, as we haven't shown
+anything regarding the relationship between those two functions.
+However, if \(P\) and \(Q\) are themselves propositions, this does indeed imply
+an isomorphism.
+\begin{lemma} \label{equal-strength}
+  For any two types \(A\) and \(B\), if there are functions \(f : A \rightarrow
+  B\) and \(g : B \rightarrow A\), \(\lVert A \rVert\) and \(\lVert B \rVert\)
+  are equivalent.
+\end{lemma}
+\begin{proof}
+  We prove equivalence by way of isomorphism.
+
+  Let \(A\), \(B\), \(f\), and \(g\) be defined as above.
+  For isomorphism, we first provide a pair of functions \(\lVert f \rVert\) and
+  \(\lVert g \rVert\), which are defined by lifting \(f\) and \(g\) under
+  propositional truncation, respectively.
+
+  Next, we need to prove that \(g\) is a section of \(f\).
+  \begin{equation}
+    \text{section}(f, g) = f \circ g \equiv id
+  \end{equation}
+  Since \(\lVert B \rVert\) is a proposition, this is true by function
+  extensionality.
+
+  Finally, \(f\) is a retraction of \(g\).
+  \begin{equation}
+    \text{retraction}(f, g) = g \circ f \equiv id
+  \end{equation}
+  Again, since \(\lVert A \rVert\) is a proposition, this is true by function
+  extensionality.
+  
+  In Agda:
+  \ExecuteMetaData[agda/HLevels/Proposition.tex]{prop-iff}
+\end{proof}
+\subsection{Functions}
+\subsubsection{Surjections}
+The following is the definition of surjectivity in HoTT:
+\begin{equation}
+  \text{Surjective}(f) = \prod_{(y : B)} , \lVert \text{fiber}_f(y) \rVert
+\end{equation}
+\ExecuteMetaData[agda/Function/Surjective.tex]{surj-def}
+We are also interested in \emph{split} surjectivity, where we don't truncate the
+fiber:
+
+\begin{equation}
+  \text{SplitSurjective}(f) = \prod_{(y : B)} , \text{fiber}_f(y)
+\end{equation}
+\ExecuteMetaData[agda/Function/Surjective.tex]{split-surj-def}
+
+A surject\emph{ion}, then, is a function which is surject\emph{ive}:
+\begin{equation}
+  A \twoheadrightarrow B = \sum_{(f : A \rightarrow B)} \text{SplitSurjective}(f)
+\end{equation}
+\ExecuteMetaData[agda/Function/Surjective.tex]{surjection}
+\subsubsection{Injections}
+The standard definition of an injective function:
+\ExecuteMetaData[agda/Function/Injective.tex]{injective-def}
+An injection:
+\ExecuteMetaData[agda/Function/Injective.tex]{injection-def}
+\subsection{Fin}
+\(\textbf{Fin}\) is a finite prefix of the natural numbers.
+Semi-formally:
+\begin{equation}
+  \textbf{Fin}(n) = \left[ 0 \dots n \right)
+\end{equation}
+There are actually a number of ways to define \(\textbf{Fin}\) in type theory.
+The method we use here is as follows:
+\ExecuteMetaData[agda/Data/Fin.tex]{def}
+\subsection{Split Enumerability}
+Here is how we define it in Agda:
+\ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{definition}
+\subsection{Predicates Over Lists}
+These two well-known dual types for quantifying a predicate over a list are used
+extensively in this work.
+We will define them using the indexing operator \(!\), which has the following
+type:
+\begin{equation}
+  ! : \prod_{(\mathit{xs} : \textbf{List}(A))} , \textbf{Fin}(\text{length}(\mathit{xs})) \rightarrow A
+\end{equation}
+For some predicate \(P\), the two definitions are as follows:
+\begin{definition}[Any]
+  \begin{equation}
+    \Diamond P \mathit{xs} = \sum_{(i : \textbf{Fin}(\text{length}(\mathit{xs})))} , P(xs \ind i)
+  \end{equation}
+  \ExecuteMetaData[agda/Data/List/Relation/Unary.tex]{any-def}
+\end{definition}
+\begin{definition}[All]
+  \begin{equation}
+    \Box P \mathit{xs} = \prod_{(i : \textbf{Fin}(\text{length}(\mathit{xs})))} , P(xs \ind i)
+  \end{equation}
+  \ExecuteMetaData[agda/Data/List/Relation/Unary.tex]{all-def}
+\end{definition}
+We are using the tradition modal logic operators here: \(\Diamond\)
+means ``any'', and \(\Box\) means ``all''.
+\subsection{Membership}
+Several other constructions are defined in terms of \(\AgdaDatatype{◇}\),
+starting with \(\AgdaDatatype{∈}\):
+\begin{equation}
+  x \in \mathit{xs} = \Diamond (\equiv x) \mathit{xs}
+\end{equation}
+\ExecuteMetaData[agda/Data/List/Membership.tex]{in-def}
+
+To show \emph{unique} membership, the membership proof itself must be a
+contraction.
+\begin{equation}
+  x \inunique \mathit{xs} = \text{isContr}(x \in \mathit{xs})
+\end{equation}
+\ExecuteMetaData[agda/Data/List/Membership.tex]{in-uniq}
+\section{Supplementary Code}
+\subsection{Permutations}
+Swap:
+\ExecuteMetaData[agda/Data/List/Relation/Binary/Permutation.tex]{swap}
+Cons:
+\ExecuteMetaData[agda/Data/List/Relation/Binary/Permutation.tex]{cons}
+Tail:
+\ExecuteMetaData[agda/Data/List/Relation/Binary/Permutation.tex]{tail}
+\subsection{Non-Dependent Sum (Disjoint Union)}
+\ExecuteMetaData[agda/Snippets/Introduction.tex]{sum-def}
+\subsection{Split Enumerability}
+Closure over \(\bot\):
+\ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{empty}
+Closure over \(\top\):
+\ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{unit}
+Closure over non-dependent sum:
+\ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{sum-prf}
+\subsection{Lists}
+\subsubsection{Indexing}
+\ExecuteMetaData[agda/Data/List.tex]{indexing}
+\subsubsection{Removing Duplicates}
+\ExecuteMetaData[agda/Data/List/Membership.tex]{uniques}
+\subsection{Functions}
+If there is an injection from \(A\) into a set with decidable equality, \(A\)
+has decidable equality.
+\ExecuteMetaData[agda/Function/Injective.tex]{discrete}
+If there is a surjection from \(A\) to \(B\), there is an injection from \(B\)
+to \(A\).
+\ExecuteMetaData[agda/Function/Surjective.tex]{surj-to-inj}
+\subsection{Membership Proofs}
+All iso:
+\ExecuteMetaData[agda/Data/List/Relation/Unary.tex]{all-iso}
+Any iso:
+\ExecuteMetaData[agda/Data/List/Relation/Unary.tex]{any-iso}
+A small function to make membership proofs shorter:
+\ExecuteMetaData[agda/Data/List/Membership.tex]{at}
+Pushing and pulling: going between \(x \; \AgdaDatatype{∈} \; xs\) and \(x
+\AgdaDatatype{∈} \; y \; \AgdaInductiveConstructor{∷} \; xs\).
+\ExecuteMetaData[agda/Data/List/Relation/Unary.tex]{push-pull}
+Push-pull for unique proofs of membership.
+\ExecuteMetaData[agda/Data/List/Relation/Unary.tex]{push-pull-unique}
+Proving that an element at the head of a list is in that list.
+\ExecuteMetaData[agda/Data/List/Relation/Unary.tex]{here-unique}
+\(\AgdaFunction{map}\) distributes over \(\AgdaDatatype{∈}\)
+\ExecuteMetaData[agda/Data/List/Relation/Unary.tex]{cong-any}
+\ExecuteMetaData[agda/Data/List/Membership.tex]{cong-in}
+An element is not in a list it's been removed from.
+\ExecuteMetaData[agda/Data/List/Membership.tex]{not-in-removed}
+\ExecuteMetaData[agda/Data/List/Membership.tex]{cons-remove}
+If \(x\) isn't in a list, it is not in that list with another element removed.
+\ExecuteMetaData[agda/Data/List/Membership.tex]{remove-other}
+Removing another element from a list doesn't affect \(x\)'s proof of unique
+membership.
+\ExecuteMetaData[agda/Data/List/Membership.tex]{unique-remove-other}
+If \(x\) is in \(xs\), \(x\) is uniquely in the unique elements of \(xs\).
+\ExecuteMetaData[agda/Data/List/Membership.tex]{unique-preserves}
+% \subsection{Convolution}
+% Convolution of lists.
+% \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{convolve}
+% Convolution of streams.
+% \ExecuteMetaData[agda/Cardinality/Infinite.tex]{convolve}
+% Convolution of colists.
+% \ExecuteMetaData[agda/Cardinality/PossiblyInfinite.tex]{convolve}
+% \subsection{Decidable Predicates}
+% Rather than the ``usual'' formulation of \(\AgdaDatatype{Dec}\), we use the
+% following definition:
+% \ExecuteMetaData[agda/Relation/Nullary.tex]{dec-def}
+% \subsection{Pauli Group Functions}
+% \ExecuteMetaData[agda/Data/Pauli.tex]{bad-eq}
+\subsection{Fin} \label{agda-fin}
+Injectivity of the \(\textbf{Fin}\) type constructor.
+\ExecuteMetaData[agda/Data/Fin/Properties.tex]{fin-inj}
+\section{References}
+\printbibliography[heading=none]
+\end{subappendices}
+\end{refsection}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../paper"
+%%% End:

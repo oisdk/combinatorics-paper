@@ -1,0 +1,40 @@
+\begin{code}
+{-# OPTIONS --cubical --safe #-}
+
+module Codata.Stream.Extensional.Membership where
+
+open import Prelude
+open import Codata.Stream.Extensional.Relation.Unary
+open import Codata.Stream.Extensional.Base
+
+import Data.List.Kleene.Membership as Kleene
+open import Data.List.Kleene
+
+open import Data.Fin
+
+_∈_ : A → Stream A → Type _
+x ∈ xs = ◇ (_≡ x) xs
+
+_∈²_ : A → Stream (A ⁺) → Type _
+x ∈² xs = ◇ (x Kleene.∈⁺_) xs
+
+mutual
+  ◇++⋆ : ∀ (x : A) y ys → x Kleene.∈⋆ y → x ∈ concat⋆ y ys
+  ◇++⋆ x (∹ y) ys x∈y = ◇++⁺ x y ys x∈y
+
+  ◇++⁺ : ∀ (x : A) y ys → x Kleene.∈⁺ y → x ∈ concat⁺ y ys
+  ◇++⁺ x y ys (f0 , x∈y) = zero , x∈y
+  ◇++⁺ x y ys (fs n , x∈y) = let m , p = ◇++⋆ x (y .tail) ys (n , x∈y) in suc m , p
+
+mutual
+  ++◇⋆ : ∀ (x : A) y ys → x ∈ concat ys → x ∈ concat⋆ y ys
+  ++◇⋆ x [] ys x∈ys = x∈ys
+  ++◇⋆ x (∹ y) ys x∈ys = ++◇⁺ x y ys x∈ys
+
+  ++◇⁺ : ∀ (x : A) y ys → x ∈ concat ys → x ∈ concat⁺ y ys
+  ++◇⁺ x y ys x∈ys = let n , p = ++◇⋆ x (y .tail) ys x∈ys in suc n , p
+
+concat-∈ : ∀ (x : A) xs → x ∈² xs → x ∈ concat xs
+concat-∈ x xs (zero  , x∈xs) = ◇++⁺ x (xs zero) (xs ∘ suc) x∈xs
+concat-∈ x xs (suc n , x∈xs) = ++◇⁺ x (xs zero) (xs ∘ suc) (concat-∈ x (xs ∘ suc) (n , x∈xs))
+\end{code}

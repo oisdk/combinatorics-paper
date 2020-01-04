@@ -1,0 +1,95 @@
+\documentclass{book}
+\usepackage{catchfilebetweentags}
+\input{agda}
+
+\usepackage{tikz-cd}
+\tikzcdset{
+  arrow style=tikz,
+  diagrams={>={Straight Barb[scale=0.8]}}
+}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\renewcommand{\qed}{\hfill\blacksquare}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem*{note}{Note}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+
+\newcommand\hbind{%
+  \ensuremath{\gg\mkern-5.5mu=}%
+}
+\newcommand\hap{%
+  \ensuremath{\mathbin{<\mkern-9mu*\mkern-9mu>}}%
+}
+\newcommand\halt{%
+  \ensuremath{\mathbin{<\mkern-5mu\vert\mkern-5mu>}}%
+}
+\newcommand\hfmap{%
+  \ensuremath{\mathbin{<\mkern-6mu\$\mkern-6mu>}}%
+}
+\newcommand\hcmb{%
+  \ensuremath{\mathbin{\diamond}}%
+}
+\newcommand\hcmbin{%
+  \ensuremath{\mathbin{\diamond\mkern-7.4mu\rtimes}}%
+}
+\newcommand\hkcomp{%
+  \ensuremath{\mathbin{<\mkern-10mu=\mkern-7mu<}}
+}
+\newcommand\hforall{%
+  \ensuremath{\forall}%
+}
+\newcommand\inunique{%
+  \mathrel{\in\mkern-6mu\raisebox{-0.5pt}{!}}
+}
+\newcommand\ind{\mathbin{!}}
+\usepackage{subcaption}
+\usepackage{locallhs2TeX}
+\renewcommand{\Varid}[1]{\mathit{#1}}
+\renewcommand{\Conid}[1]{\textcolor{OliveGreen}{\textsf{#1}}}
+\usepackage[mono=false]{libertine}
+\usepackage{multicol}
+\usepackage{todonotes}
+\usepackage[displaymath,textmath]{preview}
+\let\oldhscode\hscode
+\def\hscode{\nopreview\oldhscode}
+\usepackage{censor}
+\usepackage{appendix}
+\usepackage{tabularx}
+\usepackage{pict2e}
+
+\newcommand{\lbparen}{%
+  \mathopen{%
+    \sbox0{$()$}%
+    \setlength{\unitlength}{\dimexpr\ht0+\dp0}%
+    \raisebox{-\dp0}{%
+      \begin{picture}(.32,1)
+        \linethickness{\fontdimen8\textfont3}
+        \roundcap
+        \put(0,0){\raisebox{\depth}{$($}}
+        \polyline(0.32,0)(0,0)(0,1)(0.32,1)
+      \end{picture}%
+    }%
+  }%
+}
+
+\newcommand{\rbparen}{%
+  \mathclose{%
+    \sbox0{$()$}%
+    \setlength{\unitlength}{\dimexpr\ht0+\dp0}%
+    \raisebox{-\dp0}{%
+      \begin{picture}(.32,1)
+        \linethickness{\fontdimen8\textfont3}
+        \roundcap
+        \put(-0.08,0){\raisebox{\depth}{$)$}}
+        \polyline(0,0)(0.32,0)(0.32,1)(0,1)
+      \end{picture}%
+    }%
+  }%
+}
+
+\usepackage[backend=bibtex]{biblatex}
+\addbibresource{bibliography.bib}
+
+\usepackage{hyperref}
