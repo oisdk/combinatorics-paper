@@ -1,7 +1,9 @@
-\documentclass{book}
+\documentclass[runningheads,citeauthouryear]{llncs}
+
 \usepackage{catchfilebetweentags}
 \input{agda}
 
+\usepackage{cite}
 \usepackage{tikz-cd}
 \tikzcdset{
   arrow style=tikz,
@@ -10,11 +12,6 @@
 \usepackage{amsmath}
 \usepackage{amsthm}
 \renewcommand{\qed}{\hfill\blacksquare}
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}
-\newtheorem*{note}{Note}
-\newtheorem{lemma}{Lemma}
-\newtheorem{theorem}{Theorem}
 
 \newcommand\hbind{%
   \ensuremath{\gg\mkern-5.5mu=}%
@@ -48,14 +45,8 @@
 \usepackage{locallhs2TeX}
 \renewcommand{\Varid}[1]{\mathit{#1}}
 \renewcommand{\Conid}[1]{\textcolor{OliveGreen}{\textsf{#1}}}
-\usepackage[mono=false]{libertine}
 \usepackage{multicol}
 \usepackage{todonotes}
-\usepackage[displaymath,textmath]{preview}
-\let\oldhscode\hscode
-\def\hscode{\nopreview\oldhscode}
-\usepackage{censor}
-\usepackage{appendix}
 \usepackage{tabularx}
 \usepackage{pict2e}
 
@@ -88,8 +79,5 @@
     }%
   }%
 }
-
-\usepackage[backend=bibtex]{biblatex}
-\addbibresource{bibliography.bib}
 
 \usepackage{hyperref}
