@@ -66,17 +66,47 @@ In this work, we will explore finite types in Cubical Type Theory
 \cite{cohenCubicalTypeTheory2016}, and expose their relationship to infinite
 types, species, and demonstrate their practical uses for proofs in dependently
 typed programming languages.
+\subsubsection{Strong Finiteness Predicates}
+We will first explore the ``strong'' notions of finiteness (i.e. those at least
+as strong as Kuratowski finiteness \cite{kuratowskiNotionEnsembleFini1920}),
+with a special focus on cardinal finiteness (section~\ref{cardinal}), and
+manifest enumerability (section~\ref{manifest-enumerability}), which is new, to
+our knowledge.
 
-In section~\ref{strong-finiteness}, we will explore the ``strong'' notions of
-finiteness (i.e. those at least as strong as Kuratowski finiteness
-\cite{kuratowskiNotionEnsembleFini1920}), with a special focus on cardinal
-finiteness.
-We will delineate some subtly different finiteness predicates, and prove the
-relationship between each.
-We will prove, then, that every discrete Kuratowski finite type is cardinal
-finite, and subsequently will show that discrete Kuratowski finite sets form a
-topos.
+\input{figures/finite-classification}
+Figure~\ref{finite-classification} organises the predicates according to
+their ``strength''; i.e. how much information they provide about a conforming
+type.
+For instance, a proof that some type \(A\) is manifestly Bishop finite (the
+strongest of the notions, explored in section~\ref{manifest-bishop}) also tells
+us that \(A\) is discrete (has decidable equality), and gives us a linear order
+on the type.
+A type that is Kuratowski finite (section~\ref{kuratowski}) has no such extra
+features: indeed, we will see examples of Kuratowski finite types which are not
+even sets, never mind discrete ones.
 
+We will go through each of the predicates, proving how to weaken each (i.e. we
+will provide a proof that every cardinally finite type is Kuratowski finite),
+and how to strengthen them, given the required property.
+In terms of figure~\ref{finite-classification}, this amounts to providing proofs
+for each arrow.
+
+We will---through the use of containers
+\cite{abbottContainersConstructingStrictly2005}---formally prove the equivalence
+these predicates have with the usual function relations i.e. we will show that a
+proof of manifest enumerability is precisely equivalent to a surjection from a
+finite prefix of the natural numbers.
+
+For each predicate, we will also prove its closure over sums and products in
+both dependent and non-dependent forms, if such a closure exists.
+This will culminate in our main result for this section: the formal proof that
+decidable Kuratowski finite sets form a topos. \todo[noline]{reference for this}
+More specifically, we show that cardinal finite sets form a topos, that
+decidable Kuratowski finite sets are equivalent in strength to cardinal finite
+sets, and carry the proof over.
+This result relies on proofs on each of the other finiteness predicates.
+\subsubsection{Species}
+\todo[inline]{Redo this next paragraph}
 In section~\ref{species-and-containers}, we will redefine our finiteness
 predicates using \emph{containers}, and prove that the new definitions are
 equivalent to the old.
@@ -85,11 +115,13 @@ predicates and relation-based definitions of finiteness.
 Finally, We will show how the species-container duality falls out naturally from
 these new definitions.
 
+\subsubsection{Infinite Types}
 In section~\ref{infinite-cardinalities}, we will extend our study of finite
 types to infinite but countable types.
 We will see that the finiteness predicates are mirrored with countable
 counterparts, and we will prove closure under the Kleene star and plus.
 
+\subsubsection{Practical Uses of Finiteness}
 Proofs of finiteness have well-known practical applications in
 constructive mathematics \cite{firsovDependentlyTypedProgramming2015}.
 In section~\ref{practical}, we build a library which exploits these uses in
@@ -106,108 +138,14 @@ search spaces.
 Along the way, we extend the work in \cite{allaisGenericLevelPolymorphic2019} to
 prove isomorphisms between the curried and uncurried forms of \(n\)-ary
 dependent functions.
-\section{Strong Finiteness} \label{strong-finiteness}
-\begin{figure}[h]
-  \centering
-  \begin{tikzcd}[cramped, row sep=small]
-    &
-    \ar[ddddd, dash, start anchor={[yshift=4ex]}, end anchor={[yshift=-4ex]}] &
-    \text{Ordered} &
-    \ar[ddddd, dash, dashed, start anchor={[yshift=4ex]}, end anchor={[yshift=-4ex]}] &
-    \text{Unordered}
-    \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \ar[rrrr, dash, start anchor={[xshift=-6ex]}, end anchor={[xshift=10ex]}] &
-    &
-    &
-    &
-    {}
-    \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    &
-    &
-    \text{Split Enumerable}
-      \; \ref{split-enumerable}
-      \ar[d, xshift=-1ex, bend right=30]
-      &
-    &
-    \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \text{Discrete} &
-    &
-    \text{Manifest Bishop}
-      \ar[u, xshift=1ex, bend right=30]
-      \ar[rr, end anchor=south west, start anchor=south east, bend right=10, crossing over]
-      \; \ref{manifest-bishop}
-      &
-    &
-    \text{Cardinal}
-      \; \ref{cardinal}
-      \ar[ll, start anchor=north west, end anchor=north east, bend right=10, "\text{linOrd}" description]
-    \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \ar[rrrr, dash, dashed, start anchor={[xshift=-6ex]}, end anchor={[xshift=10ex]}] &
-    &
-    &
-    &
-    {}
-    \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \text{Non Discrete} &
-    {} &
-    \text{Manifest Enumerable}
-      \; \ref{manifest-enumerability}
-      \ar[from=uu, xshift=-1ex, bend right=30, crossing over]
-      \ar[uu, bend right=30,  "\text{Discrete}" description]
-      \ar[rr, start anchor=south east, end anchor=south west, bend right=10, crossing over]
-      &
-    {}
-    &
-    \text{Kuratowski}
-      \; \ref{kuratowski}
-      \ar[ll, start anchor=north west, end anchor=north east, bend right=10,  "\text{linOrd}" description]
-      \ar[uu, xshift=1ex, bend right=30,  "\text{Discrete}" description]
-      \ar[from=uu, xshift=-1ex, bend right=30, crossing over]
-  \end{tikzcd}
-  \caption{Classification of the strong definitions of finiteness, according to
-    whether they are discrete (imply decidable equality) and whether they induce
-    a linear order.}
-  \label{finite-classification}
-\end{figure}
-
-In this section, we will explore five predicates for finiteness, classified in
-figure~\ref{finite-classification}.
-Of these, manifest enumerability is new, to our knowledge.
-
-Figure~\ref{finite-classification} organises the predicates according to
-their ``strength''; i.e. how much information they provide about a conforming
-type.
-For instance, a proof that some type \(A\) is manifestly Bishop finite (the
-strongest of the notions, explored in section~\ref{manifest-bishop}) also tells
-us that \(A\) is discrete (has decidable equality), and gives us a linear order
-on the type.
-A type that is Kuratowski finite (section~\ref{kuratowski}) has no such extra
-features: indeed, we will see examples of Kuratowski finite types which are not
-even sets, never mind discrete ones.
-
-In the following sections, we will go through each of the predicates, proving
-how to weaken each (i.e. we will provide a proof that every cardinally finite
-type is Kuratowski finite), and how to strengthen them, given the required
-property.
-In terms of figure~\ref{finite-classification}, this amounts to providing proofs
-for each arrow.
-
-For each predicate, we will also prove its closure over sums and products in
-both dependent and non-dependent forms, if such a closure exists.
-This will culminate in our main result for this section: the formal proof that
-decidable Kuratowski finite sets form a topos. \todo[noline]{reference for this}
-More specifically, we show that cardinal finite sets form a topos, that
-decidable Kuratowski finite sets are equivalent in strength to cardinal finite
-sets, and carry the proof over.
-This result relies on proofs on each of the other finiteness predicates.
-\subsection{Split Enumerability} \label{split-enumerable}
+\section{Split Enumerability} \label{split-enumerable}
 We will start with the simplest definition of finiteness: we say a set is
 enumerable if there is a list of its elements which contains every element in
 the set.
 More formally:
 \begin{definition}[Split Enumerable Set]
   \begin{equation}
-    \mathcal{E}!(A) = \sum_{(\mathit{xs} : \textbf{List} A)} , \prod_{(x : A)} , x \in xs
+    \mathcal{E}!(A) = \sum_{(\mathit{xs} : \textbf{List}(A))} , \prod_{(x : A)} , x \in xs
   \end{equation}
   We call the first component of this pair the ``support'' list, and the second
   component the ``cover'' proof.
@@ -224,11 +162,20 @@ For now, we will define it like so:
   \begin{equation}
     x \in \mathit{xs} = \sum_{(i : \mathbf{Fin}(\text{length}(\mathit{xs})))} , \mathit{xs} \ind i \equiv x
   \end{equation}
-  Here, \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\),
-  and \(\ind\) is an indexing function.
+  Here, \(\ind\) is a safe indexing function.
   In other words, to say that some item \(x\) is in some list \(\mathit{xs}\),
   we say that there is an index into \(\mathit{xs}\) which selects an element of
   \(\mathit{xs}\) which is equivalent to \(x\).
+\end{definition}
+\begin{definition}[\mathbf{Fin}]
+  \(\mathbf{Fin}\)(n) is the type of natural numbers smaller than \(n\).
+  It is defined inductively, as follows:
+  \begin{equation}
+    \begin{aligned}
+      \mathbf{Fin}(0) &= \bot \\
+      \mathbf{Fin}(n + 1) &= 1 + \mathbf{Fin}(n)
+    \end{aligned}
+  \end{equation}
 \end{definition}
 
 Clearly, this definition of list membership tells us not just that an item is in
@@ -237,29 +184,74 @@ That piece of information gives use decidable equality, restricting the
 predicate to discrete sets.
 In section~\ref{manifest-enumerability}, we will show how to hide the position,
 giving us a variant of the predicate which allows for non-set finite types.
-\subsubsection{Decidable Equality}
-We will now prove that split enumerability implies decidable equality.
-We first need to prove a lemma regarding surjections to split enumerable types.
-\begin{lemma} \label{split-enum-surj}
-  Any split enumerable type has a split surjection from a finite prefix of the
-  natural numbers.
+\subsection{Proving Equivalence with Split Surjections}
+Another, equivalent way to define ``finiteness'' is via a (split) surjection
+from a finite prefix of the natural numbers.
+Here, we will formalise this equivalence, by first proving an equivalence with a
+container-based definition of split enumerability.
+
+
+
+Containers \cite{abbottContainersConstructingStrictly2005} give us a general way
+to construct functors from generic building-blocks.
+\begin{definition}[Container]
+  A container is a dependent pair of shapes, and positions indexed by those
+  shapes.
+  \begin{equation}
+    \mathbf{Container} = \sum_{(\text{shape} : \text{Type})} , \text{shape} \rightarrow \text{Type}
+  \end{equation}
+  We ``interpret'' a container into a pair of a specific shape, and a function
+  which goes from positions to contents.
+  \begin{equation}
+    \llbracket S , P \rrbracket = \prod_{(X : \text{Type})} , \sum_{(s : S)} , \left( P(s) \rightarrow X \right)
+  \end{equation}
+\end{definition}
+
+For instance, the shape of lists is given by \(\mathbb{N}\), and the positions are then
+\(\mathbf{Fin}\)s indexed by that \(\mathbb{N}\).
+If we swap out wherever we used ``list'' in the definition of split
+enumerability with this container-based list, we get an equivalent finiteness
+predicate.
+\begin{lemma} \label{container-split-enum-equiv}
+  The container-based definition of split enumerability is equivalent to the
+  inductive type version.
+  \begin{equation}
+    \sum_{(\mathit{xs} : \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket A)} , \prod_{(x : A)} , x \in xs \simeq
+    \sum_{(\mathit{xs} : \textbf{List}(A))} , \prod_{(x : A)} , x \in xs
+  \end{equation}
+  Membership for container-defined lists is a fiber.
+  \begin{equation}
+    x \in \mathit{xs} = \text{fiber}(\text{snd}(\mathit{xs}), x)
+  \end{equation}
 \end{lemma}
-\begin{proof} 
-  Let \(E\) be a proof of type \(\mathcal{E}!(A)\) for some type \(A\), and
-  \(n\) be the length of the support list of \(E\).
-  Then let \(f : \textbf{Fin}(n) \rightarrow A\) be defined as the indexing
-  function into the support list of \(E\).
-
-  We then prove this function to be a split surjection by providing a fiber over
-  all of the elements of its domain: this fiber is the second component of \(E\).
-
-  In Agda:
-  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{to-surj}
+\begin{proof}
+  \todo[inline]{Proof}
 \end{proof}
 
-Because of careful arrangement of previous definitions, this proof is only three
-lines of Agda.
-It is not difficult to derive decidable equality from this fact.
+This version of split enumerability is equivalent to a split surjection from a
+finite prefix of the natural numbers. 
+\begin{lemma} \label{container-split-enum-surj}
+  Container-defined split enumerability is equivalent to a split surjection from
+  some \(\mathbf{Fin}\).
+  \begin{equation}
+    \mathcal{E}!(A) \simeq \sum_{(n : \mathbb{N})} , \mathbf{Fin}(n) \twoheadrightarrow ! A
+  \end{equation}
+\end{lemma}
+\begin{proof}
+  The proof is surprisingly short: after sufficient inlining, it emerges that
+  our goal is simply a reassociation.
+  \ExecuteMetaData[agda/Cardinality/Container/Finite.tex]{split-surj}
+\end{proof}
+This lets us prove our overall goal for this section.
+\begin{theorem} \label{split-enum-surj}
+  Split enumerability is equivalent to a split surjection from a finite prefix
+  of the natural numbers.
+\end{theorem}
+\begin{proof}
+  This follows from lemmas \ref{container-split-enum-equiv} and
+  \ref{container-split-enum-surj}.
+\end{proof}
+\subsection{Decidable Equality}
 \begin{lemma} \label{split-enum-discrete}
   Any split enumerable type has decidable equality (is discrete).
 \end{lemma}
@@ -268,6 +260,8 @@ It is not difficult to derive decidable equality from this fact.
   split-surjection from \(A\) to \(B\), and \(A\) is discrete, then \(B\) is
   also discrete.
   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{discrete}
+  \todo[inline]{Rework this proof to rely on the split surjection equivalence
+    from before}
 \end{proof}
 
 This also tells us that any split enumerable type must be a set.
@@ -279,39 +273,7 @@ This also tells us that any split enumerable type must be a set.
   enumerable types have decidable equality
   (proposition~\ref{split-enum-discrete}), they are sets.
 \end{proof}
-
-Though it's not strictly needed for the rest of the construction, it is
-instructive to also prove inverse regarding surjections; i.e. that we can
-derive \(\mathcal{E}!\) from a surjection from another finite type.
-\begin{lemma} \label{split-enum-from-surj}
-  Any type with a split surjection from another split enumerable type is itself
-  split enumerable.
-\end{lemma}
-\begin{proof}
-  Let \(E\) be a proof of split enumerability for some set \(A\), and let \(f\)
-  be a surjection from \(A\) to \(B\).
-  The support list for the proof of split enumerability over \(B\) can be
-  obtained by mapping the surjective function over the support list of \(E\).
-
-  To obtain the cover proof, let \(f^{-1}\) be the inverse function of \(f\)
-  (which we can obtain because it is a split-surjection).
-  Using the cover proof of \(E\), we can show that, for all \(y : B\), \(f^{-1}(y)\)
-  is in the support list for \(E\).
-  Using the following lemma (proven in the appendix):
-  \begin{equation}
-    x \in xs \rightarrow f (x) \in \text{map} \; f \; \mathit{xs}
-  \end{equation}
-  We obtain a proof that:
-  \begin{equation}
-    \forall (y : B). f (f^{-1}(y)) \in \text{map} \; f \; \mathit{xs}
-  \end{equation}
-  And, since \(f (f^{-1}(y)) \equiv y\) (by the definition of a surjection), we
-  have proven our goal.
-
-  In Agda:
-  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{from-surj}
-\end{proof}
-\subsubsection{Closure}
+\subsection{Closure}
 In this section we will prove closure under various operations for split
 enumerable sets.
 We are working towards a topos proof, which requires us to prove closure under
@@ -377,28 +339,7 @@ Next, we will look into how to combine proofs of split enumerability.
   Then, since all of \(\mathbf{Bool}\), \(A\), and \(B\) are split enumerable,
   the type \(A + B\) is split enumerable.
 \end{proof}
-The final case can be derived from the previous closures; we give it here anyway
-for clarity.
-\begin{lemma} \label{fin-split-enum}
-  Any finite prefix of the natural numbers (what we have been calling
-  \(\textbf{Fin}\)) is split enumerable.
-\end{lemma}
-\begin{proof}
-  For the support list, we will make use of the function tabulate, which returns
-  a list consisting of the application of \(f\) to every \(\textbf{Fin}(n)\),
-  given \(n\).
-  \begin{equation}
-    \text{tabulate}(n , f) = \left[ f(0) , f(1) \dots f(n - 1) \right]
-  \end{equation}
-  In Agda:
-  \ExecuteMetaData[agda/Data/List.tex]{tabulate}
-  Tabulation with the identity function gives us our cover list.
-
-  The cover proof is obviously true given the definition of tabulate above; in
-  Agda it requires a little more work to show.
-  \ExecuteMetaData[agda/Data/List/Membership.tex]{fin-in-tabulate}
-\end{proof}
-\subsection{Manifest Bishop Finiteness} \label{manifest-bishop}
+\section{Manifest Bishop Finiteness} \label{manifest-bishop}
 \begin{definition}[Manifest Bishop Finiteness]
   \begin{equation}
     \mathcal{B}(A) = \sum_{(\mathit{xs} : \textbf{List}(A))} , \prod_{(x : A)} , x \inunique xs
@@ -420,50 +361,28 @@ It is defined in terms of our previous list membership term
 
 A nice consequence of prohibiting duplicates is that now the length of the
 support list is the same as the cardinality of the set.
-\subsubsection{Equivalence}
+\subsection{Equivalence}
 While manifest Bishop finiteness may seem stricter than split enumerability, we
 will see soon that it is actually equivalent in strength.
 Why study it separately to split enumerability at all, then?
 What purpose does it serve on our road to Kuratowski finiteness?
 Those questions are answered by the following theorem:
 \begin{lemma} \label{bishop-equiv}
-  Any manifestly Bishop finite type has an equivalence with a finite prefix of
-  the natural numbers.
+  A proof of manifest Bishop finiteness is equivalent to an equivalence with a
+  finite prefix of the natural numbers.
+  \begin{equation}
+    \mathcal{B}(A) \simeq \sum_{(n : \mathbb{N})} , \left( \mathbf{Fin}(n) \simeq A \right)
+  \end{equation}
 \end{lemma}
 \begin{proof}
   There are many equivalent definitions of equivalence in HoTT.
   Here we take the version preferred in the Cubical Agda library: contractible
-  maps \cite{hottbook}. \todo[noline]{Need this in appendix also}
+  maps \cite{hottbook}.
   Because of the parallels between contractible maps and split surjections,
   the proof proceeds much the same as \ref{split-enum-surj}.
-
-  First, we define the map as the indexing function into the support list.
-  Proving this map is a contraction is precisely the cover proof.
-
-  \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{equiv}
+  \todo[inline]{Finish prose for this proof}
 \end{proof}
-
-As we can see, our list-based definition of manifest Bishop finiteness is really
-an equivalence with \(\mathbf{Fin}\) in disguise.
-This will be the key component in establishing closure under exponentials.
-
-We would like to draw attention to the ``power-to-weight ratio'' of this proof.
-We have mentioned how important the equivalence will be for our later proofs: in
-general, the ability to transport via univalence opens up many opportunities 
-
-In Cubical Type Theory, equivalences are much more useful than their counterpart
-(isomorphisms) in Martin-Löf  Type Theory: arbitrary proofs and functions can be
-\emph{transported} along equivalences, giving a constructive justification for
-an intuitive and useful technique which is commonplace classically.
-The proof itself, however, is three lines long: thanks to careful definitions,
-the fact that manifest Bishop finiteness is the ``same'' as equivalences to
-\(\mathbf{Fin}\) becomes obviously true.
-Later we will see, by defining lists as containers, a proof that manifest Bishop
-finiteness is equivalent (in the formal sense) to equivalences with
-\(\mathbf{Fin}\). \todo[noline]{This needs to be added to the containers
-  section.}
-\todo[noline]{More on this? }
-\subsubsection{Relationship to Split Enumerability}
+\subsection{Relationship to Split Enumerability}
 We now show that manifest Bishop finiteness has equal strength to split
 enumerability.
 \begin{lemma}
@@ -501,7 +420,7 @@ in ``strength'', the two types are not equivalent.
 In particular, there are infinitely many inhabitants of \(\mathcal{E}!\), while
 for a type \(A\) with \(n\) inhabitants, there are only \(n!\) inhabitants of
 \(\mathcal{B}(A)\).
-\subsubsection{Closure}
+\subsection{Closure}
 Proving equal strength of split enumerability and manifest Bishop finiteness
 allows us to carry all of the previous proofs of closure over to manifest Bishop
 finite sets (and vice-versa).
@@ -510,18 +429,18 @@ We remedy that here.
 \begin{theorem}
   Manifest bishop finiteness is closed over dependent functions (\(\prod\)-types).
 
-  Formally, given a type \(A\) and a type family \(B\) on \(A\), when \(A\) is
+  Formally, given a type \(A\) and a type family \(U\) on \(A\), when \(A\) is
   manifestly Bishop finite:
   \begin{equation}
     \mathcal{B}\left( A \right)
   \end{equation}
-  And \(B\) is manifestly Bishop finite over all points of \(A\):
+  And \(U\) is manifestly Bishop finite over all points of \(A\):
   \begin{equation}
-    \prod_{(x : A)} , \mathcal{B}\left( B(x) \right)
+    \prod_{(x : A)} , \mathcal{B}\left( U(x) \right)
   \end{equation}
   Then we have the following:
   \begin{equation}
-    \mathcal{B}\left(\prod_{(x : A)} , B(x)\right)
+    \mathcal{B}\left(\prod_{(x : A)} , U(x)\right)
   \end{equation}
 \end{theorem}
 \begin{proof}
@@ -563,7 +482,7 @@ We remedy that here.
   
   \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{pi-clos}
 \end{proof}
-\subsection{Manifest Enumerability} \label{manifest-enumerability}
+\section{Manifest Enumerability} \label{manifest-enumerability}
 As we said in section~\ref{split-enumerable}, we will now retrieve a distinction
 between enumerability and manifest Bishop finiteness.
 We do so by propositionally truncating the membership proof:
@@ -583,7 +502,7 @@ position in the membership proof.
 However, this simply amounts to a proof of manifest Bishop finiteness over
 set-truncated types, rather than a significantly different construction, so it
 does not interest us here.
-\subsubsection{Higher Homotopy Levels}
+\subsection{Higher Homotopy Levels}
 By hiding the position, we have essentially removed the ``decidable'' component
 from split enumerability.
 Our predicate now becomes general enough to work with non-sets: we will show
@@ -602,33 +521,18 @@ here that the circle is manifestly enumerable.
 
   \ExecuteMetaData[agda/Cardinality/Finite/ManifestEnumerable.tex]{circ-inst}
 \end{proof}
-\subsubsection{Surjections}
+\subsection{Surjections}
 This predicates relation to surjectivity is much the same as split
 enumerability's relation to \emph{split} surjectivity.
 Deriving a surjection from \(\mathbf{Fin}\) is straightforward:
 \begin{lemma}
-  If a type \(A\) is manifestly enumerable, then there is a surjection from
-  \(\mathbf{Fin}\) into \(A\).
+  A proof of manifest enumerability is equivalent to a surjection from a finite
+  prefix of the natural numbers.
 \end{lemma}
 \begin{proof}
   \todo[inline]{Proof}
 \end{proof}
-And building from a surjection is similarly not too difficult:
-\begin{lemma}
-  If there is a surjection from a manifestly enumerable type \(A\) to another
-  type \(B\), then \(B\) is manifestly enumerable.
-\end{lemma}
-\begin{proof}
-  The proof proceeds in much the same way as in
-  proposition~\ref{split-enum-from-surj}.
-  The only difference is that the second component contains a truncation, but
-  since we can always eliminate from a truncation into a truncation this is not
-  a problem.
-
-  In Agda:
-  \ExecuteMetaData[agda/Cardinality/Finite/ManifestEnumerable.tex]{from-surj}
-\end{proof}
-\subsubsection{Relation to Split Enumerability}
+\subsection{Relation to Split Enumerability}
 As split enumerability is stronger than manifest enumerability, we can convert
 from one to the other easily.
 \begin{lemma}
@@ -664,7 +568,7 @@ enumerability.
 \end{proof}
 By theorem~\ref{split-enum-to-manifest-bishop}, we also can derive that any
 manifestly enumerable type with decidable equality is Bishop finite.
-\subsubsection{Closure}
+\subsection{Closure}
 \begin{lemma}
   Manifest enumerability is closed under dependent sum, disjoint union
   (non-dependent sum), and Cartesian product (non-dependent product).
@@ -679,7 +583,7 @@ manifestly enumerable type with decidable equality is Bishop finite.
 \end{proof}
 Notice that we do not have closure under functions: without decidability,
 manifest enumerability is not closed under function arrows.
-\subsection{Cardinal Finiteness} \label{cardinal}
+\section{Cardinal Finiteness} \label{cardinal}
 We now turn our attention to notions of finiteness which do not induce a linear
 order.
 \begin{definition}[Cardinal Finiteness]
@@ -689,32 +593,7 @@ order.
     \mathcal{C}(A) = \lVert \mathcal{B}(A) \rVert
   \end{equation}
 \end{definition}
-\subsubsection{Characterisation}
-Though we have chosen Bishop finiteness as our underlying finiteness proof to
-truncate, we could have in fact used any equal-strength proof
-(lemma~\ref{equal-strength}).
-Because this predicate is a mere proposition, what we called before ``equal
-strength'' now implies full equivalence.
-With this proven, we can use any one of our equal-strength finite definitions
-(\(\mathcal{E}!\), \(\mathcal{B}\)).
-In particular, we have:
-\begin{lemma}
-  Cardinal finiteness is equivalent to a propositionally truncated equivalence
-  with some \(\textbf{Fin}\).
-  \begin{equation}
-    \mathcal{C}(A) \simeq \lVert \sum_{(n : \mathbb{N})} , \textbf{Fin}(n) \simeq A \rVert
-  \end{equation}
-\end{lemma}
-\begin{proof}
-  By proposition~\ref{equal-strength}, we only need to provide conversion
-  functions between the two sides of the equivalence.
-  For left to right, we have proposition~\ref{bishop-equiv}.
-  For right to left, we can transport along the equivalence, meaning we need
-  only prove that \(\textbf{Fin}(n)\) is Bishop finite.
-  We know this to be true, since it is split enumerable
-  (proposition-\ref{fin-split-enum}).
-\end{proof}
-\subsubsection{Closure}
+\subsection{Closure}
 The closure proofs for cardinal finiteness are especially easy.
 In contrast to manifest enumerability, under the propositional truncation we
 have a full proof of bishop finiteness, meaning that all of the closure proofs
@@ -728,7 +607,7 @@ carry over.
   Therefore, cardinal finiteness has the same closure properties as manifest
   bishop finiteness.
 \end{proof}
-\subsubsection{Strength}
+\subsection{Strength}
 We can eliminate from cardinal finiteness in a coherently constant way:
 effectively, anything which doesn't ``notice'' the order of the internal support
 list is usable.
@@ -814,7 +693,7 @@ Another property which does not rely on an internal order is decidable equality.
   has decidable equality, and decidable equality is a proposition, we conclude
   that cardinal-finite types have decidable equality.
 \end{proof}
-\subsubsection{Relation to Manifest Bishop Finiteness}
+\subsection{Relation to Manifest Bishop Finiteness}
 Cardinal finiteness tells us that there is an isomorphism between a type and
 \(\mathbf{Fin}\); it just doesn't tell us \emph{which} isomorphism.
 To take a simple example, \(\mathbf{Bool}\) has 2 possible isomorphisms with the
@@ -880,10 +759,10 @@ Next, we will use the following definition of insertion sort:
   are equal.
 \end{proof}
 \todo[inline]{Agda code for proofs}
-\subsection{Kuratowski Finiteness} \label{kuratowski}
+\section{Kuratowski Finiteness} \label{kuratowski}
 Finally we arrive at Kuratowski finiteness
 \cite{kuratowskiNotionEnsembleFini1920}.
-\subsubsection{The Kuratowski Set as a Higher Inductive Type}
+\subsection{The Kuratowski Set as a Higher Inductive Type}
 We start with the Kuratowski finite sets, which are free join semilattices (or,
 equivalently, free commutative idempotent monoids).
 HITs are required to define this type
@@ -925,7 +804,7 @@ Furthermore, it is simpler to specify the rest of the paths on the heads of the
 lists, rather than on the whole structure.
 That said, the two definitions are equivalent.
 \todo[inline]{Maybe add sketch of proof here?}
-\subsubsection{Elimination}
+\subsection{Elimination}
 With Agda's dependent pattern matching, we get an eliminator automatically from
 the definition of an inductive type.
 We will define two further eliminators here.
@@ -954,7 +833,7 @@ We will define two further eliminators here.
 
 \todo[inline]{Expand on these eliminators}
 
-\subsubsection{Membership}
+\subsection{Membership}
 We can define membership of a Kuratowski set using these eliminators.
 First we define the \(\Diamond\) type, described in the appendix.
 \begin{equation}
@@ -983,7 +862,7 @@ From this we can define Kuratowski finiteness.
   \end{equation}
 \end{definition}
 
-\subsubsection{Strength}
+\subsection{Strength}
 Since the Kuratowski set is a departure in structure from our previous
 list-based notions of finiteness, it makes sense to first look for the closest
 list-based analogue.
@@ -1028,13 +907,13 @@ Kuratowski finite type we retrieve cardinal finiteness.
 \begin{proof}
   \todo[inline]{Prose for proof}
 \end{proof}
-\subsubsection{Topos}
+\subsection{Topos}
 At this point, we see that a ``decidable Kuratowski finite set'' is precisely
 equivalent to a cardinal finite set.
 From this, we can lift over all of the properties of cardinal finite sets.
 In particular, we see that decidable Kuratowski finite sets form a \emph{topos}.
 \todo[inline]{Fill in rest}
-\subsubsection{Closure}
+\subsection{Closure}
 \begin{theorem}
   Kuratowski finite sets are closed under \(\sum\).
 \end{theorem}
@@ -1042,27 +921,6 @@ In particular, we see that decidable Kuratowski finite sets form a \emph{topos}.
   \todo[inline]{Proof}
 \end{proof}
 \section{Species and Containers} \label{species-and-containers}
-Containers \cite{abbottContainersConstructingStrictly2005} give us a general way
-to construct functors from generic building-blocks.
-\begin{definition}[Container]
-  A container is a dependent pair of shapes, and positions indexed by those
-  shapes.
-  \begin{equation}
-    \mathbf{Container} = \sum_{(\text{shape} : \text{Type})} , \text{shape} \rightarrow \text{Type}
-  \end{equation}
-  \ExecuteMetaData[agda/Data/Container.tex]{def}
-  We ``interpret'' a container into a pair of a specific shape, and a function
-  which goes from positions to contents.
-  \begin{equation}
-    \llbracket S , P \rrbracket = \prod_{(X : \text{Type})} , \sum_{(s : S)} , \left( P(s) \rightarrow X \right)
-  \end{equation}
-  \ExecuteMetaData[agda/Data/Container.tex]{interp}
-\end{definition}
-For instance, the shape of lists is given by \(\Nat\), and the positions are then
-\(\AgdaDatatype{Fin}\)s indexed by that \(\Nat\).
-\ExecuteMetaData[agda/Data/Container/List.tex]{def}
-And here is the definition of foldr for container-defined lists:
-\ExecuteMetaData[agda/Data/Container/List.tex]{foldr}
 \subsection{Containers For Finiteness}
 The definition for the container-based finiteness predicates are almost
 identical to their list-based counterparts.
