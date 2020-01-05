@@ -184,14 +184,29 @@ That piece of information gives use decidable equality, restricting the
 predicate to discrete sets.
 In section~\ref{manifest-enumerability}, we will show how to hide the position,
 giving us a variant of the predicate which allows for non-set finite types.
-\subsection{Proving Equivalence with Split Surjections}
+\subsection{Split Surjections}
 Another, equivalent way to define ``finiteness'' is via a (split) surjection
 from a finite prefix of the natural numbers.
-Here, we will formalise this equivalence, by first proving an equivalence with a
-container-based definition of split enumerability.
+In this section, we will prove that equivalence, formally.
 
+\begin{theorem} \label{split-enum-surj}
+  Split enumerability is equivalent to a split surjection from a finite prefix
+  of the natural numbers.
+  \begin{equation}
+    \mathcal{E}!(A) \simeq \sum_{(n : \mathbb{N})} , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
+  \end{equation}
+\end{theorem}
+\begin{proof}
+  This proof is the composition of two intermediate equivalences: lemmas
+  \ref{container-split-enum-equiv} and \ref{container-split-enum-surj}.
+  This first of these proves that our definition of finiteness is equivalent to
+  another definition which uses lists defined as a \emph{container}, rather than
+  the usual inductive type definition.
+  The second of these shows that the container-based finiteness predicate is
+  equivalent to a split surjection from some \(\mathbf{Fin}\).
+\end{proof}
 
-
+To do so, we will first need to take a small detour to look at Containers.
 Containers \cite{abbottContainersConstructingStrictly2005} give us a general way
 to construct functors from generic building-blocks.
 \begin{definition}[Container]
@@ -204,6 +219,10 @@ to construct functors from generic building-blocks.
   which goes from positions to contents.
   \begin{equation}
     \llbracket S , P \rrbracket = \prod_{(X : \text{Type})} , \sum_{(s : S)} , \left( P(s) \rightarrow X \right)
+  \end{equation}
+  Membership of a container can be defined like so:
+  \begin{equation}
+    x \in \mathit{xs} = \text{fiber}(\text{snd}(\mathit{xs}), x)
   \end{equation}
 \end{definition}
 
@@ -219,10 +238,6 @@ predicate.
     \sum_{(\mathit{xs} : \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket A)} , \prod_{(x : A)} , x \in xs \simeq
     \sum_{(\mathit{xs} : \textbf{List}(A))} , \prod_{(x : A)} , x \in xs
   \end{equation}
-  Membership for container-defined lists is a fiber.
-  \begin{equation}
-    x \in \mathit{xs} = \text{fiber}(\text{snd}(\mathit{xs}), x)
-  \end{equation}
 \end{lemma}
 \begin{proof}
   \todo[inline]{Proof}
@@ -234,7 +249,7 @@ finite prefix of the natural numbers.
   Container-defined split enumerability is equivalent to a split surjection from
   some \(\mathbf{Fin}\).
   \begin{equation}
-    \mathcal{E}!(A) \simeq \sum_{(n : \mathbb{N})} , \mathbf{Fin}(n) \twoheadrightarrow ! A
+    \mathcal{E}!(A) \simeq \sum_{(n : \mathbb{N})} , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
   \end{equation}
 \end{lemma}
 \begin{proof}
@@ -242,28 +257,15 @@ finite prefix of the natural numbers.
   our goal is simply a reassociation.
   \ExecuteMetaData[agda/Cardinality/Container/Finite.tex]{split-surj}
 \end{proof}
-This lets us prove our overall goal for this section.
-\begin{theorem} \label{split-enum-surj}
-  Split enumerability is equivalent to a split surjection from a finite prefix
-  of the natural numbers.
-\end{theorem}
-\begin{proof}
-  This follows from lemmas \ref{container-split-enum-equiv} and
-  \ref{container-split-enum-surj}.
-\end{proof}
 \subsection{Decidable Equality}
 \begin{lemma} \label{split-enum-discrete}
   Any split enumerable type has decidable equality (is discrete).
 \end{lemma}
 \begin{proof}
-  We use a corollary, proven in the appendix, that if there is a
-  split-surjection from \(A\) to \(B\), and \(A\) is discrete, then \(B\) is
-  also discrete.
+  We use a corollary that if there is a split-surjection from \(A\) to \(B\),
+  and \(A\) is discrete, then \(B\) is also discrete.
   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{discrete}
-  \todo[inline]{Rework this proof to rely on the split surjection equivalence
-    from before}
 \end{proof}
-
 This also tells us that any split enumerable type must be a set.
 \begin{lemma}
   Any split enumerable type is a set.
@@ -380,7 +382,9 @@ Those questions are answered by the following theorem:
   maps \cite{hottbook}.
   Because of the parallels between contractible maps and split surjections,
   the proof proceeds much the same as \ref{split-enum-surj}.
-  \todo[inline]{Finish prose for this proof}
+  In other words, we can define a container-based version of bishop finiteness
+  which is a reassociation of a contractible map, and then show that the
+  container-based predicate is equivalent to the list-based.
 \end{proof}
 \subsection{Relationship to Split Enumerability}
 We now show that manifest Bishop finiteness has equal strength to split
@@ -412,8 +416,6 @@ enumerability.
     \prod_{(x : A)} , \prod_{(\mathit{xs} : \textbf{List}(A))} , x \in \mathit{xs} \rightarrow x \inunique \text{uniques}(\mathit{xs})
   \end{equation}
   And from that we can generate our cover proof.
-
-  Full details of the formal proof are provided in the appendix.
 \end{proof}
 Note that while manifest Bishop finiteness as split enumerability are equivalent
 in ``strength'', the two types are not equivalent.
