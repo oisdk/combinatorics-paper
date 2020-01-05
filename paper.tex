@@ -184,6 +184,61 @@ That piece of information gives use decidable equality, restricting the
 predicate to discrete sets.
 In section~\ref{manifest-enumerability}, we will show how to hide the position,
 giving us a variant of the predicate which allows for non-set finite types.
+\subsection{Containers}
+One last part is missing from the finiteness definition above: the definition of
+\(\mathbf{List}\).
+The standard definition is as follows:
+\begin{definition}[Lists as an Inductive Type]
+  \begin{equation}
+    \begin{aligned}
+      \mathbf{List}(A) &= \\
+      & \left| \; \text{nil} : \mathbf{List}(A)   \right; \\
+      & \left| \; \text{cons} : A \rightarrow \mathbf{List}(A) \rightarrow \mathbf{List}(A) \right;
+    \end{aligned}
+  \end{equation}
+\end{definition}
+
+However, as we will see, it will be occasionally more convenient to work with an
+equivalent type defined as a \emph{container}.
+\begin{definition}[Container] \label{container-def}
+  A container \cite{abbottContainersConstructingStrictly2005} is a dependent
+  pair of shapes, and positions indexed by those shapes. 
+  \begin{equation}
+    \mathbf{Container} = \sum_{(\text{shape} : \text{Type})} , \text{shape} \rightarrow \text{Type}
+  \end{equation}
+  We ``interpret'' a container into a pair of a specific shape, and a function
+  which goes from positions to contents.
+  \begin{equation}
+    \llbracket S , P \rrbracket = \prod_{(X : \text{Type})} , \sum_{(s : S)} , \left( P(s) \rightarrow X \right)
+  \end{equation}
+  Membership of a container can be defined like so:
+  \begin{equation}
+    x \in \mathit{xs} = \text{fiber}(\text{snd}(\mathit{xs}), x)
+  \end{equation}
+\end{definition}
+
+We often use containers to define types like lists or trees in a more generic
+way.
+While they tend to be more cumbersome to work with (especially for termination
+checking) they have a number of distinct advantages.
+In particular, when finiteness predicates are defined in terms of containers,
+certain proofs (we will point them out as we come upon them) become trivial.
+
+Happily, we can have our cake and eat it too.
+Since we have access to the univalence axiom, we can transport along any
+equivalence to a more convenient representation with good justification.
+
+\begin{lemma}
+  The two definitions of lists---the traditional inductive type, and the
+  container---are equivalent.
+  \begin{equation}
+    \mathbf{List} \simeq \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket
+  \end{equation}
+\end{lemma}
+\begin{proof}
+\todo[inline]{Agda code for proof?}
+\end{proof}
+
 \subsection{Split Surjections}
 Another, equivalent way to define ``finiteness'' is via a (split) surjection
 from a finite prefix of the natural numbers.
@@ -204,51 +259,6 @@ In this section, we will prove that equivalence, formally.
   (definition~\ref{container-def}).
   The second of these shows that the container-based finiteness predicate is
   equivalent to a split surjection from some \(\mathbf{Fin}\).
-\end{proof}
-
-\begin{definition}[Container] \label{container-def}
-  A container \cite{abbottContainersConstructingStrictly2005} is a dependent
-  pair of shapes, and positions indexed by those shapes. 
-  \begin{equation}
-    \mathbf{Container} = \sum_{(\text{shape} : \text{Type})} , \text{shape} \rightarrow \text{Type}
-  \end{equation}
-  We ``interpret'' a container into a pair of a specific shape, and a function
-  which goes from positions to contents.
-  \begin{equation}
-    \llbracket S , P \rrbracket = \prod_{(X : \text{Type})} , \sum_{(s : S)} , \left( P(s) \rightarrow X \right)
-  \end{equation}
-  Membership of a container can be defined like so:
-  \begin{equation}
-    x \in \mathit{xs} = \text{fiber}(\text{snd}(\mathit{xs}), x)
-  \end{equation}
-\end{definition}
-We often use containers to define types like lists or trees in a more generic
-way.
-For instance, while lists would usually be defined like so:
-\begin{equation}
-  \begin{aligned}
-    \mathbf{List}(A) &= \\
-      & \left| \; \text{nil} : \mathbf{List}(A)   \right; \\
-      & \left| \; \text{cons} : A \rightarrow \mathbf{List}(A) \rightarrow \mathbf{List}(A) \right;
-  \end{aligned}
-\end{equation}
-We could equivalently define them as a container:
-\begin{equation}
-  \mathbf{List}(A) = \left\llbracket \mathbb{N} , \mathbf{Fin} \right\rrbracket
-\end{equation}
-
-The two representations are equivalent, and they lead to two versions of split
-enumerability which are equivalent.
-\begin{lemma} \label{container-split-enum-equiv}
-  The container-based definition of split enumerability is equivalent to the
-  inductive type version.
-  \begin{equation}
-    \sum_{(\mathit{xs} : \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket A)} , \prod_{(x : A)} , x \in xs \simeq
-    \sum_{(\mathit{xs} : \textbf{List}(A))} , \prod_{(x : A)} , x \in xs
-  \end{equation}
-\end{lemma}
-\begin{proof}
-  \todo[inline]{Proof}
 \end{proof}
 
 Our interest in the container-based finiteness predicate comes from the fact
