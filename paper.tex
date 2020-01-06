@@ -26,118 +26,118 @@
   and demonstrate how it can be used to both prove properties and synthesise
   full functions given desired properties.
 \end{abstract}
-\section{Introduction}
-Proofs in a constructive setting are more substantial things than their
-classical counterparts.
-Rather than just evidence for some fact, they are objects in their own right,
-which we can manipulate and extract information from.
+% \section{Introduction}
+% Proofs in a constructive setting are more substantial things than their
+% classical counterparts.
+% Rather than just evidence for some fact, they are objects in their own right,
+% which we can manipulate and extract information from.
 
-Sometimes, the extra detail can reveal interesting subtleties: fissures which
-divide homogeneous-seeming definitions into a variety of related concepts.
-Finiteness is a prime example of this phenomenon: in classical set theory, a
-finite set is a finite set, and there's not much else that we can say.
-In constructive type theory, we start the bidding at no fewer than \emph{four}
-different predicates representing finiteness
-\cite{spiwackConstructivelyFinite2010}, upped to eight in
-\cite{firsovVariationsNoetherianness2016a}: all of which differ in significant
-and interesting ways.
+% Sometimes, the extra detail can reveal interesting subtleties: fissures which
+% divide homogeneous-seeming definitions into a variety of related concepts.
+% Finiteness is a prime example of this phenomenon: in classical set theory, a
+% finite set is a finite set, and there's not much else that we can say.
+% In constructive type theory, we start the bidding at no fewer than \emph{four}
+% different predicates representing finiteness
+% \cite{spiwackConstructivelyFinite2010}, upped to eight in
+% \cite{firsovVariationsNoetherianness2016a}: all of which differ in significant
+% and interesting ways.
 
-Other times, the extra baggage is unwanted.
-Maybe we want to enforce that a particular piece of information should be
-hidden, or treated as irrelevant: ``yes, I have proven that there is a
-particular number with this property, but I don't want to reveal \emph{which}
-number.''
+% Other times, the extra baggage is unwanted.
+% Maybe we want to enforce that a particular piece of information should be
+% hidden, or treated as irrelevant: ``yes, I have proven that there is a
+% particular number with this property, but I don't want to reveal \emph{which}
+% number.''
 
-This is where Homotopy Type Theory \cite{hottbook} can step in.
-Through primarily a generalisation of equality, we gain access to a number of
-exotic types which can, among other things, allow us to perform this ``hiding''.
-In the context of finiteness, the act of hiding is worth studying in its own
-right, and further delineates several new finiteness predicates which collapse
-even in standard Martin-Löf type theory
-\cite{martin-lofIntuitionisticTypeTheory1980}.
+% This is where Homotopy Type Theory \cite{hottbook} can step in.
+% Through primarily a generalisation of equality, we gain access to a number of
+% exotic types which can, among other things, allow us to perform this ``hiding''.
+% In the context of finiteness, the act of hiding is worth studying in its own
+% right, and further delineates several new finiteness predicates which collapse
+% even in standard Martin-Löf type theory
+% \cite{martin-lofIntuitionisticTypeTheory1980}.
 
-The other headline feature of HoTT's generalised equality is univalence: put
-simply, it allows us to treat isomorphic types as equal, giving us in the
-constructive world access to a technique that is commonplace classically.
-It turns out that finite types have a lot to say about isomorphisms, and we will
-rely heavily on this aspect of HoTT to work with them.
-\subsection{Contributions}
-In this work, we will explore finite types in Cubical Type Theory
-\cite{cohenCubicalTypeTheory2016}, and expose their relationship to infinite
-types, species, and demonstrate their practical uses for proofs in dependently
-typed programming languages.
-\subsubsection{Strong Finiteness Predicates}
-We will first explore the ``strong'' notions of finiteness (i.e. those at least
-as strong as Kuratowski finiteness \cite{kuratowskiNotionEnsembleFini1920}),
-with a special focus on cardinal finiteness (section~\ref{cardinal}), and
-manifest enumerability (section~\ref{manifest-enumerability}), which is new, to
-our knowledge.
+% The other headline feature of HoTT's generalised equality is univalence: put
+% simply, it allows us to treat isomorphic types as equal, giving us in the
+% constructive world access to a technique that is commonplace classically.
+% It turns out that finite types have a lot to say about isomorphisms, and we will
+% rely heavily on this aspect of HoTT to work with them.
+% \subsection{Contributions}
+% In this work, we will explore finite types in Cubical Type Theory
+% \cite{cohenCubicalTypeTheory2016}, and expose their relationship to infinite
+% types, species, and demonstrate their practical uses for proofs in dependently
+% typed programming languages.
+% \subsubsection{Strong Finiteness Predicates}
+% We will first explore the ``strong'' notions of finiteness (i.e. those at least
+% as strong as Kuratowski finiteness \cite{kuratowskiNotionEnsembleFini1920}),
+% with a special focus on cardinal finiteness (section~\ref{cardinal}), and
+% manifest enumerability (section~\ref{manifest-enumerability}), which is new, to
+% our knowledge.
 
-\input{figures/finite-classification}
-Figure~\ref{finite-classification} organises the predicates according to
-their ``strength''; i.e. how much information they provide about a conforming
-type.
-For instance, a proof that some type \(A\) is manifestly Bishop finite (the
-strongest of the notions, explored in section~\ref{manifest-bishop}) also tells
-us that \(A\) is discrete (has decidable equality), and gives us a linear order
-on the type.
-A type that is Kuratowski finite (section~\ref{kuratowski}) has no such extra
-features: indeed, we will see examples of Kuratowski finite types which are not
-even sets, never mind discrete ones.
+% \input{figures/finite-classification}
+% Figure~\ref{finite-classification} organises the predicates according to
+% their ``strength''; i.e. how much information they provide about a conforming
+% type.
+% For instance, a proof that some type \(A\) is manifestly Bishop finite (the
+% strongest of the notions, explored in section~\ref{manifest-bishop}) also tells
+% us that \(A\) is discrete (has decidable equality), and gives us a linear order
+% on the type.
+% A type that is Kuratowski finite (section~\ref{kuratowski}) has no such extra
+% features: indeed, we will see examples of Kuratowski finite types which are not
+% even sets, never mind discrete ones.
 
-We will go through each of the predicates, proving how to weaken each (i.e. we
-will provide a proof that every cardinally finite type is Kuratowski finite),
-and how to strengthen them, given the required property.
-In terms of figure~\ref{finite-classification}, this amounts to providing proofs
-for each arrow.
+% We will go through each of the predicates, proving how to weaken each (i.e. we
+% will provide a proof that every cardinally finite type is Kuratowski finite),
+% and how to strengthen them, given the required property.
+% In terms of figure~\ref{finite-classification}, this amounts to providing proofs
+% for each arrow.
 
-We will---through the use of containers
-\cite{abbottContainersConstructingStrictly2005}---formally prove the equivalence
-these predicates have with the usual function relations i.e. we will show that a
-proof of manifest enumerability is precisely equivalent to a surjection from a
-finite prefix of the natural numbers.
+% We will---through the use of containers
+% \cite{abbottContainersConstructingStrictly2005}---formally prove the equivalence
+% these predicates have with the usual function relations i.e. we will show that a
+% proof of manifest enumerability is precisely equivalent to a surjection from a
+% finite prefix of the natural numbers.
 
-For each predicate, we will also prove its closure over sums and products in
-both dependent and non-dependent forms, if such a closure exists.
-This will culminate in our main result for this section: the formal proof that
-decidable Kuratowski finite sets form a topos. \todo[noline]{reference for this}
-More specifically, we show that cardinal finite sets form a topos, that
-decidable Kuratowski finite sets are equivalent in strength to cardinal finite
-sets, and carry the proof over.
-This result relies on proofs on each of the other finiteness predicates.
-\subsubsection{Species}
-\todo[inline]{Redo this next paragraph}
-In section~\ref{species-and-containers}, we will redefine our finiteness
-predicates using \emph{containers}, and prove that the new definitions are
-equivalent to the old.
-Using this, we will prove much stronger relationships between our finiteness
-predicates and relation-based definitions of finiteness.
-Finally, We will show how the species-container duality falls out naturally from
-these new definitions.
+% For each predicate, we will also prove its closure over sums and products in
+% both dependent and non-dependent forms, if such a closure exists.
+% This will culminate in our main result for this section: the formal proof that
+% decidable Kuratowski finite sets form a topos. \todo[noline]{reference for this}
+% More specifically, we show that cardinal finite sets form a topos, that
+% decidable Kuratowski finite sets are equivalent in strength to cardinal finite
+% sets, and carry the proof over.
+% This result relies on proofs on each of the other finiteness predicates.
+% \subsubsection{Species}
+% \todo[inline]{Redo this next paragraph}
+% In section~\ref{species-and-containers}, we will redefine our finiteness
+% predicates using \emph{containers}, and prove that the new definitions are
+% equivalent to the old.
+% Using this, we will prove much stronger relationships between our finiteness
+% predicates and relation-based definitions of finiteness.
+% Finally, We will show how the species-container duality falls out naturally from
+% these new definitions.
 
-\subsubsection{Infinite Types}
-In section~\ref{infinite-cardinalities}, we will extend our study of finite
-types to infinite but countable types.
-We will see that the finiteness predicates are mirrored with countable
-counterparts, and we will prove closure under the Kleene star and plus.
+% \subsubsection{Infinite Types}
+% In section~\ref{infinite-cardinalities}, we will extend our study of finite
+% types to infinite but countable types.
+% We will see that the finiteness predicates are mirrored with countable
+% counterparts, and we will prove closure under the Kleene star and plus.
 
-\subsubsection{Practical Uses of Finiteness}
-Proofs of finiteness have well-known practical applications in
-constructive mathematics \cite{firsovDependentlyTypedProgramming2015}.
-In section~\ref{practical}, we build a library which exploits these uses in
-Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}, allowing automation of
-complex proofs over finite types.
-We frame this in terms of the principle of omniscience for finite types.
-Thanks to the flexibility afforded to us by Cubical Type Theory, we are able to
-go further than the usual examples of this kind of proof automation: as well as
-proving properties about functions, we can synthesise functions whole-cloth from
-their desired properties.
-Through the unified interface for finite and countable types, we can
-reuse the automation machinery for \emph{partial} proof search over infinite
-search spaces.
-Along the way, we extend the work in \cite{allaisGenericLevelPolymorphic2019} to
-prove isomorphisms between the curried and uncurried forms of \(n\)-ary
-dependent functions.
+% \subsubsection{Practical Uses of Finiteness}
+% Proofs of finiteness have well-known practical applications in
+% constructive mathematics \cite{firsovDependentlyTypedProgramming2015}.
+% In section~\ref{practical}, we build a library which exploits these uses in
+% Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}, allowing automation of
+% complex proofs over finite types.
+% We frame this in terms of the principle of omniscience for finite types.
+% Thanks to the flexibility afforded to us by Cubical Type Theory, we are able to
+% go further than the usual examples of this kind of proof automation: as well as
+% proving properties about functions, we can synthesise functions whole-cloth from
+% their desired properties.
+% Through the unified interface for finite and countable types, we can
+% reuse the automation machinery for \emph{partial} proof search over infinite
+% search spaces.
+% Along the way, we extend the work in \cite{allaisGenericLevelPolymorphic2019} to
+% prove isomorphisms between the curried and uncurried forms of \(n\)-ary
+% dependent functions.
 \section{Split Enumerability} \label{split-enumerable}
 We will start with the simplest definition of finiteness: we say a set is
 enumerable if there is a list of its elements which contains every element in
@@ -173,7 +173,7 @@ For now, we will define it like so:
   \begin{equation}
     \begin{aligned}
       \mathbf{Fin}(0) &= \bot \\
-      \mathbf{Fin}(n + 1) &= 1 + \mathbf{Fin}(n)
+      \mathbf{Fin}(n + 1) &= \top + \mathbf{Fin}(n)
     \end{aligned}
   \end{equation}
 \end{rm-definition}
@@ -236,9 +236,12 @@ equivalence to a more convenient representation with good justification.
   \end{equation}
 \end{rm-lemma}
 \begin{proof}
-\todo[inline]{Agda code for proof?}
+  \todo[inline]{Agda code for proof?}
 \end{proof}
 
+For each finiteness predicate, we have proven it equivalent to its
+container-based version.
+These proofs are included in the Agda formalisation.
 \subsection{Split Surjections}
 Another, equivalent way to define ``finiteness'' is via a (split) surjection
 from a finite prefix of the natural numbers.
@@ -252,26 +255,7 @@ In this section, we will prove that equivalence, formally.
   \end{equation}
 \end{rm-theorem}
 \begin{proof}
-  This proof is the composition of two intermediate equivalences: lemmas
-  \ref{container-split-enum-equiv} and \ref{container-split-enum-surj}.
-  This first of these proves that our definition of finiteness is equivalent to
-  another predicate which uses lists defined as a \emph{container}
-  (definition~\ref{container-def}).
-  The second of these shows that the container-based finiteness predicate is
-  equivalent to a split surjection from some \(\mathbf{Fin}\).
-\end{proof}
-
-Our interest in the container-based finiteness predicate comes from the fact
-that it is very straightforward to prove it equivalent to a split surjection
-from some \(\mathbf{Fin}\).
-\begin{rm-lemma} \label{container-split-enum-surj}
-  Container-defined split enumerability is equivalent to a split surjection from
-  some \(\mathbf{Fin}\).
-  \begin{equation}
-    \mathcal{E}!(A) \simeq \sum_{(n : \mathbb{N})} , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
-  \end{equation}
-\end{rm-lemma}
-\begin{proof}
+  For this proof, we will work with the container-based finiteness predicate.
   The proof is surprisingly short: after sufficient inlining, it emerges that
   our goal is simply a reassociation.
   \ExecuteMetaData[agda/Cardinality/Container/Finite.tex]{split-surj}
@@ -342,15 +326,18 @@ Next, we will look into how to combine proofs of split enumerability.
   Split-enumerability is closed under Cartesian product (non-dependent product).
 \end{rm-lemma} 
 \begin{proof}
-  Since non-dependent products are simply a special case of the \(\sum\) type,
-  we can reuse the proof of closure over \(\sum\) here.
 \end{proof}
 \begin{rm-lemma}
-  Split-enumerability is closed under disjoint union (non-dependent sum).
+  Split-enumerability is closed under disjoint union (non-dependent sum) and
+  Cartesian product (non-dependent product).
 \end{rm-lemma}
 \begin{proof}
-  Again, this can be derived from closure of the \(\sum\) type.
-  Disjoint union between two types \(A\) and \(B\) can be represented by the
+  Both of these closures can be derived from closure of the \(\sum\) type.
+  The non-dependent product is equivalent to a special case of \(\sum\):
+  \begin{equation}
+    A \times B \simeq \sum_{(x : A)} , B
+  \end{equation}
+  And disjoint union between two types \(A\) and \(B\) can be represented by the
   following type:
   \begin{equation}
     A + B = \sum_{(x : \mathbf{Bool})} , \text{if} \; x \; \text{then} \; A \; \text{else} \; B
@@ -381,11 +368,9 @@ It is defined in terms of our previous list membership term
 A nice consequence of prohibiting duplicates is that now the length of the
 support list is the same as the cardinality of the set.
 \subsection{Equivalence}
-While manifest Bishop finiteness may seem stricter than split enumerability, we
-will see soon that it is actually equivalent in strength.
-Why study it separately to split enumerability at all, then?
-What purpose does it serve on our road to Kuratowski finiteness?
-Those questions are answered by the following theorem:
+Where split enumerability was the enumeration form of a surjection from
+\(\mathbf{Fin}\), we see here that manifest Bishop finiteness is the enumeration
+form of an \emph{equivalence} with \(\mathbf{Fin}\).
 \begin{rm-lemma} \label{bishop-equiv}
   A proof of manifest Bishop finiteness is equivalent to an equivalence with a
   finite prefix of the natural numbers.
@@ -413,7 +398,6 @@ enumerability.
   The support set carries over simply, and the cover proof can be taken from the
   first component of the cover proof from the proof of manifest Bishop
   finiteness.
-  \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{bishop-to-split-enum}
 \end{proof}
 \begin{rm-theorem} \label{split-enum-to-manifest-bishop}
   Any split enumerable set is manifest Bishop finite.
@@ -743,7 +727,8 @@ Now we will build up the toolkit we need to perform the above steps.
 First, permutations.
 \begin{rm-definition}[List Permutations]
   We say that two lists are permutations of each other if there is an
-  isomorphism between membership proofs.
+  isomorphism between membership proofs
+  \cite{danielssonBagEquivalenceProofRelevant2012}.
   \begin{equation}
     \mathit{xs} \leftrightsquigarrow \mathit{ys} = \prod_{(x : A)} , x \in \mathit{xs} \iff x \in \mathit{ys}
   \end{equation}
@@ -751,9 +736,6 @@ First, permutations.
 We also prove some of the identities you might expect with regards to
 permutations, all in the appendix.
 In particular, we prove that they form an equivalence relation.
-
-Next, we will use the following definition of insertion sort:
-\ExecuteMetaData[agda/Data/List/Sort.tex]{sort}
 \begin{rm-lemma}
   Insertion sort is invariant under permutations.
   \begin{equation}
@@ -1123,7 +1105,6 @@ particular, is rich and interesting, as we hope we have demonstrated thus far.
 As well as being theoretically interesting, however, the proofs and combinators
 we have defined here are \emph{practically} useful.
 \subsection{Omniscience}
-\todo[inline]{Put definition for decidable somewhere}
 In this section we are interested in restricted forms of the limited principle
 of omniscience \cite{myhillErrettBishopFoundations1972}.
 \begin{rm-definition}[Limited Principle of Omniscience]
@@ -1189,65 +1170,24 @@ We now show that split enumerable types are omniscient.
   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{exists-quant}
 \end{proof}
 \begin{rm-theorem}
-  Any split enumerable type is exhaustible.
-\end{rm-theorem}
-\begin{proof}
-  Via lemma~\ref{omniscient-is-exhaustible}.
-\end{proof}
-
-\subsubsection{Manifest Enumerability}
-We now reach for the same quantification combinators we used for
-split enumerable types.
-Because neither of these quantifications ``care'' about the specific proof of
-membership used, they can both be used.
-\begin{rm-theorem}
-  For a decidable predicate \(P\) on a type \(A\), if the type is manifestly
-  enumerable, then we can decide the existential of \(P\).
+  Any manifestly enumerable type is omniscient.
 \end{rm-theorem}
 \begin{proof}
   \todo[inline]{Proof}
 \end{proof}
-
 \begin{rm-theorem}
-  For a decidable predicate \(P\) on a type \(A\), if the type is manifestly
-  enumerable, then we can decide the universal of \(P\).
+  Any cardinal finite type is exhaustible.
 \end{rm-theorem}
 \begin{proof}
   \todo[inline]{Proof}
 \end{proof}
-\subsubsection{Cardinal Finiteness}
-The quantification operations partially carry over.
 \begin{rm-theorem}
-  For a decidable predicate \(P\) on a type \(A\), if the type is cardinal
-  finite, then we can decide the universal of \(P\).
+  Cardinally finite types are omniscient about prop-valued predicates.
 \end{rm-theorem}
-\begin{proof}
-  \todo[inline]{Proof}
-\end{proof}
-
-An existential predicate is harder to express.
-In previous sections, we simply tested each member of the set in turn, and
-returned the first member which passed the test.
-Clearly this operation can depend on the underlying order.
 \begin{rm-theorem}
-  For a decidable predicate \(P\) on a type \(A\), if the type is cardinal
-  finite, then we can decide the propositionally truncated existential of \(P\).
+  Kuratowski finite types have the same omniscience properties as cardinal
+  finite types.
 \end{rm-theorem}
-\begin{proof}
-  \todo[inline]{proof}
-\end{proof}
-\begin{rm-theorem}
-  For a decidable predicate \(P\) on a type \(A\), which uniquely determines an
-  input, we can decide the existential of \(P\).
-\end{rm-theorem}
-\begin{proof}
-  \todo[inline]{proof}
-\end{proof}
-\subsubsection{Kuratowski}
-\begin{itemize}
-\item Forall
-\item Exists
-\end{itemize}
 
 \subsection{Synthesising Pattern-Matching Proofs}
 In particular, they can automate large proofs by analysing every possible case.
