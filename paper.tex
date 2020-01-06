@@ -26,118 +26,76 @@
   and demonstrate how it can be used to both prove properties and synthesise
   full functions given desired properties.
 \end{abstract}
-% \section{Introduction}
-% Proofs in a constructive setting are more substantial things than their
-% classical counterparts.
-% Rather than just evidence for some fact, they are objects in their own right,
-% which we can manipulate and extract information from.
+\section{Introduction}
+In this work, we will explore finite types in Cubical Type Theory
+\cite{cohenCubicalTypeTheory2016}, and expose their relationship to infinite
+types, species, and demonstrate their practical uses for proofs in dependently
+typed programming languages.
+\subsubsection{Strong Finiteness Predicates}
+We will first explore the ``strong'' notions of finiteness (i.e. those at least
+as strong as Kuratowski finiteness \cite{kuratowskiNotionEnsembleFini1920}),
+with a special focus on cardinal finiteness (section~\ref{cardinal}), and
+manifest enumerability (section~\ref{manifest-enumerability}), which is new, to
+our knowledge.
 
-% Sometimes, the extra detail can reveal interesting subtleties: fissures which
-% divide homogeneous-seeming definitions into a variety of related concepts.
-% Finiteness is a prime example of this phenomenon: in classical set theory, a
-% finite set is a finite set, and there's not much else that we can say.
-% In constructive type theory, we start the bidding at no fewer than \emph{four}
-% different predicates representing finiteness
-% \cite{spiwackConstructivelyFinite2010}, upped to eight in
-% \cite{firsovVariationsNoetherianness2016a}: all of which differ in significant
-% and interesting ways.
+\input{figures/finite-classification}
+Figure~\ref{finite-classification} organises the predicates according to
+their ``strength''; i.e. how much information they provide about a conforming
+type.
+For instance, a proof that some type \(A\) is manifestly Bishop finite (the
+strongest of the notions, explored in section~\ref{manifest-bishop}) also tells
+us that \(A\) is discrete (has decidable equality), and gives us a linear order
+on the type.
+A type that is Kuratowski finite (section~\ref{kuratowski}) has no such extra
+features: indeed, we will see examples of Kuratowski finite types which are not
+even sets, never mind discrete ones.
 
-% Other times, the extra baggage is unwanted.
-% Maybe we want to enforce that a particular piece of information should be
-% hidden, or treated as irrelevant: ``yes, I have proven that there is a
-% particular number with this property, but I don't want to reveal \emph{which}
-% number.''
+We will go through each of the predicates, proving how to weaken each (i.e. we
+will provide a proof that every cardinally finite type is Kuratowski finite),
+and how to strengthen them, given the required property.
+In terms of figure~\ref{finite-classification}, this amounts to providing proofs
+for each arrow.
 
-% This is where Homotopy Type Theory \cite{hottbook} can step in.
-% Through primarily a generalisation of equality, we gain access to a number of
-% exotic types which can, among other things, allow us to perform this ``hiding''.
-% In the context of finiteness, the act of hiding is worth studying in its own
-% right, and further delineates several new finiteness predicates which collapse
-% even in standard Martin-Löf type theory
-% \cite{martin-lofIntuitionisticTypeTheory1980}.
+We will---through the use of containers
+\cite{abbottContainersConstructingStrictly2005}---formally prove the equivalence
+these predicates have with the usual function relations i.e. we will show that a
+proof of manifest enumerability is precisely equivalent to a surjection from a
+finite prefix of the natural numbers.
 
-% The other headline feature of HoTT's generalised equality is univalence: put
-% simply, it allows us to treat isomorphic types as equal, giving us in the
-% constructive world access to a technique that is commonplace classically.
-% It turns out that finite types have a lot to say about isomorphisms, and we will
-% rely heavily on this aspect of HoTT to work with them.
-% \subsection{Contributions}
-% In this work, we will explore finite types in Cubical Type Theory
-% \cite{cohenCubicalTypeTheory2016}, and expose their relationship to infinite
-% types, species, and demonstrate their practical uses for proofs in dependently
-% typed programming languages.
-% \subsubsection{Strong Finiteness Predicates}
-% We will first explore the ``strong'' notions of finiteness (i.e. those at least
-% as strong as Kuratowski finiteness \cite{kuratowskiNotionEnsembleFini1920}),
-% with a special focus on cardinal finiteness (section~\ref{cardinal}), and
-% manifest enumerability (section~\ref{manifest-enumerability}), which is new, to
-% our knowledge.
+For each predicate, we will also prove its closure over sums and products in
+both dependent and non-dependent forms, if such a closure exists.
+This will culminate in our main result for this section: the formal proof that
+decidable Kuratowski finite sets form a topos.
+More specifically, we show that cardinal finite sets form a topos, that
+decidable Kuratowski finite sets are equivalent in strength to cardinal finite
+sets, and carry the proof over.
+This result relies on proofs on each of the other finiteness predicates.
+\subsubsection{Species}
+\todo[inline]{Redo this next paragraph}
 
-% \input{figures/finite-classification}
-% Figure~\ref{finite-classification} organises the predicates according to
-% their ``strength''; i.e. how much information they provide about a conforming
-% type.
-% For instance, a proof that some type \(A\) is manifestly Bishop finite (the
-% strongest of the notions, explored in section~\ref{manifest-bishop}) also tells
-% us that \(A\) is discrete (has decidable equality), and gives us a linear order
-% on the type.
-% A type that is Kuratowski finite (section~\ref{kuratowski}) has no such extra
-% features: indeed, we will see examples of Kuratowski finite types which are not
-% even sets, never mind discrete ones.
+\subsubsection{Infinite Types}
+In section~\ref{infinite-cardinalities}, we will extend our study of finite
+types to infinite but countable types.
+We will see that the finiteness predicates are mirrored with countable
+counterparts, and we will prove closure under the Kleene star and plus.
 
-% We will go through each of the predicates, proving how to weaken each (i.e. we
-% will provide a proof that every cardinally finite type is Kuratowski finite),
-% and how to strengthen them, given the required property.
-% In terms of figure~\ref{finite-classification}, this amounts to providing proofs
-% for each arrow.
-
-% We will---through the use of containers
-% \cite{abbottContainersConstructingStrictly2005}---formally prove the equivalence
-% these predicates have with the usual function relations i.e. we will show that a
-% proof of manifest enumerability is precisely equivalent to a surjection from a
-% finite prefix of the natural numbers.
-
-% For each predicate, we will also prove its closure over sums and products in
-% both dependent and non-dependent forms, if such a closure exists.
-% This will culminate in our main result for this section: the formal proof that
-% decidable Kuratowski finite sets form a topos. \todo[noline]{reference for this}
-% More specifically, we show that cardinal finite sets form a topos, that
-% decidable Kuratowski finite sets are equivalent in strength to cardinal finite
-% sets, and carry the proof over.
-% This result relies on proofs on each of the other finiteness predicates.
-% \subsubsection{Species}
-% \todo[inline]{Redo this next paragraph}
-% In section~\ref{species-and-containers}, we will redefine our finiteness
-% predicates using \emph{containers}, and prove that the new definitions are
-% equivalent to the old.
-% Using this, we will prove much stronger relationships between our finiteness
-% predicates and relation-based definitions of finiteness.
-% Finally, We will show how the species-container duality falls out naturally from
-% these new definitions.
-
-% \subsubsection{Infinite Types}
-% In section~\ref{infinite-cardinalities}, we will extend our study of finite
-% types to infinite but countable types.
-% We will see that the finiteness predicates are mirrored with countable
-% counterparts, and we will prove closure under the Kleene star and plus.
-
-% \subsubsection{Practical Uses of Finiteness}
-% Proofs of finiteness have well-known practical applications in
-% constructive mathematics \cite{firsovDependentlyTypedProgramming2015}.
-% In section~\ref{practical}, we build a library which exploits these uses in
-% Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}, allowing automation of
-% complex proofs over finite types.
-% We frame this in terms of the principle of omniscience for finite types.
-% Thanks to the flexibility afforded to us by Cubical Type Theory, we are able to
-% go further than the usual examples of this kind of proof automation: as well as
-% proving properties about functions, we can synthesise functions whole-cloth from
-% their desired properties.
-% Through the unified interface for finite and countable types, we can
-% reuse the automation machinery for \emph{partial} proof search over infinite
-% search spaces.
-% Along the way, we extend the work in \cite{allaisGenericLevelPolymorphic2019} to
-% prove isomorphisms between the curried and uncurried forms of \(n\)-ary
-% dependent functions.
+\subsubsection{Practical Uses of Finiteness}
+Proofs of finiteness have well-known practical applications in
+constructive mathematics \cite{firsovDependentlyTypedProgramming2015}.
+In section~\ref{practical}, we build a library which exploits these uses in
+Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}, allowing automation of
+complex proofs over finite types.
+We frame this in terms of the principle of omniscience for finite types.
+Thanks to the flexibility afforded to us by Cubical Type Theory, we are able to
+go further than the usual examples of this kind of proof automation: as well as
+proving properties about functions, we can synthesise functions whole-cloth from
+their desired properties.
+Through the unified interface for finite and countable types, we can
+reuse the automation machinery for \emph{partial} proof search over infinite
+search spaces.
+Along the way, we extend the work in \cite{allaisGenericLevelPolymorphic2019} to
+prove isomorphisms between the curried and uncurried forms of \(n\)-ary
+dependent functions.
 \section{Split Enumerability} \label{split-enumerable}
 We will start with the simplest definition of finiteness: we say a set is
 enumerable if there is a list of its elements which contains every element in
@@ -383,20 +341,14 @@ finite sets (and vice-versa).
 Missing from our previous proofs was a proof of closure of functions.
 We remedy that here.
 \begin{rm-theorem}
-  Manifest bishop finiteness is closed over dependent functions (\(\prod\)-types).
-
-  Formally, given a type \(A\) and a type family \(U\) on \(A\), when \(A\) is
-  manifestly Bishop finite:
+  Manifest bishop finiteness is closed over dependent functions
+  (\(\prod\)-types).
   \begin{equation}
-    \mathcal{B}\left( A \right)
-  \end{equation}
-  And \(U\) is manifestly Bishop finite over all points of \(A\):
-  \begin{equation}
-    \Pi {(x : A)} , \mathcal{B}\left( U(x) \right)
-  \end{equation}
-  Then we have the following:
-  \begin{equation}
-    \mathcal{B}\left(\Pi {(x : A)} , U(x)\right)
+    \frac{
+      \mathcal{B}(A) \; \; \; \Pi {(x : A)} , \mathcal{B}\left( U(x) \right)
+    }{
+      \mathcal{B}\left(\Pi {(x : A)} , U(x)\right)
+    }
   \end{equation}
 \end{rm-theorem}
 \begin{proof}
@@ -436,8 +388,6 @@ We remedy that here.
   This allows us to transport our proof of finiteness on tuples to one on
   functions from \(\mathbf{Fin}\) (our second transport operation), proving our
   goal.
-  
-  \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{pi-clos}
 \end{proof}
 \section{Manifest Enumerability} \label{manifest-enumerability}
 A defining feature of split enumerability and Bishop finiteness is decidability:
@@ -488,7 +438,7 @@ works with types other than just sets, we \emph{truncate} the membership proof.
       \(n\)-type for some finite \(n\).
   \end{enumerate}
 \end{rm-definition}
-\subsection{Higher Homotopy Levels}
+
 By hiding the position, we have essentially removed the ``decidable'' component
 from split enumerability.
 Our predicate now becomes general enough to work with non-sets: we will show
@@ -500,7 +450,6 @@ here that the circle is manifestly enumerable.
   As the cover proof is a truncated proposition, we need only consider the point
   constructors, making this poof the same as the proof of split enumerability on
   \(\top\).
-  \ExecuteMetaData[agda/Cardinality/Finite/ManifestEnumerable.tex]{circ-inst}
 \end{proof}
 \subsection{Surjections}
 This predicates relation to surjectivity is much the same as split
@@ -526,16 +475,20 @@ enumerability's relation to \emph{split} surjectivity.
 \begin{proof}
   The support list stays the same between both enumerability proofs.
 
-  For the cover proof, we need a way to get the contents out of a truncated
-  value.
-  We can do exactly that with the following lemma, called recompute:
-  given a decision procedure for some type \(A\), and a truncation for the
-  proposition \(A\), we can discount the possibility of \(A\) being false, and
-  therefore extract the true decision.
+  For the cover proof, we first need the following function which searches a
+  list for a particular element (given decidable equality on \(A\)).
+  \begin{equation}
+    \decin \; : \Pi(x : A) , \Pi(\mathit{xs} : \mathbf{List}(A)) , \mathbf{Dec}(x \in \mathit{xs})
+  \end{equation}
+  Where \(\mathbf{Dec}(A)\) is a decision on some type \(A\).
 
-  For the cover proof, our obligation now becomes constructing a decision for
-  membership of the support list.
-  This is straightforward given decidable equality.
+  We then need to convert a value of type \(\mathbf{Dec}(x \in \mathit{xs})\) to
+  \(x \in \mathit{xs}\).
+  We use the following to do that:
+  \begin{equation}
+    \text{recompute} : \mathbf{Dec}(A) \rightarrow \lVert A \rVert \rightarrow A
+  \end{equation}
+  A propositionally truncated value can be used to \emph{refute} its negation.
 \end{proof}
 \subsection{Closure}
 \begin{rm-lemma}
@@ -632,15 +585,8 @@ carry over.
   \begin{equation}
     \textbf{Fin}(n) \equiv \textbf{Fin}(m)
   \end{equation}
-  Relying on the fact that \(\textbf{Fin}\) is injective
-  (proposition~\ref{fin-inj}), we can derive that \(n\) and \(m\) are equal.
-\end{proof}
-
-\begin{rm-lemma} \label{fin-inj}
-  \(\textbf{Fin}\) is injective.
-\end{rm-lemma}
-\begin{proof}
-  Though this proof is surprisingly complex, it is a well-known puzzle in
+  All that remains now is to prove that \(\mathbf{Fin}\) is injective.
+  Though the proof is surprisingly complex, it is a well-known puzzle in
   Martin-Löf type theory.
   Our proof does not differ significantly from standard approaches, so we will
   not detail it here.
@@ -904,17 +850,6 @@ search of the pairings of both lists.
   Split countability is closed under \(\Sigma\).
 \end{rm-theorem}
 \begin{proof}
-  Let \(\mathcal{X}\) be the proof of split countability on \(A\), and
-  \(\mathcal{Y}\) be a function of the following type:
-  \begin{equation}
-    \mathcal{Y} : \Pi {(x : A)} , \mathcal{E}!(U(x))
-  \end{equation}
-  Where \(U\) is a type family on \(A\).
-  Our task is to provide the following:
-  \begin{equation}
-    \mathcal{E}!\left(\Sigma {(x : A)} , U(x)\right)
-  \end{equation}
-
   This final proof consists of the support stream, and the proof that the
   support stream covers the input.
 
@@ -924,10 +859,6 @@ search of the pairings of both lists.
   To greatly simplify the algorithm, we will produce an intermediate stream of
   lists which consists of the diagonals in the diagram.
   We then concatenate these streams into the final support stream.
-
-  Here is the algorithm in Agda:
-  \ExecuteMetaData[agda/Cardinality/Container/Infinite.tex]{conv}
-  \todo[inline]{Finish prose for this proof}
 \end{proof}
 \begin{rm-lemma}
   Split countability is closed under non-dependent product and sum.
@@ -935,48 +866,26 @@ search of the pairings of both lists.
 \begin{proof}
   Follows from theorem~\ref{split-countability-sigma}.
 \end{proof}
-\subsubsection{Kleene Star and Plus}
+\subsubsection{Kleene Star}
 While we lose some closures with the inclusion of infinite types, we gain some
 others.
-In particular, we have the Kleene star and plus.
-These allow us to introduce recursion into countable types, by way of lists.
-\begin{rm-definition}[Kleene Lists]
-  It is often useful to have two mutually-defined list types (one for
-  possibly-empty lists and one for nonempty lists).
-  Such a definition closely mirrors the Kleene star and plus.
-  \begin{equation}
-    \begin{aligned}
-      A^+ &= \\
-          &\left\vert \; \text{head} : A^+ \rightarrow A \right; \\
-          &\left\vert \; \text{tail} : A^+ \rightarrow A^\star \right; \\
-      A^\star &= \\
-          &\left\vert \; [] : A^\star \right; \\
-          &\left\vert \; [\cdot] : A^+ \rightarrow A^\star \right;
-    \end{aligned}
-  \end{equation}
-\end{rm-definition}
-Our definition of split countability is closed under these types in particular.
+In particular, we have the Kleene star.
+This means, in effect, that we have closure under lists.
 \begin{rm-theorem}
-  Split countability is closed under Kleene star and plus.
+  Split countability is closed under Kleene star.
+  \begin{equation}
+    \mathcal{E}!(A) \rightarrow \mathcal{E}!(\mathbf{List}(A))
+  \end{equation}
 \end{rm-theorem}
 \begin{proof}
-  \tot[inline]{Proof}
+  As with the proof of closure under \(\sum\), our main task here is to figure
+  out a way to arrange the indices such that 
 \end{proof}
 \subsection{Manifest Countability}
 As we can quotient out the position information with finite types, so can we with
 countable types.
 \todo[inline]{fill in rest here}
 \section{Practical Uses} \label{practical}
-\todo[inline]{%
-\begin{itemize}
-  \item Synthesize functions according to specifications.
-  \item Nonexhaustive search for the infinite types.
-  \item Lift quantifiers over types other than bishop (i.e. K). Show that
-    quantifiers have to be different (i.e. existence has to be unique).
-  \item Big operators\cite{gustafssonCountingTypeIsomorphisms}
-    \cite{gustafssonFoldableContainersDependent}
-\end{itemize}
-}
 The theory of finite types in constructive mathematics, and in HoTT in
 particular, is rich and interesting, as we hope we have demonstrated thus far.
 As well as being theoretically interesting, however, the proofs and combinators
@@ -996,8 +905,6 @@ of omniscience \cite{myhillErrettBishopFoundations1972}.
 The limited principle of omniscience is non-constructive, but individual types
 can themselves satisfy omniscience.
 In particular, \emph{finite} types are omniscient.
-Omniscience is defined in Agda like so:
-\ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{omniscient}
 
 There is also a universal form of omniscience, which we call exhaustibility.
 \begin{rm-definition}[Exhaustibility]
@@ -1006,66 +913,60 @@ There is also a universal form of omniscience, which we call exhaustibility.
   \begin{equation}
     \left( \Pi {(x : A)} , \mathbf{Dec}(P(x)) \right) \rightarrow \mathbf{Dec} \left( \Pi {(x : A)} , P(x) \right)
   \end{equation}
-  \ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{exhaustible}
 \end{rm-definition}
+
+All of the finiteness predicates we have seen justify exhaustibility.
+We will only prove it once, then, for the weakest:
+\begin{rm-theorem}
+  Kuratowski-finite types are exhaustible.
+\end{rm-theorem}
+\begin{proof}
+  \todo[inline]{Proof}
+\end{proof}
+
 Omniscience is stronger than exhaustibility, as we can derive the latter from
 the former:
 \begin{rm-lemma} \label{omniscient-is-exhaustible}
   Any omniscient type is exhaustible.
 \end{rm-lemma}
 \begin{proof}
-  \todo[inline]{Proof}
-  \ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{weaken}
-  \todo[noline]{stability in appendix}
+  For decidable propositions, we know the following:
+  \begin{equation} \label{lem-conversion}
+    \Pi (x : A) , P(x) \leftrightarrow \neg \Sigma (x : A) , \neg P(x) 
+  \end{equation}
+  To derive exhaustibility from omniscience, then, we run the predicate in its
+  negated form, and then subsequently negate the result.
+  The resulting decision over \(\neg \Sigma(x : A) , \neg P(x)\) can be
+  converted into \(\Pi (x : A) , P(x)\).
 \end{proof}
-We cannot derive, however, that any exhaustible type is omniscient: to do so
-would require us to choose a representative from an arbitrary type, which is not
-possible constructively.
-
-\subsubsection{Split Enumerability}
-We now show that split enumerable types are omniscient.
+We cannot derive, however, that any exhaustible type is omniscient, as we do not
+have the inverse of equation~\ref{lem-conversion}:
+\begin{equation} \label{choice-conversion}
+  \Sigma (x : A) , P(x) \leftrightarrow \neg \Pi (x : A) , \neg P(x)
+\end{equation}
+Such an equation would allow us to pick a representative element from any type,
+which is therefore non-constructive.
+In a sense, equation~\ref{lem-conversion} requires a form of LEM on the
+proposition (i.e. requires it to be decidable), whereas
+equation~\ref{choice-conversion} requires a form of choice.
+Those finiteness predicates which are ordered do in fact give us this form of
+choice, so the conversion is valid.
+As such, all of the ordered finiteness predicates imply omniscience.
+Again, we will prove it only for the weakest.
 \begin{rm-theorem}
-  Any split enumerable type is omniscient.
-\end{rm-theorem}
-\begin{proof}
-  Let \(E_A\) be a proof of split enumerability on a type \(A\), and \(P\) be a
-  decidable predicate on the type \(A\).
-  First, we lift the decidable predicate onto one on lists, using the
-  \(\Diamond\) type described earlier.
-  Then, we run the predicate on the support list of \(E_A\).
-
-  In the case that it is true for any member of the list, we return that element
-  along with its proof.
-
-  If the predicate fails for every member of the list, we say that the whole
-  test has failed.
-  To support this conclusion, we reason that if a predicate is false for every
-  item in a list \(\mathit{xs}\), and some element \(x\) is in that list, then
-  the predicate must be false for that item.
-
-  In Agda:
-  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{exists-quant}
-\end{proof}
-\begin{rm-theorem}
-  Any manifestly enumerable type is omniscient.
+  Manifest enumerable types are omniscient.
 \end{rm-theorem}
 \begin{proof}
   \todo[inline]{Proof}
 \end{proof}
+Finally, we do have a form of omniscience for prop-valued predicates, as they do
+not care about the chosen representative.
 \begin{rm-theorem}
-  Any cardinal finite type is exhaustible.
+  Kuratowski finite types are omniscient about prop-valued predicates.
 \end{rm-theorem}
 \begin{proof}
   \todo[inline]{Proof}
 \end{proof}
-\begin{rm-theorem}
-  Cardinally finite types are omniscient about prop-valued predicates.
-\end{rm-theorem}
-\begin{rm-theorem}
-  Kuratowski finite types have the same omniscience properties as cardinal
-  finite types.
-\end{rm-theorem}
-
 \subsection{Synthesising Pattern-Matching Proofs}
 In particular, they can automate large proofs by analysing every possible case.
 In \cite{firsovDependentlyTypedProgramming2015}, the \(\AgdaDatatype{Pauli}\)
@@ -1085,42 +986,17 @@ As \(\AgdaDatatype{Pauli}\) has 4 constructors, \(n\)-ary functions on
 A proof of decidable equality is one such function: it can be seen fully
 worked-through in the appendix.
 
-The alternative is to derive the things we need from \(\Enum\) somehow.
+The alternative is to derive the things we need from \(\Enum!\) somehow.
 First, then, we need an instance for \(\AgdaDatatype{Pauli}\):
 \ExecuteMetaData[agda/Data/Pauli.tex]{inst}
-From here we can already derive decidable equality:
-\ExecuteMetaData[agda/Data/Pauli.tex]{good-eq}
+From here we can already derive decidable equality, a function which requires 16
+cases if implemented manually.
 
-Next, we want to prove some things about the group operation itself:
-\ExecuteMetaData[agda/Data/Pauli.tex]{group-op}
-The first property is the following:
-\ExecuteMetaData[agda/Data/Pauli.tex]{cancel}
-Tough the proof is simple enough to write by hand, it's a good place to start
-for demonstrating the automation technique.
-
-First, we will witness the fact that if a property is true for every element in
-a finite type's support list, it is true for every element in the type (and vice
-versa).
-\ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{all-comb}
-We can also lift a decidable property on elements of the type to a decidable
-property on \emph{lists} of elements of the type.
-\ExecuteMetaData[agda/Data/List/Relation/Unary.tex]{dec-all}
-Combining these, we can turn a decidable predicate on a set into a decidable
-\emph{universal property} on the set.
-\ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{lift-forall}
-
-To use this as a proof, we can run the decision procedure at type checking,
-using the following:
+For proof search, the procedure is a well-known one in Agda
+\cite{devrieseBrightSideType2011}: we ask for the result of a decision procedure
+as an \emph{instance argument}, which will demand computation during
+typechecking.
 \ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{auto}
-This function uses the \(\AgdaDatatype{True}\) type, defined like so:
-\ExecuteMetaData[agda/Relation/Nullary.tex]{true-def}
-For a decision \(d\), \(\AgdaDatatype{True}\; d\) will resolve to \(\top\) when
-the decision is \(\AgdaInductiveConstructor{yes}\) (i.e. when the proposition is
-true), or \(\bot\) if the decision is \(\AgdaInductiveConstructor{no}\).
-Then, we require an instance of the resulting type to be in scope: this
-requirement can only be satisfied for \(\top\), thereby providing a proof that
-the decision was indeed \(\AgdaInductiveConstructor{yes}\).
-
 And finally we can prove the property we wanted to on \(\AgdaDatatype{Pauli}\)
 like so:
 \ExecuteMetaData[agda/Data/Pauli.tex]{noninst-prf} 
@@ -1142,37 +1018,17 @@ following more helpful error message:
 \end{displayquote}
 \subsection{Instances}
 Running decision procedures during typechecking isn't the only use of instances:
-we can also use them similarly to how typeclasses are used in Haskell, to
-automate simple derivation procedures.
-For instance, in Haskell we can define a class for generating textual
-representations of data:
-\ExecuteMetaData[haskell/Introduction.tex]{show-cls}
-With instances that look like this:
-\ExecuteMetaData[haskell/Introduction.tex]{show-inst}
-We can have instances \emph{depend} on other instances, like the following:
-\ExecuteMetaData[haskell/Introduction.tex]{show-deriv}
-In this way, it gets rid of a tremendous about of boilerplate for more complex
-types, automatically picking out the correct instance when it can.
-
-In Agda, as in Haskell, the problem of overlapping instances often presents
-itself when more complex typeclass-based machinery is used.
-While there are ways to deal with overlapping instances, it is usually better to
-avoid them altogether, which is precisely what we do in our approach.
-We provide instances for the semiring-based combinators we defined in
-\todo[noline]{reference here}
-, and require the user to provide an instance for their own type.
-We don't, for example, provide an instance that itself searches for surjections
-from other instances: this instance is not uniquely determined.
-
-After all of that, the change to our \(\AgdaFunction{∀↯}\) is simple: we just
-change the first parameter from explicit to an instance.
+we will also use them to automate the finding of a proof of finiteness for a
+given type.
+The change to our \(\AgdaFunction{∀↯}\) is simple: we just change the first
+parameter from explicit to an instance.
 \ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{auto-inst}
 
 The change to the \(\AgdaDatatype{Pauli}\) proof of cancellation isn't
 groundbreaking at first:
 \ExecuteMetaData[agda/Data/Pauli.tex]{cancel-auto}
-But the real benefit is now we can automate proofs over \emph{tuples}, allowing
-us to prove, for instance, commutativity.
+The real benefit is that we have provided instances for things like tuples,
+meaning we can now prove \(n\)-ary properties.
 \ExecuteMetaData[agda/Data/Pauli.tex]{comm-uncurried}
 \subsection{Generic Currying and Uncurrying}
 While we have arguably removed the bulk of the boilerplate from the automated
@@ -1192,40 +1048,10 @@ What we provide here differs from that work in the following ways:
     types, a feature not available in standard Agda.
   \item We deal with implicit and instance arguments generically.
 \end{itemize}
-A full explanation of our implementation is beyond the scope of this work, but
-we will mention the key parts here.
-First, we define a function arrow generic over the application method:
-\ExecuteMetaData[agda/Data/Product/N-ary.tex]{fun-arr}
-Then, we prove that it is isomorphic to the normal function arrow:
-\ExecuteMetaData[agda/Data/Product/N-ary.tex]{fun-iso}
-This step will allow us to write the curry-uncurry proofs once, and then extend
-them to the three different argument forms without difficulty.
-
-We do the same with dependent function types:
-\ExecuteMetaData[agda/Data/Product/N-ary.tex]{pi-iso}
-
-Next, we need to make our machinery for multiple arguments.
-Here we will define a generic tuple, indexed by some \(\Nat\).
-As observed in \cite{allaisGenericLevelPolymorphic2019}, it's important to
-\emph{not} implement this as an inductively defined vector, e.g.
-\ExecuteMetaData[agda/Data/Vec.tex]{def}
-As this will not give us the correct \(\eta\)-equality we need for unification.
-\todo[noline]{Stick reference to iterated Vec definition}
-Once we have a unification-friendly vector type, we can use it to implement our
-generic (and level-polymorphic) tuples.
-\ExecuteMetaData[agda/Data/Product/N-ary.tex]{tuple}
-We decided against \(\top\)-terminated tuples, as the actual contents of the
-tuple type are exposed in the interface.
-
-Finally, we can prove isomorphisms between the curried and uncurried versions of
-functions:
-\ExecuteMetaData[agda/Data/Product/N-ary.tex]{curry-n-iso}
-And dependent functions:
-\ExecuteMetaData[agda/Data/Product/N-ary.tex]{curry-n-pi-iso}
-With these combinators, we can implement the search functions in an
-arity-generic way:
+A full explanation of our implementation is beyond the scope of this work, so we
+only present the finished interface.
 \ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{all-nary}
-And automate away our proofs:
+Which is used like so:
 \ExecuteMetaData[agda/Data/Pauli.tex]{prf-curried}
 \bibliographystyle{splncs04}
 \bibliography{bibliography.bib}
