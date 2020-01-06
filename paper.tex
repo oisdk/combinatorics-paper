@@ -155,15 +155,19 @@ We will at this point take a moment to define some of the types we used to
 define \(\mathcal{E}!\).
 Lists, and membership thereof, are defined using \emph{containers}.
 \begin{rm-definition}[Container] \label{container-def}
-  A container \cite{abbottContainersConstructingStrictly2005} is a dependent
-  pair of shapes, and positions indexed by those shapes. 
+  A container \cite{abbottContainersConstructingStrictly2005} is a pair
+  \(S \triangleright P\) where \(S\) is a type, the elements of which are called
+  the \emph{shapes} of the container, and \(P\) is a type family on \(S\), where
+  the elements of \(P(s)\) are called the \emph{positions} of a container.
   \begin{equation}
-    \mathbf{Container} = \sum_{(\text{shape} : \text{Type})} , \text{shape} \rightarrow \text{Type}
+    \begin{aligned}
+      S : \text{Type}, P : S \rightarrow \text{Type} \\
+      \mathbf{Container} = S \triangleright P
+    \end{aligned}
   \end{equation}
-  We ``interpret'' a container into a pair of a specific shape, and a function
-  which goes from positions to contents.
+  We ``interpret'' a container into a functor defined like so:
   \begin{equation}
-    \llbracket S , P \rrbracket = \prod_{(X : \text{Type})} , \sum_{(s : S)} , \left( P(s) \rightarrow X \right)
+    \llbracket S \triangleright P \rrbracket = \prod_{(X : \text{Type})} , \sum_{(s : S)} , \left( P(s) \rightarrow X \right)
   \end{equation}
   Membership of a container can be defined like so:
   \begin{equation}
@@ -242,21 +246,22 @@ in order to show closure under exponentials (function arrows), we will need an
 equivalence with \(\mathbf{Fin}\), which will be provided in
 section~\ref{manifest-bishop}.
 \begin{rm-lemma}
-  \(\bot\) is split enumerable.
+  \(\bot\), \(\top\), and \(\mathbf{Bool}\) are all split enumerable.
 \end{rm-lemma}
 \begin{proof}
-  The support list for \(\bot\) is the empty list.
-  The cover proof is present via the principle of explosion.
+  These non-recursive types have similar, simple proofs.
+  For each we first provide the support list: they are \([]\), \([\text{tt}]\),
+  and \([\text{false}, \text{true}]\) respectively.
+  The cover proof should return an index which points at the given element: for
+  \(\bot\) this function is present via the principle of explosion, for \(\top\)
+  we always return a \(0\), and for \(\mathbf{Bool}\) we return a \(0\) for
+  \(\text{false}\), and a \(1\) for \(\text{true}\).
+  \begin{multicols}{3}
+    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool}
+    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{unit}
+    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{empty}
+  \end{multicols}
 \end{proof}
-\begin{rm-lemma}
-  \(\top\) is split enumerable.
-\end{rm-lemma}
-\begin{proof}
-  The support list for \(\top\) is the singleton list containing \(\text{tt}\).
-  The cover proof is a constant function which returns an index into the first
-  item in the list.
-\end{proof}
-Both of those cases were relatively simple.
 Next, we will look into how to combine proofs of split enumerability.
 \begin{rm-theorem}
   Split-enumerability is closed under \(\sum\).
@@ -331,9 +336,8 @@ form of an \emph{equivalence} with \(\mathbf{Fin}\).
   maps \cite{hottbook}.
   Because of the parallels between contractible maps and split surjections,
   the proof proceeds much the same as \ref{split-enum-surj}.
-  In other words, we can define a container-based version of bishop finiteness
-  which is a reassociation of a contractible map, and then show that the
-  container-based predicate is equivalent to the list-based.
+  In other words, the definition of Bishop finiteness is itself a reassociation
+  of a contractible map.
 \end{proof}
 \subsection{Relationship to Split Enumerability}
 We now show that manifest Bishop finiteness has equal strength to split
@@ -412,11 +416,12 @@ We remedy that here.
     \left( \prod_{(x : \mathbf{Fin}(n))} , \mathcal{E}!(A(x)) \right) \rightarrow \mathcal{E}!\left( \prod_{(x : \mathbf{Fin}(n))} , A(x) \right)
   \end{equation}
   Our strategy to accomplish this will be to consider functions from
-  \(\mathbf{Fin}(n)\) as \(n\)-tuples over some type family \(T\).
+  \(\mathbf{Fin}(n)\) as \(n\)-tuples over some type family \(T : \mathbb{N}
+  \rightarrow \text{Type}\).
   \begin{equation}
     \begin{aligned}
       \mathbf{Tuple}(T, 0)   &= \top \\
-      \mathbf{Tuple}(T, n+1) &= A(0) \times \mathbf{Tuple}(T \circ \text{suc}, n)
+      \mathbf{Tuple}(T, n+1) &= T(0) \times \mathbf{Tuple}(T \circ \text{suc}, n)
     \end{aligned}
   \end{equation}
   This type is manifestly Bishop finite, as it is constructed only from products
@@ -433,13 +438,40 @@ We remedy that here.
   \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{pi-clos}
 \end{proof}
 \section{Manifest Enumerability} \label{manifest-enumerability}
-As we said in section~\ref{split-enumerable}, we will now retrieve a distinction
-between enumerability and manifest Bishop finiteness.
-We do so by propositionally truncating the membership proof:
+A defining feature of split enumerability and Bishop finiteness is decidability:
+both predicates imply a decidable equality function on the underlying type.
+To find a predicate for finiteness which doesn't imply this, and therefore
+works with types other than just sets, we \emph{truncate} the membership proof.
 \begin{rm-definition}[Manifest Enumerability]
   \begin{equation}
     \mathcal{E}(A) = \sum_{(\mathit{xs} : \mathbf{List}(A))} , \prod_{(x : A)} , \lVert x \in \mathit{xs} \rVert
   \end{equation}
+\end{rm-definition}
+\subsection{Propositional Truncation}
+\begin{rm-definition}[Propositional Truncation]
+  The type \(\lVert A \rVert\) on some type \(A\) is a propositionally truncated
+  proof of \(A\).
+  In other words, it is a proof that some \(A\) exists, but it does not tell you
+  \emph{which} \(A\).
+
+  It is defined as a Higher Inductive Type:
+  \begin{equation}
+    \begin{aligned}
+      \lVert A \rVert &= \\
+        &| \; \lvert \cdot \rvert : A \rightarrow \lVert A \rVert ; \\
+        &| \; \text{squash} : \prod_{(x, y : \lVert A \rVert)} , x \equiv y  ; \\
+    \end{aligned}
+  \end{equation}
+
+  To eliminate from \(\lVert A \rVert\) we need to prove that we don't ``care''
+  about the specific choice of \(A\).
+  In other words, given a function \(f : A \rightarrow B\), to construct a
+  function \(\lVert A \rVert \rightarrow B\), \(f\) needs to satisfy the following:
+  \begin{equation}
+    \prod_{(x , y : A)} , f(x) \equiv f(y)
+  \end{equation}
+  Formally speaking, \(f\) needs to be ``coherently constant''
+  \cite{krausGeneralUniversalProperty2015}.
 \end{rm-definition}
 \subsection{Higher Homotopy Levels}
 By hiding the position, we have essentially removed the ``decidable'' component
