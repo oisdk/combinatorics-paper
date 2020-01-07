@@ -22,10 +22,6 @@
   full functions given desired properties.
 \end{abstract}
 \section{Introduction}
-In this work, we will explore finite types in Cubical Type Theory
-\cite{cohenCubicalTypeTheory2016}, and expose their relationship to infinite
-types, species, and demonstrate their practical uses for proofs in dependently
-typed programming languages.
 \subsection{Strong Finiteness Predicates}
 We will first explore the ``strong'' notions of finiteness (i.e. those at least
 as strong as Kuratowski finiteness \cite{kuratowskiNotionEnsembleFini1920}),
@@ -33,9 +29,8 @@ with a special focus on cardinal finiteness (section~\ref{cardinal}), and
 manifest enumerability (section~\ref{manifest-enumerability}), which is new, to
 our knowledge.
 
-\input{figures/finite-classification}
 Figure~\ref{finite-classification} organises the predicates according to
-their ``strength''; i.e. how much information they provide about a conforming
+their strength; i.e. how much information they provide about a conforming
 type.
 For instance, a proof that some type \(A\) is manifestly Bishop finite (the
 strongest of the notions, explored in section~\ref{manifest-bishop}) also tells
@@ -44,6 +39,8 @@ on the type.
 A type that is Kuratowski finite (section~\ref{kuratowski}) has no such extra
 features: indeed, we will see examples of Kuratowski finite types which are not
 even sets, never mind discrete ones.
+
+\input{figures/finite-classification}
 
 We will go through each of the predicates, proving how to weaken each (i.e. we
 will provide a proof that every cardinally finite type is Kuratowski finite),
@@ -63,11 +60,6 @@ For each predicate, we will also prove its closure over sums and products in
 both dependent and non-dependent forms, if such a closure exists.
 This will culminate in our main result for this section: the formal proof that
 decidable Kuratowski finite sets form a topos.
-More specifically, we show that cardinal finite sets form a topos, that
-decidable Kuratowski finite sets are equivalent in strength to cardinal finite
-sets, and carry the proof over.
-This result relies on proofs on each of the other finiteness predicates.
-
 \subsection{Infinite Types}
 In section~\ref{infinite-cardinalities}, we will extend our study of finite
 types to infinite but countable types.
@@ -106,19 +98,14 @@ work.
   Where \(\text{fiber}\) is from \cite[definition 4.2.4]{hottbook}.
 \end{rm-definition}
 \begin{rm-definition}[Lists]
-  \begin{equation}
-    \mathbf{List} = \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket
+  \begin{equation}%
+    \mathbf{List} = \llbracket \mathbb{N} \triangleright \mathbf{Fin} \rrbracket
   \end{equation}
 \end{rm-definition}
 \begin{rm-definition}[\mathbf{Fin}]
-  \(\mathbf{Fin}\)(n) is the type of natural numbers smaller than \(n\).
-  It is defined inductively, as follows:
-  \begin{equation}
-    \begin{aligned}
-      \mathbf{Fin}(0) &= \bot \\
-      \mathbf{Fin}(n + 1) &= \top + \mathbf{Fin}(n)
-    \end{aligned}
-  \end{equation}
+  \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\).
+  We define it the standard way, where \(\mathbf{Fin}(0) = \bot\) and
+  \(\mathbf{Fin}(n + 1) &= \top + \mathbf{Fin}(n)\).
 \end{rm-definition}
 
 Internally, in our formalisation, we actually use the standard
@@ -152,8 +139,6 @@ Finally, we can define formally split enumerability.
   Where the definitions of surjective are taken from \cite[definition
   4.6.1]{hottbook}.
 \end{rm-definition}
-An equivalent way to define ``finiteness'' is via a split surjection from a
-finite prefix of the natural numbers.
 \begin{rm-theorem} \label{split-enum-surj}
   Split enumerability is equivalent to a split surjection from a finite prefix
   of the natural numbers.
@@ -168,7 +153,7 @@ finite prefix of the natural numbers.
   To be clear: in Agda, the proof could simply be \(\AgdaFunction{reassoc}\); we
   have written out the extra lines for clarity alone.
 \end{proof}
-\subsection{Decidable Equality}
+
 \begin{rm-lemma} \label{split-enum-discrete}
   Any split enumerable type has decidable equality (is discrete).
 \end{rm-lemma}
@@ -187,7 +172,7 @@ the semiring operations, and dependent sums.
 In order to show closure under exponentials (function arrows), we will need an
 equivalence with \(\mathbf{Fin}\), which will be provided in
 section~\ref{manifest-bishop}.
-\begin{rm-lemma}
+\begin{rm-lemma} \label{split-enum-bool-top-bot}
   \(\mathbf{Bool}\), \(\top\), and \(\bot\) are all split enumerable.
 \end{rm-lemma}
 \begin{proof}
@@ -273,26 +258,15 @@ enumerability.
   Any split enumerable set is manifest Bishop finite.
 \end{rm-theorem}
 \begin{proof}
-  Let \(E\) be a proof of split enumerability for some set \(A\).
   From proposition~\ref{split-enum-discrete} we can derive decidable equality on
-  \(A\), and using this we can define a function \(\text{uniques}\) which filters
+  \(A\), and using this we can define a function (called \(\text{uniques}\)) which filters
   out duplicates from lists of \(A\)s.
-  \begin{equation}
-    \text{uniques} : \textbf{List}(A) \rightarrow \textbf{List}(A)
-  \end{equation}
   This gives us our support list.
-
-  It suffices now to prove the following:
+  To generate the cover proof it suffices now to prove the following:
   \begin{equation}
     \Pi {(x : A)} , \Pi {(\mathit{xs} : \textbf{List}(A))} , x \in \mathit{xs} \rightarrow x \inunique \text{uniques}(\mathit{xs})
   \end{equation}
-  And from that we can generate our cover proof.
 \end{proof}
-Note that while manifest Bishop finiteness and split enumerability are equivalent
-in ``strength'', the two types are not equivalent.
-For instance, for a type \(A\) with \(n\) inhabitants, there are infinitely many
-inhabitants of \(\mathcal{E}!(A)\), while there are only \(n!\) inhabitants of
-\(\mathcal{B}(A)\).
 \subsection{Closure}
 Proving equal strength of split enumerability and manifest Bishop finiteness
 allows us to carry all of the previous proofs of closure over to manifest Bishop
@@ -618,10 +592,7 @@ First, permutations.
   \begin{equation}
     \mathit{xs} \leftrightsquigarrow \mathit{ys} = \Pi {(x : A)} , x \in \mathit{xs} \iff x \in \mathit{ys}
   \end{equation}
-  Seen another way, a permutation is an isomorphism of cover proofs.
 \end{rm-definition}
-We also prove some of the identities you might expect with regards to
-permutations.
 \begin{rm-lemma}
   Insertion sort is invariant under permutations.
   \begin{equation}
@@ -726,17 +697,6 @@ order removed.
   The other direction is proven in \cite{fruminFiniteSetsHomotopy2018}, so we
   will not describe it here.
 \end{proof}
-Based on previous proofs, we can derive that if we add decidability to a
-Kuratowski finite type we retrieve cardinal finiteness.
-\begin{rm-lemma}
-  Any Kuratowski finite set with decidable equality is cardinally finite.
-\end{rm-lemma}
-\begin{proof}
-  We first convert to a propositionally truncated proof of manifest
-  enumerability.
-  From here, we can convert to manifest Bishop finiteness under the truncation
-  with our decidable equality proof.
-\end{proof}
 \subsection{Topos}
 At this point, we see that a ``decidable Kuratowski finite set'' is precisely
 equivalent to a cardinal finite set.
@@ -745,38 +705,28 @@ In particular, we see that decidable Kuratowski finite sets form a \emph{topos}.
 \todo[inline]{Fill in rest}
 \subsection{Closure}
 \begin{rm-theorem}
-  Kuratowski finite sets are closed under \(\Sigma\).
+  Kuratowski finite sets are closed under \(\times\) and \(+\).
 \end{rm-theorem}
 \begin{proof}
-  This follows from the \(\Sigma\) closure proof on manifestly enumerable types.
+  These follow from their lifted versions on manifestly enumerable types.
 \end{proof}
 \section{Infinite Cardinalities} \label{infinite-cardinalities}
-While the previous section purported to be about finite sets, we can now see
-that it was really only studying surjections and isomorphisms of different
-flavours between types and \(\mathbf{Fin}\).
-The natural next question which arises, then, is if we can extend that work to
-surjections and isomorphisms with \(\mathbb{N}\).
-In more standard language, what we're referring to here is of course
-countable infinity and related concepts.
-However, as with finite types, the ``countably infinite'' types have more
-varieties in constructive mathematics than their classical counterparts.
+In the previous sections we saw different flavours of finiteness which were
+really just different flavours of relations to \(\mathbf{Fin}\).
+In this section we will see that we can construct a similar classification of
+relations to \(\mathbb{N}\), in the form of the countably infinite types.
 \subsection{Split Countable Types}
 Our first foray into the world of countable types will be a straightforward
 analogue to the split enumerable types.
 We need change only one element: instead of a support \emph{list}, we instead
-have a support \emph{stream}, which is its infinite, coinductive counterpart.
+have a support \emph{stream}, which is its infinite.
 \begin{rm-definition}[Stream]
-  We will work with two isomorphic definitions of streams.
-  The first is the following:
+  As with lists, it is cleaner, theory-wise, to define streams as a container.
   \begin{equation}
-    \mathbf{Stream}(A) = \mathbb{N} \rightarrow A
+    \mathbf{Stream}(A) = \llbracket \top \triangleright \text{const} (\mathbb{N}) \rrbracket(A) \simeq \mathbb{N} \rightarrow A
   \end{equation}
   Conceptually, a stream is like a list without an end.
-  Of course, such a type can not be defined in the same way as a list: it would
-  be impossible to construct a value, as inductive types do not admit
-  infinitely-sized inhabitants.
 \end{rm-definition}
-We can now define the split countable types.
 \begin{rm-definition}[Split Countability]
   \begin{equation}
     \mathcal{E}!(A) = \Sigma {(\mathit{xs} : \mathbf{Stream}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
@@ -862,10 +812,6 @@ As we can quotient out the position information with finite types, so can we wit
 countable types.
 \todo[inline]{fill in rest here}
 \section{Practical Uses} \label{practical}
-The theory of finite types in constructive mathematics, and in HoTT in
-particular, is rich and interesting, as we hope we have demonstrated thus far.
-As well as being theoretically interesting, however, the proofs and combinators
-we have defined here are \emph{practically} useful.
 \subsection{Omniscience}
 In this section we are interested in restricted forms of the limited principle
 of omniscience \cite{myhillErrettBishopFoundations1972}.
@@ -948,23 +894,13 @@ In particular, they can automate large proofs by analysing every possible case.
 In \cite{firsovDependentlyTypedProgramming2015}, the \(\AgdaDatatype{Pauli}\)
 group is used as an example.
 \ExecuteMetaData[agda/Data/Pauli.tex]{def}
-For this type, there are several practical tasks we hope to achieve with the
-help of our finiteness combinators:
-\begin{itemize}
-  \item Define decidable equality on the type
-  \item Define the group operation on the type
-  \item Prove properties about the group operation
-\end{itemize}
-Unfortunately, the simple pattern-matching way to do many of these tasks is
-prohibitively verbose.
 As \(\AgdaDatatype{Pauli}\) has 4 constructors, \(n\)-ary functions on
-\(\AgdaDatatype{Pauli}\) may require up to \(4^n\) cases.
-A proof of decidable equality is one such function: it can be seen fully
-worked-through in the appendix.
+\(\AgdaDatatype{Pauli}\) may require up to \(4^n\) cases, making even simple
+proofs prohibitively verbose.
 
-The alternative is to derive the things we need from \(\Enum!\) somehow.
-First, then, we need an instance for \(\AgdaDatatype{Pauli}\):
-\ExecuteMetaData[agda/Data/Pauli.tex]{inst}
+The alternative is to derive the things we need from \(\mathcal{E}!\) somehow.
+As \(\AgdaDatatype{Pauli}\) is a simple finite type, the instance can be defined
+in a similar way to those in lemma~\ref{split-enum-bool-top-bot}.
 From here we can already derive decidable equality, a function which requires 16
 cases if implemented manually.
 
@@ -972,63 +908,42 @@ For proof search, the procedure is a well-known one in Agda
 \cite{devrieseBrightSideType2011}: we ask for the result of a decision procedure
 as an \emph{instance argument}, which will demand computation during
 typechecking.
-\ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{auto}
-And finally we can prove the property we wanted to on \(\AgdaDatatype{Pauli}\)
-like so:
+As an example, we can check that the group operation on \(\AgdaDatatype{Pauli}\)
+is idempotent like so:
 \ExecuteMetaData[agda/Data/Pauli.tex]{noninst-prf} 
 
-As a quick aside, when the property is \emph{not} true, for instance:
-\ExecuteMetaData[agda/Data/Pauli.tex]{contra}
-Agda will fail by not finding an instance of \(\bot\).
-The error message specifically is:
-\begin{displayquote}
-  \verb+No instance of type ⊥ was found in scope.+
-\end{displayquote}
-We can actually display a counterexample, by defining a custom empty type
-parameterised by the counterexample itself.
-\ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{counterexample-def}
+As a quick aside, when the property is \emph{not} true (for instance \(\forall x
+\rightarrow x \cdot x \equiv x\)), Agda will fail by not finding an instance of
+\(\bot\).
+The error message specifically is
+\verb+No instance of type ⊥ was found in scope+, which isn't very helpful.
+We can do a little better by displaying the particular element on which the
+property failed, by defining a custom empty type parameterised by the
+counterexample itself.
 Combined with some other changes to the combinators, this will give the
 following more helpful error message:
-\begin{displayquote}
-  \verb+No instance of type Counterexample X was found in scope.+
-\end{displayquote}
-\subsection{Instances}
-Running decision procedures during typechecking isn't the only use of instances:
-we will also use them to automate the finding of a proof of finiteness for a
-given type.
-The change to our \(\AgdaFunction{∀↯}\) is simple: we just change the first
-parameter from explicit to an instance.
-\ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{auto-inst}
+\verb+No instance of type Counterexample X was found in scope+.
+\subsection{Multiple Arguments}
+The automation machinery above only deals with single-argument predicates.
+This is not a problem, as we know that we can work with multiple arguments by
+currying and uncurrying, since all of the finiteness predicates are closed under
+\(\times\).
+To automate away the curry/uncurry noise we will use instance search, building
+on \cite{allaisGenericLevelPolymorphic2019} to develop a small interface to
+generic \(n\)-ary functions and properties.
+Our generic representation can handle dependent \(\Sigma\) and \(\prod\)
+types (rather than their non-dependent counterparts, \(\times\) and
+\(\rightarrow\)).
+This extension was necessary for our use case: it is mentioned in the paper
+as the obvious next step. 
+We also implement the curry-uncurry combinators as (verified) isomorphisms.
 
-The change to the \(\AgdaDatatype{Pauli}\) proof of cancellation isn't
-groundbreaking at first:
-\ExecuteMetaData[agda/Data/Pauli.tex]{cancel-auto}
-The real benefit is that we have provided instances for things like tuples,
-meaning we can now prove \(n\)-ary properties.
-\ExecuteMetaData[agda/Data/Pauli.tex]{comm-uncurried}
-\subsection{Generic Currying and Uncurrying}
-While we have arguably removed the bulk of the boilerplate from the automated
-proofs, there is still the case of the ugly noise of currying and uncurrying.
-In this section, we take inspiration from
-\cite{allaisGenericLevelPolymorphic2019} to develop a small interface to generic
-\(n\)-ary functions and properties.
-What we provide here differs from that work in the following ways:
-\begin{itemize}
-  \item Our generic representation can handle dependent \(\Sigma\) and \(\prod\)
-    types (rather than their non-dependent counterparts, \(\times\) and
-    \(\rightarrow\)).
-    This extension was necessary for our use case: it is mentioned in the paper
-    as the obvious next step. 
-  \item We implement the curry-uncurry combinators as (verified) isomorphisms.
-    Since we are in a cubical setting, this gives us equivalences between the
-    types, a feature not available in standard Agda.
-  \item We deal with implicit and instance arguments generically.
-\end{itemize}
 A full explanation of our implementation is beyond the scope of this work, so we
-only present the finished interface.
-\ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{all-nary}
-Which is used like so:
+only present the finished interface, which is used like so:
 \ExecuteMetaData[agda/Data/Pauli.tex]{prf-curried}
+
+\todo[inline]{Synthesise functions}
+\todo[inline]{Partial search over infinite types}
 \bibliographystyle{splncs04}
 \bibliography{bibliography.bib}
 \end{document}
