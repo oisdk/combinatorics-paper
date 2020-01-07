@@ -26,7 +26,7 @@ In this work, we will explore finite types in Cubical Type Theory
 \cite{cohenCubicalTypeTheory2016}, and expose their relationship to infinite
 types, species, and demonstrate their practical uses for proofs in dependently
 typed programming languages.
-\subsubsection{Strong Finiteness Predicates}
+\subsection{Strong Finiteness Predicates}
 We will first explore the ``strong'' notions of finiteness (i.e. those at least
 as strong as Kuratowski finiteness \cite{kuratowskiNotionEnsembleFini1920}),
 with a special focus on cardinal finiteness (section~\ref{cardinal}), and
@@ -68,13 +68,13 @@ decidable Kuratowski finite sets are equivalent in strength to cardinal finite
 sets, and carry the proof over.
 This result relies on proofs on each of the other finiteness predicates.
 
-\subsubsection{Infinite Types}
+\subsection{Infinite Types}
 In section~\ref{infinite-cardinalities}, we will extend our study of finite
 types to infinite but countable types.
 We will see that the classification of finiteness predicates mirrors that of
 their countable counterparts, and we will prove closure under the Kleene star.
 
-\subsubsection{Practical Uses}
+\subsection{Practical Uses}
 Finally, in section~\ref{practical} we will demonstrate some practical uses of
 the finiteness proofs in Cubical Agda.
 We will show how to use well-known techniques
@@ -198,9 +198,9 @@ section~\ref{manifest-bishop}.
     \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{empty}
   \end{multicols}
 \end{proof}
-\begin{rm-theorem}
+\begin{rm-theorem} \label{split-enum-sigma}
   Split-enumerability is closed under \(\Sigma\).
-  \begin{equation}
+  \begin{equation} \label{split-enum-sigma-clos-sig}
     \frac{
       \mathcal{E}!(A) \; \; \; \Pi (x : A) , \mathcal{E}!(U(x))
     }{
@@ -446,16 +446,17 @@ enumerability's relation to \emph{split} surjectivity.
   \(\bot\) is a mere proposition, thus proving the goal via explosion.
 \end{proof}
 \subsection{Closure}
+Since we don't have an equivalence with \(\mathbf{Fin}\), we don't get closure
+under \(\Pi\).
 \begin{rm-lemma}
   Manifest enumerability is closed under \(\Sigma\).
 \end{rm-lemma}
 \begin{proof}
-  For these three closures, the proofs on split enumerability consisted of a
-  list manipulation followed by a proof that membership was preserved by the
-  list manipulation.
-  Because we separate these two concerns, the proofs carry over onto manifest
-  enumerability: the support list manipulation stays the same, and the
-  cover proofs are performed ``under'' the truncation.
+  This closure proof is almost the same as theorem~\ref{split-enum-sigma}.
+  The manipulation of the support lists can be carried over as-is; but the type
+  of the cover proof has changed, so it will need to be updated.
+  As it happens, the translation is straightforward: we effectively write the
+  ``monadic'' version of the old function.
 \end{proof}
 \section{Cardinal Finiteness} \label{cardinal}
 For manifest enumerability, we removed the need for decidable equality: in these
@@ -466,16 +467,46 @@ underlying type.
   propositionally-truncated proof of bishop finiteness.
   \begin{equation}
     \mathcal{C}(A) = \lVert \mathcal{B}(A) \rVert
-  \end{equation}
-\end{rm-definition}
+  \end{equation}%
+\end{rm-definition}%
 \subsection{Closure}
+The closure properties of cardinal finiteness are effectively the non-dependent
+versions of manifest Bishop finiteness.
+To see why, consider equation~\ref{split-enum-sigma-clos-sig}.
+We can ``lift'' the proof (as a binary function) under a propositional
+truncation, giving us equation~\ref{sigma-proof-lifted}, but that doesn't give us
+the desired closure proof (equation~\ref{sigma-proof-desired}).
+\begin{multicols}{2}
+  \noindent
+  \begin{equation} \label{sigma-proof-lifted}
+    \frac{
+      \lVert \mathcal{B}(A) \rVert \; \; \; \lVert \Pi (x : A) , \mathcal{B}(U(x)) \rVert
+    }{
+      \lVert \mathcal{B}(\Sigma(x : A) , U(x)) \rVert
+    }
+  \end{equation}
+  \begin{equation} \label{sigma-proof-desired}
+    \frac{
+      \lVert \mathcal{B}(A) \rVert \; \; \; \Pi (x : A) , \lVert \mathcal{B}(U(x))  \rVert
+    }{
+      \lVert \mathcal{B}(\Sigma(x : A) , U(x)) \rVert
+    }
+  \end{equation}
+\end{multicols}%
+To remedy the mismatch we would need a function of the type:
+\begin{equation}
+  \left( \Pi(x : A) , \lVert \mathcal{B}(U(x)) \rVert \right) \rightarrow
+  \lVert \Pi(x : A) , \mathcal{B}(U(x)) \rVert
+\end{equation}
+Unfortunately, this equation in particular is a form of the axiom of choice
+\cite[equation 3.8.3]{hottbook}.
+This leaves us with closure under only the non-dependent operations.
 \begin{rm-lemma}
-  Cardinal finiteness is closed under \(\Sigma\) and \(\Pi\).
+  Cardinal finiteness is closed under \(\times\), \(+\), and \(\rightarrow\).
 \end{rm-lemma}
 \begin{proof}
-  All closure functions can be lifted under propositional truncation.
-  Therefore, cardinal finiteness has the same closure properties as manifest
-  Bishop finiteness.
+  All of these closure proofs can be lifted directly from their corresponding
+  proofs on manifest Bishop finiteness.
 \end{proof}
 \subsection{Decidable Equality}
 \begin{rm-theorem} \label{cardinal-finite-discrete}
