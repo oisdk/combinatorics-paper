@@ -1,5 +1,5 @@
 \input{preamble}
-\title{Finiteness, Cardinality, and Combinatorics in Homotopy Type Theory}
+\title{Finiteness and Cardinality in Homotopy Type Theory}
 \author{Donnacha Oisín Kidney}
 \authorrunning{D. O. Kidney}
 \institute{University College Cork \and
@@ -8,17 +8,12 @@
 \maketitle
 \begin{abstract}
   We explore five notions of finiteness in Homotopy Type Theory \cite{hottbook}.
-  We prove closure properties about all of these notions, culminating in a proof
-  that decidable Kuratowski-finite sets form a topos.
+  We will classify these notions, and prove their closure properties,
+  culminating in a proof that decidable Kuratowski-finite sets
+  \cite{kuratowskiNotionEnsembleFini1920} form a topos.
 
-  We extend the definitions to include infinite types, developing a similar
-  classification of countable types.
-
-  We use the definition of finiteness to formalise \emph{species}, in much
-  the same way as in \cite{yorgeyCombinatorialSpeciesLabelled2014}.
-  A clear duality with containers
-  \cite{abbottContainersConstructingStrictly2005} falls out naturally from our
-  definition.
+  We then develop a parallel classification for the countably infinite types, as
+  well as a proof of the countability of \(A^\star\) for a countable type \(A\).
 
   We formalise our work in Cubical Agda
   \cite{vezzosiCubicalAgdaDependently2019}, and we implement a library for proof
@@ -55,6 +50,8 @@ will provide a proof that every cardinally finite type is Kuratowski finite),
 and how to strengthen them, given the required property.
 In terms of figure~\ref{finite-classification}, this amounts to providing proofs
 for each arrow.
+Our main proof in this regard is that we can derive manifest Bishop finiteness
+from Kuratowski finiteness plus a total order.
 
 We will---through the use of containers
 \cite{abbottContainersConstructingStrictly2005}---formally prove the equivalence
@@ -70,70 +67,49 @@ More specifically, we show that cardinal finite sets form a topos, that
 decidable Kuratowski finite sets are equivalent in strength to cardinal finite
 sets, and carry the proof over.
 This result relies on proofs on each of the other finiteness predicates.
-\subsubsection{Species}
-\todo[inline]{Redo this next paragraph}
 
 \subsubsection{Infinite Types}
 In section~\ref{infinite-cardinalities}, we will extend our study of finite
 types to infinite but countable types.
-We will see that the finiteness predicates are mirrored with countable
-counterparts, and we will prove closure under the Kleene star and plus.
+We will see that the classification of finiteness predicates mirrors that of
+their countable counterparts, and we will prove closure under the Kleene star.
 
-\subsubsection{Practical Uses of Finiteness}
-Proofs of finiteness have well-known practical applications in
-constructive mathematics \cite{firsovDependentlyTypedProgramming2015}.
-In section~\ref{practical}, we build a library which exploits these uses in
-Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}, allowing automation of
-complex proofs over finite types.
-We frame this in terms of the principle of omniscience for finite types.
-Thanks to the flexibility afforded to us by Cubical Type Theory, we are able to
-go further than the usual examples of this kind of proof automation: as well as
-proving properties about functions, we can synthesise functions whole-cloth from
-their desired properties.
-Through the unified interface for finite and countable types, we can
-reuse the automation machinery for \emph{partial} proof search over infinite
-search spaces.
-Along the way, we extend the work in \cite{allaisGenericLevelPolymorphic2019} to
-prove isomorphisms between the curried and uncurried forms of \(n\)-ary
-dependent functions.
+\subsubsection{Practical Uses}
+Finally, in section~\ref{practical} we will demonstrate some practical uses of
+the finiteness proofs in Cubical Agda.
+We will show how to use well-known techniques
+\cite{firsovDependentlyTypedProgramming2015, devrieseBrightSideType2011} to
+automate proofs of functions with finite (and infinite) domains.
+We further show how to automate the synthesis of functions from desired
+properties.
 \section{Split Enumerability} \label{split-enumerable}
 We will start with the simplest definition of finiteness: we say a set is
 enumerable if there is a list of its elements which contains every element in
 the set.
-More formally:
-\begin{rm-definition}[Split Enumerable Set]
-  \begin{equation}
-    \mathcal{E}!(A) = \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \in xs
-  \end{equation}
-  We call the first component of this pair the ``support'' list, and the second
-  component the ``cover'' proof.
-\end{rm-definition}
 
-We will at this point take a moment to define some of the types we used to
-define \(\mathcal{E}!\).
-Lists, and membership thereof, are defined using \emph{containers}.
+Before giving the definition of the predicate, we will first define lists (and
+membership thereof): we have chosen a \emph{container}-based definition for this
+work.
 \begin{rm-definition}[Container] \label{container-def}
   A container \cite{abbottContainersConstructingStrictly2005} is a pair
   \(S \triangleright P\) where \(S\) is a type, the elements of which are called
   the \emph{shapes} of the container, and \(P\) is a type family on \(S\), where
   the elements of \(P(s)\) are called the \emph{positions} of a container.
-  \begin{equation}
-    \begin{aligned}
-      S : \text{Type}, P : S \rightarrow \text{Type} \\
-      \mathbf{Container} = S \triangleright P
-    \end{aligned}
-  \end{equation}
   We ``interpret'' a container into a functor defined like so:
   \begin{equation}
-    \llbracket S \triangleright P \rrbracket = \Pi {(X : \text{Type})} , \Sigma {(s : S)} , \left( P(s) \rightarrow X \right)
+    \llbracket S \triangleright P \rrbracket(A) = \Sigma {(s : S)} , \left( P(s) \rightarrow A \right)
   \end{equation}
   Membership of a container can be defined like so:
   \begin{equation}
     x \in \mathit{xs} = \text{fiber}(\text{snd}(\mathit{xs}), x)
   \end{equation}
+  Where \(\text{fiber}\) is from \cite[definition 4.2.4]{hottbook}.
 \end{rm-definition}
-Containers can be used to define a wide variety of functors (streams, trees,
-etc.): lists are all that interest us now.
+\begin{rm-definition}[Lists]
+  \begin{equation}
+    \mathbf{List} = \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket
+  \end{equation}
+\end{rm-definition}
 \begin{rm-definition}[\mathbf{Fin}]
   \(\mathbf{Fin}\)(n) is the type of natural numbers smaller than \(n\).
   It is defined inductively, as follows:
@@ -142,13 +118,6 @@ etc.): lists are all that interest us now.
       \mathbf{Fin}(0) &= \bot \\
       \mathbf{Fin}(n + 1) &= \top + \mathbf{Fin}(n)
     \end{aligned}
-  \end{equation}
-\end{rm-definition}
-\begin{rm-definition}[Lists]
-  The ``shape'' of lists is \(\mathbb{N}\), indicating the length of the list in
-  question.
-  \begin{equation}
-    \mathbf{List} = \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket
   \end{equation}
 \end{rm-definition}
 
@@ -161,11 +130,30 @@ whichever representation is more convenient in a given situation.
 For the higher-level proofs we present here, though, the container-based
 definition greatly simplifies certain steps, which is why we have chosen it as
 our representation.
-\subsection{Split Surjections}
-Another, equivalent way to define ``finiteness'' is via a (split) surjection
-from a finite prefix of the natural numbers.
-In this section, we will prove that equivalence, formally.
 
+Finally, we can define formally split enumerability.
+\begin{rm-definition}[Split Enumerable Set]
+  \begin{equation}
+    \mathcal{E}!(A) = \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \in xs
+  \end{equation}
+  We call the first component of this pair the ``support'' list, and the second
+  component the ``cover'' proof.
+\end{rm-definition}
+\subsection{Split Surjections}
+\begin{rm-definition}[Surjections]
+  \begin{multicols}{2}
+    \begin{equation}
+      A \twoheadrightarrow B = \Sigma (f : A \rightarrow B) , \text{surjective}(f)
+    \end{equation} \break
+    \begin{equation}
+      A \twoheadrightarrow! \; B = \Sigma (f : A \rightarrow B) , \text{split surjective}(f)
+    \end{equation}
+  \end{multicols}
+  Where the definitions of surjective are taken from \cite[definition
+  4.6.1]{hottbook}.
+\end{rm-definition}
+An equivalent way to define ``finiteness'' is via a split surjection from a
+finite prefix of the natural numbers.
 \begin{rm-theorem} \label{split-enum-surj}
   Split enumerability is equivalent to a split surjection from a finite prefix
   of the natural numbers.
@@ -188,78 +176,56 @@ In this section, we will prove that equivalence, formally.
   We use a corollary that if there is a split-surjection from \(A\) to \(B\),
   and \(A\) is discrete, then \(B\) is also discrete.
 \end{proof}
-\begin{rm-lemma}
-  Any split enumerable type is a set.
-\end{rm-lemma}
-\begin{proof}
-  By Hedberg's theorem \cite{hedbergCoherenceTheoremMartinLof1998}, since split
-  enumerable types have decidable equality
-  (proposition~\ref{split-enum-discrete}), they are sets.
-\end{proof}
+By Hedberg's theorem \cite{hedbergCoherenceTheoremMartinLof1998}, we know that
+this implies split enumerable types must all be sets.
 \subsection{Closure}
 In this section we will prove closure under various operations for split
 enumerable sets.
 We are working towards a topos proof, which requires us to prove closure under
 a variety of operations: for now, we only have enough machinery to demonstrate
 the semiring operations, and dependent sums.
-in order to show closure under exponentials (function arrows), we will need an
+In order to show closure under exponentials (function arrows), we will need an
 equivalence with \(\mathbf{Fin}\), which will be provided in
 section~\ref{manifest-bishop}.
 \begin{rm-lemma}
-  \(\bot\), \(\top\), and \(\mathbf{Bool}\) are all split enumerable.
+  \(\mathbf{Bool}\), \(\top\), and \(\bot\) are all split enumerable.
 \end{rm-lemma}
 \begin{proof}
   These non-recursive types have similar, simple proofs.
-  For each we first provide the support list: they are \([]\), \([\text{tt}]\),
-  and \([\text{false}, \text{true}]\) respectively.
-  The cover proof should return an index which points at the given element: for
-  \(\bot\) this function is present via the principle of explosion, for \(\top\)
-  we always return a \(0\), and for \(\mathbf{Bool}\) we return a \(0\) for
-  \(\text{false}\), and a \(1\) for \(\text{true}\).
   \begin{multicols}{3}
     \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool}
     \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{unit}
     \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{empty}
   \end{multicols}
 \end{proof}
-Next, we will look into how to combine proofs of split enumerability.
 \begin{rm-theorem}
-  Split-enumerability is closed under \(\sum\).
+  Split-enumerability is closed under \(\Sigma\).
+  \begin{equation}
+    \frac{
+      \mathcal{E}!(A) \; \; \; \Pi (x : A) , \mathcal{E}!(U(x))
+    }{
+      \mathcal{E}!(\Sigma (x : A) , U(x))
+    }
+  \end{equation}
 \end{rm-theorem}
 \begin{proof}
-  Let \(E_A\) be a proof of split enumerability for some type \(A\), and \(E_U\)
-  be a function of the type:
-  \begin{equation}
-    E_U : \Pi {(x : A)} , \mathcal{E}!(U(x))
-  \end{equation}
-  In other words, a function which returns a proof of split enumerability for
-  each member of the family \(U\).
-
   To obtain the support list, we concatenate the support lists of all the proofs
   of split-finiteness for \(U\) over the support list of \(E_A\).
   In Agda:
   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{sigma-enum}
   ``do-notation'' is available to us as we're working in the list monad.
 \end{proof}
-\begin{rm-lemma}
-  Split-enumerability is closed under disjoint union (non-dependent sum) and
-  Cartesian product (non-dependent product).
-\end{rm-lemma}
-\begin{proof}
-  Both of these closures can be derived from closure of the \(\sum\) type.
-  The non-dependent product is equivalent to a special case of \(\sum\):
-  \begin{equation}
-    A \times B \simeq \Sigma {(x : A)} , B
-  \end{equation}
-  And disjoint union between two types \(A\) and \(B\) can be represented by the
-  following type:
-  \begin{equation}
-    A + B = \Sigma {(x : \mathbf{Bool})} , \text{if} \; x \; \text{then} \; A \; \text{else} \; B
-  \end{equation}
-  Then, since all of \(\mathbf{Bool}\), \(A\), and \(B\) are split enumerable,
-  the type \(A + B\) is split enumerable.
-\end{proof}
+Closure under disjoint union and Cartesian product both follow from \(\Sigma\),
+as these types can be defined in terms of \(\Sigma\).
+\begin{align}
+  A \times B &= \Sigma {(x : A)} , B \\
+  A + B &= \Sigma {(x : \mathbf{Bool})} , \text{if} \; x \; \text{then} \; A \; \text{else} \; B
+\end{align}
 \section{Manifest Bishop Finiteness} \label{manifest-bishop}
+Where split enumerability was the enumeration form of a split surjection from
+\(\mathbf{Fin}\), manifest Bishop finiteness is the enumeration form of an
+\emph{equivalence} with \(\mathbf{Fin}\).
+
 \begin{rm-definition}[Manifest Bishop Finiteness]
   \begin{equation}
     \mathcal{B}(A) = \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \inunique xs
@@ -270,19 +236,20 @@ membership term: we use \(\inunique\) here, where \(x \inunique \mathit{xs}\) is
 to be read as ``\(x\) occurs exactly once in \(\mathit{xs}\)''.
 \begin{rm-definition}[Unique Membership]
   We say an item \(x\) is ``uniquely in'' some container \(\mathit{xs}\) if its
-  membership in that list is a \emph{contraction}; i.e. its membership proof
-  exists, and all such proofs are equal.
+  membership in that list is a \emph{contraction} \cite[definition
+  3.11.1]{hottbook}; i.e. its membership proof exists, and all such proofs are
+  equal.
   \begin{equation}
     x \inunique \mathit{xs} = \text{isContr}(x \in \mathit{xs})
   \end{equation}
 \end{rm-definition}
+By the definition of a contraction, we can always recover the underlying
+membership proof, meaning that we can always derive split enumerability from
+manifest Bishop finiteness.
 
 A nice consequence of prohibiting duplicates is that now the length of the
 support list is the same as the cardinality of the set.
 \subsection{Equivalence}
-Where split enumerability was the enumeration form of a surjection from
-\(\mathbf{Fin}\), we see here that manifest Bishop finiteness is the enumeration
-form of an \emph{equivalence} with \(\mathbf{Fin}\).
 \begin{rm-lemma} \label{bishop-equiv}
   A proof of manifest Bishop finiteness is equivalent to an equivalence with a
   finite prefix of the natural numbers.
@@ -293,7 +260,7 @@ form of an \emph{equivalence} with \(\mathbf{Fin}\).
 \begin{proof}
   There are many equivalent definitions of equivalence in HoTT.
   Here we take the version preferred in the Cubical Agda library: contractible
-  maps \cite{hottbook}.
+  maps \cite[definition 4.4.1]{hottbook}.
   Because of the parallels between contractible maps and split surjections,
   the proof proceeds much the same as \ref{split-enum-surj}.
   In other words, the definition of Bishop finiteness is itself a reassociation
@@ -302,14 +269,6 @@ form of an \emph{equivalence} with \(\mathbf{Fin}\).
 \subsection{Relationship to Split Enumerability}
 We now show that manifest Bishop finiteness has equal strength to split
 enumerability.
-\begin{rm-lemma}
-  Any manifest Bishop finite set is split enumerable.
-\end{rm-lemma}
-\begin{proof}
-  The support set carries over simply, and the cover proof can be taken from the
-  first component of the cover proof from the proof of manifest Bishop
-  finiteness.
-\end{proof}
 \begin{rm-theorem} \label{split-enum-to-manifest-bishop}
   Any split enumerable set is manifest Bishop finite.
 \end{rm-theorem}
@@ -329,10 +288,10 @@ enumerability.
   \end{equation}
   And from that we can generate our cover proof.
 \end{proof}
-Note that while manifest Bishop finiteness as split enumerability are equivalent
+Note that while manifest Bishop finiteness and split enumerability are equivalent
 in ``strength'', the two types are not equivalent.
-In particular, there are infinitely many inhabitants of \(\mathcal{E}!\), while
-for a type \(A\) with \(n\) inhabitants, there are only \(n!\) inhabitants of
+For instance, for a type \(A\) with \(n\) inhabitants, there are infinitely many
+inhabitants of \(\mathcal{E}!(A)\), while there are only \(n!\) inhabitants of
 \(\mathcal{B}(A)\).
 \subsection{Closure}
 Proving equal strength of split enumerability and manifest Bishop finiteness
@@ -390,10 +349,11 @@ We remedy that here.
   goal.
 \end{proof}
 \section{Manifest Enumerability} \label{manifest-enumerability}
-A defining feature of split enumerability and Bishop finiteness is decidability:
-both predicates imply a decidable equality function on the underlying type.
-To find a predicate for finiteness which doesn't imply this, and therefore
-works with types other than just sets, we \emph{truncate} the membership proof.
+Both split enumerability and manifest Bishop finiteness are restricted to sets:
+because they both imply decidable equality, no non-set types can satisfy them as
+predicates.
+To find a more general predicate for finiteness, we \emph{truncate} the
+membership proof.
 \begin{rm-definition}[Manifest Enumerability]
   \begin{equation}
     \mathcal{E}(A) = \Sigma {(\mathit{xs} : \mathbf{List}(A))} , \Pi {(x : A)} , \lVert x \in \mathit{xs} \rVert
@@ -401,7 +361,7 @@ works with types other than just sets, we \emph{truncate} the membership proof.
 \end{rm-definition}
 \begin{rm-definition}[Propositional Truncation]a \label{prop-trunc}
   The type \(\lVert A \rVert\) on some type \(A\) is a propositionally truncated
-  proof of \(A\).
+  proof of \(A\) \cite[3.7]{hottbook}.
   In other words, it is a proof that some \(A\) exists, but it does not tell you
   \emph{which} \(A\).
 
@@ -425,7 +385,7 @@ works with types other than just sets, we \emph{truncate} the membership proof.
     \item \label{elim-prop-monad} As a consequence of this first point, we can
       always eliminate into another propositionally truncated type.
       As a result, \(\lVert \cdot \rVert\) forms a Monad: for our purposes, this
-      simply means tat we can work ``under'' a propositional truncation in an
+      simply means that we can work ``under'' a propositional truncation in an
       ergonomic way.
     \item \label{elim-prop-coh} We can eliminate from \(\lVert A \rVert\) with a
       function \(f : A \rightarrow B\) iff \(f\) ``doesn't care'' about the
@@ -439,10 +399,8 @@ works with types other than just sets, we \emph{truncate} the membership proof.
   \end{enumerate}
 \end{rm-definition}
 
-By hiding the position, we have essentially removed the ``decidable'' component
-from split enumerability.
-Our predicate now becomes general enough to work with non-sets: we will show
-here that the circle is manifestly enumerable.
+We will use the circle as an example non-set type which is nonetheless
+manifestly enumerable.
 \begin{rm-theorem}
   The circle \(S^1\) is manifestly enumerable.
 \end{rm-theorem}
@@ -463,12 +421,6 @@ enumerability's relation to \emph{split} surjectivity.
   simply a reassociation.
 \end{proof}
 \subsection{Relation to Split Enumerability}
-\begin{rm-lemma}
-  Any split enumerable type is also manifestly enumerable.
-\end{rm-lemma}
-\begin{proof}
-  The proof carries over via truncation of the cover proof.
-\end{proof}
 \begin{rm-theorem} \label{manifest-enum-to-split}
   A manifestly enumerable type with decidable equality is split enumerable.
 \end{rm-theorem}
@@ -488,12 +440,14 @@ enumerability's relation to \emph{split} surjectivity.
   \begin{equation}
     \text{recompute} : \mathbf{Dec}(A) \rightarrow \lVert A \rVert \rightarrow A
   \end{equation}
-  A propositionally truncated value can be used to \emph{refute} its negation.
+  The function works via case-analysis on \(\mathbf{Dec}\): in the true case, we
+  return the proof; in the false case, we can apply the proof of negation under
+  the truncation, and then extract \(\lVert \bot \rVert\) to \(\bot\), as
+  \(\bot\) is a mere proposition, thus proving the goal via explosion.
 \end{proof}
 \subsection{Closure}
 \begin{rm-lemma}
-  Manifest enumerability is closed under dependent sum, disjoint union
-  (non-dependent sum), and Cartesian product (non-dependent product).
+  Manifest enumerability is closed under \(\Sigma\).
 \end{rm-lemma}
 \begin{proof}
   For these three closures, the proofs on split enumerability consisted of a
@@ -503,8 +457,6 @@ enumerability's relation to \emph{split} surjectivity.
   enumerability: the support list manipulation stays the same, and the
   cover proofs are performed ``under'' the truncation.
 \end{proof}
-Notice that we do not have closure under functions: without decidability,
-manifest enumerability is not closed under function arrows.
 \section{Cardinal Finiteness} \label{cardinal}
 For manifest enumerability, we removed the need for decidable equality: in these
 next two finiteness predicates, we remove the need for a total order on the
@@ -517,13 +469,8 @@ underlying type.
   \end{equation}
 \end{rm-definition}
 \subsection{Closure}
-The closure proofs for cardinal finiteness are especially easy.
-In contrast to manifest enumerability, under the propositional truncation we
-have a full proof of bishop finiteness, meaning that all of the closure proofs
-carry over.
 \begin{rm-lemma}
-  Cardinal finiteness is closed under dependent and non-dependent sums,
-  products, and functions.
+  Cardinal finiteness is closed under \(\Sigma\) and \(\Pi\).
 \end{rm-lemma}
 \begin{proof}
   All closure functions can be lifted under propositional truncation.
@@ -767,13 +714,11 @@ In particular, we see that decidable Kuratowski finite sets form a \emph{topos}.
 \todo[inline]{Fill in rest}
 \subsection{Closure}
 \begin{rm-theorem}
-  Kuratowski finite sets are closed under \(\sum\).
+  Kuratowski finite sets are closed under \(\Sigma\).
 \end{rm-theorem}
 \begin{proof}
-  This follows from the \(\sum\) closure proof on manifestly enumerable types.
+  This follows from the \(\Sigma\) closure proof on manifestly enumerable types.
 \end{proof}
-\section{Species and Containers} \label{species-and-containers}
-\todo[inline]{Figure out this section}
 \section{Infinite Cardinalities} \label{infinite-cardinalities}
 While the previous section purported to be about finite sets, we can now see
 that it was really only studying surjections and isomorphisms of different
@@ -878,7 +823,7 @@ This means, in effect, that we have closure under lists.
   \end{equation}
 \end{rm-theorem}
 \begin{proof}
-  As with the proof of closure under \(\sum\), our main task here is to figure
+  As with the proof of closure under \(\Sigma\), our main task here is to figure
   out a way to arrange the indices such that 
 \end{proof}
 \subsection{Manifest Countability}
@@ -1038,7 +983,7 @@ In this section, we take inspiration from
 \(n\)-ary functions and properties.
 What we provide here differs from that work in the following ways:
 \begin{itemize}
-  \item Our generic representation can handle dependent \(\sum\) and \(\prod\)
+  \item Our generic representation can handle dependent \(\Sigma\) and \(\prod\)
     types (rather than their non-dependent counterparts, \(\times\) and
     \(\rightarrow\)).
     This extension was necessary for our use case: it is mentioned in the paper
