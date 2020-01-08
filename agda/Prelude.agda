@@ -28,3 +28,4 @@ open import HLevels public
 open import Data.Sum public
 open import Equiv public
 open import Data.Lift public
+open import Function.Biconditional public
