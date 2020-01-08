@@ -2,7 +2,7 @@
 
 module Cardinality.Finite.SplitEnumerable.Inductive where
 
-open import Data.List
+open import Data.List public
 open import Data.List.Membership
 open import Prelude
 
