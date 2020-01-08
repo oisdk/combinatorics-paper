@@ -25,3 +25,4 @@ open import Relation.Nullary.Decidable public
 open import Relation.Nullary.Discrete public using (Discrete)
 open import Relation.Nullary.Discrete.Properties public using (Discrete→isSet)
 open import HLevels public
+open import Data.Sum public

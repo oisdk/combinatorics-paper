@@ -31,3 +31,6 @@ concat = foldr _++_ []
 
 concatMap : (A → List B) → List A → List B
 concatMap f = foldr (λ x ys → f x ++ ys) []
+
+map : (A → B) → List A → List B
+map f = foldr (λ x xs → f x ∷ xs) []
