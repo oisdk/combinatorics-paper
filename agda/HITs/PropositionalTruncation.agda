@@ -3,5 +3,5 @@
 module HITs.PropositionalTruncation where
 
 open import Cubical.HITs.PropositionalTruncation
-  using (squash; ∥_∥; ∣_∣)
+  using (squash; ∥_∥; ∣_∣; recPropTrunc)
   public
