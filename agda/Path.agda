@@ -22,6 +22,7 @@ open import Cubical.Foundations.Everything
         ; _∨_
         ; hcomp
         ; transp
+        ; J
         )
   renaming (_∙_ to _;_)
   public

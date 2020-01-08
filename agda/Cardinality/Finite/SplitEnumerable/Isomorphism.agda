@@ -46,18 +46,3 @@ import Cardinality.Finite.SplitEnumerable.Inductive as 𝕃
     let m , p = ∈ℒ⇒∈𝕃-leftInv xs (n , x∈xs) i
     in fs m , p
 
--- ∈!ℒ⇒∈!𝕃 : ∀ (x : A) l (xs : Fin l → A) → x ∈! (l , xs) → x 𝕃.∈! ℒ→𝕃 (l , xs)
--- ∈!ℒ⇒∈!𝕃 x (suc l) xs ((f0   , p) , u) = (f0 , p) , lemma
---   where
---   lemma : (y : x 𝕃.∈ ℒ→𝕃 (suc l , xs)) → (f0 , p) ≡ y
---   lemma (f0   , q) = cong (∈ℒ⇒∈𝕃 x (suc l , xs)) (u (f0 , q))
---   lemma (fs m , q) =
---     let o , r = subst (x ∈_) (ℒ→𝕃→ℒ l (xs ∘ fs)) (m , q)
---     in ⊥-elim (znots (cong (FinToℕ ∘ fst) (u (fs o , r))))
--- ∈!ℒ⇒∈!𝕃 x (suc l) xs ((fs n , p) , u) = 𝕃.push! xs0≢x (∈!ℒ⇒∈!𝕃 x l (xs ∘ fs) ((n , p) , uxss))
---   where
---   xs0≢x : xs f0 ≢ x
---   xs0≢x xs0≡x = snotz (cong (FinToℕ ∘ fst) (u (f0 , xs0≡x)))
-
---   uxss : (y : x ∈ (l , xs ∘ fs)) → (n , p) ≡ y
---   uxss (m , q) = cong (λ { (f0 , q) → ⊥-elim (xs0≢x q) ; (fs m , q) → m , q}) (u (fs m , q))

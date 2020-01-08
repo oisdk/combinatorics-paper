@@ -26,3 +26,5 @@ open import Relation.Nullary.Discrete public using (Discrete)
 open import Relation.Nullary.Discrete.Properties public using (Discrete→isSet)
 open import HLevels public
 open import Data.Sum public
+open import Equiv public
+open import Data.Lift public

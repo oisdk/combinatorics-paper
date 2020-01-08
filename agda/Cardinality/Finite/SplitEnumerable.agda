@@ -78,3 +78,9 @@ module _ where
 
   _|+|_ : ℰ! A → ℰ! B → ℰ! (Σ[ t ⦂ Bool ] (if t then A else B))
   xs |+| ys = ℰ!⟨2⟩ |Σ| bool ys xs
+
+  open import Data.Tuple
+
+  ℰ!⟨Tuple⟩ : ∀ {n u} {U : Fin n → Type u} → (∀ i → ℰ! (U i)) → ℰ! (Tuple n U)
+  ℰ!⟨Tuple⟩ {n = zero}  f = (_ ∷ []) , λ _ → f0 , refl
+  ℰ!⟨Tuple⟩ {n = suc n} f = f f0 |×| ℰ!⟨Tuple⟩ (f ∘ fs)
