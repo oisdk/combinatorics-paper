@@ -57,3 +57,35 @@ cardinality {A = A} = recPropTrunc→Set (isOfHLevelΣ 2 isSetℕ λ _ → isPro
       (λ _ → squash)
       {n , ∣ x ∣} {m , ∣ y ∣}
       (Fin-inj n m (ua (x ⟨ trans-≃ ⟩ (sym-≃ y))))
+
+open import Relation.Binary
+open import Data.List.Relation.Binary.Permutation
+
+perm-ℬ : (xs ys : ℬ A) → xs .fst ↭ ys .fst
+perm-ℬ xs ys  x .fun  _    = ys  .snd x .fst
+perm-ℬ xs ys  x .inv  _    = xs  .snd x .fst
+perm-ℬ xs ys  x .rightInv  = ys  .snd x .snd
+perm-ℬ xs ys  x .leftInv   = xs  .snd x .snd
+
+module _ {e r} {E : Type e} (totalOrder : TotalOrder E r) where
+  open import Data.List.Sort totalOrder
+  open import Cubical.HITs.PropositionalTruncation using (recPropTrunc→Set)
+  open import Data.Sigma.Properties
+  open import Cardinality.Finite.ManifestBishop using (ℰ!⇒ℬ)
+  open import Cardinality.Finite.ManifestEnumerable.Inductive
+  open import Cardinality.Finite.ManifestEnumerable
+
+  𝒞⇒ℬ : 𝒞 E → ℬ E
+  𝒞⇒ℬ xs = (ℰ!⇒ℬ ∘ ℰ⇒ℰ! discreteE ∘ recPropTrunc→Set (isSet⟨ℰ⟩ (Discrete→isSet discreteE)) alg const-alg) xs
+    where
+    discreteE = 𝒞⇒Discrete xs
+
+    alg : ℬ E → ℰ E
+    alg xs .fst = sort (xs .fst)
+    alg xs .snd x = ∣ sort-perm (xs .fst) x .inv (xs .snd x .fst) ∣
+
+    const-alg : (xs ys : ℬ E) → alg xs ≡ alg ys
+    const-alg xs ys =
+      ΣProp≡
+        (λ _ → hLevelPi 1 (λ _ → squash))
+        (perm-invar (xs .fst) (ys .fst) (perm-ℬ xs ys))

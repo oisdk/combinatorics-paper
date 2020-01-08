@@ -70,3 +70,10 @@ module _ where
   _∥Σ∥_ : {B : A → Type b} → ℰ A → ((x : A) → ℰ (B x)) → ℰ (Σ A B)
   (xs ∥Σ∥ ys) .fst = sup-Σ (xs .fst) (fst ∘ ys)
   (xs ∥Σ∥ ys) .snd (x , y) = cov-Σ′ x y (xs .fst) ys (xs .snd x)
+
+
+  open import Cubical.Foundations.HLevels using (isOfHLevelΣ; hLevelPi)
+  open import Cubical.Data.List.Properties using (isOfHLevelList)
+
+  isSet⟨ℰ⟩ : isSet A → isSet (ℰ A)
+  isSet⟨ℰ⟩ isSetA = isOfHLevelΣ 2 (isOfHLevelList 0 isSetA) λ _ → isProp→isSet (hLevelPi 1 λ _ → squash)
