@@ -7,6 +7,7 @@ open import Cubical.Foundations.Isomorphism using (Iso; section; retract; isoToP
 open import Level
 open import Path
 open import Function
+open import Data.Sigma
 
 open Iso public
 
@@ -30,3 +31,11 @@ fun      (trans-⇔ A⇔B B⇔C) = fun B⇔C ∘ fun A⇔B
 inv      (trans-⇔ A⇔B B⇔C) = inv A⇔B ∘ inv B⇔C
 leftInv  (trans-⇔ A⇔B B⇔C) x = cong (inv A⇔B) (leftInv B⇔C _) ; leftInv A⇔B _
 rightInv (trans-⇔ A⇔B B⇔C) x = cong (fun B⇔C) (rightInv A⇔B _) ; rightInv B⇔C _
+
+iso-Σ : {B : A → Type b} {C : A → Type c} → (∀ x → B x ⇔ C x) → Σ A B ⇔ Σ A C
+iso-Σ B⇔C .fun (x , xs) = x , B⇔C x .fun xs
+iso-Σ B⇔C .inv (x , xs) = x , B⇔C x .inv xs
+iso-Σ B⇔C .rightInv (x , xs) i .fst = x
+iso-Σ B⇔C .rightInv (x , xs) i .snd = B⇔C x .rightInv xs i
+iso-Σ B⇔C .leftInv (x , xs) i .fst = x
+iso-Σ B⇔C .leftInv (x , xs) i .snd = B⇔C x .leftInv xs i
