@@ -24,3 +24,15 @@ discreteℕ n m .why  = correct-== n m
 
 isSetℕ : isSet ℕ
 isSetℕ = Discrete→isSet discreteℕ
+
++-suc : ∀ x y → x + suc y ≡ suc (x + y)
++-suc zero y = refl
++-suc (suc x) y = cong suc (+-suc x y)
+
++-idʳ : ∀ x → x + 0 ≡ x
++-idʳ zero     = refl
++-idʳ (suc x)  = cong suc (+-idʳ x)
+
++-comm : ∀ x y → x + y ≡ y + x
++-comm x zero = +-idʳ x
++-comm x (suc y) = +-suc x y ; cong suc (+-comm x y)

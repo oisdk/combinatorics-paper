@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical --safe #-}
+{-# OPTIONS --cubical --safe --postfix-projections #-}
 
 module Function.Injective.Base where
 
@@ -12,3 +12,7 @@ Injective f = ∀ x y → f x ≡ f y → x ≡ y
 infixr 0 _↣_
 _↣_ : Set a → Set b → Set (a ℓ⊔ b)
 A ↣ B = Σ[ f ⦂ (A → B) ] (Injective f)
+
+refl-↣ : A ↣ A
+refl-↣ .fst x = x
+refl-↣ .snd x y x≡y = x≡y
