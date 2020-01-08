@@ -1,0 +1,11 @@
+{-# OPTIONS --cubical --safe #-}
+
+module HLevels where
+
+open import Path
+open import Cubical.Foundations.Everything
+  using (isProp
+        ;isSet
+        ;isContr
+        )
+  public

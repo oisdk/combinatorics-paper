@@ -255,6 +255,3 @@ haskell/**/*.tex
 .DS_Store
 _region_.pdf
 _region_.tex
-*.agda
-agda/agda.agda-lib
-agda
