@@ -342,9 +342,8 @@ membership proof.
   It is defined as a Higher Inductive Type:
   \begin{equation}
     \begin{aligned}
-      \lVert A \rVert &= \\
-        &| \; \lvert \cdot \rvert : A \rightarrow \lVert A \rVert ; \\
-        &| \; \text{squash} : \Pi {(x, y : \lVert A \rVert)} , x \equiv y  ; \\
+      \lVert A \rVert =& \; \lvert \cdot \rvert : A \rightarrow \lVert A \rVert ; \\
+                      |& \; \text{squash} : \Pi {(x, y : \lVert A \rVert)} , x \equiv y  ; 
     \end{aligned}
   \end{equation}
 
@@ -625,12 +624,12 @@ Finally we arrive at Kuratowski finiteness
   \cite{altenkirchDefinableQuotientsType2011}:
   \begin{equation}
     \begin{aligned}
-      \mathcal{K}(A) &=  \\
-        &\left\vert \; \cdot \dblcolon \cdot : A \times \mathcal{K}(A) \rightarrow \mathcal{K}(A) \right; \\
-        &\left\vert \; [] : \mathcal{K}(A) \right; \\
-        &\left\vert \; \text{com} : \Pi (x, y: A) , \Pi (\mathit{xs}: \mathcal{K}(A)) , x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} \right; \\
-        &\left\vert \; \text{dup} : \Pi (\mathit{x}: A) , \Pi (\mathit{xs}: \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} \right; \\
-        &\left\vert \; \text{trunc} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q \right;
+      \mathcal{K}(A) =&
+       \; \cdot \dblcolon \cdot : A \times \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
+      \vert& \; [] : \mathcal{K}(A) ; \\
+      \vert& \; \text{com} : \Pi (x, y: A) , \Pi (\mathit{xs}: \mathcal{K}(A)) , x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} ; \\
+      \vert& \; \text{dup} : \Pi (\mathit{x}: A) , \Pi (\mathit{xs}: \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} ; \\
+      \vert& \; \text{trunc} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q ;
     \end{aligned}
   \end{equation}
   The \(\text{com}\) and \(\text{dup}\) constructors effectively add
@@ -654,12 +653,8 @@ Nonetheless, the alternative representation is included in our formalisation,
 and proven equivalent to the representation here.
 \begin{rm-definition}[Membership of \mathcal{K}]
   First, we need to provide equations for the two point constructors.
-  \begin{equation}
-    \begin{alignat}{2}
-      x &\in& [] &= \bot \\
-      x &\in& y \dblcolon \mathit{xs} &= \lVert (x \equiv y) + (x \in \mathit{xs}) \rVert
-    \end{alignat}
-  \end{equation}
+  \(x \in [] = \bot\), and \(x \in y \dblcolon \mathit{xs} = \lVert (x \equiv y)
+  + (x \in \mathit{xs}) \rVert \).
   The \(\text{com}\) and \(\text{dup}\) constructors are handled by proving that
   the truncated form of \(+\) is itself commutative and idempotent.
   The type of propositions is itself a set, satisfying the \(\text{trunc}\)
@@ -673,12 +668,6 @@ and proven equivalent to the representation here.
   \end{equation}
 \end{rm-definition}
 
-\subsection{Strength}
-Since the Kuratowski set is a departure in structure from our previous
-list-based notions of finiteness, it makes sense to first look for the closest
-list-based analogue.
-As it turns out, that analogue is manifestly enumerable finiteness, with the
-order removed.
 \begin{rm-theorem}
   A proof of Kuratowski finiteness is equivalent to a propositionally truncated
   proof of enumerability.
@@ -702,14 +691,13 @@ At this point, we see that a ``decidable Kuratowski finite set'' is precisely
 equivalent to a cardinal finite set.
 From this, we can lift over all of the properties of cardinal finite sets.
 In particular, we see that decidable Kuratowski finite sets form a \emph{topos}.
-\todo[inline]{Fill in rest}
-\subsection{Closure}
 \begin{rm-theorem}
   Kuratowski finite sets are closed under \(\times\) and \(+\).
 \end{rm-theorem}
 \begin{proof}
   These follow from their lifted versions on manifestly enumerable types.
 \end{proof}
+\todo[inline]{Fill in rest}
 \section{Infinite Cardinalities} \label{infinite-cardinalities}
 In the previous sections we saw different flavours of finiteness which were
 really just different flavours of relations to \(\mathbf{Fin}\).
