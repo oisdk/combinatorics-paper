@@ -1,4 +1,3 @@
-\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Algebra.Construct.Free.Semilattice.Union where
@@ -87,4 +86,3 @@ module _ {a} {A : Type a} where
   𝒦-semilattice .commutativeMonoid .monoid .∙ε = ∪-identityʳ
   𝒦-semilattice .commutativeMonoid .comm = ∪-comm
   𝒦-semilattice .idem = ∪-idem
-\end{code}

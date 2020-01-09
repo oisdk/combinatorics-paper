@@ -1,4 +1,3 @@
-\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Algebra.Construct.Free.Semilattice.FromList where
@@ -22,4 +21,3 @@ fromList = foldr _∷_ []
   (fs n , x∈xs) ← ∣x∈xs∣
     where (f0 , x∈xs) → ∣ inl x∈xs ∣
   ∣ inr (∈List⇒∈𝒦 xs ∣ n , x∈xs ∣) ∣
-\end{code}

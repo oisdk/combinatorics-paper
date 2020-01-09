@@ -1,4 +1,3 @@
-\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Algebra.Construct.Free.Semilattice.Relation.Unary where
@@ -107,4 +106,3 @@ map-◻ {A = A} {P = P} = λ f → ∥ map-◻′ f ∥⇓
   ∥ map-◻′ f ∥-prop {xs} = isProp-◻ {P = P} {xs = xs}
   ∥ map-◻′ f ∥[] = tt
   ∥ map-◻′ f ∥ x ∷ xs ⟨ Pxs ⟩ = ∣ f x ∣ , Pxs
-\end{code}

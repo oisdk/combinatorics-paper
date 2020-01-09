@@ -1,4 +1,3 @@
-\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Algebra.Construct.Free.Semilattice.Extensionality where
@@ -49,4 +48,3 @@ extensional xs ys xs↭ys =
   ys ∪ xs ≡⟨ ∪-comm ys xs ⟩
   xs ∪ ys ≡⟨ subset-ext xs ys (fun ∘ xs↭ys) ⟩
   ys ∎
-\end{code}

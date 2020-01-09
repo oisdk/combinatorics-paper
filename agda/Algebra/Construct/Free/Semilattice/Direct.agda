@@ -1,4 +1,3 @@
-\begin{code}
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
 module Algebra.Construct.Free.Semilattice.Direct where
@@ -7,9 +6,7 @@ open import Algebra
 open import Prelude
 open import Path.Reasoning
 infixl 6 _∪_
-\end{code}
-%<*def>
-\begin{code}
+
 data 𝒦 (A : Type a) : Type a where
   η : A → 𝒦 A
   _∪_ : 𝒦 A → 𝒦 A → 𝒦 A
@@ -19,9 +16,7 @@ data 𝒦 (A : Type a) : Type a where
   ∪-idempotent : ∀ xs → xs ∪ xs ≡ xs
   ∪-identity : ∀ xs → xs ∪ ∅ ≡ xs
   trunc : isSet (𝒦 A)
-\end{code}
-%</def>
-\begin{code}
+  
 module _ (semiLattice : Semilattice b) where
   open Semilattice semiLattice
   module _ (sIsSet : isSet 𝑆) (h : A → 𝑆) where
@@ -148,4 +143,3 @@ Direct⇔Listed .fun = Direct→Listed
 Direct⇔Listed .inv = Listed→Direct
 Direct⇔Listed .rightInv = Listed→Direct→Listed
 Direct⇔Listed .leftInv = Direct→Listed→Direct
-\end{code}

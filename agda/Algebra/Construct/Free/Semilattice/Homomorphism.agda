@@ -1,4 +1,3 @@
-\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Algebra.Construct.Free.Semilattice.Homomorphism where
@@ -43,4 +42,3 @@ module _ {b} (semilattice : Semilattice b) where
 
     ∙-hom : ∀ xs ys → μ xs ∙ μ ys ≡ μ (xs ∪ ys)
     ∙-hom xs ys = ∥ ∙-hom′ ys ∥⇓ xs
-\end{code}

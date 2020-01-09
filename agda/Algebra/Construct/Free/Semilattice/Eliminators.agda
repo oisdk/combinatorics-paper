@@ -1,4 +1,3 @@
-\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Algebra.Construct.Free.Semilattice.Eliminators where
@@ -98,4 +97,3 @@ record _↘_ {a b} (A : Type a) (B : Type b) : Type (a ℓ⊔ b) where
             (λ x xs → [_]-dup x)
   [_]↓ = ⟦ [_]↑ ⟧⇓
 open _↘_ public
-\end{code}
