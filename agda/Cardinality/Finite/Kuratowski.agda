@@ -61,9 +61,9 @@ open import Cardinality.Finite.SplitEnumerable.Isomorphism
 open import Cardinality.Finite.SplitEnumerable
 open import Data.List.Relation.Unary
 
-to-subobject : (p : A → Bool) → ℰ! A → ℰ! (Σ[ x ⦂ A ] (T (p x)))
-to-subobject s xs .fst = filter s (xs .fst)
-to-subobject p xs .snd (x , v) = filter-preserves p (xs .fst) x v (xs .snd x)
+filter-subobject : (p : A → Bool) → ℰ! A → ℰ! (Σ[ x ⦂ A ] (T (p x)))
+filter-subobject s xs .fst = filter s (xs .fst)
+filter-subobject p xs .snd (x , v) = filter-preserves p (xs .fst) x v (xs .snd x)
 
 decide-subobject : (P : A → Type ℓzero) → ℰ! A → (xs : ℰ! (∃ P)) → (x : A) → Dec (P x)
 decide-subobject P E xs x =
@@ -71,18 +71,13 @@ decide-subobject P E xs x =
   ,no (λ y → map₂ (cong fst) (xs .snd (x , y)))
   ⟧ (Exists.◇? (λ y → fst y ≡ x) (λ y → ℰ!⇒Discrete (𝕃⇔ℒ⟨ℰ!⟩ .fun E) (y .fst) x) (xs .fst))
 
-dec-refl : ∀ x → (y : Dec (T x)) → does y ≡ x
-dec-refl true (yes p) = refl
-dec-refl false (no ¬p) = refl
-dec-refl true (no ¬p) = ⊥-elim (¬p tt)
+it-does : (x : Dec A) → T (x .does) → A
+it-does (yes x) p = x
+it-does (no ¬x) ()
 
-dec-un : (x : Dec A) → T (x .does) → A
-dec-un (yes x) p = x
-dec-un (no ¬x) ()
-
-dec-nu : A → (d : Dec A) → T (d .does)
-dec-nu x (true because z) = tt
-dec-nu x (no ¬p) = ⊥-elim (¬p x)
+does-it : (d : Dec A) → A → T (d .does)
+does-it (true because z) x = tt
+does-it (no ¬p) x = ⊥-elim (¬p x)
 
 open import Data.Bool.Properties
 open import Cardinality.Finite.Cardinal
@@ -90,30 +85,31 @@ open import Cardinality.Finite.ManifestBishop
 open import Relation.Nullary.Decidable.Properties
 
 module _ {a} {A : Type a} (xs : 𝒞 A) where
-  to : (A → Bool) → Σ[ sub ⦂ (A → hProp ℓzero) ] (𝒞 (Σ[ x ⦂ A ] (sub x .fst)))
-  to p .fst x .fst = T (p x)
-  to p .fst x .snd = isPropT _
-  to p .snd = ℰ!⇒ℬ ∘ to-subobject p ∘ ℬ⇒ℰ! ∥$∥ xs
+  to-subobject : (A → Bool) → Σ[ sub ⦂ (A → hProp ℓzero) ] (𝒞 (Σ[ x ⦂ A ] (sub x .fst)))
+  to-subobject p .fst x .fst = T (p x)
+  to-subobject p .fst x .snd = isPropT _
+  to-subobject p .snd = ℰ!⇒ℬ ∘ filter-subobject p ∘ ℬ⇒ℰ! ∥$∥ xs
 
   fromDec : (sub : (A → hProp ℓzero)) → 𝒞 (Σ[ x ⦂ A ] (sub x .fst)) → ∀ x → Dec (sub x .fst)
-  fromDec sub fin x = recPropTrunc (isPropDec (sub x .snd)) (λ { (xs′ , fin′) → decide-subobject (fst ∘ sub) (ℬ⇒ℰ! xs′) (ℬ⇒ℰ! fin′) x}) ⦇ xs , fin ⦈
-
-  lem : ∀ f x → Dec.does (fromDec (to f .fst) (to f .snd) x) ≡ f x
-  lem f x = dec-refl (f x) (fromDec (to f .fst) (to f .snd) x)
-
-  lem3 : (sub : A → hProp ℓzero) → (fin : 𝒞 (∃ (fst ∘ sub))) → ∀ x → T ((does ∘ fromDec sub fin) x) → sub x .fst
-  lem3 sub fin x Dx = dec-un ((fromDec sub fin) x) Dx
-
-  lem4 : (sub : A → hProp ℓzero) → (fin : 𝒞 (∃ (fst ∘ sub))) → ∀ x → sub x .fst → T ((does ∘ fromDec sub fin) x)
-  lem4 sub fin x Px = dec-nu Px (fromDec sub fin x)
-
-  lem2 : (sub : A → hProp ℓzero) → (fin : 𝒞 (∃ (fst ∘ sub))) → ∀ x → to (does ∘ fromDec sub fin) .fst x ≡ sub x
-  lem2 sub fin x = ΣProp≡ (λ _ → isPropIsProp) (isoToPath (iso (lem3 sub fin x) (lem4 sub fin x) (λ y → sub x .snd _ y) (λ x → isPropT _ _ x)  ))
+  fromDec sub fin x = recPropTrunc (isPropDec (sub x .snd)) id $ do
+    c ← xs
+    f ← fin
+    ∣ decide-subobject (fst ∘ sub) (ℬ⇒ℰ! c) (ℬ⇒ℰ! f) x ∣
 
   subobject-classifier : (A → Bool) ⇔ (Σ[ sub ⦂ (A → hProp ℓzero) ] (𝒞 (Σ[ x ⦂ A ] (sub x .fst))))
-  subobject-classifier .fun p .fst x .fst = T (p x)
-  subobject-classifier .fun p .fst x .snd = isPropT _
-  subobject-classifier .fun p .snd = ℰ!⇒ℬ ∘ to-subobject p ∘ ℬ⇒ℰ! ∥$∥ xs
+  subobject-classifier .fun = to-subobject
   subobject-classifier .inv (sub , fin) x = does (fromDec sub fin x)
-  subobject-classifier .rightInv (sub , fin) = ΣProp≡ (λ _ → squash) (λ i x → lem2 sub fin x i)
-  subobject-classifier .leftInv fn i x = lem fn x i
+  subobject-classifier .rightInv (sub , fin) = ΣProp≡ (λ _ → squash) (λ i x → lemma sub fin x i)
+    where
+    lemma : (sub : A → hProp ℓzero) → (fin : 𝒞 (∃ (fst ∘ sub))) → ∀ x → to-subobject (does ∘ fromDec sub fin) .fst x ≡ sub x
+    lemma sub fin x = ΣProp≡ (λ _ → isPropIsProp) (isoToPath (iso (it-does (fromDec sub fin x)) (does-it (fromDec sub fin x)) (λ y → sub x .snd _ y) (λ x → isPropT _ _ x)))
+  subobject-classifier .leftInv fn i x = lemma fn x i
+    where
+    dec-refl : ∀ x → (y : Dec (T x)) → does y ≡ x
+    dec-refl true (yes p) = refl
+    dec-refl false (no ¬p) = refl
+    dec-refl true (no ¬p) = ⊥-elim (¬p tt)
+
+    lemma : ∀ f x → Dec.does (fromDec (to-subobject f .fst) (to-subobject f .snd) x) ≡ f x
+    lemma f x = dec-refl (f x) (fromDec (to-subobject f .fst) (to-subobject f .snd) x)
+
