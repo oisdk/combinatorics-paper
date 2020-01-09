@@ -255,3 +255,5 @@ haskell/**/*.tex
 .DS_Store
 _region_.pdf
 _region_.tex
+
+docs/*
