@@ -95,4 +95,5 @@ module _ {e r} {E : Type e} (totalOrder : TotalOrder E r) where
       ΣProp≡
         (λ _ → hLevelPi 1 (λ _ → squash))
         (perm-invar (xs .fst) (ys .fst) (perm-ℬ xs ys))
+
 \end{code}

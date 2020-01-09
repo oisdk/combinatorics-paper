@@ -176,12 +176,8 @@ section~\ref{manifest-bishop}.
   \(\mathbf{Bool}\), \(\top\), and \(\bot\) are all split enumerable.
 \end{rm-lemma}
 \begin{proof}
-  These non-recursive types have similar, simple proofs.
-  \begin{multicols}{3}
-    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool}
-    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{top}
-    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bot}
-  \end{multicols}
+  Each of these types clearly has a finite number of elements (2, 1, and 0,
+  respectively), and furthermore has a straightforward enumeration.
 \end{proof}
 \begin{rm-theorem} \label{split-enum-sigma}
   Split-enumerability is closed under \(\Sigma\).
@@ -231,9 +227,6 @@ to be read as ``\(x\) occurs exactly once in \(\mathit{xs}\)''.
 By the definition of a contraction, we can always recover the underlying
 membership proof, meaning that we can always derive split enumerability from
 manifest Bishop finiteness.
-
-A nice consequence of prohibiting duplicates is that now the length of the
-support list is the same as the cardinality of the set.
 \subsection{Equivalence}
 \begin{rm-lemma} \label{bishop-equiv}
   A proof of manifest Bishop finiteness is equivalent to an equivalence with a
