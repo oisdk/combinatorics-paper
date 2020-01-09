@@ -13,7 +13,7 @@ open import Data.Fin
 
 module _ where
   open ℒ
-  ℬ⇔Fin≃ : ℬ A ⇔ (∃[ n ] (Fin n ≃ A))
+  ℬ⇔Fin≃ : ℬ A ⇔ ∃[ n ] (Fin n ≃ A)
   ℬ⇔Fin≃ .fun ((n , xs) , cov) .fst = n
   ℬ⇔Fin≃ .fun ((n , xs) , cov) .snd .fst = xs
   ℬ⇔Fin≃ .fun ((n , xs) , cov) .snd .snd .equiv-proof = cov

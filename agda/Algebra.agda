@@ -31,7 +31,7 @@ module _ {a b} {A : Type a} {B : Type b} where
 
   _Distributesˡ_ : (B → A → B) → (B → B → B) → Type _
   _⊗_ Distributesˡ _⊕_ = ∀ x y z → (x ⊕ y) ⊗ z ≡ (x ⊗ z) ⊕ (y ⊗ z)
-  
+
 record  Semigroup ℓ : Type (ℓsuc ℓ) where
   infixl 6 _∙_
   field

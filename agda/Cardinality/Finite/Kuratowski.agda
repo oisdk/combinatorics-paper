@@ -113,3 +113,21 @@ module _ {a} {A : Type a} (xs : 𝒞 A) where
     lemma : ∀ f x → Dec.does (fromDec (to-subobject f .fst) (to-subobject f .snd) x) ≡ f x
     lemma f x = dec-refl (f x) (fromDec (to-subobject f .fst) (to-subobject f .snd) x)
 
+
+open import Relation.Nullary.Decidable.Properties
+open import Relation.Nullary.Omniscience
+open import HITs.PropositionalTruncation.Properties
+
+𝒦ᶠ⇒Exhaustible : ∀ {p} → 𝒦ᶠ A → Exhaustible p A
+𝒦ᶠ⇒Exhaustible K P? =
+  ∣ ◻? P? (K .fst)
+    ∣yes⇒ (λ ◻Pxs x → recompute (P? x) (P∈◇ x (K .fst) (K .snd x) ◻Pxs))
+    ∣no⇒ λ ¬◻Pxs ∀P → ¬◻Pxs (map-◻ ∀P (K .fst))
+
+-- Omniscient   p A = ∀ {P : A → Type p} → Decidable P → Dec (∃  P)
+
+-- 𝒦ᶠ⇒∣Omniscient∣ : ∀ {p} {P : A → Type p} → 𝒦ᶠ A → Decidable P → Dec ∥ ∃ P ∥
+-- 𝒦ᶠ⇒∣Omniscient∣ K P? =
+--   ∣ ◇? P? (K .fst)
+--     ∣yes⇒ (P∃◇ (K .fst))
+--     ∣no⇒ (λ ¬◇xs ∃xs → recPropTrunc squash {!!} ∃xs)

@@ -45,13 +45,13 @@ open import Data.Fin.Properties using (Fin-inj)
 open import Data.Nat.Properties using (isSetℕ)
 open import Cubical.Foundations.HLevels
 
-cardinality : ∥ ∃[ n ] Fin n ≃ A ∥ → ∃[ n ] ∥ Fin n ≃ A ∥
+cardinality : ∥ ∃[ n ] (Fin n ≃ A) ∥ → ∃[ n ] ∥ Fin n ≃ A ∥
 cardinality {A = A} = recPropTrunc→Set (isOfHLevelΣ 2 isSetℕ λ _ → isProp→isSet squash) alg const-alg
   where
   alg : Σ[ n ⦂ ℕ ] (Fin n ≃ A) → Σ[ n ⦂ ℕ ] ∥ Fin n ≃ A ∥
   alg (n , f≃A) = n , ∣ f≃A ∣
 
-  const-alg : (x y : ∃[ n ] Fin n ≃ A) → alg x ≡ alg y
+  const-alg : (x y : ∃[ n ] (Fin n ≃ A)) → alg x ≡ alg y
   const-alg (n , x) (m , y) =
     ΣProp≡
       (λ _ → squash)

@@ -10,13 +10,13 @@ open import Level
 ∀′ : {A : Type a} (B : A → Type b) → Type _
 ∀′ {A = A} B = Π A B
 
-infixr 3 ∀-syntax
+infixr 4.5 ∀-syntax
 ∀-syntax : ∀ {a b} {A : Type a} (B : A → Type b) → Type (a ℓ⊔ b)
 ∀-syntax = ∀′
 
 syntax ∀-syntax (λ x → e) = ∀[ x ] e
 
-infixr 3 Π⦂-syntax
+infixr 4.5 Π⦂-syntax
 Π⦂-syntax : (A : Type a) (B : A → Type b) → Type (a ℓ⊔ b)
 Π⦂-syntax = Π
 
