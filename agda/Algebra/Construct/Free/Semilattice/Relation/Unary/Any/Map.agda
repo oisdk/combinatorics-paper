@@ -19,9 +19,8 @@ private
   variable P : A → Type p
 
 map-◇ : ∀ (x : A) → P x → (xs : 𝒦 A) → x ∈ xs → ◇ P xs
-map-◇ x Px = ∥ map-◇′ x Px ∥⇓
-  where
-  map-◇′ : ∀ x → P x → xs ∈𝒦 A ⇒∥ (x ∈ xs → ◇ P xs) ∥
-  ∥ map-◇′ x Px ∥-prop {xs} p q i x∈xs = isProp-◇  {xs = xs} (p x∈xs) (q x∈xs) i
-  ∥ map-◇′ x Px ∥[] ()
-  ∥ map-◇′ x Px ∥ y ∷ xs ⟨ Pxs ⟩ x∈xs = x∈xs >>= either′ (λ x≡y → ∣ inl (subst _ x≡y Px) ∣ ) (∣_∣ ∘ inr ∘ Pxs)
+map-◇ x Px =
+  𝒦-elim-prop
+    (λ {xs} p q i x∈xs → isProp-◇  {xs = xs} (p x∈xs) (q x∈xs) i)
+    (λ ())
+    λ y xs Pxs x∈xs → x∈xs >>= either′ (λ x≡y → ∣ inl (subst _ x≡y Px) ∣ ) (∣_∣ ∘′ inr ∘′ Pxs)

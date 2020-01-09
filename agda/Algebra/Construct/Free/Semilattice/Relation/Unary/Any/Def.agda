@@ -30,17 +30,18 @@ com-◇ P y z xs .inv = swap-◇
 com-◇ P y z xs .leftInv  p = squash _ p
 com-◇ P y z xs .rightInv p = squash _ p
 
-◇′ : (P : A → Type p) → A ↘ hProp p
+◇′ : (P : A → Type p) → 𝒦 A → hProp p
 ◇′ P =
-  rec
+  𝒦-rec
     isSetHProp
-    (λ x xs → ∥ P x ⊎ xs .fst ∥ , squash)
+    (λ { x (xs , _) → ∥ P x ⊎ xs ∥ , squash })
     (⊥ , λ ())
     (λ x xs → ΣProp≡ (λ _ → isPropIsProp) (isoToPath (dup-◇ P x (xs .fst))))
     (λ x y xs → ΣProp≡ (λ _ → isPropIsProp) (isoToPath (com-◇ P x y (xs .fst))))
+{-# INLINE ◇′ #-}
 
 ◇ : (P : A → Type p) → 𝒦 A → Type p
-◇ P xs = [ ◇′ P ]↓ xs .fst
+◇ P xs = ◇′ P xs .fst
 
 isProp-◇ : ∀ {P : A → Type p} {xs} → isProp (◇ P xs)
-isProp-◇ {P = P} {xs = xs} = [ ◇′ P ]↓ xs .snd
+isProp-◇ {P = P} {xs = xs} = ◇′ P xs .snd

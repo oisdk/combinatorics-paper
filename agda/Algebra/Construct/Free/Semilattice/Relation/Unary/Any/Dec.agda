@@ -20,10 +20,10 @@ open import Relation.Nullary.Decidable.Logic
 private
   variable p : Level
 
-◇′? : ∀ {P : A → Type p} → (∀ x → Dec (P x)) → xs ∈𝒦 A ⇒∥ Dec (◇ P xs) ∥
-∥ ◇′? {P = P} P? ∥-prop {xs} = isPropDec (isProp-◇ {P = P} {xs = xs})
-∥ ◇′? P? ∥[] = no (Poly⊥⇔Mono⊥ .fun)
-∥ ◇′? P? ∥ x ∷ xs ⟨ Pxs ⟩ = map-dec ∣_∣ refute-trunc (P? x || Pxs)
-
-◇? : ∀ {P : A → Type p} → (∀ x → Dec (P x)) → ∀ xs → Dec (◇ P xs)
-◇? P? = ∥ ◇′? P? ∥⇓
+◇? : ∀ {P : A → Type p} → (∀ x → Dec (P x)) → (xs : 𝒦 A) → Dec (◇ P xs)
+◇? {A = A} {P = P} P? = 𝒦-elim-prop (λ {xs} → isPropDec (isProp-◇ {P = P} {xs = xs})) (λ x xs → fn x xs (P? x)) (no (Poly⊥⇔Mono⊥ .fun))
+  where
+  fn : ∀ x xs → Dec (P x) → Dec (◇ P xs) → Dec (◇ P (x ∷ xs))
+  fn x xs (yes Px) Pxs = yes ∣ inl Px ∣
+  fn x xs (no ¬Px) (yes Pxs) = yes ∣ inr Pxs ∣
+  fn x xs (no ¬Px) (no ¬Pxs) = no (refute-trunc (either′ ¬Px ¬Pxs))
