@@ -80,3 +80,19 @@ record TotalOrder {ℓ₁} (𝑆 : Type ℓ₁) ℓ₂ : Type (ℓ₁ ℓ⊔ ℓ
   compare x y | inr x₁ | 〖 xy 〗 | inr x₂ | 〖 yx 〗 = eq (antisym x₂ x₁)
   compare x y | inl x₁ | 〖 xy 〗 | inr x₂ | 〖 yx 〗 = lt ((λ p → subst (bool ⊥ ⊤) (cong is-l (≡.sym xy) ; cong₂ _≤ᵇ_ p (≡.sym p) ; cong is-l yx) tt) , x₁)
   compare x y | inr x₁ | 〖 xy 〗 | inl x₂ | 〖 yx 〗 = gt ((λ p → subst (bool ⊤ ⊥) (cong is-l (≡.sym xy) ; cong₂ _≤ᵇ_ (≡.sym p) p ; cong is-l yx) tt) , x₁)
+
+record Equivalence {ℓ₁} (𝑆 : Type ℓ₁) ℓ₂ : Type (ℓ₁ ℓ⊔ ℓsuc ℓ₂) where
+  infix 4 _≋_
+  field
+    _≋_ : 𝑆 → 𝑆 → Type ℓ₂
+    sym   : ∀ {x y} → x ≋ y → y ≋ x
+    refl  : ∀ {x} → x ≋ x
+    trans : ∀ {x y z} → x ≋ y → y ≋ z → x ≋ z
+
+≡-equivalence : ∀ {a} {A : Set a} → Equivalence A a
+≡-equivalence = record
+  { _≋_ = _≡_
+  ; sym = ≡.sym
+  ; refl = ≡.refl
+  ; trans = _;_
+  }

@@ -8,6 +8,7 @@ import Data.Nat.Properties as ℕ
 open import Data.Nat.Properties using (+-comm)
 open import Data.Nat
 open import Function.Injective
+open import Agda.Builtin.Nat renaming (_<_ to _<ᵇ_)
 
 private
   variable
@@ -36,6 +37,10 @@ discreteFin {k = suc _} (fs fj) (fs fk) =
 
 isSetFin : isSet (Fin n)
 isSetFin = Discrete→isSet discreteFin
+
+FinFromℕ : (n m : ℕ) → T (n <ᵇ m) → Fin m
+FinFromℕ zero (suc m) p = f0
+FinFromℕ (suc n) (suc m) p = fs (FinFromℕ n m p)
 
 infix 4 _≢ᶠ_ _≡ᶠ_
 _≢ᶠ_ _≡ᶠ_ : Fin n → Fin n → Type _

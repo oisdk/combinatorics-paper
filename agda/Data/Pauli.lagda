@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Data.Pauli where
@@ -9,9 +10,13 @@ open import Cardinality.Finite.SplitEnumerable.Instances
 open import Cardinality.Finite.SplitEnumerable.Inductive
 open import Cardinality.Finite.SplitEnumerable.Isomorphism
 open import Data.Fin
-
+\end{code}
+%<*def>
+\begin{code}
 data Pauli : Type₀ where X Y Z I : Pauli
-
+\end{code}
+%</def>
+\begin{code}
 instance
   ℰ!⟨Pauli⟩ : ℰ! Pauli
   ℰ!⟨Pauli⟩ .fst  = X ∷ Y ∷ Z ∷ I ∷ []
@@ -45,6 +50,10 @@ cancel-· = ∀↯ⁿ 1 λ x → x · x ≟ I
 
 comm-· : ∀ x y → x · y ≡ y · x
 comm-· = ∀↯ⁿ 2 λ x y → x · y ≟ y · x
-
+\end{code}
+%<*assoc-prf>
+\begin{code}
 assoc-· : ∀ x y z → (x · y) · z ≡ x · (y · z)
 assoc-· = ∀↯ⁿ 3 λ x y z → (x · y) · z ≟ x · (y · z)
+\end{code}
+%</assoc-prf>

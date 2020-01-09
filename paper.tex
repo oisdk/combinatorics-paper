@@ -143,13 +143,13 @@ Finally, we can define formally split enumerability.
   Split enumerability is equivalent to a split surjection from a finite prefix
   of the natural numbers.
   \begin{equation}
-    \mathcal{E}!(A) \simeq \Sigma {(n : \mathbb{N})} , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
+    \mathcal{E}!(A) \iff \Sigma {(n : \mathbb{N})} , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
   \end{equation}
 \end{rm-theorem}
 \begin{proof}
   The proof is surprisingly short: after sufficient inlining, it emerges that
   our goal is simply a reassociation.
-  \ExecuteMetaData[agda/Cardinality/Container/Finite.tex]{split-surj}
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{split-surj}
   To be clear: in Agda, the proof could simply be \(\AgdaFunction{reassoc}\); we
   have written out the extra lines for clarity alone.
 \end{proof}
@@ -179,8 +179,8 @@ section~\ref{manifest-bishop}.
   These non-recursive types have similar, simple proofs.
   \begin{multicols}{3}
     \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool}
-    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{unit}
-    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{empty}
+    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{top}
+    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bot}
   \end{multicols}
 \end{proof}
 \begin{rm-theorem} \label{split-enum-sigma}
@@ -197,7 +197,7 @@ section~\ref{manifest-bishop}.
   To obtain the support list, we concatenate the support lists of all the proofs
   of split-finiteness for \(U\) over the support list of \(E_A\).
   In Agda:
-  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{sigma-enum}
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{sigma-sup}
   ``do-notation'' is available to us as we're working in the list monad.
 \end{proof}
 Closure under disjoint union and Cartesian product both follow from \(\Sigma\),
@@ -894,21 +894,6 @@ For proof search, the procedure is a well-known one in Agda
 \cite{devrieseBrightSideType2011}: we ask for the result of a decision procedure
 as an \emph{instance argument}, which will demand computation during
 typechecking.
-As an example, we can check that the group operation on \(\AgdaDatatype{Pauli}\)
-is idempotent like so:
-\ExecuteMetaData[agda/Data/Pauli.tex]{noninst-prf} 
-
-As a quick aside, when the property is \emph{not} true (for instance \(\forall x
-\rightarrow x \cdot x \equiv x\)), Agda will fail by not finding an instance of
-\(\bot\).
-The error message specifically is
-\verb+No instance of type ⊥ was found in scope+, which isn't very helpful.
-We can do a little better by displaying the particular element on which the
-property failed, by defining a custom empty type parameterised by the
-counterexample itself.
-Combined with some other changes to the combinators, this will give the
-following more helpful error message:
-\verb+No instance of type Counterexample X was found in scope+.
 \subsection{Multiple Arguments}
 The automation machinery above only deals with single-argument predicates.
 This is not a problem, as we know that we can work with multiple arguments by
@@ -926,7 +911,7 @@ We also implement the curry-uncurry combinators as (verified) isomorphisms.
 
 A full explanation of our implementation is beyond the scope of this work, so we
 only present the finished interface, which is used like so:
-\ExecuteMetaData[agda/Data/Pauli.tex]{prf-curried}
+\ExecuteMetaData[agda/Data/Pauli.tex]{assoc-prf}
 
 \todo[inline]{Synthesise functions}
 \todo[inline]{Partial search over infinite types}

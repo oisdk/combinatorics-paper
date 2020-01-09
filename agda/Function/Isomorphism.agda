@@ -8,6 +8,7 @@ open import Level
 open import Path
 open import Function
 open import Data.Sigma
+open import Relation.Binary
 
 open Iso public
 
@@ -39,3 +40,9 @@ iso-Σ B⇔C .rightInv (x , xs) i .fst = x
 iso-Σ B⇔C .rightInv (x , xs) i .snd = B⇔C x .rightInv xs i
 iso-Σ B⇔C .leftInv (x , xs) i .fst = x
 iso-Σ B⇔C .leftInv (x , xs) i .snd = B⇔C x .leftInv xs i
+
+⇔-equiv : Equivalence (Type a) a
+Equivalence._≋_ ⇔-equiv = _⇔_
+Equivalence.sym ⇔-equiv = sym-⇔
+Equivalence.refl ⇔-equiv = refl-⇔
+Equivalence.trans ⇔-equiv = trans-⇔
