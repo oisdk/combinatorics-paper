@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical #-}
+{-# OPTIONS --cubical --safe #-}
 
 module Cardinality.Finite.Kuratowski where
 
@@ -124,8 +124,5 @@ open import HITs.PropositionalTruncation.Properties
     ∣yes⇒ (λ ◻Pxs x → recompute (P? x) (P∈◇ x (K .fst) (K .snd x) ◻Pxs))
     ∣no⇒ λ ¬◻Pxs ∀P → ¬◻Pxs (map-◻ ∀P (K .fst))
 
-𝒦ᶠ⇒∣Omniscient∣ : ∀ {p} {P : A → Type p} → 𝒦ᶠ A → Decidable P → Dec ∥ ∃ P ∥
-𝒦ᶠ⇒∣Omniscient∣ K P? =
-  ∣ ◇? P? (K .fst)
-    ∣yes⇒ (P∃◇ (K .fst))
-    ∣no⇒ (λ ¬◇xs → refute-trunc (λ { (x , Px) → ¬◇xs (map-◇ x Px (K .fst) (K .snd x))}))
+𝒦ᶠ⇒∣Omniscient∣ : ∀ {p} {P : A → Type p} → ∥ ℰ A ∥ → Decidable P → Dec ∥ ∃ P ∥
+𝒦ᶠ⇒∣Omniscient∣ {p = p} {P = P} K P? = recPropTrunc (isPropDec squash) (map-dec ∣_∣ refute-trunc ∘ λ xs → ℰ⇒Omniscient xs P?) K

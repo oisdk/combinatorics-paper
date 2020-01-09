@@ -18,13 +18,16 @@ private
   variable p : Level
   variable P : A → Type p
 
-map-◇ : ∀ (x : A) → P x → (xs : 𝒦 A) → x ∈ xs → ◇ P xs
-map-◇ {A = A} {P = P} x Px =
-  𝒦-elim-prop
-    (λ {xs} p q i x∈xs → isProp-◇  {xs = xs} (p x∈xs) (q x∈xs) i)
-    (λ ())
-    λ y xs Pxs x∈xs → x∈xs >>= (fn y xs Pxs)
-  where
-  fn : ∀ y xs → (x ∈ xs → ◇ P xs) → (y ≡ x) ⊎ (x ∈ xs) → ◇ P (y ∷ xs)
-  fn y xs k (inl y≡x) = ∣ inl (subst P (sym y≡x) Px) ∣
-  fn y xs k (inr x∈xs) = ∣ inr (k x∈xs) ∣
+-- map-◇-fn : ∀ x → P x → ∀ y xs → (x ∈ xs → ◇ P xs) → (y ≡ x) ⊎ (x ∈ xs) → ◇ P (y ∷ xs)
+-- map-◇-fn {P = P} x Px y xs k (inl y≡x) = ∣ inl (subst P (sym y≡x) Px) ∣
+-- map-◇-fn x Px y xs k (inr x∈xs) = ∣ inr (k x∈xs) ∣
+
+-- map-◇-prop : ∀ (x : A) {xs} → isProp (x ∈ xs → ◇ P xs)
+-- map-◇-prop {P = P} x {xs} p q i x∈xs = ◇′ P xs .snd (p x∈xs) (q x∈xs) i
+
+-- map-◇ : ∀ (x : A) → P x → (xs : 𝒦 A) → x ∈ xs → ◇ P xs
+-- map-◇ {A = A} {P = P} x Px =
+--   𝒦-elim-prop {A = A} {P = λ ys → x ∈ ys → ◇ P ys}
+--     (map-◇-prop {A = A} {P = P} x)
+--     (λ y xs Pxs → recPropTrunc squash (map-◇-fn x Px y xs Pxs))
+--     (λ ())
