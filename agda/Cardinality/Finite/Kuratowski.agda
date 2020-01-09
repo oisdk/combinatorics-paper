@@ -124,5 +124,11 @@ open import HITs.PropositionalTruncation.Properties
     ∣yes⇒ (λ ◻Pxs x → recompute (P? x) (P∈◇ x (K .fst) (K .snd x) ◻Pxs))
     ∣no⇒ λ ¬◻Pxs ∀P → ¬◻Pxs (map-◻ ∀P (K .fst))
 
-𝒦ᶠ⇒∣Omniscient∣ : ∀ {p} {P : A → Type p} → ∥ ℰ A ∥ → Decidable P → Dec ∥ ∃ P ∥
-𝒦ᶠ⇒∣Omniscient∣ {p = p} {P = P} K P? = recPropTrunc (isPropDec squash) (map-dec ∣_∣ refute-trunc ∘ λ xs → ℰ⇒Omniscient xs P?) K
+private variable p : Level
+
+𝒦ᶠ⇒∣Omniscient∣ : {P : A → Type p} → 𝒦ᶠ A → Decidable P → Dec ∥ ∃ P ∥
+𝒦ᶠ⇒∣Omniscient∣ K P? =
+  recPropTrunc
+    (isPropDec squash)
+    (map-dec ∣_∣ refute-trunc ∘ λ xs → ℰ⇒Omniscient xs P?)
+    (𝒦ᶠ⇒∥ℰ∥ K)
