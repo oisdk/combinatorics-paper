@@ -10,5 +10,8 @@ open import Cubical.Foundations.Everything
         ;isPropIsContr
         ;isProp→isSet
         ;isOfHLevel→isOfHLevelDep
+        ;hProp
+        ;isSetHProp
+        ;isPropIsProp
         )
   public
