@@ -256,4 +256,4 @@ haskell/**/*.tex
 _region_.pdf
 _region_.tex
 
-docs/*
+agda/Everything.agda

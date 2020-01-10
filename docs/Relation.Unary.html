@@ -1,0 +1,11 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>Relation.Unary</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--cubical</a> <a id="23" class="Pragma">--safe</a> <a id="30" class="Symbol">#-}</a>
+
+<a id="35" class="Keyword">module</a> <a id="42" href="Relation.Unary.html" class="Module">Relation.Unary</a> <a id="57" class="Keyword">where</a>
+
+<a id="64" class="Keyword">open</a> <a id="69" class="Keyword">import</a> <a id="76" href="Relation.Nullary.Decidable.html" class="Module">Relation.Nullary.Decidable</a>
+<a id="103" class="Keyword">open</a> <a id="108" class="Keyword">import</a> <a id="115" href="Level.html" class="Module">Level</a>
+
+<a id="Decidable"></a><a id="122" href="Relation.Unary.html#122" class="Function">Decidable</a> <a id="132" class="Symbol">:</a> <a id="134" class="Symbol">(</a><a id="135" href="Level.html#388" class="Generalizable">A</a> <a id="137" class="Symbol">→</a> <a id="139" href="Level.html#192" class="Function">Type</a> <a id="144" href="Level.html#374" class="Generalizable">b</a><a id="145" class="Symbol">)</a> <a id="147" class="Symbol">→</a> <a id="149" href="Level.html#192" class="Function">Type</a> <a id="154" class="Symbol">_</a>
+<a id="156" href="Relation.Unary.html#122" class="Function">Decidable</a> <a id="166" href="Relation.Unary.html#166" class="Bound">P</a> <a id="168" class="Symbol">=</a> <a id="170" class="Symbol">∀</a> <a id="172" href="Relation.Unary.html#172" class="Bound">x</a> <a id="174" class="Symbol">→</a> <a id="176" href="Relation.Nullary.Decidable.Base.html#309" class="Record">Dec</a> <a id="180" class="Symbol">(</a><a id="181" href="Relation.Unary.html#166" class="Bound">P</a> <a id="183" href="Relation.Unary.html#172" class="Bound">x</a><a id="184" class="Symbol">)</a>
+</pre></body></html>
