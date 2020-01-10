@@ -85,19 +85,19 @@ module _ where
  cov-Σ : (x : A)
        → (y : U x)
        → (xs : List A)
-       → (ys : ∀ x → ℰ! (U x))
+       → (ys : ∀ x → List (U x))
        → x ∈ xs
-       → (x , y) ∈ sup-Σ xs (fst ∘ ys)
- cov-Σ xᵢ yᵢ (x ∷ xs) ys (fs n , x∈xs) =
-   map (x ,_) (ys x .fst) ++◇ cov-Σ xᵢ yᵢ xs ys (n , x∈xs)
- cov-Σ xᵢ yᵢ (x ∷ xs) ys (f0  , x∈xs) =
-   subst (λ x′ → (xᵢ , yᵢ) ∈ sup-Σ (x′ ∷ xs) (fst ∘ ys)) (sym x∈xs)
-   (map (xᵢ ,_) (ys xᵢ .fst) ◇++ cong-∈ (xᵢ ,_) (ys xᵢ .fst) (ys xᵢ .snd yᵢ))
-
+       → y ∈ ys x
+       → (x , y) ∈ sup-Σ xs ys
+ cov-Σ xᵢ yᵢ (x ∷ xs) ys (fs n , x∈xs) y∈ys =
+   map (x ,_) (ys x) ++◇ cov-Σ xᵢ yᵢ xs ys (n , x∈xs) y∈ys
+ cov-Σ xᵢ yᵢ (x ∷ xs) ys (f0  , x∈xs) y∈ys =
+   subst (λ x′ → (xᵢ , yᵢ) ∈ sup-Σ (x′ ∷ xs) ys) (sym x∈xs)
+   (map (xᵢ ,_) (ys xᵢ) ◇++ cong-∈ (xᵢ ,_) (ys xᵢ) y∈ys)
 
  _|Σ|_ : ℰ! A → (∀ x → ℰ! (U x)) → ℰ! (Σ A U)
  (xs |Σ| ys) .fst = sup-Σ (xs .fst) (fst ∘ ys)
- (xs |Σ| ys) .snd (x , y) = cov-Σ x y (xs .fst) ys (xs .snd x)
+ (xs |Σ| ys) .snd (x , y) = cov-Σ x y (xs .fst) (fst ∘ ys) (xs .snd x) (ys x .snd y)
 
  _|×|_ : ℰ! A → ℰ! B → ℰ! (A × B)
  xs |×| ys = xs |Σ| const ys

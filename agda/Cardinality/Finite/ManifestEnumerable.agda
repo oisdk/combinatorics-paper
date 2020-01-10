@@ -44,23 +44,9 @@ module _ where
   ℰ!⇒ℰ E .fst = E .fst
   ℰ!⇒ℰ E .snd x = ∣ E .snd x ∣
 
-
-  cov-Σ′ : {B : A → Type b}
-                → (x : A)
-                → (y : B x)
-                → (xs : List A)
-                → (ys : ∀ x → ℰ (B x))
-                → x ∈ xs
-                → ∥ (x , y) ∈ sup-Σ xs (fst ∘ ys) ∥
-  cov-Σ′ xᵢ yᵢ (x ∷ xs) ys (fs n , xᵢ∈xs) =
-    map (x ,_) (ys x .fst) ++◇_ ∥$∥ cov-Σ′ xᵢ yᵢ xs ys (n , xᵢ∈xs)
-  cov-Σ′ xᵢ yᵢ (x ∷ xs) ys (f0 , x≡xᵢ) =
-    subst (λ x′ → (xᵢ , yᵢ) ∈ sup-Σ (x′ ∷ xs) (fst ∘ ys)) (sym x≡xᵢ) ∥$∥
-    map (xᵢ ,_) (ys xᵢ .fst) ◇++_ ∥$∥ cong-∈ (xᵢ ,_) (ys xᵢ .fst) ∥$∥ ys xᵢ .snd yᵢ
-
   _∥Σ∥_ : {B : A → Type b} → ℰ A → ((x : A) → ℰ (B x)) → ℰ (Σ A B)
   (xs ∥Σ∥ ys) .fst = sup-Σ (xs .fst) (fst ∘ ys)
-  (xs ∥Σ∥ ys) .snd (x , y) = xs .snd x >>= cov-Σ′ x y (xs .fst) ys
+  (xs ∥Σ∥ ys) .snd (x , y) = ⦇ (cov-Σ x y (xs .fst) (fst ∘ ys)) (xs .snd x) (ys x .snd y) ⦈
 
   open import Cubical.Foundations.HLevels using (isOfHLevelΣ; hLevelPi)
   open import Cubical.Data.List.Properties using (isOfHLevelList)

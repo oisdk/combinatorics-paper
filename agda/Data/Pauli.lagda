@@ -9,8 +9,24 @@ open import Cardinality.Finite.SplitEnumerable.Search
 open import Cardinality.Finite.SplitEnumerable.Instances
 open import Cardinality.Finite.SplitEnumerable.Inductive
 open import Cardinality.Finite.SplitEnumerable.Isomorphism
+open import Cardinality.Finite.ManifestBishop
 open import Data.Fin
+open import Relation.Nullary.Decidable.Logic
+
+it : ⦃ _ : A ⦄ → A
+it ⦃ x ⦄ = x
+
+module Bools where
+ infix 4 _≟_
+ _≟_ : Discrete (Bool → Bool)
+ _≟_ = ℰ!⇒Discrete (𝕃⇔ℒ⟨ℰ!⟩ .fun it)
 \end{code}
+%<*not-spec>
+\begin{code}
+ not-spec : Σ[ f ⦂ (Bool → Bool) ] (f ∘ f ≡ id) × (f ≢ id)
+ not-spec = ∃↯ⁿ 1 λ f → (f ∘ f ≟ id) && ! (f ≟ id)
+\end{code}
+%</not-spec>
 %<*def>
 \begin{code}
 data Pauli : Type₀ where X Y Z I : Pauli
@@ -57,3 +73,6 @@ assoc-· : ∀ x y z → (x · y) · z ≡ x · (y · z)
 assoc-· = ∀↯ⁿ 3 λ x y z → (x · y) · z ≟ x · (y · z)
 \end{code}
 %</assoc-prf>
+\begin{code}
+
+\end{code}

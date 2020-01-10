@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Cardinality.Infinite.Split where
@@ -6,10 +7,12 @@ open import Prelude
 open import Data.List.Kleene
 open import Data.Fin
 import Data.Nat as ℕ
+open import Data.Nat using (_+_)
 open import Cubical.Data.Sigma.Properties
 open import Cubical.Foundations.Prelude using (J)
 import Data.List.Kleene.Membership as Kleene
 open import Codata.Stream
+open import Data.Sigma.Properties
 
 private
   variable
@@ -21,22 +24,36 @@ private
 ℰ! : Type a → Type a
 ℰ! A = Σ[ xs ⦂ Stream A ] Π[ x ⦂ A ] x ∈ xs
 
-mutual
-  convΣ⋆ : Stream A → (∀ x → Stream (U x)) → Stream (Σ A U ⋆)
-  convΣ⋆ xs ys zero     = []
-  convΣ⋆ xs ys (suc n)  = ∹ convΣ xs ys n
+ℰ!⇔ℕ↠! : ℰ! A ≡ (ℕ ↠! A)
+ℰ!⇔ℕ↠! = refl
 
-  convΣ : Stream A → (∀ x → Stream (U x)) → Stream (Σ A U ⁺)
-  convΣ xs ys n .head  = x , ys x n where x = xs zero
-  convΣ xs ys n .tail  = convΣ⋆ (xs ∘ suc) ys n
-
+infixl 6 _*_ _*⋆_[_]
+_*_ : Stream A → (∀ x → Stream (U x)) → Stream (Σ A U ⁺)
+_*⋆_[_] : Stream A → (∀ x → Stream (U x)) → Stream (Σ A U ⋆)
 cantor : Stream A → (∀ x → Stream (U x)) → Stream (Σ A U)
-cantor xs ys = concat (convΣ xs ys)
-
-convΣ-cover : ∀ (x : A) xs (y : U x) (ys : ∀ x → Stream (U x)) → x ∈ xs → y ∈ ys x → (x , y) ∈² convΣ xs ys
-convΣ-cover {U = U} x xs y ys (n , x∈xs) (m , y∈ys) = (n ℕ.+ m) , lemma xs n x∈xs
+\end{code}
+%<*cantor>
+\begin{code}
+cantor xs ys = concat (xs * ys)
+\end{code}
+%</cantor>
+%<*convstar>
+\begin{code}
+xs *⋆ ys [ zero   ] = []
+xs *⋆ ys [ suc n  ] = ∹ (xs * ys) n
+\end{code}
+%</convstar>
+%<*convplus>
+\begin{code}
+(xs * ys) n .head  = x , ys x n where x = xs 0
+(xs * ys) n .tail  = (xs ∘ suc) *⋆ ys [ n ]
+\end{code}
+%</convplus>
+\begin{code}
+*-cover : ∀ (x : A) xs (y : U x) (ys : ∀ x → Stream (U x)) → x ∈ xs → y ∈ ys x → (x , y) ∈² xs * ys
+*-cover {U = U} x xs y ys (n , x∈xs) (m , y∈ys) = (n + m) , lemma xs n x∈xs
   where
-  lemma : ∀ xs n → xs n ≡ x → (x , y) Kleene.∈⁺ convΣ xs ys (n ℕ.+ m)
+  lemma : ∀ xs n → xs n ≡ x → (x , y) Kleene.∈⁺ (xs * ys) (n + m)
   lemma xs zero    x∈xs .fst = f0
   lemma xs zero    x∈xs .snd i .fst = x∈xs i
   lemma xs zero    x∈xs .snd i .snd = J (λ z z≡ → PathP (λ j → U (sym z≡ j)) (ys z m) y) y∈ys (sym x∈xs) i
@@ -47,8 +64,8 @@ _|Σ|_ : ℰ! A → (∀ x → ℰ! (U x)) → ℰ! (Σ A U)
 (xs |Σ| ys) .snd (x , y) =
   concat-∈
     (x , y)
-    (convΣ (xs .fst) (fst ∘ ys))
-    (convΣ-cover x (xs .fst) y (fst ∘ ys) (xs .snd x) (ys x .snd y))
+    (xs .fst * (fst ∘ ys))
+    (*-cover x (xs .fst) y (fst ∘ ys) (xs .snd x) (ys x .snd y))
 
 open import Data.Nat using (_+_)
 
@@ -135,3 +152,4 @@ x≢¬x true  p = subst (bool ⊥ ⊤) p tt
 
 cantor-diag : ¬ (ℰ! (Stream Bool))
 cantor-diag (sup , cov) = let n , p = cov (λ n → not (sup n n)) in x≢¬x _ (cong (_$ n) p)
+\end{code}

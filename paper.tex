@@ -643,44 +643,35 @@ have a support \emph{stream}, which is its infinite.
     \mathcal{E}!(A) = \Sigma {(\mathit{xs} : \mathbf{Stream}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
   \end{equation}
 \end{rm-definition}
+This type is definitionally equal to it surjection equivalent (\(\mathbb{N}
+\twoheadrightarrow ! \; A\)).
 \subsubsection{Closure}
 We know that countable infinity is not closed under the exponential (function
 arrow), so the only closure we need to prove is \(\Sigma\) to cover all of
 what's left.
-To do this we have to take a slightly different approach to the functions we
-defined before.
-Figure~\ref{pairings} illustrates the reason why: previously, we used the
-``Cartesian'' product pairing for each support list.
-This diverges if the first list is infinite, never exploring anything other than
-the first element in the second list.
-Instead, we use here the cantor pairing function, which performs a breadth-first
-search of the pairings of both lists.
 \input{figures/pairing-functions.tex}
 \begin{rm-theorem} \label{split-countability-sigma}
   Split countability is closed under \(\Sigma\).
 \end{rm-theorem}
 \begin{proof}
-  The main task here is to find a productive (in the coinductive sense) way to
-  combine the two support streams.
-  A trick which greatly simplifies the algorithm is to first produce a stream of
-  lists, which we then concatenate to a single stream.
-  This intermediate stream, which we will call \(C\), is generated from the two
-  support streams \(\mathit{xs}\) and \(\mathit{ys}\) like so:
-  \begin{equation}
-    C_i = \left\{ \left( \mathit{xs}_j , \mathit{ys}_{i - j} \right) \mid j \in [0,i] \right\}
-  \end{equation}
-\end{proof}
-\begin{rm-lemma}
-  Split countability is closed under non-dependent product and sum.
-\end{rm-lemma}
-\begin{proof}
-  Follows from theorem~\ref{split-countability-sigma}.
+  The main task here is to figure out a pattern which will pair elements of the
+  two support streams without diverging.
+  Figure~\ref{cartesian} illustrates why the pairing function we used for lists
+  won't work: it needs to exhaust one of the input lists before inspecting
+  anything other than the first element of the other.
+  Of course, we can't exhaust a stream, so this diverges.
+
+  Instead, we will use the pattern in figure~\ref{cantor}.
+  We will produce a stream of lists (where each list is a diagonal), which is
+  then concatenated to the final output stream.
+  The intermediate stream is sometimes called the discrete convolution of the
+  two input streams.
 \end{proof}
 \subsubsection{Kleene Star}
 While we lose some closures with the inclusion of infinite types, we gain some
 others.
 In particular, we have the Kleene star.
-This means, in effect, that we have closure under lists.
+This means that we have closure under lists.
 \begin{rm-theorem}
   Split countability is closed under Kleene star.
   \begin{equation}
@@ -689,12 +680,23 @@ This means, in effect, that we have closure under lists.
 \end{rm-theorem}
 \begin{proof}
   As with the proof of closure under \(\Sigma\), our main task here is to figure
-  out a way to arrange the indices such that 
+  out a pattern that reaches any given finite list in finite time.
+  Our first step is to split up the problem as we did for \(\Sigma\)-closure: we
+  produce an intermediate stream of lists, which we then concatenate to give the
+  final result.
+  The intermediate stream is constructed like so:
+  \begin{equation}
+    \mathit{xs}^\star_i = \left\{ \text{map}(\mathit{xs} , x) \mid \mathit{x} \in \mathbf{List}(\mathbb{N}) , \text{sum}(\text{map}(1+, x)) \equiv i \right\}
+  \end{equation}
+  In other words, the \(i\)th element is all lists such that the sum of the
+  successor of the indices in the list is equal to \(i\).
 \end{proof}
-\subsection{Manifest Countability}
-As we can quotient out the position information with finite types, so can we with
-countable types.
-\todo[inline]{fill in rest here}
+\subsection{Other Types of Countability}
+There are of course other forms of countability available to us: manifest
+countability, cardinal, etc.
+We have a similar structure of relationships to the finite types, with the
+exception that we cannot construct an isomorphism with \(\mathbb{N}\) fiven a
+surjection from \(\mathbb{N}\).
 \section{Practical Uses} \label{practical}
 \subsection{Omniscience}
 In this section we are interested in restricted forms of the limited principle
@@ -726,9 +728,6 @@ We will only prove it once, then, for the weakest:
 \begin{rm-theorem}
   Kuratowski-finite types are exhaustible.
 \end{rm-theorem}
-\begin{proof}
-  \todo[inline]{Proof}
-\end{proof}
 
 Omniscience is stronger than exhaustibility, as we can derive the latter from
 the former:
@@ -762,17 +761,11 @@ Again, we will prove it only for the weakest.
 \begin{rm-theorem}
   Manifest enumerable types are omniscient.
 \end{rm-theorem}
-\begin{proof}
-  \todo[inline]{Proof}
-\end{proof}
 Finally, we do have a form of omniscience for prop-valued predicates, as they do
 not care about the chosen representative.
 \begin{rm-theorem}
   Kuratowski finite types are omniscient about prop-valued predicates.
 \end{rm-theorem}
-\begin{proof}
-  \todo[inline]{Proof}
-\end{proof}
 \subsection{Synthesising Pattern-Matching Proofs}
 In particular, they can automate large proofs by analysing every possible case.
 In \cite{firsovDependentlyTypedProgramming2015}, the \(\AgdaDatatype{Pauli}\)
@@ -810,9 +803,14 @@ We also implement the curry-uncurry combinators as (verified) isomorphisms.
 A full explanation of our implementation is beyond the scope of this work, so we
 only present the finished interface, which is used like so:
 \ExecuteMetaData[agda/Data/Pauli.tex]{assoc-prf}
-
-\todo[inline]{Synthesise functions}
-\todo[inline]{Partial search over infinite types}
+\subsection{Synthesising Functions}
+Finally, thanks to extensionality provided to us by HoTT, and the computation
+properties provided by CuTT, we can derive decidable equality on functions over
+finite types.
+We can also use functions in our proof search.
+Here, for instance, is a automated procedure which finds the
+\(\AgdaFunction{not}\) function on \(\mathbf{Bool}\), given a specification.
+\ExecuteMetaData[agda/Data/Pauli.tex]{not-spec}
 \section{Related Work}
 \cite{spiwackConstructivelyFinite2010} explored the notion of ``constructive
 finite sets'', demonstrating that there is a rich variety of finiteness

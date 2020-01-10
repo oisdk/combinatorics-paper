@@ -31,6 +31,7 @@ mutual
 concat : Stream (A ⁺) → Stream A
 concat xs = concat⁺ (xs zero) (xs ∘ suc)
 
+infixr 5 _∈²_
 _∈²_ : A → Stream (A ⁺) → Type _
 x ∈² xs = ∃[ n ] x Kleene.∈⁺ xs n
 
