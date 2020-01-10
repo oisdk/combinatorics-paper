@@ -23,6 +23,7 @@
 \end{abstract}
 \section{Introduction}
 \subsection{Strong Finiteness Predicates}
+\input{figures/finite-classification}
 We will first explore the ``strong'' notions of finiteness (i.e. those at least
 as strong as Kuratowski finiteness \cite{kuratowskiNotionEnsembleFini1920}),
 with a special focus on cardinal finiteness (section~\ref{cardinal}), and
@@ -30,18 +31,7 @@ manifest enumerability (section~\ref{manifest-enumerability}), which is new, to
 our knowledge.
 
 Figure~\ref{finite-classification} organises the predicates according to
-their strength; i.e. how much information they provide about a conforming
-type.
-For instance, a proof that some type \(A\) is manifestly Bishop finite (the
-strongest of the notions, explored in section~\ref{manifest-bishop}) also tells
-us that \(A\) is discrete (has decidable equality), and gives us a linear order
-on the type.
-A type that is Kuratowski finite (section~\ref{kuratowski}) has no such extra
-features: indeed, we will see examples of Kuratowski finite types which are not
-even sets, never mind discrete ones.
-
-\input{figures/finite-classification}
-
+their strength.
 We will go through each of the predicates, proving how to weaken each (i.e. we
 will provide a proof that every cardinally finite type is Kuratowski finite),
 and how to strengthen them, given the required property.
@@ -125,7 +115,9 @@ Finally, we can define formally split enumerability.
   \end{equation}
   We call the first component of this pair the ``support'' list, and the second
   component the ``cover'' proof.
+  This definition is what is referred to as \verb+Listable+ in
 \end{rm-definition}
+\cite{firsovDependentlyTypedProgramming2015}.
 \subsection{Split Surjections}
 \begin{rm-definition}[Surjections]
   \begin{multicols}{2}
@@ -147,13 +139,11 @@ Finally, we can define formally split enumerability.
   \end{equation}
 \end{rm-theorem}
 \begin{proof}
-  The proof is surprisingly short: after sufficient inlining, it emerges that
-  our goal is simply a reassociation.
+  After sufficient inlining, it emerges that our goal is simply a reassociation.
   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{split-surj}
   To be clear: in Agda, the proof could simply be \(\AgdaFunction{reassoc}\); we
   have written out the extra lines for clarity alone.
 \end{proof}
-
 \begin{rm-lemma} \label{split-enum-discrete}
   Any split enumerable type has decidable equality (is discrete).
 \end{rm-lemma}
@@ -245,8 +235,6 @@ manifest Bishop finiteness.
   of a contractible map.
 \end{proof}
 \subsection{Relationship to Split Enumerability}
-We now show that manifest Bishop finiteness has equal strength to split
-enumerability.
 \begin{rm-theorem} \label{split-enum-to-manifest-bishop}
   Any split enumerable set is manifest Bishop finite.
 \end{rm-theorem}
@@ -340,25 +328,16 @@ membership proof.
     \end{aligned}
   \end{equation}
 
-  We will use and consume values of the type \(\lVert A \rVert\) in three main
-  ways.
+  We will use three eliminators from \(\lVert A \rVert\) in this paper.
   \begin{enumerate}
-    \item \label{elim-prop-prop} We can first eliminate from \(\lVert A \rVert\)
-      into any type which is a proposition.
-      In other words, given a function \(f : A \rightarrow B\), and a proof that
-      \(B\) is a proposition, we can construct a function \(\lVert A \rVert
-      \rightarrow B\).
-    \item \label{elim-prop-monad} As a consequence of this first point, we can
-      always eliminate into another propositionally truncated type.
-      As a result, \(\lVert \cdot \rVert\) forms a Monad: for our purposes, this
-      simply means that we can work ``under'' a propositional truncation in an
-      ergonomic way.
+  \item \label{elim-prop-prop} For any function \(A \rightarrow B\), where
+    \(\text{isProp}(B)\), we have a function \(\lVert A \rVert \rightarrow B\).
+  \item \label{elim-prop-monad} A special case of \ref{elim-prop-prop} implies
+    that \(\lVert \cdot \rVert\) forms a monad: this means that we get the usual
+    Monadic operators on \(\lVert \cdot \rVert\) (bind, pure, fmap, etc.).
     \item \label{elim-prop-coh} We can eliminate from \(\lVert A \rVert\) with a
       function \(f : A \rightarrow B\) iff \(f\) ``doesn't care'' about the
-      choice of \(A\).
-      \begin{equation}
-        \Pi {(x , y : A)} , f(x) \equiv f(y)
-      \end{equation}
+      choice of \(A\) (\(\Pi {(x , y : A)} , f(x) \equiv f(y) \)).
       Formally speaking, \(f\) needs to be ``coherently constant''
       \cite{krausGeneralUniversalProperty2015}, and \(B\) needs to be an
       \(n\)-type for some finite \(n\).
@@ -382,10 +361,6 @@ enumerability's relation to \emph{split} surjectivity.
   A proof of manifest enumerability is equivalent to a surjection from a finite
   prefix of the natural numbers.
 \end{rm-lemma}
-\begin{proof}
-  As with the other surjection proof (lemma~\ref{split-enum-surj}), this is
-  simply a reassociation.
-\end{proof}
 \subsection{Relation to Split Enumerability}
 \begin{rm-theorem} \label{manifest-enum-to-split}
   A manifestly enumerable type with decidable equality is split enumerable.
@@ -474,24 +449,17 @@ This leaves us with closure under only the non-dependent operations.
   All of these closure proofs can be lifted directly from their corresponding
   proofs on manifest Bishop finiteness.
 \end{proof}
-\subsection{Decidable Equality}
+\subsection{Strength}
+The following two theorems are proven in
+\cite{yorgeyCombinatorialSpeciesLabelled2014}, in much the same way as we have
+done here.
+Our contribution for this section is simply the formalisation.
 \begin{rm-theorem} \label{cardinal-finite-discrete}
   Any cardinal-finite set has decidable equality.
 \end{rm-theorem}
 \begin{proof}
-  We will use eliminator~\ref{elim-prop-prop} from definition~\ref{prop-trunc}.
-  Manifest Bishop finiteness implies decidable equality already, so our task
-  here is to prove that decidable equality itself is a proposition.
-
-  We know that if a type \(A\) is a proposition, then the decision over that
-  type is also a proposition.
-  Then, via Hedberg's theorem, we know that any type with decidable equality is
-  a set, meaning that paths in that type are themselves propositions.
-  Therefore we can derive that a decision of equality on elements with decidable
-  equality is a proposition, and by function extensionality we see that
-  decidable equality is itself a proposition.
+  See \cite[Proposition 2.4.10]{yorgeyCombinatorialSpeciesLabelled2014}.
 \end{proof}
-\subsection{Cardinality}
 \begin{rm-theorem}
   Given a cardinally finite type, we can derive the type's cardinality, as well
   as a propositionally truncated proof of equivalence with \(\textbf{Fin}\)s of
@@ -501,39 +469,7 @@ This leaves us with closure under only the non-dependent operations.
   \end{equation}
 \end{rm-theorem}
 \begin{proof}
-  Our task here is to ``pull out'' the cardinality of the set from under the
-  propositional truncation.
-  In effect, we need the following function:
-  \begin{equation}
-    \left\lVert \Sigma {(n : \mathbb{N})} , \left( \mathbf{Fin}(n) \simeq A \right) \right\rVert \rightarrow
-    \Sigma {(n : \mathbb{N})} , \left\lVert \mathbf{Fin}(n) \simeq A \right\rVert
-  \end{equation}
-
-  We will use eliminator~\ref{elim-prop-coh} from definition~\ref{prop-trunc}.
-  We eliminate with the following function:
-  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{trunc-alg}
-
-  To show that \(\text{alg}\) is coherently constant, we first notice that the
-  second element of the output pair is propositionally truncated, meaning that
-  it is trivially equal to any other element of the same type.
-  Our task, then, simplifies to demonstrating that the first element of the
-  output pair is coherently constant.
-  \begin{equation}
-    \Pi {(x : \Sigma {(n : \mathbb{N})} , \textbf{Fin}(n) \simeq A)} ,
-    \Pi {(y : \Sigma {(m : \mathbb{N})} , \textbf{Fin}(m) \simeq A)} ,
-    n \equiv m
-  \end{equation}
-
-  Notice that \(\mathbf{Fin}(n)\) and \(\mathbf{Fin}(m)\) are both equivalent to
-  \(A\): we can join these proofs together, giving us the following:
-  \begin{equation}
-    \textbf{Fin}(n) \equiv \textbf{Fin}(m)
-  \end{equation}
-  All that remains now is to prove that \(\mathbf{Fin}\) is injective.
-  Though the proof is surprisingly complex, it is a well-known puzzle in
-  Martin-Löf type theory.
-  Our proof does not differ significantly from standard approaches, so we will
-  not detail it here.
+  \cite[Proposition 2.4.9]{yorgeyCombinatorialSpeciesLabelled2014}.
 \end{proof}
 \subsection{Relation to Manifest Bishop Finiteness}
 Cardinal finiteness tells us that there is an isomorphism between a type and
@@ -592,7 +528,6 @@ First, permutations.
   \end{equation}
 \end{rm-lemma}
 \begin{proof}
-  Again, this proof is quite complex, so we only give a sketch here.
   First, we prove two properties about insertion sort:
   \begin{enumerate}
     \item It returns a sorted list.
@@ -687,8 +622,7 @@ In particular, we see that decidable Kuratowski finite sets form a \emph{topos}.
 We already have most of the components we need: closure under \(\bot\),
 \(\top\), \(\mathbf{Bool}\), \(+\), \(\times\), and \(\rightarrow\).
 What remains is the subobject classifier.
-\begin{definition}
-\end{definition}
+\todo[inline]{Topos!}
 \section{Infinite Cardinalities} \label{infinite-cardinalities}
 In the previous sections we saw different flavours of finiteness which were
 really just different flavours of relations to \(\mathbf{Fin}\).
@@ -700,18 +634,16 @@ analogue to the split enumerable types.
 We need change only one element: instead of a support \emph{list}, we instead
 have a support \emph{stream}, which is its infinite.
 \begin{rm-definition}[Stream]
-  As with lists, it is cleaner, theory-wise, to define streams as a container.
   \begin{equation}
     \mathbf{Stream}(A) = \llbracket \top \triangleright \text{const} (\mathbb{N}) \rrbracket(A) \simeq \mathbb{N} \rightarrow A
   \end{equation}
-  Conceptually, a stream is like a list without an end.
 \end{rm-definition}
 \begin{rm-definition}[Split Countability]
   \begin{equation}
     \mathcal{E}!(A) = \Sigma {(\mathit{xs} : \mathbf{Stream}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
   \end{equation}
 \end{rm-definition}
-\subsubsection{\(\Sigma\) Closure}
+\subsubsection{Closure}
 We know that countable infinity is not closed under the exponential (function
 arrow), so the only closure we need to prove is \(\Sigma\) to cover all of
 what's left.
@@ -723,47 +655,20 @@ This diverges if the first list is infinite, never exploring anything other than
 the first element in the second list.
 Instead, we use here the cantor pairing function, which performs a breadth-first
 search of the pairings of both lists.
-\begin{figure}
-  \centering
-  \begin{subfigure}[b]{.5\linewidth}
-    \begin{tikzcd}[sep=tiny,font=\footnotesize]
-      (1,e) \ar[rdddd, out=-45, in=135] & (2,e) \ar[rdddd, out=-45, in=135] & (3,e) \ar[rdddd, out=-45, in=135] & (4,e) \ar[rdddd, out=-45, in=135] & (5,e)        \\
-      (1,d) \ar[u]     & (2,d) \ar[u]    & (3,d) \ar[u]    & (4,d) \ar[u]    & (5,d) \ar[u] \\
-      (1,c) \ar[u]     & (2,c) \ar[u]    & (3,c) \ar[u]    & (4,c) \ar[u]    & (5,c) \ar[u] \\
-      (1,b) \ar[u]     & (2,b) \ar[u]    & (3,b) \ar[u]    & (4,b) \ar[u]    & (5,b) \ar[u] \\
-      (1,a) \ar[u]     & (2,a) \ar[u]    & (3,a) \ar[u]    & (4,a) \ar[u]    & (5,a) \ar[u]
-    \end{tikzcd}
-    \caption{Cartesian}
-    \label{cartesian}
-  \end{subfigure}%
-  \begin{subfigure}[b]{.5\linewidth}
-    \begin{tikzcd}[sep=tiny,font=\footnotesize]
-      (1,e) \ar[dr] & (2,e) \ar[dr]  & (3,e) \ar[dr]    & (4,e) \ar[dr] & (5,e) \\
-      (1,d) \ar[dr] & (2,d) \ar[dr]  & (3,d) \ar[dr]    & (4,d) \ar[dr] & (5,d) \ar[u] \\
-      (1,c) \ar[dr] & (2,c) \ar[dr]  & (3,c) \ar[dr]    & (4,c) \ar[dr] & (5,c) \ar[uul] \\
-      (1,b) \ar[dr] & (2,b) \ar[dr]  & (3,b) \ar[dr]    & (4,b) \ar[dr] & (5,b) \ar[uuull, out=130, in=-50] \\
-      (1,a) \ar[u]  & (2,a) \ar[uul, out=130, in=-50] & (3,a) \ar[uuull, out=130, in=-50] & (4,a) \ar[uuuulll, out=130, in=-50] & (5,a) \ar[uuuulll, out=130, in=-50]
-    \end{tikzcd}
-    \caption{Cantor}
-    \label{cantor}
-  \end{subfigure}
-  \caption{Two possible products for the sets \(\left[ 1 \dots 5 \right]\) and
-    \(\left[  a \dots e \right]\)}
-  \label{pairings}
-\end{figure}
+\input{figures/pairing-functions.tex}
 \begin{rm-theorem} \label{split-countability-sigma}
   Split countability is closed under \(\Sigma\).
 \end{rm-theorem}
 \begin{proof}
-  This final proof consists of the support stream, and the proof that the
-  support stream covers the input.
-
-  As mentioned, we will have to use a more sophisticated pairing function than
-  the Cartesian product we used before.
-  We instead will mirror the pattern in figure~\ref{cantor}.
-  To greatly simplify the algorithm, we will produce an intermediate stream of
-  lists which consists of the diagonals in the diagram.
-  We then concatenate these streams into the final support stream.
+  The main task here is to find a productive (in the coinductive sense) way to
+  combine the two support streams.
+  A trick which greatly simplifies the algorithm is to first produce a stream of
+  lists, which we then concatenate to a single stream.
+  This intermediate stream, which we will call \(C\), is generated from the two
+  support streams \(\mathit{xs}\) and \(\mathit{ys}\) like so:
+  \begin{equation}
+    C_i = \left\{ \left( \mathit{xs}_j , \mathit{ys}_{i - j} \right) \mid j \in [0,i] \right\}
+  \end{equation}
 \end{proof}
 \begin{rm-lemma}
   Split countability is closed under non-dependent product and sum.
@@ -908,6 +813,29 @@ only present the finished interface, which is used like so:
 
 \todo[inline]{Synthesise functions}
 \todo[inline]{Partial search over infinite types}
+\section{Related Work}
+\cite{spiwackConstructivelyFinite2010} explored the notion of ``constructive
+finite sets'', demonstrating that there is a rich variety of finiteness
+predicates in a constructive setting.
+Some of those predicates where explored more in
+\cite{firsovVariationsNoetherianness2016a},
+\cite{parmannInvestigatingStreamlessSets2015}, and
+\cite{uustaluFinitenessRationalSequences2017a}.
+
+\cite{yorgeyCombinatorialSpeciesLabelled2014} explored some of the definitions
+we have given here (manifest bishop finiteness and cardinal finiteness) in HoTT,
+in order to construct species.
+Some of this paper is a formalisation of the early parts of that work.
+
+\cite{firsovDependentlyTypedProgramming2015} explores finite sets in Agda and
+uses them to automate proof machinery in much the same way as we have here.
+The primary difference between their proof automation and ours is that we can
+talk about finite functions, as we are working in HoTT.
+
+\cite{fruminFiniteSetsHomotopy2018} explores many of the same notions as we do
+here: cardinal finiteness, and Kuratowski finite sets.
+Our work makes extensive use of the computational properties of CuTT, however,
+and we are able to formalise the finiteness of function objects.
 \bibliographystyle{splncs04}
 \bibliography{bibliography.bib}
 \end{document}
