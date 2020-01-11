@@ -112,7 +112,11 @@ module _ where
 
  open import Data.Tuple
 
- ℰ!⟨Tuple⟩ : ∀ {n u} {U : Fin n → Type u} → (∀ i → ℰ! (U i)) → ℰ! (Tuple n U)
+ ℰ!⟨Tuple⟩ : ∀ {n u} {U : Lift a (Fin n) → Type u} → (∀ i → ℰ! (U i)) → ℰ! (Tuple n U)
  ℰ!⟨Tuple⟩ {n = zero}  f = (_ ∷ []) , λ _ → f0 , refl
- ℰ!⟨Tuple⟩ {n = suc n} f = f f0 |×| ℰ!⟨Tuple⟩ (f ∘ fs)
+ ℰ!⟨Tuple⟩ {n = suc n} f = f (lift f0) |×| ℰ!⟨Tuple⟩ (f ∘ lift ∘ fs ∘ lower)
+
+ ℰ!⟨Lift⟩ : ℰ! A → ℰ! (Lift b A)
+ ℰ!⟨Lift⟩ xs .fst = map lift (xs .fst)
+ ℰ!⟨Lift⟩ xs .snd x = cong-∈ lift (xs .fst) (xs .snd (x .lower))
 \end{code}

@@ -43,12 +43,15 @@ module _ where
 
   open import Data.Tuple
 
-  _|Π|_ :  ∀ {u} {A : Type₀} {U : A → Type u} →
+  isoLift : Lift b A ⇔ A
+  isoLift = iso lower lift (λ _ → refl) λ _ → refl
+
+  _|Π|_ : ∀ {u} {A : Type a} {U : A → Type u} →
           ℰ! A →
           ((x : A) → ℰ! (U x)) →
           ℰ! ((x : A) → U x)
-  _|Π|_ xs =
+  _|Π|_ {a = a} {u = u} xs =
     subst
       (λ t → {A : t → Type _} → ((x : t) → ℰ! (A x)) → ℰ! ((x : t) → (A x)))
-      (ua (ℬ⇔Fin≃ .fun (𝕃⇔ℒ⟨ℬ⟩ .fun (ℰ!⇒ℬ xs)) .snd))
-      (subst ℰ! (isoToPath Tuple⇔ΠFin) ∘ ℰ!⟨Tuple⟩)
+      (ua (isoToEquiv isoLift ⟨ trans-≃ ⟩ ℬ⇔Fin≃ .fun (𝕃⇔ℒ⟨ℬ⟩ .fun (ℰ!⇒ℬ xs)) .snd))
+      (subst ℰ! (isoToPath (isoLift {b = a} ⟨ trans-⇔ ⟩ Tuple⇔ΠFin)) ∘ ℰ!⟨Lift⟩ ∘ ℰ!⟨Tuple⟩)
