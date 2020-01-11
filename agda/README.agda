@@ -18,7 +18,7 @@ open import Data.Fin.Base using (Fin)
 -- Definition 4: ℰ!
 open import Cardinality.Finite.SplitEnumerable.Container using (ℰ!)
 
--- COntainer based definition is isomophic to inductive
+-- Container based definition is isomophic to inductive
 open import Cardinality.Finite.SplitEnumerable.Isomorphism using (𝕃⇔ℒ⟨ℰ!⟩)
 
 -- Definition 5: Surjections
@@ -46,6 +46,9 @@ open import Cardinality.Finite.ManifestBishop.Container using (ℬ)
 -- Defintion 7: Unique Membership
 open import Container.Membership using (_∈!_)
 
+-- Container based definition is isomophic to inductive
+open import Cardinality.Finite.ManifestBishop.Isomorphism using (𝕃⇔ℒ⟨ℬ⟩)
+
 -- Lemma 3
 open import Cardinality.Finite.ManifestBishop using (ℬ⇔Fin≃)
 
@@ -56,5 +59,27 @@ open import Cardinality.Finite.ManifestBishop using (ℰ!⇒ℬ)
 open import Cardinality.Finite.ManifestBishop using (_|Π|_)
 
 --------------------------------------------------------------------------------
--- Section 3: Manifest Enumerability
+-- Section 4: Manifest Enumerability
+--------------------------------------------------------------------------------
+
+-- Definition 8: Manifest Bishop Finiteness
+open import Cardinality.Finite.ManifestEnumerable.Container using (ℰ)
+
+-- Definition 9: Propositional Truncation (from the cubical agda library)
+open import Cubical.HITs.PropositionalTruncation using (∥_∥)
+
+-- Theorem 5
+open import Cardinality.Finite.ManifestEnumerable using (ℰ⟨S¹⟩)
+
+-- Lemma 4
+open import Cardinality.Finite.ManifestEnumerable using (ℰ⇔Fin↠)
+
+-- Theorem 6
+open import Cardinality.Finite.ManifestEnumerable using (ℰ⇒ℰ!)
+
+-- Lemma 5
+open import Cardinality.Finite.ManifestEnumerable using (_∥Σ∥_)
+
+--------------------------------------------------------------------------------
+-- Section 5: Cardinal Finiteness
 --------------------------------------------------------------------------------
