@@ -84,4 +84,79 @@
 <a id="2574" class="Comment">--------------------------------------------------------------------------------</a>
 <a id="2655" class="Comment">-- Section 5: Cardinal Finiteness</a>
 <a id="2689" class="Comment">--------------------------------------------------------------------------------</a>
+
+<a id="2771" class="Comment">-- Definition 10: Cardinal Finiteness</a>
+<a id="2809" class="Keyword">open</a> <a id="2814" class="Keyword">import</a> <a id="2821" href="Cardinality.Finite.Cardinal.html" class="Module">Cardinality.Finite.Cardinal</a> <a id="2849" class="Keyword">using</a> <a id="2855" class="Symbol">(</a><a id="2856" href="Cardinality.Finite.Cardinal.html#538" class="Function">𝒞</a><a id="2857" class="Symbol">)</a>
+
+<a id="2860" class="Comment">-- Lemma 6</a>
+<a id="2871" class="Keyword">open</a> <a id="2876" class="Keyword">import</a> <a id="2883" href="Cardinality.Finite.Cardinal.html" class="Module">Cardinality.Finite.Cardinal</a> <a id="2911" class="Keyword">using</a> <a id="2917" class="Symbol">(</a><a id="2918" href="Cardinality.Finite.Cardinal.html#573" class="Function Operator">_∥×∥_</a><a id="2923" class="Symbol">;</a> <a id="2925" href="Cardinality.Finite.Cardinal.html#668" class="Function Operator">_∥⊎∥_</a><a id="2930" class="Symbol">;</a> <a id="2932" href="Cardinality.Finite.Cardinal.html#763" class="Function Operator">_∥→∥_</a><a id="2937" class="Symbol">)</a>
+
+<a id="2940" class="Comment">-- Theorem 7</a>
+<a id="2953" class="Keyword">open</a> <a id="2958" class="Keyword">import</a> <a id="2965" href="Cardinality.Finite.Cardinal.html" class="Module">Cardinality.Finite.Cardinal</a> <a id="2993" class="Keyword">using</a> <a id="2999" class="Symbol">(</a><a id="3000" href="Cardinality.Finite.Cardinal.html#880" class="Function">𝒞⇒Discrete</a><a id="3010" class="Symbol">)</a>
+
+<a id="3013" class="Comment">-- Theorem 8</a>
+<a id="3026" class="Keyword">open</a> <a id="3031" class="Keyword">import</a> <a id="3038" href="Cardinality.Finite.Cardinal.html" class="Module">Cardinality.Finite.Cardinal</a> <a id="3066" class="Keyword">using</a> <a id="3072" class="Symbol">(</a><a id="3073" href="Cardinality.Finite.Cardinal.html#1158" class="Function">cardinality</a><a id="3084" class="Symbol">)</a>
+
+<a id="3087" class="Comment">-- Theorem 9</a>
+<a id="3100" class="Keyword">open</a> <a id="3105" class="Keyword">import</a> <a id="3112" href="Cardinality.Finite.Cardinal.html" class="Module">Cardinality.Finite.Cardinal</a> <a id="3140" class="Keyword">using</a> <a id="3146" class="Symbol">(</a><a id="3147" href="Cardinality.Finite.Cardinal.html#2390" class="Function">𝒞⇒ℬ</a><a id="3150" class="Symbol">)</a>
+
+<a id="3153" class="Comment">-- Definition 11</a>
+<a id="3170" class="Keyword">open</a> <a id="3175" class="Keyword">import</a> <a id="3182" href="Data.List.Relation.Binary.Permutation.html" class="Module">Data.List.Relation.Binary.Permutation</a> <a id="3220" class="Keyword">using</a> <a id="3226" class="Symbol">(</a><a id="3227" href="Data.List.Relation.Binary.Permutation.html#662" class="Function Operator">_↭_</a><a id="3230" class="Symbol">)</a>
+
+<a id="3233" class="Comment">-- Lemma 7</a>
+<a id="3244" class="Keyword">open</a> <a id="3249" class="Keyword">import</a> <a id="3256" href="Data.List.Sort.html" class="Module">Data.List.Sort</a> <a id="3271" class="Keyword">using</a> <a id="3277" class="Symbol">(</a><a id="3278" href="Data.List.Sort.html#2929" class="Function">perm-invar</a><a id="3288" class="Symbol">)</a>
+
+<a id="3291" class="Comment">--------------------------------------------------------------------------------</a>
+<a id="3372" class="Comment">-- Section 6: Kuratowski Finiteness</a>
+<a id="3408" class="Comment">--------------------------------------------------------------------------------</a>
+
+<a id="3490" class="Comment">-- Definition 12: Kuratowski-finite set</a>
+<a id="3530" class="Keyword">open</a> <a id="3535" class="Keyword">import</a> <a id="3542" href="Algebra.Construct.Free.Semilattice.html" class="Module">Algebra.Construct.Free.Semilattice</a> <a id="3577" class="Keyword">using</a> <a id="3583" class="Symbol">(</a><a id="3584" href="Algebra.Construct.Free.Semilattice.Definition.html#134" class="Datatype">𝒦</a><a id="3585" class="Symbol">)</a>
+
+<a id="3588" class="Comment">-- Definition 13: Membership of 𝒦</a>
+<a id="3622" class="Keyword">open</a> <a id="3627" class="Keyword">import</a> <a id="3634" href="Algebra.Construct.Free.Semilattice.Relation.Unary.html" class="Module">Algebra.Construct.Free.Semilattice.Relation.Unary</a> <a id="3684" class="Keyword">using</a> <a id="3690" class="Symbol">(</a><a id="3691" href="Algebra.Construct.Free.Semilattice.Relation.Unary.Membership.html#640" class="Function Operator">_∈_</a><a id="3694" class="Symbol">)</a>
+
+<a id="3697" class="Comment">-- Definition 14: Kuratowski finiteness</a>
+<a id="3737" class="Keyword">open</a> <a id="3742" class="Keyword">import</a> <a id="3749" href="Cardinality.Finite.Kuratowski.html" class="Module">Cardinality.Finite.Kuratowski</a> <a id="3779" class="Keyword">using</a> <a id="3785" class="Symbol">(</a><a id="3786" href="Cardinality.Finite.Kuratowski.html#453" class="Function">𝒦ᶠ</a><a id="3788" class="Symbol">)</a>
+
+<a id="3791" class="Comment">-- Theorem 10</a>
+<a id="3805" class="Keyword">open</a> <a id="3810" class="Keyword">import</a> <a id="3817" href="Cardinality.Finite.Kuratowski.html" class="Module">Cardinality.Finite.Kuratowski</a> <a id="3847" class="Keyword">using</a> <a id="3853" class="Symbol">(</a><a id="3854" href="Cardinality.Finite.Kuratowski.html#1364" class="Function">∥ℰ∥⇔𝒦</a><a id="3859" class="Symbol">)</a>
+
+<a id="3862" class="Comment">--------------------------------------------------------------------------------</a>
+<a id="3943" class="Comment">-- Section 7: Infinite Cardinalities</a>
+<a id="3980" class="Comment">--------------------------------------------------------------------------------</a>
+
+<a id="4062" class="Comment">-- Definition 15: Stream</a>
+<a id="4087" class="Keyword">open</a> <a id="4092" class="Keyword">import</a> <a id="4099" href="Codata.Stream.html" class="Module">Codata.Stream</a> <a id="4113" class="Keyword">using</a> <a id="4119" class="Symbol">(</a><a id="4120" href="Codata.Stream.html#223" class="Function">Stream</a><a id="4126" class="Symbol">)</a>
+
+<a id="4129" class="Comment">-- Definition 16: Split Countability</a>
+<a id="4166" class="Keyword">open</a> <a id="4171" class="Keyword">import</a> <a id="4178" href="Cardinality.Infinite.Split.html" class="Module">Cardinality.Infinite.Split</a> <a id="4205" class="Keyword">using</a> <a id="4211" class="Symbol">(</a><a id="4212" href="Cardinality.Infinite.Split.html#497" class="Function">ℰ!</a><a id="4214" class="Symbol">)</a>
+
+<a id="4217" class="Comment">-- Theorem 11</a>
+<a id="4231" class="Keyword">open</a> <a id="4236" class="Keyword">import</a> <a id="4243" href="Cardinality.Infinite.Split.html" class="Module">Cardinality.Infinite.Split</a> <a id="4270" class="Keyword">using</a> <a id="4276" class="Symbol">(</a><a id="4277" href="Cardinality.Infinite.Split.html#1665" class="Function Operator">_|Σ|_</a><a id="4282" class="Symbol">)</a>
+
+<a id="4285" class="Comment">-- Theorem 12</a>
+<a id="4299" class="Keyword">open</a> <a id="4304" class="Keyword">import</a> <a id="4311" href="Cardinality.Infinite.Split.html" class="Module">Cardinality.Infinite.Split</a> <a id="4338" class="Keyword">using</a> <a id="4344" class="Symbol">(</a><a id="4345" href="Cardinality.Infinite.Split.html#2590" class="Function">star</a><a id="4349" class="Symbol">)</a>
+
+<a id="4352" class="Comment">--------------------------------------------------------------------------------</a>
+<a id="4433" class="Comment">-- Section 8: Practical Uses</a>
+<a id="4462" class="Comment">--------------------------------------------------------------------------------</a>
+
+<a id="4544" class="Comment">-- Definition 17: Limited Principle of Omniscience</a>
+<a id="4595" class="Keyword">open</a> <a id="4600" class="Keyword">import</a> <a id="4607" href="Relation.Nullary.Omniscience.html" class="Module">Relation.Nullary.Omniscience</a> <a id="4636" class="Keyword">using</a> <a id="4642" class="Symbol">(</a><a id="4643" href="Relation.Nullary.Omniscience.html#372" class="Function">Omniscient</a><a id="4653" class="Symbol">)</a>
+
+<a id="4656" class="Comment">-- Definition 18: Exhaustibility</a>
+<a id="4689" class="Keyword">open</a> <a id="4694" class="Keyword">import</a> <a id="4701" href="Relation.Nullary.Omniscience.html" class="Module">Relation.Nullary.Omniscience</a> <a id="4730" class="Keyword">using</a> <a id="4736" class="Symbol">(</a><a id="4737" href="Relation.Nullary.Omniscience.html#383" class="Function">Exhaustible</a><a id="4748" class="Symbol">)</a>
+
+<a id="4751" class="Comment">-- Theorem 13</a>
+<a id="4765" class="Keyword">open</a> <a id="4770" class="Keyword">import</a> <a id="4777" href="Cardinality.Finite.Kuratowski.html" class="Module">Cardinality.Finite.Kuratowski</a> <a id="4807" class="Keyword">using</a> <a id="4813" class="Symbol">(</a><a id="4814" href="Cardinality.Finite.Kuratowski.html#4402" class="Function">𝒦ᶠ⇒Exhaustible</a><a id="4828" class="Symbol">)</a>
+
+<a id="4831" class="Comment">-- Theorem 14</a>
+<a id="4845" class="Keyword">open</a> <a id="4850" class="Keyword">import</a> <a id="4857" href="Cardinality.Finite.ManifestEnumerable.html" class="Module">Cardinality.Finite.ManifestEnumerable</a> <a id="4895" class="Keyword">using</a> <a id="4901" class="Symbol">(</a><a id="4902" href="Cardinality.Finite.ManifestEnumerable.html#1841" class="Function">ℰ⇒Omniscient</a><a id="4914" class="Symbol">)</a>
+
+<a id="4917" class="Comment">-- Theorem 15</a>
+<a id="4931" class="Keyword">open</a> <a id="4936" class="Keyword">import</a> <a id="4943" href="Cardinality.Finite.Kuratowski.html" class="Module">Cardinality.Finite.Kuratowski</a> <a id="4973" class="Keyword">using</a> <a id="4979" class="Symbol">(</a><a id="4980" href="Cardinality.Finite.Kuratowski.html#4641" class="Function">𝒦ᶠ⇒∣Omniscient∣</a><a id="4995" class="Symbol">)</a>
+
+<a id="4998" class="Comment">-- Automated proofs</a>
+<a id="5018" class="Keyword">open</a> <a id="5023" class="Keyword">import</a> <a id="5030" href="Data.Pauli.html" class="Module">Data.Pauli</a>
 </pre></body></html>

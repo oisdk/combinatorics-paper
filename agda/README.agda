@@ -83,3 +83,78 @@ open import Cardinality.Finite.ManifestEnumerable using (_∥Σ∥_)
 --------------------------------------------------------------------------------
 -- Section 5: Cardinal Finiteness
 --------------------------------------------------------------------------------
+
+-- Definition 10: Cardinal Finiteness
+open import Cardinality.Finite.Cardinal using (𝒞)
+
+-- Lemma 6
+open import Cardinality.Finite.Cardinal using (_∥×∥_; _∥⊎∥_; _∥→∥_)
+
+-- Theorem 7
+open import Cardinality.Finite.Cardinal using (𝒞⇒Discrete)
+
+-- Theorem 8
+open import Cardinality.Finite.Cardinal using (cardinality)
+
+-- Theorem 9
+open import Cardinality.Finite.Cardinal using (𝒞⇒ℬ)
+
+-- Definition 11
+open import Data.List.Relation.Binary.Permutation using (_↭_)
+
+-- Lemma 7
+open import Data.List.Sort using (perm-invar)
+
+--------------------------------------------------------------------------------
+-- Section 6: Kuratowski Finiteness
+--------------------------------------------------------------------------------
+
+-- Definition 12: Kuratowski-finite set
+open import Algebra.Construct.Free.Semilattice using (𝒦)
+
+-- Definition 13: Membership of 𝒦
+open import Algebra.Construct.Free.Semilattice.Relation.Unary using (_∈_)
+
+-- Definition 14: Kuratowski finiteness
+open import Cardinality.Finite.Kuratowski using (𝒦ᶠ)
+
+-- Theorem 10
+open import Cardinality.Finite.Kuratowski using (∥ℰ∥⇔𝒦)
+
+--------------------------------------------------------------------------------
+-- Section 7: Infinite Cardinalities
+--------------------------------------------------------------------------------
+
+-- Definition 15: Stream
+open import Codata.Stream using (Stream)
+
+-- Definition 16: Split Countability
+open import Cardinality.Infinite.Split using (ℰ!)
+
+-- Theorem 11
+open import Cardinality.Infinite.Split using (_|Σ|_)
+
+-- Theorem 12
+open import Cardinality.Infinite.Split using (star)
+
+--------------------------------------------------------------------------------
+-- Section 8: Practical Uses
+--------------------------------------------------------------------------------
+
+-- Definition 17: Limited Principle of Omniscience
+open import Relation.Nullary.Omniscience using (Omniscient)
+
+-- Definition 18: Exhaustibility
+open import Relation.Nullary.Omniscience using (Exhaustible)
+
+-- Theorem 13
+open import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒Exhaustible)
+
+-- Theorem 14
+open import Cardinality.Finite.ManifestEnumerable using (ℰ⇒Omniscient)
+
+-- Theorem 15
+open import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒∣Omniscient∣)
+
+-- Automated proofs
+open import Data.Pauli
