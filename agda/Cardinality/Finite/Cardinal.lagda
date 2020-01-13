@@ -25,6 +25,9 @@ private
     u : Level
     U : A → Type u
 
+𝒞⇒Choice : 𝒞 A → Π[ x ⦂ A ] ∥ U x ∥ → ∥ Π[ x ⦂ A ] U x ∥
+𝒞⇒Choice ca p = ca >>= flip ℬ⇒Choice p
+
 _∥Σ∥_ : 𝒞 A → (∀ x → 𝒞 (U x)) → 𝒞 (Σ A U)
 xs ∥Σ∥ ys = do
   x ← xs
