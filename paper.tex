@@ -7,16 +7,16 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-  We explore five notions of finiteness in Homotopy Type Theory \cite{hottbook}.
-  We will classify these notions, and prove their closure properties,
-  culminating in a proof that decidable Kuratowski-finite sets
-  \cite{kuratowskiNotionEnsembleFini1920} form a topos.
+  We study finiteness in Homotopy Type Theory, classifying five fundamentally
+  different finiteness predicates and proving formally the relationship between
+  them.
+  We also prove the closure properties of each predicate, which includes a proof
+  that decidable Kuratowski finite sets form a topos.
 
   We then develop a parallel classification for the countably infinite types, as
   well as a proof of the countability of \(A^\star\) for a countable type \(A\).
 
-  We formalise our work in Cubical Agda
-  \cite{vezzosiCubicalAgdaDependently2019}, and we implement a library for proof
+  We formalise our work in Cubical Agda, and we implement a library for proof
   search (including combinators for level-polymorphic fully generic currying),
   and demonstrate how it can be used to both prove properties and synthesise
   full functions given desired properties.

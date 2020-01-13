@@ -11,6 +11,11 @@ open import Cardinality.Finite.ManifestBishop.Isomorphism
 
 open import Data.Fin
 
+private
+  variable
+    u : Level
+    U : A → Type u
+
 module _ where
   open ℒ
   ℬ⇔Fin≃ : ℬ A ⇔ ∃[ n ] (Fin n ≃ A)
@@ -41,10 +46,10 @@ module _ where
     where
     disc = ℰ!⇒Discrete (𝕃⇔ℒ⟨ℰ!⟩ .fun xs)
 
-  open import Data.Tuple
-
   isoLift : Lift b A ⇔ A
   isoLift = iso lower lift (λ _ → refl) λ _ → refl
+
+  open import Data.Tuple
 
   _|Π|_ : ∀ {u} {A : Type a} {U : A → Type u} →
           ℰ! A →
@@ -55,3 +60,19 @@ module _ where
       (λ t → {A : t → Type _} → ((x : t) → ℰ! (A x)) → ℰ! ((x : t) → (A x)))
       (ua (isoToEquiv isoLift ⟨ trans-≃ ⟩ ℬ⇔Fin≃ .fun (𝕃⇔ℒ⟨ℬ⟩ .fun (ℰ!⇒ℬ xs)) .snd))
       (subst ℰ! (isoToPath (isoLift {b = a} ⟨ trans-⇔ ⟩ Tuple⇔ΠFin)) ∘ ℰ!⟨Lift⟩ ∘ ℰ!⟨Tuple⟩)
+
+  open import HITs.PropositionalTruncation.Sugar
+
+  ℬ⇒Choice : ℬ A → ((x : A) → ∥ U x ∥) → ∥ (∀ x → U x) ∥
+  ℬ⇒Choice ba =
+    subst
+      (λ t → {U : t → Type _} → ((x : t) → ∥ U x ∥) → ∥ ((x : t) → U x) ∥)
+      (ua (isoToEquiv isoLift ⟨ trans-≃ ⟩ ℬ⇔Fin≃ .fun (𝕃⇔ℒ⟨ℬ⟩ .fun ba) .snd))
+      ((ind ∥$∥_) ∘ trav _ ∘ tab)
+    where
+    trav : ∀ n {T : Lift a (Fin n) → Type b} → Tuple n (∥_∥ ∘ T) → ∥ Tuple n T ∥
+    trav zero    xs = ∣ _ ∣
+    trav (suc n) (x , xs) = do
+      x′ ← x
+      xs′ ← trav n xs
+      ∣ x′ , xs′ ∣
