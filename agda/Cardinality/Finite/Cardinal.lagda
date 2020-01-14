@@ -1,5 +1,5 @@
 \begin{code}
-{-# OPTIONS --cubical --safe #-}
+{-# OPTIONS --cubical --safe --postfix-projections #-}
 
 module Cardinality.Finite.Cardinal where
 
@@ -28,6 +28,7 @@ private
 𝒞⇒Choice : 𝒞 A → Π[ x ⦂ A ] ∥ U x ∥ → ∥ Π[ x ⦂ A ] U x ∥
 𝒞⇒Choice ca p = ca >>= flip ℬ⇒Choice p
 
+infixr 3 _∥Σ∥_
 _∥Σ∥_ : 𝒞 A → (∀ x → 𝒞 (U x)) → 𝒞 (Σ A U)
 xs ∥Σ∥ ys = do
   x ← xs
@@ -45,6 +46,13 @@ xs ∥Π∥ ys = do
   x ← xs
   y ← ℬ⇒Choice x ys
   ∣ ℰ!⇒ℬ (ℬ⇒ℰ! x |Π| (ℬ⇒ℰ! ∘ y)) ∣
+
+_∥→∥_ : 𝒞 A → 𝒞 B → 𝒞 (A → B)
+xs ∥→∥ ys = xs ∥Π∥ const ys
+
+_∥×∥_ : 𝒞 A → 𝒞 B → 𝒞 (A × B)
+xs ∥×∥ ys = xs ∥Σ∥ const ys
+
 
 𝒞⇒Discrete : 𝒞 A → Discrete A
 𝒞⇒Discrete = recPropTrunc isPropDiscrete (ℰ!⇒Discrete ∘ 𝕃⇔ℒ⟨ℰ!⟩ .fun ∘ ℬ⇒ℰ!)
@@ -71,6 +79,40 @@ cardinality {A = A} = recPropTrunc→Set (isOfHLevelΣ 2 isSetℕ λ _ → isPro
       (λ _ → squash)
       {n , ∣ x ∣} {m , ∣ y ∣}
       (Fin-inj n m (ua (x ⟨ trans-≃ ⟩ (sym-≃ y))))
+
+# : 𝒞 A → ℕ
+# = fst ∘ cardinality ∘ _∥$∥_ (ℬ⇔Fin≃ .fun ∘ 𝕃⇔ℒ⟨ℬ⟩ .fun)
+
+open import Data.List.Filter
+open import Cardinality.Finite.SplitEnumerable.Inductive
+open import Relation.Nullary.Decidable.Logic
+
+filter-subobject : ∀ {p} {P : A → Type p} (isPropP : ∀ x → isProp (P x)) (P? : ∀ x → Dec (P x)) →
+                   ℰ! A → ℰ! (Σ[ x ⦂ A ] (P x))
+filter-subobject isPropP P? xs .fst = filter P? (xs .fst)
+filter-subobject isPropP P? xs .snd (x , v) = filter-preserves isPropP P? (xs .fst) x v (xs .snd x)
+
+module _ {a b} {A : Type a} {B : Type b} where
+ _∥⇔∥_ : 𝒞 A → 𝒞 B → 𝒞 (A ⇔ B)
+ xs ∥⇔∥ ys = subst 𝒞 (isoToPath form) p
+   where
+   𝒞⟨f⟩ : 𝒞 (A → B)
+   𝒞⟨f⟩ = xs ∥→∥ ys
+
+   𝒞⟨g⟩ : 𝒞 (B → A)
+   𝒞⟨g⟩ = ys ∥→∥ xs
+
+   p : 𝒞 (Σ[ fg ⦂ ((A → B) × (B → A)) ] (((fg .fst ∘ fg .snd) ≡ id) × ((fg .snd ∘ fg .fst) ≡ id)))
+   p = ℰ!⇒ℬ ∘ filter-subobject
+     (λ fg → isOfHLevelΣ 1 (Discrete→isSet (𝒞⇒Discrete (ys ∥→∥ ys)) _ _) λ _ → (Discrete→isSet (𝒞⇒Discrete (xs ∥→∥ xs)) _ _))
+     (λ { (f , g) → 𝒞⇒Discrete (ys ∥→∥ ys) (f ∘ g) id && 𝒞⇒Discrete (xs ∥→∥ xs) (g ∘ f) id}) ∘ ℬ⇒ℰ!
+     ∥$∥ (𝒞⟨f⟩ ∥×∥ 𝒞⟨g⟩)
+
+   form : (Σ[ fg ⦂ ((A → B) × (B → A)) ] (((fg .fst ∘ fg .snd) ≡ id) × ((fg .snd ∘ fg .fst) ≡ id))) ⇔ (A ⇔ B)
+   form .fun ((f , g) , (leftInv , rightInv)) = iso f g (λ x i → leftInv i x) (λ x i → rightInv i x)
+   form .inv (iso f g leftInv rightInv) = ((f , g) , ((λ i x → leftInv x i) , (λ i x → rightInv x i)))
+   form .rightInv _ = refl
+   form .leftInv  _ = refl
 
 open import Relation.Binary
 open import Data.List.Relation.Binary.Permutation
@@ -103,5 +145,4 @@ module _ {e r} {E : Type e} (totalOrder : TotalOrder E r) where
       ΣProp≡
         (λ _ → hLevelPi 1 (λ _ → squash))
         (perm-invar (xs .fst) (ys .fst) (perm-ℬ xs ys))
-
 \end{code}

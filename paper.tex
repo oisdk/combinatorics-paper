@@ -26,6 +26,104 @@
   full functions given desired properties.
 \end{abstract}
 \section{Introduction}
+In constructive mathematics, we are often preoccupied with \emph{how} we know
+something.
+Finiteness is one of the prime examples which demonstrates this phenomenon: to
+show that some type is finite, we might provide a bijection with another
+finite set, or a surjection from some finite type.
+We could alternatively say that a type is finite if any collection of its
+elements larger than some bound contains duplicates, or if any stream of its
+elements contains duplicates.
+
+Classically, all of these ways to prove finiteness end up proving the same
+thing: constructively, however, each defines a fundamentally different
+``version'' of finiteness.
+In Martin-Löf type theory \cite{martin-lofIntuitionisticTypeTheory1980}, these
+variations (and more) have been explored in
+\cite{spiwackConstructivelyFinite2010} and
+\cite{firsovVariationsNoetherianness2016}.
+
+Homotopy Type Theory \cite{hottbook} further adds to this story in two ways.
+First, its universe of types includes non-sets: whether or not a finiteness
+predicate includes these gives us another dimension on which to discriminate.
+Secondly, 
+
+classifying these types as
+finite or not adds 
+
+can step in.
+Through primarily a generalisation of equality, we gain access to a number of
+exotic types which can, among other things, allow us to perform this ``hiding''.
+In the context of finiteness, the act of hiding is worth studying in its own
+right, and further delineates several new finiteness predicates which collapse
+even in standard 
+
+The other headline feature of HoTT's generalised equality is univalence: put
+simply, it allows us to treat isomorphic types as equal, giving us in the
+constructive world access to a technique that is commonplace classically.
+It turns out that finite types have a lot to say about isomorphisms, and we will
+rely heavily on this aspect of HoTT to work with them.
+\subsection{Contributions}
+In this work, we will explore finite types in Cubical Type Theory
+\cite{cohenCubicalTypeTheory2016}, and expose their relationship to infinite
+types, species, and demonstrate their practical uses for proofs in dependently
+typed programming languages.
+
+In section~\ref{strong-finiteness}, we will explore the ``strong'' notions of
+finiteness (i.e. those at least as strong as Kuratowski finiteness
+\cite{kuratowskiNotionEnsembleFini1920}), with a special focus on cardinal
+finiteness.
+We will delineate some subtly different finiteness predicates, and prove the
+relationship between each.
+We will prove, then, that every discrete Kuratowski finite type is cardinal
+finite, and subsequently will show that discrete Kuratowski finite sets form a
+topos.
+
+In section~\ref{species-and-containers}, we will redefine our finiteness
+predicates using \emph{containers}, and prove that the new definitions are
+equivalent to the old.
+Using this, we will prove much stronger relationships between our finiteness
+predicates and relation-based definitions of finiteness.
+Finally, We will show how the species-container duality falls out naturally from
+these new definitions.
+
+In section~\ref{infinite-cardinalities}, we will extend our study of finite
+types to infinite but countable types.
+We will see that the finiteness predicates are mirrored with countable
+counterparts, and we will prove closure under the Kleene star and plus.
+
+Proofs of finiteness have well-known practical applications in
+constructive mathematics \cite{firsovDependentlyTypedProgramming2015}.
+In section~\ref{practical}, we build a library which exploits these uses in
+Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}, allowing automation of
+complex proofs over finite types.
+We frame this in terms of the principle of omniscience for finite types.
+Thanks to the flexibility afforded to us by Cubical Type Theory, we are able to
+go further than the usual examples of this kind of proof automation: as well as
+proving properties about functions, we can synthesise functions whole-cloth from
+their desired properties.
+Through the unified interface for finite and countable types, we can
+reuse the automation machinery for \emph{partial} proof search over infinite
+search spaces.
+Along the way, we extend the work in \cite{allaisGenericLevelPolymorphic2019} to
+prove isomorphisms between the curried and uncurried forms of \(n\)-ary
+dependent functions.
+
+
+% Classically, of course, each of these statements are equivalent.
+% Constructively, though, all four predicates are fundamentally different.
+
+% Part of the difference comes from ``leaking'' information about the finite type
+% in the proof of its finiteness.
+% If I demonstrate a type is finite by showing a surjection to that type, I've
+% revealed a way to construct all of the elements of my type.
+% If I show that it is bounded, I reveal an upper bound on the cardinality of the
+% type.
+
+
+
+
+
 \subsection{Strong Finiteness Predicates}
 \input{figures/finite-classification}
 We will first explore the ``strong'' notions of finiteness (i.e. those at least

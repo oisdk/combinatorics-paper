@@ -9,21 +9,22 @@ open import Data.Sigma.Properties
 open import Data.Bool.Properties
 open import Data.Fin
 
-filter : (p : A → Bool) → List A → List (∃ (T ∘ p))
-filter p = foldr f []
-  where
-  f : _ → List (∃ (T ∘ p)) → List (∃ (T ∘ p))
-  f y ys with T? (p y)
-  ... | yes t = (y , t) ∷ ys
-  ... | no _  = ys
+module _ {p} {P : A → Type p} where
+  filter : (P? : ∀ x → Dec (P x)) → List A → List (∃ P)
+  filter P? = foldr f []
+    where
+    f : _ → List (∃ P) → List (∃ P)
+    f y ys with P? y
+    ... | yes t = (y , t) ∷ ys
+    ... | no _  = ys
 
-filter-preserves : (p : A → Bool) (xs : List A) →
-                   (x : A) →
-                   (v : T (p x)) →
-                   (x ∈ xs) →
-                   ((x , v) ∈ filter p xs)
-filter-preserves p (x ∷ xs) y v (n , y∈xs) with T? (p x)
-filter-preserves p (x ∷ xs) y v (f0   , y∈xs) | yes t = f0 , ΣProp≡ (isPropT ∘ p) y∈xs
-filter-preserves p (x ∷ xs) y v (fs n , y∈xs) | yes t = let m , q = filter-preserves p xs y v (n , y∈xs) in fs m , q
-filter-preserves p (x ∷ xs) y v (f0   , y∈xs) | no ¬t = ⊥-elim (¬t (subst (T ∘ p) (sym y∈xs) v))
-filter-preserves p (x ∷ xs) y v (fs n , y∈xs) | no ¬t = filter-preserves p xs y v (n , y∈xs)
+  filter-preserves : (isPropP : ∀ x → isProp (P x)) (P? : ∀ x → Dec (P x)) (xs : List A) →
+                     (x : A) →
+                     (v : P x) →
+                     (x ∈ xs) →
+                     ((x , v) ∈ filter P? xs)
+  filter-preserves isPropP P? (x ∷ xs) y v (n , y∈xs) with P? x
+  filter-preserves isPropP P? (x ∷ xs) y v (f0   , y∈xs) | yes t = f0 , ΣProp≡ isPropP y∈xs
+  filter-preserves isPropP P? (x ∷ xs) y v (fs n , y∈xs) | yes t = let m , q = filter-preserves isPropP P? xs y v (n , y∈xs) in fs m , q
+  filter-preserves isPropP P? (x ∷ xs) y v (f0   , y∈xs) | no ¬t = ⊥-elim (¬t (subst P (sym y∈xs) v))
+  filter-preserves isPropP P? (x ∷ xs) y v (fs n , y∈xs) | no ¬t = filter-preserves isPropP P? xs y v (n , y∈xs)
