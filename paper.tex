@@ -46,17 +46,20 @@ variations (and more) have been explored in
 Homotopy Type Theory \cite{hottbook} further adds to this story in two ways.
 First, its universe of types includes non-sets: whether or not a finiteness
 predicate includes these gives us another dimension on which to discriminate.
-Secondly, 
 
-classifying these types as
-finite or not adds 
+The second addition is concerned with the hiding of information.
+Occasionally in a constructive setting you don't want to have to reveal how you
+proved something.
+To model logical disjunction, for instance, we usually use a disjoint union: the
+model isn't entirely correct, though, because a proof of \(A \text{or} B\)
+reveals which of \(A\) or \(B\) we actually proved.
 
-can step in.
-Through primarily a generalisation of equality, we gain access to a number of
-exotic types which can, among other things, allow us to perform this ``hiding''.
-In the context of finiteness, the act of hiding is worth studying in its own
-right, and further delineates several new finiteness predicates which collapse
-even in standard 
+logical disjunction, for instance, is usually modelled with a
+disjoint union.
+This always means, however, that to prove ``A or B'' you have to reveal which of
+A or B you did prove.
+
+
 
 The other headline feature of HoTT's generalised equality is univalence: put
 simply, it allows us to treat isomorphic types as equal, giving us in the
