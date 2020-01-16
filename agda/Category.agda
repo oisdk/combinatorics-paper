@@ -1,6 +1,6 @@
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
-module Categories where
+module Category where
 
 open import Prelude
 
@@ -72,8 +72,8 @@ record PreCategory ℓ₁ ℓ₂ : Type (ℓsuc (ℓ₁ ℓ⊔ ℓ₂)) where
   trans-≅ X≅Y Y≅Z .fst = Y≅Z .fst · X≅Y .fst
   trans-≅ X≅Y Y≅Z .snd .fst = X≅Y .snd .fst · Y≅Z .snd .fst
   trans-≅ X≅Y Y≅Z .snd .snd .fst =
-    (X≅Y .snd .fst · Y≅Z .snd .fst) · (Y≅Z .fst · X≅Y .fst) ≡⟨ assoc-Comp (X≅Y .snd .fst · Y≅Z .snd .fst) (Y≅Z .fst) (X≅Y .fst) ⟩
-    ((X≅Y .snd .fst · Y≅Z .snd .fst) · Y≅Z .fst) · X≅Y .fst ≡˘⟨ cong (_· X≅Y .fst) (assoc-Comp (X≅Y .snd .fst) (Y≅Z .snd .fst) (Y≅Z .fst)) ⟩
+    (X≅Y .snd .fst · Y≅Z .snd .fst) · (Y≅Z .fst · X≅Y .fst) ≡⟨ assoc-Comp _ _ _ ⟩
+    ((X≅Y .snd .fst · Y≅Z .snd .fst) · Y≅Z .fst) · X≅Y .fst ≡˘⟨ cong (_· X≅Y .fst) (assoc-Comp _ _ _) ⟩
     (X≅Y .snd .fst · (Y≅Z .snd .fst · Y≅Z .fst)) · X≅Y .fst ≡⟨ cong (λ yz → (X≅Y .snd .fst · yz) · X≅Y .fst) (Y≅Z .snd .snd .fst) ⟩
     (X≅Y .snd .fst · Id) · X≅Y .fst ≡⟨ cong (_· X≅Y .fst) (Comp-Id (X≅Y .snd .fst)) ⟩
     X≅Y .snd .fst · X≅Y .fst ≡⟨ X≅Y .snd .snd .fst ⟩
@@ -88,3 +88,10 @@ record PreCategory ℓ₁ ℓ₂ : Type (ℓsuc (ℓ₁ ℓ⊔ ℓ₂)) where
 
   idToIso : X ≡ Y → X ≅ Y
   idToIso {X} {Y} X≡Y = subst (X ≅_) X≡Y refl-≅
+
+record Category ℓ₁ ℓ₂ : Type (ℓsuc (ℓ₁ ℓ⊔ ℓ₂)) where
+  field
+    preCategory : PreCategory ℓ₁ ℓ₂
+  open PreCategory preCategory public
+  field
+    univalent : {X Y : Ob} → (X ≡ Y) ≃ (X ≅ Y)
