@@ -104,3 +104,12 @@ record Category ℓ₁ ℓ₂ : Type (ℓsuc (ℓ₁ ℓ⊔ ℓ₂)) where
   open PreCategory preCategory public
   field
     univalent : {X Y : Ob} → (X ≡ Y) ≃ (X ≅ Y)
+
+module _ {ℓ₁ ℓ₂} (C : Category ℓ₁ ℓ₂) where
+  open Category C
+
+  _[_,_] : Ob → Ob → Type ℓ₂
+  _[_,_] = Hom
+
+  _[_∘_] : (Y ⟶ Z) → (X ⟶ Y) → (X ⟶ Z)
+  _[_∘_] = Comp

@@ -9,5 +9,5 @@ open import Agda.Builtin.Cubical.Glue public
 
 open import Cubical.Foundations.Everything public using (ua)
 open import Cubical.Foundations.Equiv public
-  using ()
+  using (equivToIso; isPropIsEquiv)
   renaming (compEquiv to trans-≃; invEquiv to sym-≃)
