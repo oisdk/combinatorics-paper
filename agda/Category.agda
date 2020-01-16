@@ -3,6 +3,7 @@
 module Category where
 
 open import Prelude
+open import Cubical.Foundations.HLevels
 
 record PreCategory ℓ₁ ℓ₂ : Type (ℓsuc (ℓ₁ ℓ⊔ ℓ₂)) where
   field
@@ -88,6 +89,14 @@ record PreCategory ℓ₁ ℓ₂ : Type (ℓsuc (ℓ₁ ℓ⊔ ℓ₂)) where
 
   idToIso : X ≡ Y → X ≅ Y
   idToIso {X} {Y} X≡Y = subst (X ≅_) X≡Y refl-≅
+
+  ≅-set : isSet (X ≅ Y)
+  ≅-set = isOfHLevelΣ 2 Hom-Set
+    λ _ → isOfHLevelΣ 2 Hom-Set
+    λ _ → isOfHLevelΣ 2 (hLevelSuc 2 (Hom _ _) Hom-Set _ _)
+    λ _ → hLevelSuc 2 (Hom _ _) Hom-Set _ _
+
+open import Cubical.Foundations.Transport
 
 record Category ℓ₁ ℓ₂ : Type (ℓsuc (ℓ₁ ℓ⊔ ℓ₂)) where
   field
