@@ -1,14 +1,15 @@
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
-module Category.HSets where
+module Categories.HSets where
 
-open import Prelude
-open import Category
+open import Prelude hiding (_×_)
+open import Categories
 open import Cubical.Foundations.HLevels
 open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Univalence
 open import Data.Sigma.Properties
-open import Category.Product
+open import Categories.Product
+open import Categories.Exponential
 
 module _ {ℓ : Level} where
   hSetPreCategory : PreCategory (ℓsuc ℓ) ℓ
@@ -41,10 +42,17 @@ module _ {ℓ : Level} where
   hSetCategory .Category.univalent = isoToEquiv univ⇔
 
   hSetProd : HasProducts hSetCategory
-  hSetProd .HasProducts.product X Y .Product.obj = (X .fst × Y .fst) , isOfHLevelΣ 2 (X .snd) λ _ → Y .snd
-  hSetProd .HasProducts.product X Y .Product.fst = fst
-  hSetProd .HasProducts.product X Y .Product.snd = snd
+  hSetProd .HasProducts.product X Y .Product.obj = (X .fst Prelude.× Y .fst) , isOfHLevelΣ 2 (X .snd) λ _ → Y .snd
+  hSetProd .HasProducts.product X Y .Product.proj₁ = fst
+  hSetProd .HasProducts.product X Y .Product.proj₂ = snd
   hSetProd .HasProducts.product X Y .Product.ump f g .fst z = f z , g z
   hSetProd .HasProducts.product X Y .Product.ump f g .snd .fst .fst = refl
   hSetProd .HasProducts.product X Y .Product.ump f g .snd .fst .snd = refl
   hSetProd .HasProducts.product X Y .Product.ump f g .snd .snd (f≡ , g≡) i x = f≡ (~ i) x , g≡ (~ i) x
+
+  hSetExp : HasExponentials hSetCategory hSetProd
+  hSetExp .HasExponentials.exponent X Y .Exponential.obj = (X .fst → Y .fst) , hLevelPi 2 λ _ → Y .snd
+  hSetExp .HasExponentials.exponent X Y .Exponential.eval (f , x) = f x
+  hSetExp .HasExponentials.exponent X Y .Exponential.uniq X₁ f .fst = curry f
+  hSetExp .HasExponentials.exponent X Y .Exponential.uniq X₁ f .snd .fst = refl
+  hSetExp .HasExponentials.exponent X Y .Exponential.uniq X₁ f .snd .snd {y} x = cong curry (sym x)

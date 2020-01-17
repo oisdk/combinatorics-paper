@@ -9,9 +9,10 @@ open import HITs.PropositionalTruncation
 open import Data.Sigma.Properties
 open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.HLevels
-open import Category
-open import Category.HSets using (equivSigProp; iso⇔equiv)
+open import Categories
 open import Cubical.Foundations.Univalence
+open import Categories.Product
+open import Categories.Exponential
 
 finSetPreCategory : PreCategory (ℓsuc ℓ) ℓ
 finSetPreCategory .PreCategory.Ob = Σ (Type ℓ) 𝒞
@@ -34,7 +35,24 @@ iso-iso .leftInv  _ = refl
 finSetCategory : Category (ℓsuc ℓ) ℓ
 finSetCategory .Category.preCategory = finSetPreCategory
 finSetCategory .Category.univalent {X} {Y} =
-  isoToEquiv $ equivSigProp (λ _ → squash) ⟨ trans-⇔ ⟩
-               equivToIso univalence ⟨ trans-⇔ ⟩
-               sym-⇔ (iso⇔equiv (Discrete→isSet (𝒞⇒Discrete (X .snd)))) ⟨ trans-⇔ ⟩
-               sym-⇔ (iso-iso {X} {Y})
+  ≃ΣProp≡ (λ _ → squash) ⟨ trans-≃ ⟩
+  univalence ⟨ trans-≃ ⟩
+  isoToEquiv (
+  sym-⇔ (iso⇔equiv (Discrete→isSet (𝒞⇒Discrete (X .snd)))) ⟨ trans-⇔ ⟩
+  sym-⇔ (iso-iso {X} {Y}))
+
+finSetHasProducts : HasProducts finSetCategory
+finSetHasProducts .HasProducts.product X Y .Product.obj = X .fst × Y .fst , X .snd ∥×∥ Y .snd
+finSetHasProducts .HasProducts.product X Y .Product.proj₁ = fst
+finSetHasProducts .HasProducts.product X Y .Product.proj₂ = snd
+finSetHasProducts .HasProducts.product X Y .Product.ump f g .fst z = f z , g z
+finSetHasProducts .HasProducts.product X Y .Product.ump f g .snd .fst .fst = refl
+finSetHasProducts .HasProducts.product X Y .Product.ump f g .snd .fst .snd = refl
+finSetHasProducts .HasProducts.product X Y .Product.ump f g .snd .snd (f≡ , g≡) i x = f≡ (~ i) x , g≡ (~ i) x
+
+finSetHasExp : HasExponentials finSetCategory finSetHasProducts
+finSetHasExp .HasExponentials.exponent X Y .Exponential.obj = (X .fst → Y .fst) , (X .snd ∥→∥ Y .snd)
+finSetHasExp .HasExponentials.exponent X Y .Exponential.eval (f , x) = f x
+finSetHasExp .HasExponentials.exponent X Y .Exponential.uniq X₁ f .fst = curry f
+finSetHasExp .HasExponentials.exponent X Y .Exponential.uniq X₁ f .snd .fst = refl
+finSetHasExp .HasExponentials.exponent X Y .Exponential.uniq X₁ f .snd .snd x = cong curry (sym x)

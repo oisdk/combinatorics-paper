@@ -1,6 +1,6 @@
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
-module Category where
+module Categories where
 
 open import Prelude
 open import Cubical.Foundations.HLevels
@@ -110,6 +110,8 @@ module _ {ℓ₁ ℓ₂} (C : Category ℓ₁ ℓ₂) where
 
   _[_,_] : Ob → Ob → Type ℓ₂
   _[_,_] = Hom
+  {-# INLINE _[_,_] #-}
 
   _[_∘_] : (Y ⟶ Z) → (X ⟶ Y) → (X ⟶ Z)
   _[_∘_] = Comp
+  {-# INLINE _[_∘_] #-}
