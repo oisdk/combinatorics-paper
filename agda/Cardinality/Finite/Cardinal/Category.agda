@@ -13,6 +13,8 @@ open import Categories
 open import Cubical.Foundations.Univalence
 open import Categories.Product
 open import Categories.Exponential
+open import Data.Fin
+open import Cardinality.Finite.Bishop
 
 finSetPreCategory : PreCategory (ℓsuc ℓ) ℓ
 finSetPreCategory .PreCategory.Ob = Σ (Type ℓ) 𝒞

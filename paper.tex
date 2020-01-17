@@ -26,117 +26,146 @@
   full functions given desired properties.
 \end{abstract}
 \section{Introduction}
-In constructive mathematics, we are often preoccupied with \emph{how} we know
-something, in contrast to the classical focus on the \emph{what}.
+\subsection{Foreword}
+In constructive mathematics we are often preoccupied with \emph{why} something
+is true.
 Take finiteness, for example.
 There are a handful of ways to demonstrate some type is finite: we could provide
-a bijection or a surjection from another finite type; we could show that any
-collection of its elements larger than some bound contains duplicates, or that
-any stream of its elements contain duplicates.
+a surjection from another finite type; we could show that any collection of its
+elements larger than some bound contains duplicates; or that any stream of its
+elements contain duplicates.
 
 Classically, all of these proofs end up proving the same thing: that our type is
 finite.
-Constructively, however, all \emph{four} of the statements above imply a
-different ``version'' of finiteness.
+Constructively (in Martin-Löf Type Theory
+\cite{martin-lofIntuitionisticTypeTheory1980} at least), however, all three
+of the statements above construct a different version of finiteness.
 \emph{How} we show that some type is finite has a significant impact on the
-scope of the things we can do with that type.
+type of finiteness we end up dealing with.
 
-That is the first thing this paper sets out to investigate: different finiteness
-predicates.
-The five in particular that we are interested in are organised in
-figure~\ref{finite-classification}.
-We especially want to examine what separates each predicate: what extra
-information do you need, for instance, to go from a proof of Cardinal finiteness
-(section~\ref{cardinal}) to manifest Bishop finiteness
-(section~\ref{manifest-bishop}).
+Homotopy Type Theory \cite{hottbook} adds another wrinkle to the story.
+Firstly, in HoTT we cannot assume that every type is a (homotopy) set: this
+means that the finiteness predicates above can be further split into versions
+which apply to sets only, and those that apply to all types.
+Secondly, HoTT gives us a principled and powerful way to construct quotients,
+allowing us to regain some of the flexibility of classical definitions by
+``forgetting'' the parts of a proof we would be forced to remember in MLTT.
+\subsection{Contributions}
+\begin{itemize}
+  \item Relation between different versions of finiteness, especially card to
+    bishop.
+  \item Topos for Kuratowski
+  \item Countable and W-topos
+  \item Search
+\end{itemize}
+\subsection{Related Work}
+\subsection{Notation}
+
+
+
+
+% Taking finiteness as an example again, if we prove that some type is finite via
+% bijection, in MLTT such a proof would have to reveal the particular bijection.
+% This becomes problematic when defining, for instance, the category of finite
+% sets: the objects of this category would ideally be types coupled with proofs of
+% their finiteness, but in order to 
+
+
+
+% The five in particular that we are interested in are organised in
+% figure~\ref{finite-classification}.
+% We especially want to examine what separates each predicate: what extra
+% information do you need, for instance, to go from a proof of Cardinal finiteness
+% (section~\ref{cardinal}) to manifest Bishop finiteness
+% (section~\ref{manifest-bishop}).
 
 \input{figures/finite-classification}
 
-Next, we will examine the category-theoretic and topos-theoretic interpretations
-of each of the predicates.
-We will give a ``category of finite sets'' for each finiteness predicate, and
-then prove the various closure properties required to arrive at the relevant
-topos (we show that decidable Kuratowski finite sets form a \(\Pi\)-pretopos,
-for instance).
+% Next, we will examine the category-theoretic and topos-theoretic interpretations
+% of each of the predicates.
+% We will give a ``category of finite sets'' for each finiteness predicate, and
+% then prove the various closure properties required to arrive at the relevant
+% topos (we show that decidable Kuratowski finite sets form a \(\Pi\)-pretopos,
+% for instance).
 
 
 
-ways to prove finiteness end up proving the same
-thing: constructively, however, each defines a fundamentally different
-``version'' of finiteness.
-In Martin-Löf type theory \cite{martin-lofIntuitionisticTypeTheory1980}, these
-variations (and more) have been explored in
-\cite{spiwackConstructivelyFinite2010} and
-\cite{firsovVariationsNoetherianness2016}.
+% ways to prove finiteness end up proving the same
+% thing: constructively, however, each defines a fundamentally different
+% ``version'' of finiteness.
+% In Martin-Löf type theory \cite{martin-lofIntuitionisticTypeTheory1980}, these
+% variations (and more) have been explored in
+% \cite{spiwackConstructivelyFinite2010} and
+% \cite{firsovVariationsNoetherianness2016}.
 
-Homotopy Type Theory \cite{hottbook} further adds to this story in two ways.
-First, its universe of types includes non-sets: whether or not a finiteness
-predicate includes these gives us another dimension on which to discriminate.
+% Homotopy Type Theory \cite{hottbook} further adds to this story in two ways.
+% First, its universe of types includes non-sets: whether or not a finiteness
+% predicate includes these gives us another dimension on which to discriminate.
 
-The second addition is concerned with the hiding of information.
-Occasionally in a constructive setting you don't want to have to reveal how you
-proved something.
-To model logical disjunction, for instance, we usually use a disjoint union: the
-model isn't entirely correct, though, because a proof of \(A \text{or} B\)
-reveals which of \(A\) or \(B\) we actually proved.
+% The second addition is concerned with the hiding of information.
+% Occasionally in a constructive setting you don't want to have to reveal how you
+% proved something.
+% To model logical disjunction, for instance, we usually use a disjoint union: the
+% model isn't entirely correct, though, because a proof of \(A \text{or} B\)
+% reveals which of \(A\) or \(B\) we actually proved.
 
-logical disjunction, for instance, is usually modelled with a
-disjoint union.
-This always means, however, that to prove ``A or B'' you have to reveal which of
-A or B you did prove.
+% logical disjunction, for instance, is usually modelled with a
+% disjoint union.
+% This always means, however, that to prove ``A or B'' you have to reveal which of
+% A or B you did prove.
 
 
 
-The other headline feature of HoTT's generalised equality is univalence: put
-simply, it allows us to treat isomorphic types as equal, giving us in the
-constructive world access to a technique that is commonplace classically.
-It turns out that finite types have a lot to say about isomorphisms, and we will
-rely heavily on this aspect of HoTT to work with them.
-\subsection{Contributions}
-In this work, we will explore finite types in Cubical Type Theory
-\cite{cohenCubicalTypeTheory2016}, and expose their relationship to infinite
-types, species, and demonstrate their practical uses for proofs in dependently
-typed programming languages.
+% The other headline feature of HoTT's generalised equality is univalence: put
+% simply, it allows us to treat isomorphic types as equal, giving us in the
+% constructive world access to a technique that is commonplace classically.
+% It turns out that finite types have a lot to say about isomorphisms, and we will
+% rely heavily on this aspect of HoTT to work with them.
+% \subsection{Contributions}
+% In this work, we will explore finite types in Cubical Type Theory
+% \cite{cohenCubicalTypeTheory2016}, and expose their relationship to infinite
+% types, species, and demonstrate their practical uses for proofs in dependently
+% typed programming languages.
 
-In section~\ref{strong-finiteness}, we will explore the ``strong'' notions of
-finiteness (i.e. those at least as strong as Kuratowski finiteness
-\cite{kuratowskiNotionEnsembleFini1920}), with a special focus on cardinal
-finiteness.
-We will delineate some subtly different finiteness predicates, and prove the
-relationship between each.
-We will prove, then, that every discrete Kuratowski finite type is cardinal
-finite, and subsequently will show that discrete Kuratowski finite sets form a
-topos.
+% In section~\ref{strong-finiteness}, we will explore the ``strong'' notions of
+% finiteness (i.e. those at least as strong as Kuratowski finiteness
+% \cite{kuratowskiNotionEnsembleFini1920}), with a special focus on cardinal
+% finiteness.
+% We will delineate some subtly different finiteness predicates, and prove the
+% relationship between each.
+% We will prove, then, that every discrete Kuratowski finite type is cardinal
+% finite, and subsequently will show that discrete Kuratowski finite sets form a
+% topos.
 
-In section~\ref{species-and-containers}, we will redefine our finiteness
-predicates using \emph{containers}, and prove that the new definitions are
-equivalent to the old.
-Using this, we will prove much stronger relationships between our finiteness
-predicates and relation-based definitions of finiteness.
-Finally, We will show how the species-container duality falls out naturally from
-these new definitions.
+% In section~\ref{species-and-containers}, we will redefine our finiteness
+% predicates using \emph{containers}, and prove that the new definitions are
+% equivalent to the old.
+% Using this, we will prove much stronger relationships between our finiteness
+% predicates and relation-based definitions of finiteness.
+% Finally, We will show how the species-container duality falls out naturally from
+% these new definitions.
 
-In section~\ref{infinite-cardinalities}, we will extend our study of finite
-types to infinite but countable types.
-We will see that the finiteness predicates are mirrored with countable
-counterparts, and we will prove closure under the Kleene star and plus.
+% In section~\ref{infinite-cardinalities}, we will extend our study of finite
+% types to infinite but countable types.
+% We will see that the finiteness predicates are mirrored with countable
+% counterparts, and we will prove closure under the Kleene star and plus.
 
-Proofs of finiteness have well-known practical applications in
-constructive mathematics \cite{firsovDependentlyTypedProgramming2015}.
-In section~\ref{practical}, we build a library which exploits these uses in
-Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}, allowing automation of
-complex proofs over finite types.
-We frame this in terms of the principle of omniscience for finite types.
-Thanks to the flexibility afforded to us by Cubical Type Theory, we are able to
-go further than the usual examples of this kind of proof automation: as well as
-proving properties about functions, we can synthesise functions whole-cloth from
-their desired properties.
-Through the unified interface for finite and countable types, we can
-reuse the automation machinery for \emph{partial} proof search over infinite
-search spaces.
-Along the way, we extend the work in \cite{allaisGenericLevelPolymorphic2019} to
-prove isomorphisms between the curried and uncurried forms of \(n\)-ary
-dependent functions.
+% Proofs of finiteness have well-known practical applications in
+% constructive mathematics \cite{firsovDependentlyTypedProgramming2015}.
+% In section~\ref{practical}, we build a library which exploits these uses in
+% Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}, allowing automation of
+% complex proofs over finite types.
+% We frame this in terms of the principle of omniscience for finite types.
+% Thanks to the flexibility afforded to us by Cubical Type Theory, we are able to
+% go further than the usual examples of this kind of proof automation: as well as
+% proving properties about functions, we can synthesise functions whole-cloth from
+% their desired properties.
+% Through the unified interface for finite and countable types, we can
+% reuse the automation machinery for \emph{partial} proof search over infinite
+% search spaces.
+% Along the way, we extend the work in \cite{allaisGenericLevelPolymorphic2019} to
+% prove isomorphisms between the curried and uncurried forms of \(n\)-ary
+% dependent functions.
 
 
 % Classically, of course, each of these statements are equivalent.
