@@ -1,12 +1,13 @@
 \input{preamble}
 \title{Finiteness in Cubical Type Theory}
-\author{Donnacha Oisín Kidney}
-\authorrunning{D. O. Kidney}
-\institute{University College Cork \and
-  \email{o.kidney@cs.ucc.ie}}
-\author{Gregory Provan}
-\institute{University College Cork \and
-  \email{g.provan@cs.ucc.ie}}
+\author{
+  Donnacha Oisín Kidney \inst{1} \and
+  Gregory Provan \inst{2}
+}
+\institute{
+  University College Cork \email{o.kidney@cs.ucc.ie} \and
+  University College Cork \email{g.provan@cs.ucc.ie}
+}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -61,7 +62,7 @@ Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}, realise this property
 even in the presence of univalence, giving computational content to programs
 written in HoTT.
 \subsection{Contributions}
-In this work we will examine five notions of finiteness in Homotopy Type Theory:
+In this work we will examine five notions of finiteness in Homotopy Type Theory,
 the relationships between them, and their topos-theoretic characterisation.
 We also briefly examine a definition for countable sets, comparing it to the
 manifestly Bishop finite sets.
@@ -72,10 +73,16 @@ proof search based on the finiteness predicates.
 
 The finiteness predicates we are interested in are organised in
 Figure~\ref{finite-classification}.
-We will provide a definition for each, and prove each relation to the other
-finiteness predicates.
-In terms of Figure~\ref{finite-classification}, this means providing a function
-to inhabit each arrows.
+We will explore two aspects of each predicate: its relation with the other
+predicates, and its topos-theoretic classification.
+
+When we say ``relation'' we are referring to the arrows in
+Figure~\ref{finite-classification}.
+The proofs, then, amount to a function which inhabits each arrow.
+Each unlabelled arrow is a weakening: i.e., every manifest Bishop finite set
+is manifest enumerable.
+The labelled arrows are strengthening proofs: i.e. every manifest enumerable set
+\emph{with decidable equality} is manifest Bishop finite.
 
 We will then characterise each predicate as some form of topos.
 Our proofs follow the structure of \cite[Chapters 9, 10]{hottbook} and
@@ -85,223 +92,24 @@ of sets, and prove the required closures and limits to get us to a topos.
 We say ``some form of'' topos here because of course the category of sets in
 HoTT do \emph{not}, in fact, form a topos, rather a \(\Pi W\)-pretopos.
 
+\todo[inline]{redo these last two paragraphs}
+After the finite predicates, we will briefly look at the infinite countable
+types, and classify them in a parallel way to the finite predicates.
 
-\begin{itemize}
-  \item Relation between different versions of finiteness, especially card to
-    bishop.
-  \item Topos for Kuratowski
-  \item Countable and W-topos
-  \item Search
-\end{itemize}
+All of our work is formalised in Cubical Agda
+\cite{vezzosiCubicalAgdaDependently2019}.
+We will make mention of the few occasions where the formalisation of some proof
+is of interest, but the main place where we will discuss the code is in the
+final section, where we implement a library for proof search, based on
+omniscience and exhaustibility.
+We also use this section to demonstrate some \emph{computation} using
+univalence: our proof search library can deal seamlessly with functions, testing
+them for equality, synthesising them, etc.
 \subsection{Related Work}
 \subsection{Notation}
 
-
-
-
-% Taking finiteness as an example again, if we prove that some type is finite via
-% bijection, in MLTT such a proof would have to reveal the particular bijection.
-% This becomes problematic when defining, for instance, the category of finite
-% sets: the objects of this category would ideally be types coupled with proofs of
-% their finiteness, but in order to 
-
-
-
-% The five in particular that we are interested in are organised in
-% figure~\ref{finite-classification}.
-% We especially want to examine what separates each predicate: what extra
-% information do you need, for instance, to go from a proof of Cardinal finiteness
-% (section~\ref{cardinal}) to manifest Bishop finiteness
-% (section~\ref{manifest-bishop}).
-
-
-% Next, we will examine the category-theoretic and topos-theoretic interpretations
-% of each of the predicates.
-% We will give a ``category of finite sets'' for each finiteness predicate, and
-% then prove the various closure properties required to arrive at the relevant
-% topos (we show that decidable Kuratowski finite sets form a \(\Pi\)-pretopos,
-% for instance).
-
-
-
-% ways to prove finiteness end up proving the same
-% thing: constructively, however, each defines a fundamentally different
-% ``version'' of finiteness.
-% In Martin-Löf type theory \cite{martin-lofIntuitionisticTypeTheory1980}, these
-% variations (and more) have been explored in
-% \cite{spiwackConstructivelyFinite2010} and
-% \cite{firsovVariationsNoetherianness2016}.
-
-% Homotopy Type Theory \cite{hottbook} further adds to this story in two ways.
-% First, its universe of types includes non-sets: whether or not a finiteness
-% predicate includes these gives us another dimension on which to discriminate.
-
-% The second addition is concerned with the hiding of information.
-% Occasionally in a constructive setting you don't want to have to reveal how you
-% proved something.
-% To model logical disjunction, for instance, we usually use a disjoint union: the
-% model isn't entirely correct, though, because a proof of \(A \text{or} B\)
-% reveals which of \(A\) or \(B\) we actually proved.
-
-% logical disjunction, for instance, is usually modelled with a
-% disjoint union.
-% This always means, however, that to prove ``A or B'' you have to reveal which of
-% A or B you did prove.
-
-
-
-% The other headline feature of HoTT's generalised equality is univalence: put
-% simply, it allows us to treat isomorphic types as equal, giving us in the
-% constructive world access to a technique that is commonplace classically.
-% It turns out that finite types have a lot to say about isomorphisms, and we will
-% rely heavily on this aspect of HoTT to work with them.
-% \subsection{Contributions}
-% In this work, we will explore finite types in Cubical Type Theory
-% \cite{cohenCubicalTypeTheory2016}, and expose their relationship to infinite
-% types, species, and demonstrate their practical uses for proofs in dependently
-% typed programming languages.
-
-% In section~\ref{strong-finiteness}, we will explore the ``strong'' notions of
-% finiteness (i.e. those at least as strong as Kuratowski finiteness
-% \cite{kuratowskiNotionEnsembleFini1920}), with a special focus on cardinal
-% finiteness.
-% We will delineate some subtly different finiteness predicates, and prove the
-% relationship between each.
-% We will prove, then, that every discrete Kuratowski finite type is cardinal
-% finite, and subsequently will show that discrete Kuratowski finite sets form a
-% topos.
-
-% In section~\ref{species-and-containers}, we will redefine our finiteness
-% predicates using \emph{containers}, and prove that the new definitions are
-% equivalent to the old.
-% Using this, we will prove much stronger relationships between our finiteness
-% predicates and relation-based definitions of finiteness.
-% Finally, We will show how the species-container duality falls out naturally from
-% these new definitions.
-
-% In section~\ref{infinite-cardinalities}, we will extend our study of finite
-% types to infinite but countable types.
-% We will see that the finiteness predicates are mirrored with countable
-% counterparts, and we will prove closure under the Kleene star and plus.
-
-% Proofs of finiteness have well-known practical applications in
-% constructive mathematics \cite{firsovDependentlyTypedProgramming2015}.
-% In section~\ref{practical}, we build a library which exploits these uses in
-% Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}, allowing automation of
-% complex proofs over finite types.
-% We frame this in terms of the principle of omniscience for finite types.
-% Thanks to the flexibility afforded to us by Cubical Type Theory, we are able to
-% go further than the usual examples of this kind of proof automation: as well as
-% proving properties about functions, we can synthesise functions whole-cloth from
-% their desired properties.
-% Through the unified interface for finite and countable types, we can
-% reuse the automation machinery for \emph{partial} proof search over infinite
-% search spaces.
-% Along the way, we extend the work in \cite{allaisGenericLevelPolymorphic2019} to
-% prove isomorphisms between the curried and uncurried forms of \(n\)-ary
-% dependent functions.
-
-
-% Classically, of course, each of these statements are equivalent.
-% Constructively, though, all four predicates are fundamentally different.
-
-% Part of the difference comes from ``leaking'' information about the finite type
-% in the proof of its finiteness.
-% If I demonstrate a type is finite by showing a surjection to that type, I've
-% revealed a way to construct all of the elements of my type.
-% If I show that it is bounded, I reveal an upper bound on the cardinality of the
-% type.
-
-
-
-
-
-\subsection{Strong Finiteness Predicates}
-We will first explore the ``strong'' notions of finiteness (i.e. those at least
-as strong as Kuratowski finiteness \cite{kuratowskiNotionEnsembleFini1920}),
-with a special focus on cardinal finiteness (section~\ref{cardinal}), and
-manifest enumerability (section~\ref{manifest-enumerability}), which is new, to
-our knowledge.
-
-Figure~\ref{finite-classification} organises the predicates according to
-their strength.
-We will go through each of the predicates, proving how to weaken each (i.e. we
-will provide a proof that every cardinally finite type is Kuratowski finite),
-and how to strengthen them, given the required property.
-In terms of figure~\ref{finite-classification}, this amounts to providing proofs
-for each arrow.
-Our main proof in this regard is that we can derive manifest Bishop finiteness
-from Kuratowski finiteness plus a total order.
-
-We will---through the use of containers
-\cite{abbottContainersConstructingStrictly2005}---formally prove the equivalence
-these predicates have with the usual function relations i.e. we will show that a
-proof of manifest enumerability is precisely equivalent to a surjection from a
-finite prefix of the natural numbers.
-
-For each predicate, we will also prove its closure over sums and products in
-both dependent and non-dependent forms, if such a closure exists.
-This will culminate in our main result for this section: the formal proof that
-decidable Kuratowski finite sets form a topos.
-\subsection{Infinite Types}
-In section~\ref{infinite-cardinalities}, we will extend our study of finite
-types to infinite but countable types.
-We will see that the classification of finiteness predicates mirrors that of
-their countable counterparts, and we will prove closure under the Kleene star.
-
-\subsection{Practical Uses}
-Finally, in section~\ref{practical} we will demonstrate some practical uses of
-the finiteness proofs in Cubical Agda.
-We will show how to use well-known techniques
-\cite{firsovDependentlyTypedProgramming2015, devrieseBrightSideType2011} to
-automate proofs of functions with finite (and infinite) domains.
-We further show how to automate the synthesis of functions from desired
-properties.
-\section{Split Enumerability} \label{split-enumerable}
-We will start with the simplest definition of finiteness: we say a set is
-enumerable if there is a list of its elements which contains every element in
-the set.
-
-Before giving the definition of the predicate, we will first define lists (and
-membership thereof): we have chosen a \emph{container}-based definition for this
-work.
-\begin{rm-definition}[Container] \label{container-def}
-  A container \cite{abbottContainersConstructingStrictly2005} is a pair
-  \(S \triangleright P\) where \(S\) is a type, the elements of which are called
-  the \emph{shapes} of the container, and \(P\) is a type family on \(S\), where
-  the elements of \(P(s)\) are called the \emph{positions} of a container.
-  We ``interpret'' a container into a functor defined like so:
-  \begin{equation}
-    \llbracket S \triangleright P \rrbracket(A) = \Sigma {(s : S)} , \left( P(s) \rightarrow A \right)
-  \end{equation}
-  Membership of a container can be defined like so:
-  \begin{equation}
-    x \in \mathit{xs} = \text{fiber}(\text{snd}(\mathit{xs}), x)
-  \end{equation}
-  Where \(\text{fiber}\) is from \cite[definition 4.2.4]{hottbook}.
-\end{rm-definition}
-\begin{rm-definition}[Lists]
-  \begin{equation}%
-    \mathbf{List} = \llbracket \mathbb{N} \triangleright \mathbf{Fin} \rrbracket
-  \end{equation}
-\end{rm-definition}
-\begin{rm-definition}[\mathbf{Fin}]
-  \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\).
-  We define it the standard way, where \(\mathbf{Fin}(0) = \bot\) and
-  \(\mathbf{Fin}(n + 1) &= \top + \mathbf{Fin}(n)\).
-\end{rm-definition}
-
-Internally, in our formalisation, we actually use the standard
-inductive definition of lists more often (it tends to work better in more
-complex algorithms, and functions on it seems to satisfy the termination
-checker more readily).
-However, since both types are equivalent, univalence allows us to transport to
-whichever representation is more convenient in a given situation.
-For the higher-level proofs we present here, though, the container-based
-definition greatly simplifies certain steps, which is why we have chosen it as
-our representation.
-
-Finally, we can define formally split enumerability.
+\section{Finiteness Predicates}
+\subsection{Split Enumerable}
 \begin{rm-definition}[Split Enumerable Set]
   \begin{equation}
     \mathcal{E}!(A) = \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \in xs
@@ -309,724 +117,935 @@ Finally, we can define formally split enumerability.
   We call the first component of this pair the ``support'' list, and the second
   component the ``cover'' proof.
   This definition is what is referred to as \verb+Listable+ in
+  \cite{firsovDependentlyTypedProgramming2015}.
 \end{rm-definition}
-\cite{firsovDependentlyTypedProgramming2015}.
-\subsection{Split Surjections}
-\begin{rm-definition}[Surjections]
-  \begin{multicols}{2}
-    \begin{equation}
-      A \twoheadrightarrow B = \Sigma (f : A \rightarrow B) , \text{surjective}(f)
-    \end{equation} \break
-    \begin{equation}
-      A \twoheadrightarrow! \; B = \Sigma (f : A \rightarrow B) , \text{split surjective}(f)
-    \end{equation}
-  \end{multicols}
-  Where the definitions of surjective are taken from \cite[definition
-  4.6.1]{hottbook}.
-\end{rm-definition}
-\begin{rm-theorem} \label{split-enum-surj}
-  Split enumerability is equivalent to a split surjection from a finite prefix
-  of the natural numbers.
-  \begin{equation}
-    \mathcal{E}!(A) \iff \Sigma {(n : \mathbb{N})} , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
-  \end{equation}
-\end{rm-theorem}
-\begin{proof}
-  After sufficient inlining, it emerges that our goal is simply a reassociation.
-  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{split-surj}
-  To be clear: in Agda, the proof could simply be \(\AgdaFunction{reassoc}\); we
-  have written out the extra lines for clarity alone.
-\end{proof}
-\begin{rm-lemma} \label{split-enum-discrete}
-  Any split enumerable type has decidable equality (is discrete).
-\end{rm-lemma}
-\begin{proof}
-  We use a corollary that if there is a split-surjection from \(A\) to \(B\),
-  and \(A\) is discrete, then \(B\) is also discrete.
-\end{proof}
-By Hedberg's theorem \cite{hedbergCoherenceTheoremMartinLof1998}, we know that
-this implies split enumerable types must all be sets.
-\subsection{Closure}
-In this section we will prove closure under various operations for split
-enumerable sets.
-We are working towards a topos proof, which requires us to prove closure under
-a variety of operations: for now, we only have enough machinery to demonstrate
-the semiring operations, and dependent sums.
-In order to show closure under exponentials (function arrows), we will need an
-equivalence with \(\mathbf{Fin}\), which will be provided in
-section~\ref{manifest-bishop}.
-\begin{rm-lemma} \label{split-enum-bool-top-bot}
-  \(\mathbf{Bool}\), \(\top\), and \(\bot\) are all split enumerable.
-\end{rm-lemma}
-\begin{proof}
-  Each of these types clearly has a finite number of elements (2, 1, and 0,
-  respectively), and furthermore has a straightforward enumeration.
-\end{proof}
-\begin{rm-theorem} \label{split-enum-sigma}
-  Split-enumerability is closed under \(\Sigma\).
-  \begin{equation} \label{split-enum-sigma-clos-sig}
-    \frac{
-      \mathcal{E}!(A) \; \; \; \Pi (x : A) , \mathcal{E}!(U(x))
-    }{
-      \mathcal{E}!(\Sigma (x : A) , U(x))
-    }
-  \end{equation}
-\end{rm-theorem}
-\begin{proof}
-  To obtain the support list, we concatenate the support lists of all the proofs
-  of split-finiteness for \(U\) over the support list of \(E_A\).
-  In Agda:
-  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{sigma-sup}
-  ``do-notation'' is available to us as we're working in the list monad.
-\end{proof}
-Closure under disjoint union and Cartesian product both follow from \(\Sigma\),
-as these types can be defined in terms of \(\Sigma\).
-\begin{align}
-  A \times B &= \Sigma {(x : A)} , B \\
-  A + B &= \Sigma {(x : \mathbf{Bool})} , \text{if} \; x \; \text{then} \; A \; \text{else} \; B
-\end{align}
-\section{Manifest Bishop Finiteness} \label{manifest-bishop}
-Where split enumerability was the enumeration form of a split surjection from
-\(\mathbf{Fin}\), manifest Bishop finiteness is the enumeration form of an
-\emph{equivalence} with \(\mathbf{Fin}\).
 
-\begin{rm-definition}[Manifest Bishop Finiteness]
-  \begin{equation}
-    \mathcal{B}(A) = \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \inunique xs
-  \end{equation}
-\end{rm-definition}
-The only difference between this predicate and split enumerability is the list
-membership term: we use \(\inunique\) here, where \(x \inunique \mathit{xs}\) is
-to be read as ``\(x\) occurs exactly once in \(\mathit{xs}\)''.
-\begin{rm-definition}[Unique Membership]
-  We say an item \(x\) is ``uniquely in'' some container \(\mathit{xs}\) if its
-  membership in that list is a \emph{contraction} \cite[definition
-  3.11.1]{hottbook}; i.e. its membership proof exists, and all such proofs are
-  equal.
-  \begin{equation}
-    x \inunique \mathit{xs} = \text{isContr}(x \in \mathit{xs})
-  \end{equation}
-\end{rm-definition}
-By the definition of a contraction, we can always recover the underlying
-membership proof, meaning that we can always derive split enumerability from
-manifest Bishop finiteness.
-\subsection{Equivalence}
-\begin{rm-lemma} \label{bishop-equiv}
-  A proof of manifest Bishop finiteness is equivalent to an equivalence with a
-  finite prefix of the natural numbers.
-  \begin{equation}
-    \mathcal{B}(A) \simeq \Sigma {(n : \mathbb{N})} , \left( \mathbf{Fin}(n) \simeq A \right)
-  \end{equation}
-\end{rm-lemma}
-\begin{proof}
-  There are many equivalent definitions of equivalence in HoTT.
-  Here we take the version preferred in the Cubical Agda library: contractible
-  maps \cite[definition 4.4.1]{hottbook}.
-  Because of the parallels between contractible maps and split surjections,
-  the proof proceeds much the same as \ref{split-enum-surj}.
-  In other words, the definition of Bishop finiteness is itself a reassociation
-  of a contractible map.
-\end{proof}
-\subsection{Relationship to Split Enumerability}
-\begin{rm-theorem} \label{split-enum-to-manifest-bishop}
-  Any split enumerable set is manifest Bishop finite.
-\end{rm-theorem}
-\begin{proof}
-  From proposition~\ref{split-enum-discrete} we can derive decidable equality on
-  \(A\), and using this we can define a function (called \(\text{uniques}\)) which filters
-  out duplicates from lists of \(A\)s.
-  This gives us our support list.
-  To generate the cover proof it suffices now to prove the following:
-  \begin{equation}
-    \Pi {(x : A)} , \Pi {(\mathit{xs} : \textbf{List}(A))} , x \in \mathit{xs} \rightarrow x \inunique \text{uniques}(\mathit{xs})
-  \end{equation}
-\end{proof}
-\subsection{Closure}
-Proving equal strength of split enumerability and manifest Bishop finiteness
-allows us to carry all of the previous proofs of closure over to manifest Bishop
-finite sets (and vice-versa).
-Missing from our previous proofs was a proof of closure of functions.
-We remedy that here.
-\begin{rm-theorem}
-  Manifest bishop finiteness is closed over dependent functions
-  (\(\prod\)-types).
-  \begin{equation}
-    \frac{
-      \mathcal{B}(A) \; \; \; \Pi {(x : A)} , \mathcal{B}\left( U(x) \right)
-    }{
-      \mathcal{B}\left(\Pi {(x : A)} , U(x)\right)
-    }
-  \end{equation}
-\end{rm-theorem}
-\begin{proof}
-  This proof is essentially the composition of two transport operations, made
-  available to us via univalence.
+
+\section{Relations Between Each Finiteness Definition}
+\section{Topos}
+\section{Countably Infinite Types}
+\section{Search}
+
+
+% % Taking finiteness as an example again, if we prove that some type is finite via
+% % bijection, in MLTT such a proof would have to reveal the particular bijection.
+% % This becomes problematic when defining, for instance, the category of finite
+% % sets: the objects of this category would ideally be types coupled with proofs of
+% % their finiteness, but in order to 
+
+
+
+% % The five in particular that we are interested in are organised in
+% % figure~\ref{finite-classification}.
+% % We especially want to examine what separates each predicate: what extra
+% % information do you need, for instance, to go from a proof of Cardinal finiteness
+% % (section~\ref{cardinal}) to manifest Bishop finiteness
+% % (section~\ref{manifest-bishop}).
+
+
+% % Next, we will examine the category-theoretic and topos-theoretic interpretations
+% % of each of the predicates.
+% % We will give a ``category of finite sets'' for each finiteness predicate, and
+% % then prove the various closure properties required to arrive at the relevant
+% % topos (we show that decidable Kuratowski finite sets form a \(\Pi\)-pretopos,
+% % for instance).
+
+
+
+% % ways to prove finiteness end up proving the same
+% % thing: constructively, however, each defines a fundamentally different
+% % ``version'' of finiteness.
+% % In Martin-Löf type theory \cite{martin-lofIntuitionisticTypeTheory1980}, these
+% % variations (and more) have been explored in
+% % \cite{spiwackConstructivelyFinite2010} and
+% % \cite{firsovVariationsNoetherianness2016}.
+
+% % Homotopy Type Theory \cite{hottbook} further adds to this story in two ways.
+% % First, its universe of types includes non-sets: whether or not a finiteness
+% % predicate includes these gives us another dimension on which to discriminate.
+
+% % The second addition is concerned with the hiding of information.
+% % Occasionally in a constructive setting you don't want to have to reveal how you
+% % proved something.
+% % To model logical disjunction, for instance, we usually use a disjoint union: the
+% % model isn't entirely correct, though, because a proof of \(A \text{or} B\)
+% % reveals which of \(A\) or \(B\) we actually proved.
+
+% % logical disjunction, for instance, is usually modelled with a
+% % disjoint union.
+% % This always means, however, that to prove ``A or B'' you have to reveal which of
+% % A or B you did prove.
+
+
+
+% % The other headline feature of HoTT's generalised equality is univalence: put
+% % simply, it allows us to treat isomorphic types as equal, giving us in the
+% % constructive world access to a technique that is commonplace classically.
+% % It turns out that finite types have a lot to say about isomorphisms, and we will
+% % rely heavily on this aspect of HoTT to work with them.
+% % \subsection{Contributions}
+% % In this work, we will explore finite types in Cubical Type Theory
+% % \cite{cohenCubicalTypeTheory2016}, and expose their relationship to infinite
+% % types, species, and demonstrate their practical uses for proofs in dependently
+% % typed programming languages.
+
+% % In section~\ref{strong-finiteness}, we will explore the ``strong'' notions of
+% % finiteness (i.e. those at least as strong as Kuratowski finiteness
+% % \cite{kuratowskiNotionEnsembleFini1920}), with a special focus on cardinal
+% % finiteness.
+% % We will delineate some subtly different finiteness predicates, and prove the
+% % relationship between each.
+% % We will prove, then, that every discrete Kuratowski finite type is cardinal
+% % finite, and subsequently will show that discrete Kuratowski finite sets form a
+% % topos.
+
+% % In section~\ref{species-and-containers}, we will redefine our finiteness
+% % predicates using \emph{containers}, and prove that the new definitions are
+% % equivalent to the old.
+% % Using this, we will prove much stronger relationships between our finiteness
+% % predicates and relation-based definitions of finiteness.
+% % Finally, We will show how the species-container duality falls out naturally from
+% % these new definitions.
+
+% % In section~\ref{infinite-cardinalities}, we will extend our study of finite
+% % types to infinite but countable types.
+% % We will see that the finiteness predicates are mirrored with countable
+% % counterparts, and we will prove closure under the Kleene star and plus.
+
+% % Proofs of finiteness have well-known practical applications in
+% % constructive mathematics \cite{firsovDependentlyTypedProgramming2015}.
+% % In section~\ref{practical}, we build a library which exploits these uses in
+% % Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}, allowing automation of
+% % complex proofs over finite types.
+% % We frame this in terms of the principle of omniscience for finite types.
+% % Thanks to the flexibility afforded to us by Cubical Type Theory, we are able to
+% % go further than the usual examples of this kind of proof automation: as well as
+% % proving properties about functions, we can synthesise functions whole-cloth from
+% % their desired properties.
+% % Through the unified interface for finite and countable types, we can
+% % reuse the automation machinery for \emph{partial} proof search over infinite
+% % search spaces.
+% % Along the way, we extend the work in \cite{allaisGenericLevelPolymorphic2019} to
+% % prove isomorphisms between the curried and uncurried forms of \(n\)-ary
+% % dependent functions.
+
+
+% % Classically, of course, each of these statements are equivalent.
+% % Constructively, though, all four predicates are fundamentally different.
+
+% % Part of the difference comes from ``leaking'' information about the finite type
+% % in the proof of its finiteness.
+% % If I demonstrate a type is finite by showing a surjection to that type, I've
+% % revealed a way to construct all of the elements of my type.
+% % If I show that it is bounded, I reveal an upper bound on the cardinality of the
+% % type.
+
+
+
+
+
+% \subsection{Strong Finiteness Predicates}
+% We will first explore the ``strong'' notions of finiteness (i.e. those at least
+% as strong as Kuratowski finiteness \cite{kuratowskiNotionEnsembleFini1920}),
+% with a special focus on cardinal finiteness (section~\ref{cardinal}), and
+% manifest enumerability (section~\ref{manifest-enumerability}), which is new, to
+% our knowledge.
+
+% Figure~\ref{finite-classification} organises the predicates according to
+% their strength.
+% We will go through each of the predicates, proving how to weaken each (i.e. we
+% will provide a proof that every cardinally finite type is Kuratowski finite),
+% and how to strengthen them, given the required property.
+% In terms of figure~\ref{finite-classification}, this amounts to providing proofs
+% for each arrow.
+% Our main proof in this regard is that we can derive manifest Bishop finiteness
+% from Kuratowski finiteness plus a total order.
+
+% We will---through the use of containers
+% \cite{abbottContainersConstructingStrictly2005}---formally prove the equivalence
+% these predicates have with the usual function relations i.e. we will show that a
+% proof of manifest enumerability is precisely equivalent to a surjection from a
+% finite prefix of the natural numbers.
+
+% For each predicate, we will also prove its closure over sums and products in
+% both dependent and non-dependent forms, if such a closure exists.
+% This will culminate in our main result for this section: the formal proof that
+% decidable Kuratowski finite sets form a topos.
+% \subsection{Infinite Types}
+% In section~\ref{infinite-cardinalities}, we will extend our study of finite
+% types to infinite but countable types.
+% We will see that the classification of finiteness predicates mirrors that of
+% their countable counterparts, and we will prove closure under the Kleene star.
+
+% \subsection{Practical Uses}
+% Finally, in section~\ref{practical} we will demonstrate some practical uses of
+% the finiteness proofs in Cubical Agda.
+% We will show how to use well-known techniques
+% \cite{firsovDependentlyTypedProgramming2015, devrieseBrightSideType2011} to
+% automate proofs of functions with finite (and infinite) domains.
+% We further show how to automate the synthesis of functions from desired
+% properties.
+% \section{Split Enumerability} \label{split-enumerable}
+% We will start with the simplest definition of finiteness: we say a set is
+% enumerable if there is a list of its elements which contains every element in
+% the set.
+
+% Before giving the definition of the predicate, we will first define lists (and
+% membership thereof): we have chosen a \emph{container}-based definition for this
+% work.
+% \begin{rm-definition}[Container] \label{container-def}
+%   A container \cite{abbottContainersConstructingStrictly2005} is a pair
+%   \(S \triangleright P\) where \(S\) is a type, the elements of which are called
+%   the \emph{shapes} of the container, and \(P\) is a type family on \(S\), where
+%   the elements of \(P(s)\) are called the \emph{positions} of a container.
+%   We ``interpret'' a container into a functor defined like so:
+%   \begin{equation}
+%     \llbracket S \triangleright P \rrbracket(A) = \Sigma {(s : S)} , \left( P(s) \rightarrow A \right)
+%   \end{equation}
+%   Membership of a container can be defined like so:
+%   \begin{equation}
+%     x \in \mathit{xs} = \text{fiber}(\text{snd}(\mathit{xs}), x)
+%   \end{equation}
+%   Where \(\text{fiber}\) is from \cite[definition 4.2.4]{hottbook}.
+% \end{rm-definition}
+% \begin{rm-definition}[Lists]
+%   \begin{equation}%
+%     \mathbf{List} = \llbracket \mathbb{N} \triangleright \mathbf{Fin} \rrbracket
+%   \end{equation}
+% \end{rm-definition}
+% \begin{rm-definition}[\mathbf{Fin}]
+%   \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\).
+%   We define it the standard way, where \(\mathbf{Fin}(0) = \bot\) and
+%   \(\mathbf{Fin}(n + 1) &= \top + \mathbf{Fin}(n)\).
+% \end{rm-definition}
+
+% Internally, in our formalisation, we actually use the standard
+% inductive definition of lists more often (it tends to work better in more
+% complex algorithms, and functions on it seems to satisfy the termination
+% checker more readily).
+% However, since both types are equivalent, univalence allows us to transport to
+% whichever representation is more convenient in a given situation.
+% For the higher-level proofs we present here, though, the container-based
+% definition greatly simplifies certain steps, which is why we have chosen it as
+% our representation.
+
+% Finally, we can define formally split enumerability.
+% \subsection{Split Surjections}
+% \begin{rm-definition}[Surjections]
+%   \begin{multicols}{2}
+%     \begin{equation}
+%       A \twoheadrightarrow B = \Sigma (f : A \rightarrow B) , \text{surjective}(f)
+%     \end{equation} \break
+%     \begin{equation}
+%       A \twoheadrightarrow! \; B = \Sigma (f : A \rightarrow B) , \text{split surjective}(f)
+%     \end{equation}
+%   \end{multicols}
+%   Where the definitions of surjective are taken from \cite[definition
+%   4.6.1]{hottbook}.
+% \end{rm-definition}
+% \begin{rm-theorem} \label{split-enum-surj}
+%   Split enumerability is equivalent to a split surjection from a finite prefix
+%   of the natural numbers.
+%   \begin{equation}
+%     \mathcal{E}!(A) \iff \Sigma {(n : \mathbb{N})} , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
+%   \end{equation}
+% \end{rm-theorem}
+% \begin{proof}
+%   After sufficient inlining, it emerges that our goal is simply a reassociation.
+%   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{split-surj}
+%   To be clear: in Agda, the proof could simply be \(\AgdaFunction{reassoc}\); we
+%   have written out the extra lines for clarity alone.
+% \end{proof}
+% \begin{rm-lemma} \label{split-enum-discrete}
+%   Any split enumerable type has decidable equality (is discrete).
+% \end{rm-lemma}
+% \begin{proof}
+%   We use a corollary that if there is a split-surjection from \(A\) to \(B\),
+%   and \(A\) is discrete, then \(B\) is also discrete.
+% \end{proof}
+% By Hedberg's theorem \cite{hedbergCoherenceTheoremMartinLof1998}, we know that
+% this implies split enumerable types must all be sets.
+% \subsection{Closure}
+% In this section we will prove closure under various operations for split
+% enumerable sets.
+% We are working towards a topos proof, which requires us to prove closure under
+% a variety of operations: for now, we only have enough machinery to demonstrate
+% the semiring operations, and dependent sums.
+% In order to show closure under exponentials (function arrows), we will need an
+% equivalence with \(\mathbf{Fin}\), which will be provided in
+% section~\ref{manifest-bishop}.
+% \begin{rm-lemma} \label{split-enum-bool-top-bot}
+%   \(\mathbf{Bool}\), \(\top\), and \(\bot\) are all split enumerable.
+% \end{rm-lemma}
+% \begin{proof}
+%   Each of these types clearly has a finite number of elements (2, 1, and 0,
+%   respectively), and furthermore has a straightforward enumeration.
+% \end{proof}
+% \begin{rm-theorem} \label{split-enum-sigma}
+%   Split-enumerability is closed under \(\Sigma\).
+%   \begin{equation} \label{split-enum-sigma-clos-sig}
+%     \frac{
+%       \mathcal{E}!(A) \; \; \; \Pi (x : A) , \mathcal{E}!(U(x))
+%     }{
+%       \mathcal{E}!(\Sigma (x : A) , U(x))
+%     }
+%   \end{equation}
+% \end{rm-theorem}
+% \begin{proof}
+%   To obtain the support list, we concatenate the support lists of all the proofs
+%   of split-finiteness for \(U\) over the support list of \(E_A\).
+%   In Agda:
+%   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{sigma-sup}
+%   ``do-notation'' is available to us as we're working in the list monad.
+% \end{proof}
+% Closure under disjoint union and Cartesian product both follow from \(\Sigma\),
+% as these types can be defined in terms of \(\Sigma\).
+% \begin{align}
+%   A \times B &= \Sigma {(x : A)} , B \\
+%   A + B &= \Sigma {(x : \mathbf{Bool})} , \text{if} \; x \; \text{then} \; A \; \text{else} \; B
+% \end{align}
+% \section{Manifest Bishop Finiteness} \label{manifest-bishop}
+% Where split enumerability was the enumeration form of a split surjection from
+% \(\mathbf{Fin}\), manifest Bishop finiteness is the enumeration form of an
+% \emph{equivalence} with \(\mathbf{Fin}\).
+
+% \begin{rm-definition}[Manifest Bishop Finiteness]
+%   \begin{equation}
+%     \mathcal{B}(A) = \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \inunique xs
+%   \end{equation}
+% \end{rm-definition}
+% The only difference between this predicate and split enumerability is the list
+% membership term: we use \(\inunique\) here, where \(x \inunique \mathit{xs}\) is
+% to be read as ``\(x\) occurs exactly once in \(\mathit{xs}\)''.
+% \begin{rm-definition}[Unique Membership]
+%   We say an item \(x\) is ``uniquely in'' some container \(\mathit{xs}\) if its
+%   membership in that list is a \emph{contraction} \cite[definition
+%   3.11.1]{hottbook}; i.e. its membership proof exists, and all such proofs are
+%   equal.
+%   \begin{equation}
+%     x \inunique \mathit{xs} = \text{isContr}(x \in \mathit{xs})
+%   \end{equation}
+% \end{rm-definition}
+% By the definition of a contraction, we can always recover the underlying
+% membership proof, meaning that we can always derive split enumerability from
+% manifest Bishop finiteness.
+% \subsection{Equivalence}
+% \begin{rm-lemma} \label{bishop-equiv}
+%   A proof of manifest Bishop finiteness is equivalent to an equivalence with a
+%   finite prefix of the natural numbers.
+%   \begin{equation}
+%     \mathcal{B}(A) \simeq \Sigma {(n : \mathbb{N})} , \left( \mathbf{Fin}(n) \simeq A \right)
+%   \end{equation}
+% \end{rm-lemma}
+% \begin{proof}
+%   There are many equivalent definitions of equivalence in HoTT.
+%   Here we take the version preferred in the Cubical Agda library: contractible
+%   maps \cite[definition 4.4.1]{hottbook}.
+%   Because of the parallels between contractible maps and split surjections,
+%   the proof proceeds much the same as \ref{split-enum-surj}.
+%   In other words, the definition of Bishop finiteness is itself a reassociation
+%   of a contractible map.
+% \end{proof}
+% \subsection{Relationship to Split Enumerability}
+% \begin{rm-theorem} \label{split-enum-to-manifest-bishop}
+%   Any split enumerable set is manifest Bishop finite.
+% \end{rm-theorem}
+% \begin{proof}
+%   From proposition~\ref{split-enum-discrete} we can derive decidable equality on
+%   \(A\), and using this we can define a function (called \(\text{uniques}\)) which filters
+%   out duplicates from lists of \(A\)s.
+%   This gives us our support list.
+%   To generate the cover proof it suffices now to prove the following:
+%   \begin{equation}
+%     \Pi {(x : A)} , \Pi {(\mathit{xs} : \textbf{List}(A))} , x \in \mathit{xs} \rightarrow x \inunique \text{uniques}(\mathit{xs})
+%   \end{equation}
+% \end{proof}
+% \subsection{Closure}
+% Proving equal strength of split enumerability and manifest Bishop finiteness
+% allows us to carry all of the previous proofs of closure over to manifest Bishop
+% finite sets (and vice-versa).
+% Missing from our previous proofs was a proof of closure of functions.
+% We remedy that here.
+% \begin{rm-theorem}
+%   Manifest bishop finiteness is closed over dependent functions
+%   (\(\prod\)-types).
+%   \begin{equation}
+%     \frac{
+%       \mathcal{B}(A) \; \; \; \Pi {(x : A)} , \mathcal{B}\left( U(x) \right)
+%     }{
+%       \mathcal{B}\left(\Pi {(x : A)} , U(x)\right)
+%     }
+%   \end{equation}
+% \end{rm-theorem}
+% \begin{proof}
+%   This proof is essentially the composition of two transport operations, made
+%   available to us via univalence.
   
-  First, we will simplify things slightly by working only with split
-  enumerability.
-  As this is equal in strength to manifest Bishop finiteness, any closure proofs
-  carry over.
+%   First, we will simplify things slightly by working only with split
+%   enumerability.
+%   As this is equal in strength to manifest Bishop finiteness, any closure proofs
+%   carry over.
 
-  Secondly, we will replace \(A\) in all places with \(\mathbf{Fin}(n)\).
-  Since we have already seen an equivalence between these two types, we are
-  permitted to transport along these lines.
-  This is the first transport operation.
+%   Secondly, we will replace \(A\) in all places with \(\mathbf{Fin}(n)\).
+%   Since we have already seen an equivalence between these two types, we are
+%   permitted to transport along these lines.
+%   This is the first transport operation.
 
-  The bulk of the proof now is concerned with proving the following:
-  \begin{equation}
-    \left( \Pi {(x : \mathbf{Fin}(n))} , \mathcal{E}!(A(x)) \right) \rightarrow \mathcal{E}!\left( \Pi {(x : \mathbf{Fin}(n))} , A(x) \right)
-  \end{equation}
-  Our strategy to accomplish this will be to consider functions from
-  \(\mathbf{Fin}(n)\) as \(n\)-tuples over some type family \(T : \mathbb{N}
-  \rightarrow \text{Type}\).
-  \begin{equation}
-    \begin{aligned}
-      \mathbf{Tuple}(T, 0)   &= \top \\
-      \mathbf{Tuple}(T, n+1) &= T(0) \times \mathbf{Tuple}(T \circ \text{suc}, n)
-    \end{aligned}
-  \end{equation}
-  This type is manifestly Bishop finite, as it is constructed only from products
-  and the unit type.
+%   The bulk of the proof now is concerned with proving the following:
+%   \begin{equation}
+%     \left( \Pi {(x : \mathbf{Fin}(n))} , \mathcal{E}!(A(x)) \right) \rightarrow \mathcal{E}!\left( \Pi {(x : \mathbf{Fin}(n))} , A(x) \right)
+%   \end{equation}
+%   Our strategy to accomplish this will be to consider functions from
+%   \(\mathbf{Fin}(n)\) as \(n\)-tuples over some type family \(T : \mathbb{N}
+%   \rightarrow \text{Type}\).
+%   \begin{equation}
+%     \begin{aligned}
+%       \mathbf{Tuple}(T, 0)   &= \top \\
+%       \mathbf{Tuple}(T, n+1) &= T(0) \times \mathbf{Tuple}(T \circ \text{suc}, n)
+%     \end{aligned}
+%   \end{equation}
+%   This type is manifestly Bishop finite, as it is constructed only from products
+%   and the unit type.
   
-  We then prove an isomorphism between this representation and \(\Pi\)-types.
-  \begin{equation}
-    \mathbf{Tuple}(T, n) \iff \Pi {(x : \mathbf{Fin}(n))} , T(x)
-  \end{equation}
-  This allows us to transport our proof of finiteness on tuples to one on
-  functions from \(\mathbf{Fin}\) (our second transport operation), proving our
-  goal.
-\end{proof}
-\section{Manifest Enumerability} \label{manifest-enumerability}
-Both split enumerability and manifest Bishop finiteness are restricted to sets:
-because they both imply decidable equality, no non-set types can satisfy them as
-predicates.
-To find a more general predicate for finiteness, we \emph{truncate} the
-membership proof.
-\begin{rm-definition}[Manifest Enumerability]
-  \begin{equation}
-    \mathcal{E}(A) = \Sigma {(\mathit{xs} : \mathbf{List}(A))} , \Pi {(x : A)} , \lVert x \in \mathit{xs} \rVert
-  \end{equation}
-\end{rm-definition}
-\begin{rm-definition}[Propositional Truncation]a \label{prop-trunc}
-  The type \(\lVert A \rVert\) on some type \(A\) is a propositionally truncated
-  proof of \(A\) \cite[3.7]{hottbook}.
-  In other words, it is a proof that some \(A\) exists, but it does not tell you
-  \emph{which} \(A\).
+%   We then prove an isomorphism between this representation and \(\Pi\)-types.
+%   \begin{equation}
+%     \mathbf{Tuple}(T, n) \iff \Pi {(x : \mathbf{Fin}(n))} , T(x)
+%   \end{equation}
+%   This allows us to transport our proof of finiteness on tuples to one on
+%   functions from \(\mathbf{Fin}\) (our second transport operation), proving our
+%   goal.
+% \end{proof}
+% \section{Manifest Enumerability} \label{manifest-enumerability}
+% Both split enumerability and manifest Bishop finiteness are restricted to sets:
+% because they both imply decidable equality, no non-set types can satisfy them as
+% predicates.
+% To find a more general predicate for finiteness, we \emph{truncate} the
+% membership proof.
+% \begin{rm-definition}[Manifest Enumerability]
+%   \begin{equation}
+%     \mathcal{E}(A) = \Sigma {(\mathit{xs} : \mathbf{List}(A))} , \Pi {(x : A)} , \lVert x \in \mathit{xs} \rVert
+%   \end{equation}
+% \end{rm-definition}
+% \begin{rm-definition}[Propositional Truncation]a \label{prop-trunc}
+%   The type \(\lVert A \rVert\) on some type \(A\) is a propositionally truncated
+%   proof of \(A\) \cite[3.7]{hottbook}.
+%   In other words, it is a proof that some \(A\) exists, but it does not tell you
+%   \emph{which} \(A\).
 
-  It is defined as a Higher Inductive Type:
-  \begin{equation}
-    \begin{aligned}
-      \lVert A \rVert =& \; \lvert \cdot \rvert : A \rightarrow \lVert A \rVert ; \\
-                      |& \; \text{squash} : \Pi {(x, y : \lVert A \rVert)} , x \equiv y  ; 
-    \end{aligned}
-  \end{equation}
+%   It is defined as a Higher Inductive Type:
+%   \begin{equation}
+%     \begin{aligned}
+%       \lVert A \rVert =& \; \lvert \cdot \rvert : A \rightarrow \lVert A \rVert ; \\
+%                       |& \; \text{squash} : \Pi {(x, y : \lVert A \rVert)} , x \equiv y  ; 
+%     \end{aligned}
+%   \end{equation}
 
-  We will use three eliminators from \(\lVert A \rVert\) in this paper.
-  \begin{enumerate}
-  \item \label{elim-prop-prop} For any function \(A \rightarrow B\), where
-    \(\text{isProp}(B)\), we have a function \(\lVert A \rVert \rightarrow B\).
-  \item \label{elim-prop-monad} A special case of \ref{elim-prop-prop} implies
-    that \(\lVert \cdot \rVert\) forms a monad: this means that we get the usual
-    Monadic operators on \(\lVert \cdot \rVert\) (bind, pure, fmap, etc.).
-    \item \label{elim-prop-coh} We can eliminate from \(\lVert A \rVert\) with a
-      function \(f : A \rightarrow B\) iff \(f\) ``doesn't care'' about the
-      choice of \(A\) (\(\Pi {(x , y : A)} , f(x) \equiv f(y) \)).
-      Formally speaking, \(f\) needs to be ``coherently constant''
-      \cite{krausGeneralUniversalProperty2015}, and \(B\) needs to be an
-      \(n\)-type for some finite \(n\).
-  \end{enumerate}
-\end{rm-definition}
+%   We will use three eliminators from \(\lVert A \rVert\) in this paper.
+%   \begin{enumerate}
+%   \item \label{elim-prop-prop} For any function \(A \rightarrow B\), where
+%     \(\text{isProp}(B)\), we have a function \(\lVert A \rVert \rightarrow B\).
+%   \item \label{elim-prop-monad} A special case of \ref{elim-prop-prop} implies
+%     that \(\lVert \cdot \rVert\) forms a monad: this means that we get the usual
+%     Monadic operators on \(\lVert \cdot \rVert\) (bind, pure, fmap, etc.).
+%     \item \label{elim-prop-coh} We can eliminate from \(\lVert A \rVert\) with a
+%       function \(f : A \rightarrow B\) iff \(f\) ``doesn't care'' about the
+%       choice of \(A\) (\(\Pi {(x , y : A)} , f(x) \equiv f(y) \)).
+%       Formally speaking, \(f\) needs to be ``coherently constant''
+%       \cite{krausGeneralUniversalProperty2015}, and \(B\) needs to be an
+%       \(n\)-type for some finite \(n\).
+%   \end{enumerate}
+% \end{rm-definition}
 
-We will use the circle as an example non-set type which is nonetheless
-manifestly enumerable.
-\begin{rm-theorem}
-  The circle \(S^1\) is manifestly enumerable.
-\end{rm-theorem}
-\begin{proof}
-  As the cover proof is a truncated proposition, we need only consider the point
-  constructors, making this poof the same as the proof of split enumerability on
-  \(\top\).
-\end{proof}
-\subsection{Surjections}
-This predicates relation to surjectivity is much the same as split
-enumerability's relation to \emph{split} surjectivity.
-\begin{rm-lemma}
-  A proof of manifest enumerability is equivalent to a surjection from a finite
-  prefix of the natural numbers.
-\end{rm-lemma}
-\subsection{Relation to Split Enumerability}
-\begin{rm-theorem} \label{manifest-enum-to-split}
-  A manifestly enumerable type with decidable equality is split enumerable.
-\end{rm-theorem}
-\begin{proof}
-  The support list stays the same between both enumerability proofs.
+% We will use the circle as an example non-set type which is nonetheless
+% manifestly enumerable.
+% \begin{rm-theorem}
+%   The circle \(S^1\) is manifestly enumerable.
+% \end{rm-theorem}
+% \begin{proof}
+%   As the cover proof is a truncated proposition, we need only consider the point
+%   constructors, making this poof the same as the proof of split enumerability on
+%   \(\top\).
+% \end{proof}
+% \subsection{Surjections}
+% This predicates relation to surjectivity is much the same as split
+% enumerability's relation to \emph{split} surjectivity.
+% \begin{rm-lemma}
+%   A proof of manifest enumerability is equivalent to a surjection from a finite
+%   prefix of the natural numbers.
+% \end{rm-lemma}
+% \subsection{Relation to Split Enumerability}
+% \begin{rm-theorem} \label{manifest-enum-to-split}
+%   A manifestly enumerable type with decidable equality is split enumerable.
+% \end{rm-theorem}
+% \begin{proof}
+%   The support list stays the same between both enumerability proofs.
 
-  For the cover proof, we first need the following function which searches a
-  list for a particular element (given decidable equality on \(A\)).
-  \begin{equation}
-    \decin \; : \Pi(x : A) , \Pi(\mathit{xs} : \mathbf{List}(A)) , \mathbf{Dec}(x \in \mathit{xs})
-  \end{equation}
-  Where \(\mathbf{Dec}(A)\) is a decision on some type \(A\).
+%   For the cover proof, we first need the following function which searches a
+%   list for a particular element (given decidable equality on \(A\)).
+%   \begin{equation}
+%     \decin \; : \Pi(x : A) , \Pi(\mathit{xs} : \mathbf{List}(A)) , \mathbf{Dec}(x \in \mathit{xs})
+%   \end{equation}
+%   Where \(\mathbf{Dec}(A)\) is a decision on some type \(A\).
 
-  We then need to convert a value of type \(\mathbf{Dec}(x \in \mathit{xs})\) to
-  \(x \in \mathit{xs}\).
-  We use the following to do that:
-  \begin{equation}
-    \text{recompute} : \mathbf{Dec}(A) \rightarrow \lVert A \rVert \rightarrow A
-  \end{equation}
-  The function works via case-analysis on \(\mathbf{Dec}\): in the true case, we
-  return the proof; in the false case, we can apply the proof of negation under
-  the truncation, and then extract \(\lVert \bot \rVert\) to \(\bot\), as
-  \(\bot\) is a mere proposition, thus proving the goal via explosion.
-\end{proof}
-\subsection{Closure}
-Since we don't have an equivalence with \(\mathbf{Fin}\), we don't get closure
-under \(\Pi\).
-\begin{rm-lemma}
-  Manifest enumerability is closed under \(\Sigma\).
-\end{rm-lemma}
-\begin{proof}
-  This closure proof is almost the same as theorem~\ref{split-enum-sigma}.
-  The manipulation of the support lists can be carried over as-is; but the type
-  of the cover proof has changed, so it will need to be updated.
-  As it happens, the translation is straightforward: we effectively write the
-  ``monadic'' version of the old function.
-\end{proof}
-\section{Cardinal Finiteness} \label{cardinal}
-For manifest enumerability, we removed the need for decidable equality: in these
-next two finiteness predicates, we remove the need for a total order on the
-underlying type.
-\begin{rm-definition}[Cardinal Finiteness]
-  A type \(A\) is cardinally finite, \(\mathcal{C}\), if it has a
-  propositionally-truncated proof of bishop finiteness.
-  \begin{equation}
-    \mathcal{C}(A) = \lVert \mathcal{B}(A) \rVert
-  \end{equation}%
-\end{rm-definition}%
-\subsection{Closure}
-The closure properties of cardinal finiteness are effectively the non-dependent
-versions of manifest Bishop finiteness.
-To see why, consider equation~\ref{split-enum-sigma-clos-sig}.
-We can ``lift'' the proof (as a binary function) under a propositional
-truncation, giving us equation~\ref{sigma-proof-lifted}, but that doesn't give us
-the desired closure proof (equation~\ref{sigma-proof-desired}).
-\begin{multicols}{2}
-  \noindent
-  \begin{equation} \label{sigma-proof-lifted}
-    \frac{
-      \lVert \mathcal{B}(A) \rVert \; \; \; \lVert \Pi (x : A) , \mathcal{B}(U(x)) \rVert
-    }{
-      \lVert \mathcal{B}(\Sigma(x : A) , U(x)) \rVert
-    }
-  \end{equation}
-  \begin{equation} \label{sigma-proof-desired}
-    \frac{
-      \lVert \mathcal{B}(A) \rVert \; \; \; \Pi (x : A) , \lVert \mathcal{B}(U(x))  \rVert
-    }{
-      \lVert \mathcal{B}(\Sigma(x : A) , U(x)) \rVert
-    }
-  \end{equation}
-\end{multicols}%
-To remedy the mismatch we would need a function of the type:
-\begin{equation}
-  \left( \Pi(x : A) , \lVert \mathcal{B}(U(x)) \rVert \right) \rightarrow
-  \lVert \Pi(x : A) , \mathcal{B}(U(x)) \rVert
-\end{equation}
-Unfortunately, this equation in particular is a form of the axiom of choice
-\cite[equation 3.8.3]{hottbook}.
-This leaves us with closure under only the non-dependent operations.
-\begin{rm-lemma}
-  Cardinal finiteness is closed under \(\times\), \(+\), and \(\rightarrow\).
-\end{rm-lemma}
-\begin{proof}
-  All of these closure proofs can be lifted directly from their corresponding
-  proofs on manifest Bishop finiteness.
-\end{proof}
-\subsection{Strength}
-The following two theorems are proven in
-\cite{yorgeyCombinatorialSpeciesLabelled2014}, in much the same way as we have
-done here.
-Our contribution for this section is simply the formalisation.
-\begin{rm-theorem} \label{cardinal-finite-discrete}
-  Any cardinal-finite set has decidable equality.
-\end{rm-theorem}
-\begin{proof}
-  See \cite[Proposition 2.4.10]{yorgeyCombinatorialSpeciesLabelled2014}.
-\end{proof}
-\begin{rm-theorem}
-  Given a cardinally finite type, we can derive the type's cardinality, as well
-  as a propositionally truncated proof of equivalence with \(\textbf{Fin}\)s of
-  the same cardinality.
-  \begin{equation}
-    \mathcal{C}(A) \rightarrow \Sigma {(n : \mathbb{N})} , \lVert \textbf{Fin}(n) \simeq A \rVert
-  \end{equation}
-\end{rm-theorem}
-\begin{proof}
-  \cite[Proposition 2.4.9]{yorgeyCombinatorialSpeciesLabelled2014}.
-\end{proof}
-\subsection{Relation to Manifest Bishop Finiteness}
-Cardinal finiteness tells us that there is an isomorphism between a type and
-\(\mathbf{Fin}\); it just doesn't tell us \emph{which} isomorphism.
-To take a simple example, \(\mathbf{Bool}\) has 2 possible isomorphisms with the
-set \(\mathbf{Fin}(2)\): one where false maps to 0, and true to 1; and another
-where false maps to 1 and true to 0.
+%   We then need to convert a value of type \(\mathbf{Dec}(x \in \mathit{xs})\) to
+%   \(x \in \mathit{xs}\).
+%   We use the following to do that:
+%   \begin{equation}
+%     \text{recompute} : \mathbf{Dec}(A) \rightarrow \lVert A \rVert \rightarrow A
+%   \end{equation}
+%   The function works via case-analysis on \(\mathbf{Dec}\): in the true case, we
+%   return the proof; in the false case, we can apply the proof of negation under
+%   the truncation, and then extract \(\lVert \bot \rVert\) to \(\bot\), as
+%   \(\bot\) is a mere proposition, thus proving the goal via explosion.
+% \end{proof}
+% \subsection{Closure}
+% Since we don't have an equivalence with \(\mathbf{Fin}\), we don't get closure
+% under \(\Pi\).
+% \begin{rm-lemma}
+%   Manifest enumerability is closed under \(\Sigma\).
+% \end{rm-lemma}
+% \begin{proof}
+%   This closure proof is almost the same as theorem~\ref{split-enum-sigma}.
+%   The manipulation of the support lists can be carried over as-is; but the type
+%   of the cover proof has changed, so it will need to be updated.
+%   As it happens, the translation is straightforward: we effectively write the
+%   ``monadic'' version of the old function.
+% \end{proof}
+% \section{Cardinal Finiteness} \label{cardinal}
+% For manifest enumerability, we removed the need for decidable equality: in these
+% next two finiteness predicates, we remove the need for a total order on the
+% underlying type.
+% \begin{rm-definition}[Cardinal Finiteness]
+%   A type \(A\) is cardinally finite, \(\mathcal{C}\), if it has a
+%   propositionally-truncated proof of bishop finiteness.
+%   \begin{equation}
+%     \mathcal{C}(A) = \lVert \mathcal{B}(A) \rVert
+%   \end{equation}%
+% \end{rm-definition}%
+% \subsection{Closure}
+% The closure properties of cardinal finiteness are effectively the non-dependent
+% versions of manifest Bishop finiteness.
+% To see why, consider equation~\ref{split-enum-sigma-clos-sig}.
+% We can ``lift'' the proof (as a binary function) under a propositional
+% truncation, giving us equation~\ref{sigma-proof-lifted}, but that doesn't give us
+% the desired closure proof (equation~\ref{sigma-proof-desired}).
+% \begin{multicols}{2}
+%   \noindent
+%   \begin{equation} \label{sigma-proof-lifted}
+%     \frac{
+%       \lVert \mathcal{B}(A) \rVert \; \; \; \lVert \Pi (x : A) , \mathcal{B}(U(x)) \rVert
+%     }{
+%       \lVert \mathcal{B}(\Sigma(x : A) , U(x)) \rVert
+%     }
+%   \end{equation}
+%   \begin{equation} \label{sigma-proof-desired}
+%     \frac{
+%       \lVert \mathcal{B}(A) \rVert \; \; \; \Pi (x : A) , \lVert \mathcal{B}(U(x))  \rVert
+%     }{
+%       \lVert \mathcal{B}(\Sigma(x : A) , U(x)) \rVert
+%     }
+%   \end{equation}
+% \end{multicols}%
+% To remedy the mismatch we would need a function of the type:
+% \begin{equation}
+%   \left( \Pi(x : A) , \lVert \mathcal{B}(U(x)) \rVert \right) \rightarrow
+%   \lVert \Pi(x : A) , \mathcal{B}(U(x)) \rVert
+% \end{equation}
+% Unfortunately, this equation in particular is a form of the axiom of choice
+% \cite[equation 3.8.3]{hottbook}.
+% This leaves us with closure under only the non-dependent operations.
+% \begin{rm-lemma}
+%   Cardinal finiteness is closed under \(\times\), \(+\), and \(\rightarrow\).
+% \end{rm-lemma}
+% \begin{proof}
+%   All of these closure proofs can be lifted directly from their corresponding
+%   proofs on manifest Bishop finiteness.
+% \end{proof}
+% \subsection{Strength}
+% The following two theorems are proven in
+% \cite{yorgeyCombinatorialSpeciesLabelled2014}, in much the same way as we have
+% done here.
+% Our contribution for this section is simply the formalisation.
+% \begin{rm-theorem} \label{cardinal-finite-discrete}
+%   Any cardinal-finite set has decidable equality.
+% \end{rm-theorem}
+% \begin{proof}
+%   See \cite[Proposition 2.4.10]{yorgeyCombinatorialSpeciesLabelled2014}.
+% \end{proof}
+% \begin{rm-theorem}
+%   Given a cardinally finite type, we can derive the type's cardinality, as well
+%   as a propositionally truncated proof of equivalence with \(\textbf{Fin}\)s of
+%   the same cardinality.
+%   \begin{equation}
+%     \mathcal{C}(A) \rightarrow \Sigma {(n : \mathbb{N})} , \lVert \textbf{Fin}(n) \simeq A \rVert
+%   \end{equation}
+% \end{rm-theorem}
+% \begin{proof}
+%   \cite[Proposition 2.4.9]{yorgeyCombinatorialSpeciesLabelled2014}.
+% \end{proof}
+% \subsection{Relation to Manifest Bishop Finiteness}
+% Cardinal finiteness tells us that there is an isomorphism between a type and
+% \(\mathbf{Fin}\); it just doesn't tell us \emph{which} isomorphism.
+% To take a simple example, \(\mathbf{Bool}\) has 2 possible isomorphisms with the
+% set \(\mathbf{Fin}(2)\): one where false maps to 0, and true to 1; and another
+% where false maps to 1 and true to 0.
 
-To convert from Cardinal finiteness to Bishop finiteness, then, requires that we
-supply enough information to identity a particular isomorphism.
-A total order is sufficient here: it will give us enough to uniquely order the
-support list invariant under permutations.
-This tells us what we already knew in the introduction: manifest Bishop
-finiteness is cardinal finiteness plus an order.
+% To convert from Cardinal finiteness to Bishop finiteness, then, requires that we
+% supply enough information to identity a particular isomorphism.
+% A total order is sufficient here: it will give us enough to uniquely order the
+% support list invariant under permutations.
+% This tells us what we already knew in the introduction: manifest Bishop
+% finiteness is cardinal finiteness plus an order.
 
-\begin{rm-theorem}
-  Any cardinal finite type with a (decidable) total order is manifestly Bishop
-  finite.
-\end{rm-theorem}
-\begin{proof}
-  This proof is quite involved, and will rely on several subsequent lemmas, so
-  we will give only its outline here.
-  \begin{itemize}
-    \item First, we will convert to manifest enumerability: knowing that the
-      underlying type is discrete (theorem~\ref{cardinal-finite-discrete}) we can
-      go from manifest enumerability to split enumerability
-      (lemma~\ref{manifest-enum-to-split}), and subsequently to manifest Bishop
-      finiteness (lemma~\ref{split-enum-to-manifest-bishop}).
-    \item To convert to manifest enumerability, we need to provide a support
-      list: this cannot simply be the support list hidden under the truncation,
-      since that would violate the hiding promised by the truncation.
-      Instead, we sort the list (using insertion sort).
-      We must, therefore, prove that insertion sort is invariant under all
-      support lists in cardinal finiteness proofs.
-    \item We do this by first showing that all support lists in cardinal
-      finiteness proofs are permutations of each other, and then that insertion
-      sort is invariant under permutations.
-    \item Given our particular definition of permutations, cover proofs
-      transfers naturally between lists which are permutations of each other.
-  \end{itemize} 
-\end{proof}
-Now we will build up the toolkit we need to perform the above steps.
-First, permutations.
-\begin{rm-definition}[List Permutations]
-  We say that two lists are permutations of each other if there is an
-  isomorphism between membership proofs
-  \cite{danielssonBagEquivalenceProofRelevant2012}.
-  \begin{equation}
-    \mathit{xs} \leftrightsquigarrow \mathit{ys} = \Pi {(x : A)} , x \in \mathit{xs} \iff x \in \mathit{ys}
-  \end{equation}
-\end{rm-definition}
-\begin{rm-lemma}
-  Insertion sort is invariant under permutations.
-  \begin{equation}
-    \mathit{xs} \leftrightsquigarrow \mathit{ys} \implies \text{sort}(\mathit{xs}) \equiv \text{sort}(\mathit{ys})
-  \end{equation}
-\end{rm-lemma}
-\begin{proof}
-  First, we prove two properties about insertion sort:
-  \begin{enumerate}
-    \item It returns a sorted list.
-    \item It a returns a list that is a permutation of its input.
-  \end{enumerate}
-  The second of these points allows us to show that \(\text{sort}(\mathit{xs})\)
-  is a permutation of \(\text{sort}(\mathit{ys})\).
-  \begin{equation}
-    \text{sort}(\mathit{xs}) \leftrightsquigarrow \mathit{xs} \leftrightsquigarrow \mathit{ys} \leftrightsquigarrow \text{sort}(\mathit{ys})
-  \end{equation}
-  Then, we show that any lists which are both sorted and permutations of each
-  other are equal.
-  Both of these conditions are true for the output of \(\text{sort}\).
-\end{proof}
-\section{Kuratowski Finiteness} \label{kuratowski}
-Finally we arrive at Kuratowski finiteness
-\cite{kuratowskiNotionEnsembleFini1920}.
-\begin{rm-definition}[Kuratowski-Finite Set]
-  The Kuratowski finite set is a free join semilattice (or, equivalently, a free
-  commutative idempotent monoid).
-  HITs are required to define this type
-  \cite{altenkirchDefinableQuotientsType2011}:
-  \begin{equation}
-    \begin{aligned}
-      \mathcal{K}(A) =&
-       \; \cdot \dblcolon \cdot : A \times \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
-      \vert& \; [] : \mathcal{K}(A) ; \\
-      \vert& \; \text{com} : \Pi (x, y: A) , \Pi (\mathit{xs}: \mathcal{K}(A)) , x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} ; \\
-      \vert& \; \text{dup} : \Pi (\mathit{x}: A) , \Pi (\mathit{xs}: \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} ; \\
-      \vert& \; \text{trunc} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q ;
-    \end{aligned}
-  \end{equation}
-  The \(\text{com}\) and \(\text{dup}\) constructors effectively add
-  commutativity and idempotency to the free monoid (the list), which is made by
-  the first two constructors.
-  The last constructor makes \(\mathcal{K}(A)\) a set.
+% \begin{rm-theorem}
+%   Any cardinal finite type with a (decidable) total order is manifestly Bishop
+%   finite.
+% \end{rm-theorem}
+% \begin{proof}
+%   This proof is quite involved, and will rely on several subsequent lemmas, so
+%   we will give only its outline here.
+%   \begin{itemize}
+%     \item First, we will convert to manifest enumerability: knowing that the
+%       underlying type is discrete (theorem~\ref{cardinal-finite-discrete}) we can
+%       go from manifest enumerability to split enumerability
+%       (lemma~\ref{manifest-enum-to-split}), and subsequently to manifest Bishop
+%       finiteness (lemma~\ref{split-enum-to-manifest-bishop}).
+%     \item To convert to manifest enumerability, we need to provide a support
+%       list: this cannot simply be the support list hidden under the truncation,
+%       since that would violate the hiding promised by the truncation.
+%       Instead, we sort the list (using insertion sort).
+%       We must, therefore, prove that insertion sort is invariant under all
+%       support lists in cardinal finiteness proofs.
+%     \item We do this by first showing that all support lists in cardinal
+%       finiteness proofs are permutations of each other, and then that insertion
+%       sort is invariant under permutations.
+%     \item Given our particular definition of permutations, cover proofs
+%       transfers naturally between lists which are permutations of each other.
+%   \end{itemize} 
+% \end{proof}
+% Now we will build up the toolkit we need to perform the above steps.
+% First, permutations.
+% \begin{rm-definition}[List Permutations]
+%   We say that two lists are permutations of each other if there is an
+%   isomorphism between membership proofs
+%   \cite{danielssonBagEquivalenceProofRelevant2012}.
+%   \begin{equation}
+%     \mathit{xs} \leftrightsquigarrow \mathit{ys} = \Pi {(x : A)} , x \in \mathit{xs} \iff x \in \mathit{ys}
+%   \end{equation}
+% \end{rm-definition}
+% \begin{rm-lemma}
+%   Insertion sort is invariant under permutations.
+%   \begin{equation}
+%     \mathit{xs} \leftrightsquigarrow \mathit{ys} \implies \text{sort}(\mathit{xs}) \equiv \text{sort}(\mathit{ys})
+%   \end{equation}
+% \end{rm-lemma}
+% \begin{proof}
+%   First, we prove two properties about insertion sort:
+%   \begin{enumerate}
+%     \item It returns a sorted list.
+%     \item It a returns a list that is a permutation of its input.
+%   \end{enumerate}
+%   The second of these points allows us to show that \(\text{sort}(\mathit{xs})\)
+%   is a permutation of \(\text{sort}(\mathit{ys})\).
+%   \begin{equation}
+%     \text{sort}(\mathit{xs}) \leftrightsquigarrow \mathit{xs} \leftrightsquigarrow \mathit{ys} \leftrightsquigarrow \text{sort}(\mathit{ys})
+%   \end{equation}
+%   Then, we show that any lists which are both sorted and permutations of each
+%   other are equal.
+%   Both of these conditions are true for the output of \(\text{sort}\).
+% \end{proof}
+% \section{Kuratowski Finiteness} \label{kuratowski}
+% Finally we arrive at Kuratowski finiteness
+% \cite{kuratowskiNotionEnsembleFini1920}.
+% \begin{rm-definition}[Kuratowski-Finite Set]
+%   The Kuratowski finite set is a free join semilattice (or, equivalently, a free
+%   commutative idempotent monoid).
+%   HITs are required to define this type
+%   \cite{altenkirchDefinableQuotientsType2011}:
+%   \begin{equation}
+%     \begin{aligned}
+%       \mathcal{K}(A) =&
+%        \; \cdot \dblcolon \cdot : A \times \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
+%       \vert& \; [] : \mathcal{K}(A) ; \\
+%       \vert& \; \text{com} : \Pi (x, y: A) , \Pi (\mathit{xs}: \mathcal{K}(A)) , x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} ; \\
+%       \vert& \; \text{dup} : \Pi (\mathit{x}: A) , \Pi (\mathit{xs}: \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} ; \\
+%       \vert& \; \text{trunc} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q ;
+%     \end{aligned}
+%   \end{equation}
+%   The \(\text{com}\) and \(\text{dup}\) constructors effectively add
+%   commutativity and idempotency to the free monoid (the list), which is made by
+%   the first two constructors.
+%   The last constructor makes \(\mathcal{K}(A)\) a set.
 
-  To eliminate from \(\mathcal{K}(A)\), we have to provide equations for each of
-  the point constructors which obey the equations of the path constructors.
-  For \(\text{com}\) and \(\text{dup}\), this means ensuring that the fold is
-  commutative and idempotent, whereas \(\text{trunc}\) means we can only
-  eliminate into sets.
-\end{rm-definition}
+%   To eliminate from \(\mathcal{K}(A)\), we have to provide equations for each of
+%   the point constructors which obey the equations of the path constructors.
+%   For \(\text{com}\) and \(\text{dup}\), this means ensuring that the fold is
+%   commutative and idempotent, whereas \(\text{trunc}\) means we can only
+%   eliminate into sets.
+% \end{rm-definition}
 
-Other representations of \(\mathcal{K}\) \cite{fruminFiniteSetsHomotopy2018}
-are more explicit constructions of the free join semilattice (i.e. there is a
-point constructors for union instead of cons, and then path constructors for
-the associativity and identity laws), but we have found this representation
-easier to work with.
-Nonetheless, the alternative representation is included in our formalisation,
-and proven equivalent to the representation here.
-\begin{rm-definition}[Membership of \mathcal{K}]
-  First, we need to provide equations for the two point constructors.
-  \(x \in [] = \bot\), and \(x \in y \dblcolon \mathit{xs} = \lVert (x \equiv y)
-  + (x \in \mathit{xs}) \rVert \).
-  The \(\text{com}\) and \(\text{dup}\) constructors are handled by proving that
-  the truncated form of \(+\) is itself commutative and idempotent.
-  The type of propositions is itself a set, satisfying the \(\text{trunc}\)
-  constructor.
-\end{rm-definition}
-\begin{rm-definition}[Kuratowski Finiteness]
-  A type is Kuratowski finite iff there exists a Kuratowski Set which contains
-  all of its elements.
-  \begin{equation}
-    \mathcal{K}^{f}(A) = \Sigma {(\mathit{xs} : \mathcal{K}(A))} , \Pi (x : A) , x \in \mathit{xs}
-  \end{equation}
-\end{rm-definition}
+% Other representations of \(\mathcal{K}\) \cite{fruminFiniteSetsHomotopy2018}
+% are more explicit constructions of the free join semilattice (i.e. there is a
+% point constructors for union instead of cons, and then path constructors for
+% the associativity and identity laws), but we have found this representation
+% easier to work with.
+% Nonetheless, the alternative representation is included in our formalisation,
+% and proven equivalent to the representation here.
+% \begin{rm-definition}[Membership of \mathcal{K}]
+%   First, we need to provide equations for the two point constructors.
+%   \(x \in [] = \bot\), and \(x \in y \dblcolon \mathit{xs} = \lVert (x \equiv y)
+%   + (x \in \mathit{xs}) \rVert \).
+%   The \(\text{com}\) and \(\text{dup}\) constructors are handled by proving that
+%   the truncated form of \(+\) is itself commutative and idempotent.
+%   The type of propositions is itself a set, satisfying the \(\text{trunc}\)
+%   constructor.
+% \end{rm-definition}
+% \begin{rm-definition}[Kuratowski Finiteness]
+%   A type is Kuratowski finite iff there exists a Kuratowski Set which contains
+%   all of its elements.
+%   \begin{equation}
+%     \mathcal{K}^{f}(A) = \Sigma {(\mathit{xs} : \mathcal{K}(A))} , \Pi (x : A) , x \in \mathit{xs}
+%   \end{equation}
+% \end{rm-definition}
 
-\begin{rm-theorem}
-  A proof of Kuratowski finiteness is equivalent to a propositionally truncated
-  proof of enumerability.
-  \begin{equation}
-    \mathcal{K}^f(A) \simeq \lVert \mathcal{E}(A) \rVert
-  \end{equation}
-\end{rm-theorem}
-\begin{proof}
-  We prove by way of an isomorphism.
-  In the first direction (from \(\mathcal{K}\) to \(\mathcal{E}\)), because we
-  are eliminating into a proposition, we need only deal with the point
-  constructors.
-  For these, we convert the \(\mathcal{K}\) cons to its list counterpart, and
-  similarly for the nil constructor.
+% \begin{rm-theorem}
+%   A proof of Kuratowski finiteness is equivalent to a propositionally truncated
+%   proof of enumerability.
+%   \begin{equation}
+%     \mathcal{K}^f(A) \simeq \lVert \mathcal{E}(A) \rVert
+%   \end{equation}
+% \end{rm-theorem}
+% \begin{proof}
+%   We prove by way of an isomorphism.
+%   In the first direction (from \(\mathcal{K}\) to \(\mathcal{E}\)), because we
+%   are eliminating into a proposition, we need only deal with the point
+%   constructors.
+%   For these, we convert the \(\mathcal{K}\) cons to its list counterpart, and
+%   similarly for the nil constructor.
 
-  The other direction is proven in \cite{fruminFiniteSetsHomotopy2018}, so we
-  will not describe it here.
-\end{proof}
-\subsection{Topos}
-At this point, we see that a ``decidable Kuratowski finite set'' is precisely
-equivalent to a cardinal finite set.
-From this, we can lift over all of the properties of cardinal finite sets.
-In particular, we see that decidable Kuratowski finite sets form a \emph{topos}.
-We already have most of the components we need: closure under \(\bot\),
-\(\top\), \(\mathbf{Bool}\), \(+\), \(\times\), and \(\rightarrow\).
-What remains is the subobject classifier.
-\todo[inline]{Topos!}
-\section{Infinite Cardinalities} \label{infinite-cardinalities}
-In the previous sections we saw different flavours of finiteness which were
-really just different flavours of relations to \(\mathbf{Fin}\).
-In this section we will see that we can construct a similar classification of
-relations to \(\mathbb{N}\), in the form of the countably infinite types.
-\subsection{Split Countable Types}
-Our first foray into the world of countable types will be a straightforward
-analogue to the split enumerable types.
-We need change only one element: instead of a support \emph{list}, we instead
-have a support \emph{stream}, which is its infinite.
-\begin{rm-definition}[Stream]
-  \begin{equation}
-    \mathbf{Stream}(A) = \llbracket \top \triangleright \text{const} (\mathbb{N}) \rrbracket(A) \simeq \mathbb{N} \rightarrow A
-  \end{equation}
-\end{rm-definition}
-\begin{rm-definition}[Split Countability]
-  \begin{equation}
-    \mathcal{E}!(A) = \Sigma {(\mathit{xs} : \mathbf{Stream}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
-  \end{equation}
-\end{rm-definition}
-This type is definitionally equal to it surjection equivalent (\(\mathbb{N}
-\twoheadrightarrow ! \; A\)).
-\subsubsection{Closure}
-We know that countable infinity is not closed under the exponential (function
-arrow), so the only closure we need to prove is \(\Sigma\) to cover all of
-what's left.
-\input{figures/pairing-functions.tex}
-\begin{rm-theorem} \label{split-countability-sigma}
-  Split countability is closed under \(\Sigma\).
-\end{rm-theorem}
-\begin{proof}
-  The main task here is to figure out a pattern which will pair elements of the
-  two support streams without diverging.
-  Figure~\ref{cartesian} illustrates why the pairing function we used for lists
-  won't work: it needs to exhaust one of the input lists before inspecting
-  anything other than the first element of the other.
-  Of course, we can't exhaust a stream, so this diverges.
+%   The other direction is proven in \cite{fruminFiniteSetsHomotopy2018}, so we
+%   will not describe it here.
+% \end{proof}
+% \subsection{Topos}
+% At this point, we see that a ``decidable Kuratowski finite set'' is precisely
+% equivalent to a cardinal finite set.
+% From this, we can lift over all of the properties of cardinal finite sets.
+% In particular, we see that decidable Kuratowski finite sets form a \emph{topos}.
+% We already have most of the components we need: closure under \(\bot\),
+% \(\top\), \(\mathbf{Bool}\), \(+\), \(\times\), and \(\rightarrow\).
+% What remains is the subobject classifier.
+% \todo[inline]{Topos!}
+% \section{Infinite Cardinalities} \label{infinite-cardinalities}
+% In the previous sections we saw different flavours of finiteness which were
+% really just different flavours of relations to \(\mathbf{Fin}\).
+% In this section we will see that we can construct a similar classification of
+% relations to \(\mathbb{N}\), in the form of the countably infinite types.
+% \subsection{Split Countable Types}
+% Our first foray into the world of countable types will be a straightforward
+% analogue to the split enumerable types.
+% We need change only one element: instead of a support \emph{list}, we instead
+% have a support \emph{stream}, which is its infinite.
+% \begin{rm-definition}[Stream]
+%   \begin{equation}
+%     \mathbf{Stream}(A) = \llbracket \top \triangleright \text{const} (\mathbb{N}) \rrbracket(A) \simeq \mathbb{N} \rightarrow A
+%   \end{equation}
+% \end{rm-definition}
+% \begin{rm-definition}[Split Countability]
+%   \begin{equation}
+%     \mathcal{E}!(A) = \Sigma {(\mathit{xs} : \mathbf{Stream}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
+%   \end{equation}
+% \end{rm-definition}
+% This type is definitionally equal to it surjection equivalent (\(\mathbb{N}
+% \twoheadrightarrow ! \; A\)).
+% \subsubsection{Closure}
+% We know that countable infinity is not closed under the exponential (function
+% arrow), so the only closure we need to prove is \(\Sigma\) to cover all of
+% what's left.
+% \input{figures/pairing-functions.tex}
+% \begin{rm-theorem} \label{split-countability-sigma}
+%   Split countability is closed under \(\Sigma\).
+% \end{rm-theorem}
+% \begin{proof}
+%   The main task here is to figure out a pattern which will pair elements of the
+%   two support streams without diverging.
+%   Figure~\ref{cartesian} illustrates why the pairing function we used for lists
+%   won't work: it needs to exhaust one of the input lists before inspecting
+%   anything other than the first element of the other.
+%   Of course, we can't exhaust a stream, so this diverges.
 
-  Instead, we will use the pattern in figure~\ref{cantor}.
-  We will produce a stream of lists (where each list is a diagonal), which is
-  then concatenated to the final output stream.
-  The intermediate stream is sometimes called the discrete convolution of the
-  two input streams.
-\end{proof}
-\subsubsection{Kleene Star}
-While we lose some closures with the inclusion of infinite types, we gain some
-others.
-In particular, we have the Kleene star.
-This means that we have closure under lists.
-\begin{rm-theorem}
-  Split countability is closed under Kleene star.
-  \begin{equation}
-    \mathcal{E}!(A) \rightarrow \mathcal{E}!(\mathbf{List}(A))
-  \end{equation}
-\end{rm-theorem}
-\begin{proof}
-  As with the proof of closure under \(\Sigma\), our main task here is to figure
-  out a pattern that reaches any given finite list in finite time.
-  Our first step is to split up the problem as we did for \(\Sigma\)-closure: we
-  produce an intermediate stream of lists, which we then concatenate to give the
-  final result.
-  The intermediate stream is constructed like so:
-  \begin{equation}
-    \mathit{xs}^\star_i = \left\{ \text{map}(\mathit{xs} , x) \mid \mathit{x} \in \mathbf{List}(\mathbb{N}) , \text{sum}(\text{map}(1+, x)) \equiv i \right\}
-  \end{equation}
-  In other words, the \(i\)th element is all lists such that the sum of the
-  successor of the indices in the list is equal to \(i\).
-\end{proof}
-\subsection{Other Types of Countability}
-There are of course other forms of countability available to us: manifest
-countability, cardinal, etc.
-We have a similar structure of relationships to the finite types, with the
-exception that we cannot construct an isomorphism with \(\mathbb{N}\) fiven a
-surjection from \(\mathbb{N}\).
-\section{Practical Uses} \label{practical}
-\subsection{Omniscience}
-In this section we are interested in restricted forms of the limited principle
-of omniscience \cite{myhillErrettBishopFoundations1972}.
-\begin{rm-definition}[Limited Principle of Omniscience]
-  For any type \(A\) and predicate \(P\) on \(A\), the limited principle of
-  omniscience is as follows:
-  \begin{equation}
-    \left( \Pi {(x : A)} , \mathbf{Dec}(P(x)) \right) \rightarrow \mathbf{Dec} \left( \Sigma {(x : A)} , P(x) \right)
-  \end{equation}
-  In other words, for any decidable predicate the existential quantification of
-  that predicate is also decidable.
-\end{rm-definition}
-The limited principle of omniscience is non-constructive, but individual types
-can themselves satisfy omniscience.
-In particular, \emph{finite} types are omniscient.
+%   Instead, we will use the pattern in figure~\ref{cantor}.
+%   We will produce a stream of lists (where each list is a diagonal), which is
+%   then concatenated to the final output stream.
+%   The intermediate stream is sometimes called the discrete convolution of the
+%   two input streams.
+% \end{proof}
+% \subsubsection{Kleene Star}
+% While we lose some closures with the inclusion of infinite types, we gain some
+% others.
+% In particular, we have the Kleene star.
+% This means that we have closure under lists.
+% \begin{rm-theorem}
+%   Split countability is closed under Kleene star.
+%   \begin{equation}
+%     \mathcal{E}!(A) \rightarrow \mathcal{E}!(\mathbf{List}(A))
+%   \end{equation}
+% \end{rm-theorem}
+% \begin{proof}
+%   As with the proof of closure under \(\Sigma\), our main task here is to figure
+%   out a pattern that reaches any given finite list in finite time.
+%   Our first step is to split up the problem as we did for \(\Sigma\)-closure: we
+%   produce an intermediate stream of lists, which we then concatenate to give the
+%   final result.
+%   The intermediate stream is constructed like so:
+%   \begin{equation}
+%     \mathit{xs}^\star_i = \left\{ \text{map}(\mathit{xs} , x) \mid \mathit{x} \in \mathbf{List}(\mathbb{N}) , \text{sum}(\text{map}(1+, x)) \equiv i \right\}
+%   \end{equation}
+%   In other words, the \(i\)th element is all lists such that the sum of the
+%   successor of the indices in the list is equal to \(i\).
+% \end{proof}
+% \subsection{Other Types of Countability}
+% There are of course other forms of countability available to us: manifest
+% countability, cardinal, etc.
+% We have a similar structure of relationships to the finite types, with the
+% exception that we cannot construct an isomorphism with \(\mathbb{N}\) fiven a
+% surjection from \(\mathbb{N}\).
+% \section{Practical Uses} \label{practical}
+% \subsection{Omniscience}
+% In this section we are interested in restricted forms of the limited principle
+% of omniscience \cite{myhillErrettBishopFoundations1972}.
+% \begin{rm-definition}[Limited Principle of Omniscience]
+%   For any type \(A\) and predicate \(P\) on \(A\), the limited principle of
+%   omniscience is as follows:
+%   \begin{equation}
+%     \left( \Pi {(x : A)} , \mathbf{Dec}(P(x)) \right) \rightarrow \mathbf{Dec} \left( \Sigma {(x : A)} , P(x) \right)
+%   \end{equation}
+%   In other words, for any decidable predicate the existential quantification of
+%   that predicate is also decidable.
+% \end{rm-definition}
+% The limited principle of omniscience is non-constructive, but individual types
+% can themselves satisfy omniscience.
+% In particular, \emph{finite} types are omniscient.
 
-There is also a universal form of omniscience, which we call exhaustibility.
-\begin{rm-definition}[Exhaustibility]
-  We say a type \(A\) is exhaustible if, for any decidable predicate \(P\) on
-  \(A\), the universal quantification of the predicate is decidable.
-  \begin{equation}
-    \left( \Pi {(x : A)} , \mathbf{Dec}(P(x)) \right) \rightarrow \mathbf{Dec} \left( \Pi {(x : A)} , P(x) \right)
-  \end{equation}
-\end{rm-definition}
+% There is also a universal form of omniscience, which we call exhaustibility.
+% \begin{rm-definition}[Exhaustibility]
+%   We say a type \(A\) is exhaustible if, for any decidable predicate \(P\) on
+%   \(A\), the universal quantification of the predicate is decidable.
+%   \begin{equation}
+%     \left( \Pi {(x : A)} , \mathbf{Dec}(P(x)) \right) \rightarrow \mathbf{Dec} \left( \Pi {(x : A)} , P(x) \right)
+%   \end{equation}
+% \end{rm-definition}
 
-All of the finiteness predicates we have seen justify exhaustibility.
-We will only prove it once, then, for the weakest:
-\begin{rm-theorem}
-  Kuratowski-finite types are exhaustible.
-\end{rm-theorem}
+% All of the finiteness predicates we have seen justify exhaustibility.
+% We will only prove it once, then, for the weakest:
+% \begin{rm-theorem}
+%   Kuratowski-finite types are exhaustible.
+% \end{rm-theorem}
 
-Omniscience is stronger than exhaustibility, as we can derive the latter from
-the former:
-\begin{rm-lemma} \label{omniscient-is-exhaustible}
-  Any omniscient type is exhaustible.
-\end{rm-lemma}
-\begin{proof}
-  For decidable propositions, we know the following:
-  \begin{equation} \label{lem-conversion}
-    \Pi (x : A) , P(x) \leftrightarrow \neg \Sigma (x : A) , \neg P(x) 
-  \end{equation}
-  To derive exhaustibility from omniscience, then, we run the predicate in its
-  negated form, and then subsequently negate the result.
-  The resulting decision over \(\neg \Sigma(x : A) , \neg P(x)\) can be
-  converted into \(\Pi (x : A) , P(x)\).
-\end{proof}
-We cannot derive, however, that any exhaustible type is omniscient, as we do not
-have the inverse of equation~\ref{lem-conversion}:
-\begin{equation} \label{choice-conversion}
-  \Sigma (x : A) , P(x) \leftrightarrow \neg \Pi (x : A) , \neg P(x)
-\end{equation}
-Such an equation would allow us to pick a representative element from any type,
-which is therefore non-constructive.
-In a sense, equation~\ref{lem-conversion} requires a form of LEM on the
-proposition (i.e. requires it to be decidable), whereas
-equation~\ref{choice-conversion} requires a form of choice.
-Those finiteness predicates which are ordered do in fact give us this form of
-choice, so the conversion is valid.
-As such, all of the ordered finiteness predicates imply omniscience.
-Again, we will prove it only for the weakest.
-\begin{rm-theorem}
-  Manifest enumerable types are omniscient.
-\end{rm-theorem}
-Finally, we do have a form of omniscience for prop-valued predicates, as they do
-not care about the chosen representative.
-\begin{rm-theorem}
-  Kuratowski finite types are omniscient about prop-valued predicates.
-\end{rm-theorem}
-\subsection{Synthesising Pattern-Matching Proofs}
-In particular, they can automate large proofs by analysing every possible case.
-In \cite{firsovDependentlyTypedProgramming2015}, the \(\AgdaDatatype{Pauli}\)
-group is used as an example.
-\ExecuteMetaData[agda/Data/Pauli.tex]{def}
-As \(\AgdaDatatype{Pauli}\) has 4 constructors, \(n\)-ary functions on
-\(\AgdaDatatype{Pauli}\) may require up to \(4^n\) cases, making even simple
-proofs prohibitively verbose.
+% Omniscience is stronger than exhaustibility, as we can derive the latter from
+% the former:
+% \begin{rm-lemma} \label{omniscient-is-exhaustible}
+%   Any omniscient type is exhaustible.
+% \end{rm-lemma}
+% \begin{proof}
+%   For decidable propositions, we know the following:
+%   \begin{equation} \label{lem-conversion}
+%     \Pi (x : A) , P(x) \leftrightarrow \neg \Sigma (x : A) , \neg P(x) 
+%   \end{equation}
+%   To derive exhaustibility from omniscience, then, we run the predicate in its
+%   negated form, and then subsequently negate the result.
+%   The resulting decision over \(\neg \Sigma(x : A) , \neg P(x)\) can be
+%   converted into \(\Pi (x : A) , P(x)\).
+% \end{proof}
+% We cannot derive, however, that any exhaustible type is omniscient, as we do not
+% have the inverse of equation~\ref{lem-conversion}:
+% \begin{equation} \label{choice-conversion}
+%   \Sigma (x : A) , P(x) \leftrightarrow \neg \Pi (x : A) , \neg P(x)
+% \end{equation}
+% Such an equation would allow us to pick a representative element from any type,
+% which is therefore non-constructive.
+% In a sense, equation~\ref{lem-conversion} requires a form of LEM on the
+% proposition (i.e. requires it to be decidable), whereas
+% equation~\ref{choice-conversion} requires a form of choice.
+% Those finiteness predicates which are ordered do in fact give us this form of
+% choice, so the conversion is valid.
+% As such, all of the ordered finiteness predicates imply omniscience.
+% Again, we will prove it only for the weakest.
+% \begin{rm-theorem}
+%   Manifest enumerable types are omniscient.
+% \end{rm-theorem}
+% Finally, we do have a form of omniscience for prop-valued predicates, as they do
+% not care about the chosen representative.
+% \begin{rm-theorem}
+%   Kuratowski finite types are omniscient about prop-valued predicates.
+% \end{rm-theorem}
+% \subsection{Synthesising Pattern-Matching Proofs}
+% In particular, they can automate large proofs by analysing every possible case.
+% In \cite{firsovDependentlyTypedProgramming2015}, the \(\AgdaDatatype{Pauli}\)
+% group is used as an example.
+% \ExecuteMetaData[agda/Data/Pauli.tex]{def}
+% As \(\AgdaDatatype{Pauli}\) has 4 constructors, \(n\)-ary functions on
+% \(\AgdaDatatype{Pauli}\) may require up to \(4^n\) cases, making even simple
+% proofs prohibitively verbose.
 
-The alternative is to derive the things we need from \(\mathcal{E}!\) somehow.
-As \(\AgdaDatatype{Pauli}\) is a simple finite type, the instance can be defined
-in a similar way to those in lemma~\ref{split-enum-bool-top-bot}.
-From here we can already derive decidable equality, a function which requires 16
-cases if implemented manually.
+% The alternative is to derive the things we need from \(\mathcal{E}!\) somehow.
+% As \(\AgdaDatatype{Pauli}\) is a simple finite type, the instance can be defined
+% in a similar way to those in lemma~\ref{split-enum-bool-top-bot}.
+% From here we can already derive decidable equality, a function which requires 16
+% cases if implemented manually.
 
-For proof search, the procedure is a well-known one in Agda
-\cite{devrieseBrightSideType2011}: we ask for the result of a decision procedure
-as an \emph{instance argument}, which will demand computation during
-typechecking.
-\subsection{Multiple Arguments}
-The automation machinery above only deals with single-argument predicates.
-This is not a problem, as we know that we can work with multiple arguments by
-currying and uncurrying, since all of the finiteness predicates are closed under
-\(\times\).
-To automate away the curry/uncurry noise we will use instance search, building
-on \cite{allaisGenericLevelPolymorphic2019} to develop a small interface to
-generic \(n\)-ary functions and properties.
-Our generic representation can handle dependent \(\Sigma\) and \(\prod\)
-types (rather than their non-dependent counterparts, \(\times\) and
-\(\rightarrow\)).
-This extension was necessary for our use case: it is mentioned in the paper
-as the obvious next step. 
-We also implement the curry-uncurry combinators as (verified) isomorphisms.
+% For proof search, the procedure is a well-known one in Agda
+% \cite{devrieseBrightSideType2011}: we ask for the result of a decision procedure
+% as an \emph{instance argument}, which will demand computation during
+% typechecking.
+% \subsection{Multiple Arguments}
+% The automation machinery above only deals with single-argument predicates.
+% This is not a problem, as we know that we can work with multiple arguments by
+% currying and uncurrying, since all of the finiteness predicates are closed under
+% \(\times\).
+% To automate away the curry/uncurry noise we will use instance search, building
+% on \cite{allaisGenericLevelPolymorphic2019} to develop a small interface to
+% generic \(n\)-ary functions and properties.
+% Our generic representation can handle dependent \(\Sigma\) and \(\prod\)
+% types (rather than their non-dependent counterparts, \(\times\) and
+% \(\rightarrow\)).
+% This extension was necessary for our use case: it is mentioned in the paper
+% as the obvious next step. 
+% We also implement the curry-uncurry combinators as (verified) isomorphisms.
 
-A full explanation of our implementation is beyond the scope of this work, so we
-only present the finished interface, which is used like so:
-\ExecuteMetaData[agda/Data/Pauli.tex]{assoc-prf}
-\subsection{Synthesising Functions}
-Finally, thanks to extensionality provided to us by HoTT, and the computation
-properties provided by CuTT, we can derive decidable equality on functions over
-finite types.
-We can also use functions in our proof search.
-Here, for instance, is a automated procedure which finds the
-\(\AgdaFunction{not}\) function on \(\mathbf{Bool}\), given a specification.
-\ExecuteMetaData[agda/Data/Pauli.tex]{not-spec}
-\section{Related Work}
-\cite{spiwackConstructivelyFinite2010} explored the notion of ``constructive
-finite sets'', demonstrating that there is a rich variety of finiteness
-predicates in a constructive setting.
-Some of those predicates where explored more in
-\cite{firsovVariationsNoetherianness2016a},
-\cite{parmannInvestigatingStreamlessSets2015}, and
-\cite{uustaluFinitenessRationalSequences2017a}.
+% A full explanation of our implementation is beyond the scope of this work, so we
+% only present the finished interface, which is used like so:
+% \ExecuteMetaData[agda/Data/Pauli.tex]{assoc-prf}
+% \subsection{Synthesising Functions}
+% Finally, thanks to extensionality provided to us by HoTT, and the computation
+% properties provided by CuTT, we can derive decidable equality on functions over
+% finite types.
+% We can also use functions in our proof search.
+% Here, for instance, is a automated procedure which finds the
+% \(\AgdaFunction{not}\) function on \(\mathbf{Bool}\), given a specification.
+% \ExecuteMetaData[agda/Data/Pauli.tex]{not-spec}
+% \section{Related Work}
+% \cite{spiwackConstructivelyFinite2010} explored the notion of ``constructive
+% finite sets'', demonstrating that there is a rich variety of finiteness
+% predicates in a constructive setting.
+% Some of those predicates where explored more in
+% \cite{firsovVariationsNoetherianness2016a},
+% \cite{parmannInvestigatingStreamlessSets2015}, and
+% \cite{uustaluFinitenessRationalSequences2017a}.
 
-\cite{yorgeyCombinatorialSpeciesLabelled2014} explored some of the definitions
-we have given here (manifest bishop finiteness and cardinal finiteness) in HoTT,
-in order to construct species.
-Some of this paper is a formalisation of the early parts of that work.
+% \cite{yorgeyCombinatorialSpeciesLabelled2014} explored some of the definitions
+% we have given here (manifest bishop finiteness and cardinal finiteness) in HoTT,
+% in order to construct species.
+% Some of this paper is a formalisation of the early parts of that work.
 
-\cite{firsovDependentlyTypedProgramming2015} explores finite sets in Agda and
-uses them to automate proof machinery in much the same way as we have here.
-The primary difference between their proof automation and ours is that we can
-talk about finite functions, as we are working in HoTT.
+% \cite{firsovDependentlyTypedProgramming2015} explores finite sets in Agda and
+% uses them to automate proof machinery in much the same way as we have here.
+% The primary difference between their proof automation and ours is that we can
+% talk about finite functions, as we are working in HoTT.
 
-\cite{fruminFiniteSetsHomotopy2018} explores many of the same notions as we do
-here: cardinal finiteness, and Kuratowski finite sets.
-Our work makes extensive use of the computational properties of CuTT, however,
-and we are able to formalise the finiteness of function objects.
+% \cite{fruminFiniteSetsHomotopy2018} explores many of the same notions as we do
+% here: cardinal finiteness, and Kuratowski finite sets.
+% Our work makes extensive use of the computational properties of CuTT, however,
+% and we are able to formalise the finiteness of function objects.
 \bibliographystyle{splncs04}
 \bibliography{bibliography.bib}
 \end{document} 
