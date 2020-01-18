@@ -4,6 +4,9 @@
 \authorrunning{D. O. Kidney}
 \institute{University College Cork \and
   \email{o.kidney@cs.ucc.ie}}
+\author{Gregory Provan}
+\institute{University College Cork \and
+  \email{g.provan@cs.ucc.ie}}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -50,7 +53,39 @@ which apply to sets only, and those that apply to all types.
 Secondly, HoTT gives us a principled and powerful way to construct quotients,
 allowing us to regain some of the flexibility of classical definitions by
 ``forgetting'' the parts of a proof we would be forced to remember in MLTT.
+
+Finally, the other important property of constructive mathematics is that we can
+actually \emph{compute} with proofs.
+Cubical Type Theory \cite{cohenCubicalTypeTheory2016}, and its implementation in
+Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}, realise this property
+even in the presence of univalence, giving computational content to programs
+written in HoTT.
 \subsection{Contributions}
+In this work we will examine five notions of finiteness in Homotopy Type Theory:
+the relationships between them, and their topos-theoretic characterisation.
+We also briefly examine a definition for countable sets, comparing it to the
+manifestly Bishop finite sets.
+Our work is formalised in Cubical Agda, where we also develop a library for
+proof search based on the finiteness predicates.
+
+\input{figures/finite-classification}
+
+The finiteness predicates we are interested in are organised in
+Figure~\ref{finite-classification}.
+We will provide a definition for each, and prove each relation to the other
+finiteness predicates.
+In terms of Figure~\ref{finite-classification}, this means providing a function
+to inhabit each arrows.
+
+We will then characterise each predicate as some form of topos.
+Our proofs follow the structure of \cite[Chapters 9, 10]{hottbook} and
+\cite{rijkeSetsHomotopyType2015}.
+This means we will define first the precategory of sets, and then the category
+of sets, and prove the required closures and limits to get us to a topos.
+We say ``some form of'' topos here because of course the category of sets in
+HoTT do \emph{not}, in fact, form a topos, rather a \(\Pi W\)-pretopos.
+
+
 \begin{itemize}
   \item Relation between different versions of finiteness, especially card to
     bishop.
@@ -79,7 +114,6 @@ allowing us to regain some of the flexibility of classical definitions by
 % (section~\ref{cardinal}) to manifest Bishop finiteness
 % (section~\ref{manifest-bishop}).
 
-\input{figures/finite-classification}
 
 % Next, we will examine the category-theoretic and topos-theoretic interpretations
 % of each of the predicates.
@@ -995,4 +1029,4 @@ Our work makes extensive use of the computational properties of CuTT, however,
 and we are able to formalise the finiteness of function objects.
 \bibliographystyle{splncs04}
 \bibliography{bibliography.bib}
-\end{document}
+\end{document} 
