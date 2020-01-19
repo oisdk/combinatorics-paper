@@ -19,36 +19,49 @@
 \newtheorem{rm-lemma}{Lemma}
 \newtheorem{rm-theorem}{Theorem}
 
+% Haskell bind operator >>=
 \newcommand\hbind{%
   \ensuremath{\gg\mkern-5.5mu=}%
 }
+% Haskell apply operator <*>
 \newcommand\hap{%
   \ensuremath{\mathbin{<\mkern-9mu*\mkern-9mu>}}%
 }
+% Haskell alternative operator <|>
 \newcommand\halt{%
   \ensuremath{\mathbin{<\mkern-5mu\vert\mkern-5mu>}}%
 }
+% Haskell fmap operator <$>$
 \newcommand\hfmap{%
   \ensuremath{\mathbin{<\mkern-6mu\$\mkern-6mu>}}%
 }
+% Haskell mappend operator <>
 \newcommand\hcmb{%
   \ensuremath{\mathbin{\diamond}}%
 }
+% Haskell fish operator <><
 \newcommand\hcmbin{%
   \ensuremath{\mathbin{\diamond\mkern-7.4mu\rtimes}}%
 }
+% Haskell Kleisli composition <=<
 \newcommand\hkcomp{%
   \ensuremath{\mathbin{<\mkern-10mu=\mkern-7mu<}}
 }
+% Haskell forall
 \newcommand\hforall{%
   \ensuremath{\forall}%
 }
+% Unique membership \in!
 \newcommand\inunique{%
   \mathrel{\in\mkern-6mu\raisebox{-0.5pt}{!}}
 }
+% Decide membership \in?
 \newcommand\decin{%
   \mathrel{\in\mkern-6mu\raisebox{-0.5pt}{?}}
 }
+% Dot as wildcard character
+\newcommand\wc{{\mkern 2mu\cdot\mkern 2mu}}
+% Binary operator !
 \newcommand\ind{\mathbin{!}}
 \usepackage{subcaption}
 \usepackage{locallhs2TeX}
@@ -59,6 +72,7 @@
 \usepackage{tabularx}
 \usepackage{pict2e}
 
+% Proper double left paren [( (also ``plano-concave lens'')
 \newcommand{\lbparen}{%
   \mathopen{%
     \sbox0{$()$}%
@@ -74,6 +88,7 @@
   }%
 }
 
+% Proper double right paren [( (also ``plano-concave lens'')
 \newcommand{\rbparen}{%
   \mathclose{%
     \sbox0{$()$}%

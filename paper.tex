@@ -28,7 +28,10 @@
   search (including combinators for level-polymorphic fully generic currying),
   and demonstrate how it can be used to both prove properties and synthesise
   full functions given desired properties.
+  \keywords{Agda \and Homotopy Type Theory \and Cubical Type Theory \and
+    Dependent Types \and Finiteness \and Topos \and Kuratowski finite}
 \end{abstract}
+
 \section{Introduction}
 \subsection{Foreword}
 In constructive mathematics we are often preoccupied with \emph{why} something
@@ -73,7 +76,7 @@ proof search based on the finiteness predicates.
 
 The finiteness predicates we are interested in are organised in
 Figure~\ref{finite-classification}.
-We will explore two aspects of each predicate: its relation with the other
+We will explore two aspects of each predicate: its relation to the other
 predicates, and its topos-theoretic classification.
 
 When we say ``relation'' we are referring to the arrows in
@@ -81,7 +84,7 @@ Figure~\ref{finite-classification}.
 The proofs, then, amount to a function which inhabits each arrow.
 Each unlabelled arrow is a weakening: i.e., every manifest Bishop finite set
 is manifest enumerable.
-The labelled arrows are strengthening proofs: i.e. every manifest enumerable set
+The labelled arrows are strengthening proofs: i.e., every manifest enumerable set
 \emph{with decidable equality} is manifest Bishop finite.
 
 We will then characterise each predicate as some form of topos.
@@ -107,8 +110,71 @@ univalence: our proof search library can deal seamlessly with functions, testing
 them for equality, synthesising them, etc.
 \subsection{Related Work}
 \subsection{Notation}
+\todo[inline]{Basic MLTT Notation: \(\Pi\), \(\Sigma\), etc}
+\todo[inline]{Paths, Univalence, isomorphisms}
+\todo[inline]{HITs}
 
 \section{Finiteness Predicates}
+\subsection{Kuratowski Finiteness}
+\begin{rm-definition}[Kuratowski Finite Subset]
+  \(\mathcal{K}(A)\) is the type of Kuratowski-finite subsets of \(A\).
+  \begin{equation}
+    \begin{aligned}
+      \mathcal{K}(A) =&
+             \; \eta : A \rightarrow \mathcal{K}(A) ; \\
+      \vert& \; \emptyset : \mathcal{K}(A) ; \\
+      \vert& \; \wc \cup \wc : \mathcal{K}(A) \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
+      \vert& \; \text{associative} : \Pi (\mathit{xs}, \mathit{ys}, \mathit{zs}: \mathcal{K}(A)) , (\mathit{xs} \cup \mathit{ys}) \cup \mathit{zs} \equiv \mathit{xs} \cup (\mathit{ys} \cup \mathit{zs}) ; \\
+      \vert& \; \text{identity} : \Pi (\mathit{xs}: \mathcal{K}(A)) , \emptyset \cup \mathit{xs} \equiv \mathit{xs} ; \\
+      \vert& \; \text{commutative} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \mathit{xs} \cup \mathit{ys} \equiv \mathit{ys} \cup \mathit{xs} ; \\
+      \vert& \; \text{idempotent} : \Pi (\mathit{xs}: \mathcal{K}(A)) , \mathit{xs} \cup \mathit{xs} \equiv \mathit{xs} ; \\
+      \vert& \; \text{trunc} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q ;
+    \end{aligned}
+  \end{equation}
+\end{rm-definition}
+The Kuratowski finite subset is a free join semilattice (or, equivalently, a
+free commutative idempotent monoid).
+Though it would be possible to use this type as-is, we found it easier to work
+with the following type as it has fewer path constructors.
+\begin{equation}
+  \begin{aligned}
+    \mathcal{K}(A) =&
+           \; [] : \mathcal{K}(A) ; \\
+    \vert& \; \wc \dblcolon \wc : A \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
+    \vert& \; \text{com} : \Pi (x, y: A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} ; \\
+    \vert& \; \text{dup} : \Pi (x : A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} ; \\
+    \vert& \; \text{trunc} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q ;
+  \end{aligned}
+\end{equation}
+What we've done here is basically pulled out the ``monoid'' part of ``free
+commutative idempotent monoid'': the first two constructors now construct a
+list, which is a representation of the free monoid \emph{without} quotient
+types.
+This obviates the need for the associative and identity constructors.
+We have proven both types equivalent in our formalisation.
+
+Next, we need a way to say that a type is Kuratowski finite, rather than just
+some subset.
+For that, we will need to define membership of \(\mathcal{K}\).
+\begin{rm-definition}[Membership of \mathcal{K}]
+  First, we need to provide equations for the two point constructors.
+  \(x \in [] = \bot\), and \(x \in y \dblcolon \mathit{xs} = \lVert (x \equiv y)
+  + (x \in \mathit{xs}) \rVert \).
+  The \(\text{com}\) and \(\text{dup}\) constructors are handled by proving that
+  the truncated form of \(+\) is itself commutative and idempotent.
+  The type of propositions is itself a set, satisfying the \(\text{trunc}\)
+  constructor.
+\end{rm-definition}
+\begin{rm-definition}[Kuratowski Finiteness]
+  A type is Kuratowski finite iff there exists a Kuratowski finite subset which
+  contains all of its elements.
+  \begin{equation}
+    \mathcal{K}^{f}(A) = \Sigma {(\mathit{xs} : \mathcal{K}(A))} , \Pi (x : A) , x \in \mathit{xs}
+  \end{equation}
+\end{rm-definition}
+
+
+
 \subsection{Split Enumerable}
 \begin{rm-definition}[Split Enumerable Set]
   \begin{equation}
@@ -116,11 +182,31 @@ them for equality, synthesising them, etc.
   \end{equation}
   We call the first component of this pair the ``support'' list, and the second
   component the ``cover'' proof.
-  This definition is what is referred to as \verb+Listable+ in
-  \cite{firsovDependentlyTypedProgramming2015}.
 \end{rm-definition}
+In this, and the rest of the definitions in the paper, we tend to prefer
+list-based notions of finiteness.
+This is purely a matter of perspective, however: the definition above is
+precisely equivalent to a split surjection from a finite prefix of the natural
+numbers.
+\begin{rm-lemma}
+  \begin{equation}
+    \mathcal{E}!(A) \simeq \Sigma (n : \mathbb{N}) , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
+  \end{equation}
+\end{rm-lemma}
+We have proven this statement in our formalisation, but it is worth pointing out
+that the proof is nearly trivial: after inlining the definitions of
+\(\mathbf{List}\), \(\in\), and \(\twoheadrightarrow!\), it becomes clear that
+the two terms are basically the same anyway, modulo the reassociation of
+\(\Sigma\).
+
+Split enumerability is quite a strong predicate, implying both decidable
+equality and a total order on the underlying type.
+This 
 
 
+\subsection{Manifest Bishop}
+\subsection{Manifest Enumerable}
+\subsection{Cardinal}
 \section{Relations Between Each Finiteness Definition}
 \section{Topos}
 \section{Countably Infinite Types}
@@ -757,32 +843,6 @@ them for equality, synthesising them, etc.
 % \section{Kuratowski Finiteness} \label{kuratowski}
 % Finally we arrive at Kuratowski finiteness
 % \cite{kuratowskiNotionEnsembleFini1920}.
-% \begin{rm-definition}[Kuratowski-Finite Set]
-%   The Kuratowski finite set is a free join semilattice (or, equivalently, a free
-%   commutative idempotent monoid).
-%   HITs are required to define this type
-%   \cite{altenkirchDefinableQuotientsType2011}:
-%   \begin{equation}
-%     \begin{aligned}
-%       \mathcal{K}(A) =&
-%        \; \cdot \dblcolon \cdot : A \times \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
-%       \vert& \; [] : \mathcal{K}(A) ; \\
-%       \vert& \; \text{com} : \Pi (x, y: A) , \Pi (\mathit{xs}: \mathcal{K}(A)) , x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} ; \\
-%       \vert& \; \text{dup} : \Pi (\mathit{x}: A) , \Pi (\mathit{xs}: \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} ; \\
-%       \vert& \; \text{trunc} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q ;
-%     \end{aligned}
-%   \end{equation}
-%   The \(\text{com}\) and \(\text{dup}\) constructors effectively add
-%   commutativity and idempotency to the free monoid (the list), which is made by
-%   the first two constructors.
-%   The last constructor makes \(\mathcal{K}(A)\) a set.
-
-%   To eliminate from \(\mathcal{K}(A)\), we have to provide equations for each of
-%   the point constructors which obey the equations of the path constructors.
-%   For \(\text{com}\) and \(\text{dup}\), this means ensuring that the fold is
-%   commutative and idempotent, whereas \(\text{trunc}\) means we can only
-%   eliminate into sets.
-% \end{rm-definition}
 
 % Other representations of \(\mathcal{K}\) \cite{fruminFiniteSetsHomotopy2018}
 % are more explicit constructions of the free join semilattice (i.e. there is a
@@ -791,22 +851,6 @@ them for equality, synthesising them, etc.
 % easier to work with.
 % Nonetheless, the alternative representation is included in our formalisation,
 % and proven equivalent to the representation here.
-% \begin{rm-definition}[Membership of \mathcal{K}]
-%   First, we need to provide equations for the two point constructors.
-%   \(x \in [] = \bot\), and \(x \in y \dblcolon \mathit{xs} = \lVert (x \equiv y)
-%   + (x \in \mathit{xs}) \rVert \).
-%   The \(\text{com}\) and \(\text{dup}\) constructors are handled by proving that
-%   the truncated form of \(+\) is itself commutative and idempotent.
-%   The type of propositions is itself a set, satisfying the \(\text{trunc}\)
-%   constructor.
-% \end{rm-definition}
-% \begin{rm-definition}[Kuratowski Finiteness]
-%   A type is Kuratowski finite iff there exists a Kuratowski Set which contains
-%   all of its elements.
-%   \begin{equation}
-%     \mathcal{K}^{f}(A) = \Sigma {(\mathit{xs} : \mathcal{K}(A))} , \Pi (x : A) , x \in \mathit{xs}
-%   \end{equation}
-% \end{rm-definition}
 
 % \begin{rm-theorem}
 %   A proof of Kuratowski finiteness is equivalent to a propositionally truncated
@@ -1046,6 +1090,12 @@ them for equality, synthesising them, etc.
 % here: cardinal finiteness, and Kuratowski finite sets.
 % Our work makes extensive use of the computational properties of CuTT, however,
 % and we are able to formalise the finiteness of function objects.
+
+\todo[inline]{Add funding ack:
+
+  This work has been supported by the Science Foundation Ireland under the
+  following grant: 13/RC/2D94 to Irish Software Research Centre.
+}
 \bibliographystyle{splncs04}
 \bibliography{bibliography.bib}
 \end{document} 
