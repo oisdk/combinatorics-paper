@@ -68,8 +68,8 @@ written in HoTT.
 \subsection{Contributions}
 In this work we will examine five notions of finiteness in Homotopy Type Theory,
 the relationships between them, and their topos-theoretic characterisation.
-We also briefly examine a definition for countable sets, comparing it to the
-manifestly Bishop finite sets.
+We also briefly examine a predicate for countable sets, comparing it to the
+finiteness predicates.
 Our work is formalised in Cubical Agda, where we also develop a library for
 proof search based on the finiteness predicates.
 
@@ -120,7 +120,61 @@ Furthermore, the extensionality afforded to us by HoTT means that we can have
 \(\Pi\) types in the domain of the search, meaning we can synthesise full
 functions from specifications alone.
 \subsection{Related Work}
-\subsection{Notation}
+\subsection{Notation and Background}
+We work in Cubical Type Theory \cite{cohenCubicalTypeTheory2016}.
+For the various type formers we use the following notation:
+\begin{description}
+  \item[Type] We use \(\mathbf{Type}\) to denote the universe of (small) types.
+    ``Type families'' are functions into type.
+  \item[Universes]
+    Implicitly, types will exist at some point in a universe hierarchy,
+    beginning with \(\mathbf{Type}\) (\(\mathbf{Type} : \mathbf{Type}_1\),
+    \(\mathbf{Type}_1 : \mathbf{Type}_2\), and so on).
+    In our formalisation, every proof is done in the most universe polymorphic
+    way possible: the proof that the cardinally finite sets form a
+    \(\Pi\)-pretopos, for instance, is defined over any universe level.
+  \item[0 , 1 , 2] We call the \(\mathbf{0}\), \(\mathbf{1}\), and
+    \(\mathbf{2}\) types \(\bot\), \(\top\), and \(\mathbf{Bool}\) respectively.
+    The single inhabitant of \(\top\) is tt, and the two inhabitants of
+    \(\mathbf{Bool}\) are false and true.
+  \item[Dependent Sum and Product] We use \(\Sigma\) and \(\Pi\) for the
+    dependent sum and product, respectively.
+    The two projections from \(\Sigma\) are called fst and snd.
+    In the non-dependent case, \(\Sigma\) can be written as \(\times\), and
+    \(\Pi\) as \(\rightarrow\).
+  \item[Disjoint Union] Disjoint union can be defined in terms of \(\Sigma\):
+    \begin{equation}
+      A \uplus B \coloneqq \Sigma(x : \mathbf{Bool}) , \text{if } x \text{ then } A \text{ else } B
+    \end{equation}
+    However, we prefer to use it as an inductively defined type (though the two
+    are equivalent).
+    The two constructors are:
+    \begin{equation}
+      \begin{aligned}
+        \text{inl} &: A \rightarrow A \uplus B \\
+        \text{inr} &: B \rightarrow A \uplus B
+      \end{aligned}
+    \end{equation}
+  \item[Equalities, equivalences, and paths] We use the symbol \(\coloneqq\)
+    for definitions.
+    \(\simeq\) will be used for equivalences, and \(\equiv\) for equalities.
+    Of course, we know that \((A \simeq B) \simeq (A \equiv B)\) by univalence,
+    so the distinction isn't terribly important in usage.
+\end{description}
+
+% \item[Isomorphisms and Biconditionals] A pair of functions \(f : A \rightarrow
+%   B\) and \(g : B \rightarrow A\) will be described by the type \(A
+%   \leftrightarrow B\).
+%   If \(g\) is a quasi-inverse \cite[definition 2.4.6]{hottbook} of \(f\), we
+%   have an isomorphism between \(A\) and \(B\), denoted \(A \iff B\).
+%   Note that while we can derive an equivalence from an isomorphism, we do not
+%   have \((A \iff B) \simeq (A \simeq B)\).
+
+
+We will use the standard \(\Pi\) and \(\Sigma\) notation for dependent products
+and sums, respectively.
+
+
 \todo[inline]{Basic MLTT Notation: \(\Pi\), \(\Sigma\), etc}
 \todo[inline]{Paths, Univalence, isomorphisms}
 \todo[inline]{HITs}
@@ -136,74 +190,6 @@ that we can often prove things like closure much more readily on the simpler
 predicates.
 The relations (which we will prove in the next section) then allow us to
 transfer those proofs onto Kuratowski finiteness.
-\subsection{Kuratowski Finiteness}
-Much work has already been done on Kuratowski finiteness in HoTT in
-\cite{fruminFiniteSetsHomotopy2018}.
-As a result, we will not needlessly repeat proofs, rather we will just give a
-brief introduction to the topic and point out where our treatment differs.
-
-The first thing we must define is a representation of subsets.
-\begin{romdefinition}[Kuratowski Finite Subset]
-  \(\mathcal{K}(A)\) is the type of Kuratowski-finite subsets of \(A\).
-  \begin{equation}
-    \begin{aligned}
-      \mathcal{K}(A) =&
-      \; [] : \mathcal{K}(A) ; \\
-      \vert& \; \wc \dblcolon \wc : A \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
-      \vert& \; \text{com} : \Pi (x, y: A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} ; \\
-      \vert& \; \text{dup} : \Pi (x : A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} ; \\
-      \vert& \; \text{trunc} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q ;
-    \end{aligned}
-  \end{equation}
-\end{romdefinition}
-The Kuratowski finite subset is a free join semilattice (or, equivalently, a
-free commutative idempotent monoid).
-More prosaically, \(\mathcal{K}\) is the abstract data type for finite sets, as
-defined in the Boom hierarchy \cite{boomFurtherThoughtsAbstracto1981,
-  bunkenburgBoomHierarchy1994}.
-However, rather than just being a specification, \(\mathcal{K}\) is fully usable
-as a data type in its own right, thanks to HITs.
-
-Other definitions of \(\mathcal{K}\) exist (such as the one in
-\cite{fruminFiniteSetsHomotopy2018}) which make the fact that \(\mathcal{K}\) is
-the free join semilattice more obvious.
-We have included such a definition in our formalisation, and proven it
-equivalent to the one above.
-
-Next, we need a way to say that an entire type is Kuratowski finite.
-For that, we will need to define membership of \(\mathcal{K}\).
-\begin{romdefinition}[Membership of \(\mathcal{K}\)]
-  Membership is defined by pattern-matching on \(\mathcal{K}\).
-  The two point constructors are handled like so:
-  \begin{equation}
-    \begin{alignedat}{2}
-      x \in&& \; []                      &= \bot \\
-      x \in&& \; y \dblcolon \mathit{ys} &= \lVert x \equiv y \uplus x \in \mathit{ys} \rVert
-    \end{alignedat}
-  \end{equation}
-  The \(\text{com}\) and \(\text{dup}\) constructors are handled by proving that
-  the truncated form of \(\uplus\) is itself commutative and idempotent.
-  The type of propositions is itself a set, satisfying the \(\text{trunc}\)
-  constructor.
-\end{romdefinition}
-Finally, we have enough background to define Kuratowski finiteness.
-\begin{romdefinition}[Kuratowski Finiteness]
-  \begin{equation}
-    \mathcal{K}^{f}(A) = \Sigma {(\mathit{xs} : \mathcal{K}(A))} , \Pi (x : A) , x \in \mathit{xs}
-  \end{equation}
-\end{romdefinition}
-
-We also have the following two lemmas, proven in both
-\cite{fruminFiniteSetsHomotopy2018} and our formalisation.
-\begin{romlemma}
-  \(\mathcal{K}^f\) is a mere proposition.
-\end{romlemma}
-\begin{romlemma}
-  This circle \(S^1\) is Kuratowski finite.
-\end{romlemma}
-The second of these in particular tells us that the ``Kuratowski-finite types''
-are not necessarily sets; it also tells us that we cannot derive decidable
-equality from a proof of Kuratowski finiteness.
 \subsection{Split Enumerable}
 \begin{romdefinition}[Split Enumerable Set]
   \begin{equation}
@@ -222,32 +208,32 @@ precisely equivalent to a split surjection from a finite prefix of the natural
 numbers.
 \begin{romlemma} \label{split-enum-is-split-surj}
   \begin{equation}
-    \mathcal{E}!(A) \equiv \Sigma (n : \mathbb{N}) , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
+    \mathcal{E}!(A) \simeq \Sigma (n : \mathbb{N}) , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
   \end{equation}
 \end{romlemma}
 \todo[inline]{Put refs for each ``definition of''}
 \begin{proof}
   \begin{align*}
     \mathcal{E}!(A)
-    & \equiv \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , x \in \mathit{xs}
+    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , x \in \mathit{xs}
     & \text{Definition of } \mathcal{E}!
     \\
-    & \equiv \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{fib}_{\text{snd}(\mathit{xs})}(x)
+    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{fib}_{\text{snd}(\mathit{xs})}(x)
     & \text{Definition of } \in
     \\
-    & \equiv \Sigma (\mathit{xs} : \textbf{List}(A)) , \text{sp-surj}(\text{snd}(\mathit{xs}))
+    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \text{sp-surj}(\text{snd}(\mathit{xs}))
     & \text{Definition of sp-surj}
     \\
-    & \equiv \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket (A)) , \text{sp-surj}(\text{snd}(\mathit{xs}))
+    & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket (A)) , \text{sp-surj}(\text{snd}(\mathit{xs}))
     & \text{Definition of } \mathbf{List}
     \\
-    & \equiv \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \mathbf{Fin}(n)) , A) , \text{sp-surj}(\text{snd}(\mathit{xs}))
+    & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \mathbf{Fin}(n)) , A) , \text{sp-surj}(\text{snd}(\mathit{xs}))
     & \text{Definition of } \llbracket \wc \rrbracket
     \\
-    & \equiv \Sigma (n : \mathbb{N}) , \Sigma (f : \mathbf{Fin}(n) \rightarrow A) , \text{sp-surj}(f)
+    & \simeq \Sigma (n : \mathbb{N}) , \Sigma (f : \mathbf{Fin}(n) \rightarrow A) , \text{sp-surj}(f)
     & \text{Reassociation of } \Sigma
     \\
-    & \equiv \Sigma (n : \mathbb{N}) , ( \mathbf{Fin}(n) \twoheadrightarrow ! \; A )
+    & \simeq \Sigma (n : \mathbb{N}) , ( \mathbf{Fin}(n) \twoheadrightarrow ! \; A )
     & \text{Definition of } \twoheadrightarrow!
   \end{align*}
   \qed
@@ -303,29 +289,34 @@ Where split enumerability was the enumeration form of a split surjection from
 \begin{proof}
   \begin{align*}
     \mathcal{B}(A)
-    & \equiv \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , x \inunique \mathit{xs}
+    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , x \inunique \mathit{xs}
     & \text{Definition of } \mathcal{B}
     \\
-    & \equiv \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{isContr} \left(\text{fib}_{\text{snd}(\mathit{xs})}(x)\right)
+    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{isContr} \left(\text{fib}_{\text{snd}(\mathit{xs})}(x)\right)
     & \text{Definition of } \inunique
     \\
-    & \equiv \Sigma (\mathit{xs} : \textbf{List}(A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
+    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
     & \text{\cite[theorem 4.4.5]{hottbook}}
     \\
-    & \equiv \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket (A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
+    & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket (A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
     & \text{Definition of } \mathbf{List}
     \\
-    & \equiv \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \mathbf{Fin}(n)) , A) , \text{isEquiv}(\text{snd}(\mathit{xs}))
+    & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \mathbf{Fin}(n)) , A) , \text{isEquiv}(\text{snd}(\mathit{xs}))
     & \text{Definition of } \llbracket \wc \rrbracket
     \\
-    & \equiv \Sigma (n : \mathbb{N}) , \Sigma (f : \mathbf{Fin}(n) \rightarrow A) , \text{isEquiv}(f)
+    & \simeq \Sigma (n : \mathbb{N}) , \Sigma (f : \mathbf{Fin}(n) \rightarrow A) , \text{isEquiv}(f)
     & \text{Reassociation of } \Sigma
     \\
-    & \equiv \Sigma (n : \mathbb{N}) , ( \mathbf{Fin}(n) \simeq \; A )
+    & \simeq \Sigma (n : \mathbb{N}) , ( \mathbf{Fin}(n) \simeq \; A )
     & \text{Definition of } \twoheadrightarrow!
   \end{align*}
   \qed
 \end{proof}
+\subsection{Cardinal}
+\begin{itemize}
+\item Definition
+\item Cardinality
+\end{itemize}
 \subsection{Manifest Enumerable}
 \begin{romdefinition}[Manifest Enumerability]
   \begin{equation}
@@ -333,35 +324,130 @@ Where split enumerability was the enumeration form of a split surjection from
   \end{equation}
 \end{romdefinition}
 Again, the only difference with this type and split enumerability is the
-membership proof.
-Here we have propositionally truncated it.
+membership proof: here we have propositionally truncated it.
+This has two effects.
+First, it means that this proof represents a true surjection (rather than a
+split surjection) from \(\mathbf{Fin}\).
+\begin{romlemma}
+  \begin{equation}
+    \mathcal{E}(A) \simeq \Sigma(n : \mathbb{N}) , (\mathbf{Fin}(n) \twoheadrightarrow A)
+  \end{equation}
+\end{romlemma}
+\begin{proof}
+  \todo[inline]{Proof}
+\end{proof}
 
+Secondly, it means the predicate does not imply decidable equality.
+More significantly, it allows the predicate to be defined over non-set types,
+like the circle.
+\begin{romlemma}
+  The circle \(S^1\) is manifestly enumerable.
+\end{romlemma}
+\begin{proof}
+  \todo[inline]{Proof}
+\end{proof}
 
-% We will use the circle as an example non-set type which is nonetheless
-% manifestly enumerable.
-% \begin{romtheorem}
-%   The circle \(S^1\) is manifestly enumerable.
-% \end{romtheorem}
-% \begin{proof}
-%   As the cover proof is a truncated proposition, we need only consider the point
-%   constructors, making this poof the same as the proof of split enumerability on
-%   \(\top\).
-% \end{proof}
-% \subsection{Surjections}
-% This predicates relation to surjectivity is much the same as split
-% enumerability's relation to \emph{split} surjectivity.
-% \begin{romlemma}
-%   A proof of manifest enumerability is equivalent to a surjection from a finite
-%   prefix of the natural numbers.
-% \end{romlemma}
-\subsection{Cardinal}
+\subsection{Kuratowski Finiteness}
+Much work has already been done on Kuratowski finiteness in HoTT in
+\cite{fruminFiniteSetsHomotopy2018}.
+As a result, we will not needlessly repeat proofs, rather we will just give a
+brief introduction to the topic and point out where our treatment differs.
+
+The first thing we must define is a representation of subsets.
+\begin{romdefinition}[Kuratowski Finite Subset]
+  \(\mathcal{K}(A)\) is the type of Kuratowski-finite subsets of \(A\).
+  \begin{equation}
+    \begin{aligned}
+      \mathcal{K}(A) =&
+      \; [] : \mathcal{K}(A) ; \\
+      \vert& \; \wc \dblcolon \wc : A \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
+      \vert& \; \text{com} : \Pi (x, y: A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon y \dblcolon \mathit{xs} \simeq y \dblcolon x \dblcolon \mathit{xs} ; \\
+      \vert& \; \text{dup} : \Pi (x : A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \simeq x \dblcolon \mathit{xs} ; \\
+      \vert& \; \text{trunc} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \simeq \mathit{ys}) , p \simeq q ;
+    \end{aligned}
+  \end{equation}
+\end{romdefinition}
+The Kuratowski finite subset is a free join semilattice (or, equivalently, a
+free commutative idempotent monoid).
+More prosaically, \(\mathcal{K}\) is the abstract data type for finite sets, as
+defined in the Boom hierarchy \cite{boomFurtherThoughtsAbstracto1981,
+  bunkenburgBoomHierarchy1994}.
+However, rather than just being a specification, \(\mathcal{K}\) is fully usable
+as a data type in its own right, thanks to HITs.
+
+Other definitions of \(\mathcal{K}\) exist (such as the one in
+\cite{fruminFiniteSetsHomotopy2018}) which make the fact that \(\mathcal{K}\) is
+the free join semilattice more obvious.
+We have included such a definition in our formalisation, and proven it
+equivalent to the one above.
+
+Next, we need a way to say that an entire type is Kuratowski finite.
+For that, we will need to define membership of \(\mathcal{K}\).
+\begin{romdefinition}[Membership of \(\mathcal{K}\)]
+  Membership is defined by pattern-matching on \(\mathcal{K}\).
+  The two point constructors are handled like so:
+  \begin{equation}
+    \begin{alignedat}{2}
+      x \in&& \; []                      &= \bot \\
+      x \in&& \; y \dblcolon \mathit{ys} &= \lVert x \simeq y \uplus x \in \mathit{ys} \rVert
+    \end{alignedat}
+  \end{equation}
+  The \(\text{com}\) and \(\text{dup}\) constructors are handled by proving that
+  the truncated form of \(\uplus\) is itself commutative and idempotent.
+  The type of propositions is itself a set, satisfying the \(\text{trunc}\)
+  constructor.
+\end{romdefinition}
+Finally, we have enough background to define Kuratowski finiteness.
+\begin{romdefinition}[Kuratowski Finiteness]
+  \begin{equation}
+    \mathcal{K}^{f}(A) = \Sigma {(\mathit{xs} : \mathcal{K}(A))} , \Pi (x : A) , x \in \mathit{xs}
+  \end{equation}
+\end{romdefinition}
+
+We also have the following two lemmas, proven in both
+\cite{fruminFiniteSetsHomotopy2018} and our formalisation.
+\begin{romlemma}
+  \(\mathcal{K}^f\) is a mere proposition.
+\end{romlemma}
+\begin{romlemma}
+  This circle \(S^1\) is Kuratowski finite.
+\end{romlemma}
+The second of these in particular tells us that the ``Kuratowski-finite types''
+are not necessarily sets; it also tells us that we cannot derive decidable
+equality from a proof of Kuratowski finiteness.
 \section{Relations Between Each Finiteness Definition}
+\begin{itemize}
+  \item SE -> MB (and back)
+  \item MB <-> ME
+  \item MB <-> C
+  \item C <-> K
+  \item ME -> K
+\end{itemize}
 \section{Topos}
 \begin{itemize}
-  \item Complete (pullbacks + terminal object)
+  \item \(\bot\)
+  \item \(\top\)
+  \item Bool
+  \item \(\Sigma\)
+  \item \(\Pi\)
+  \item Pre-categories to categories
+  \item \(\Pi\)-pretopos
 \end{itemize}
 \section{Countably Infinite Types}
+\begin{itemize}
+  \item Definition
+  \item \(\Sigma\)
+  \item Kleene star
+  \item Truncated
+  \item Topos
+\end{itemize}
 \section{Search}
+\begin{itemize}
+  \item Omniscience
+  \item Search
+  \item Curry / uncurry
+  \item Synth function
+\end{itemize}
 
 
 % % Taking finiteness as an example again, if we prove that some type is finite via
@@ -921,7 +1007,7 @@ Here we have propositionally truncated it.
 % \begin{romlemma}
 %   Insertion sort is invariant under permutations.
 %   \begin{equation}
-%     \mathit{xs} \leftrightsquigarrow \mathit{ys} \implies \text{sort}(\mathit{xs}) \equiv \text{sort}(\mathit{ys})
+%     \mathit{xs} \leftrightsquigarrow \mathit{ys} \implies \text{sort}(\mathit{xs}) \simeq \text{sort}(\mathit{ys})
 %   \end{equation}
 % \end{romlemma}
 % \begin{proof}
@@ -1041,7 +1127,7 @@ Here we have propositionally truncated it.
 %   final result.
 %   The intermediate stream is constructed like so:
 %   \begin{equation}
-%     \mathit{xs}^\star_i = \left\{ \text{map}(\mathit{xs} , x) \mid \mathit{x} \in \mathbf{List}(\mathbb{N}) , \text{sum}(\text{map}(1+, x)) \equiv i \right\}
+%     \mathit{xs}^\star_i = \left\{ \text{map}(\mathit{xs} , x) \mid \mathit{x} \in \mathbf{List}(\mathbb{N}) , \text{sum}(\text{map}(1+, x)) \simeq i \right\}
 %   \end{equation}
 %   In other words, the \(i\)th element is all lists such that the sum of the
 %   successor of the indices in the list is equal to \(i\).
