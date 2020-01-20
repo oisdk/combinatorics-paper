@@ -98,7 +98,7 @@ module _ {A : Type a} {P : A → Type b} (R : ∀ x → P x → hProp c) where
 
 open import HITs.PropositionalTruncation.Sugar
 
-module _ {X Y : Ob} (f : X ⟶ Y) where
+module CoeqProofs {X Y : Ob} (f : X ⟶ Y) where
   KernelPair : Pullback hSetCategory {X = X} {Z = Y} {Y = X} f f
   KernelPair = hSetHasPullbacks f f
 
@@ -131,3 +131,16 @@ module _ {X Y : Ob} (f : X ⟶ Y) where
   hSetCoeq .Coequalizer.coequalize {H = H} {h = h} eq = lem {H = H} h eq .fst
   hSetCoeq .Coequalizer.universal {H = H} {h = h} {eq = eq} = funExt λ x → lem {H = H} h eq .snd (im x) x refl
   hSetCoeq .Coequalizer.unique {H = H} {h = h} {i = i} {eq = eq} prf = funExt λ x → lem₂ H h i x prf eq
+
+module PullbackSurjProofs {X Y : Ob} (f : X ⟶ Y) (fSurj : Surjective f) where
+  KernelPair : Pullback hSetCategory {X = X} {Z = Y} {Y = X} f f
+  KernelPair = hSetHasPullbacks f f
+
+  open Pullback KernelPair
+
+  p₁surj : Surjective p₁
+  p₁surj y = ∣ ((y , y) , refl) , refl ∣
+
+  p₂surj : Surjective p₂
+  p₂surj y = ∣ ((y , y) , refl) , refl ∣
+
