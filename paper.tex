@@ -109,28 +109,28 @@ We will make mention of the few occasions where the formalisation of some proof
 is of interest, but the main place where we will discuss the code is in the
 final section, where we implement a library for proof search, based on
 omniscience and exhaustibility.
-We also use this section to demonstrate some \emph{computation} using
-univalence: our proof search library can deal seamlessly with functions, testing
-them for equality, synthesising them, etc.
+While proof search based on finiteness is not new, implementing it here does
+give us an opportunity to demonstrate some actual \emph{computation} in a
+univalent setting.
+Many of the finiteness predicates are built using univalence, so for the proof
+search functionality to work at all we require computational content in the
+univalence axiom.
+Furthermore, the extensionality afforded to us by HoTT means that we can have
+\(\Pi\) types in the domain of the search, meaning we can synthesise full
+functions from specifications alone.
 \subsection{Related Work}
 \subsection{Notation}
 \todo[inline]{Basic MLTT Notation: \(\Pi\), \(\Sigma\), etc}
 \todo[inline]{Paths, Univalence, isomorphisms}
 \todo[inline]{HITs}
 \section{Finiteness Predicates}
-While our primary interest is in decidable Kuratowski finiteness, we found it
-useful to examine the other finiteness predicates as well, if only as a way to
-construct proofs which can then be transferred to proof on Kuratowski
-finiteness.
-This, in turn, is why the relation proofs are so important: in HoTT, if two
-types are proved equivalent, we get access to the extremely powerful univalence
-axiom, which allows us to switch between types freely depending on what is more
-convenient.
-The \(\Pi\)-topos proof, for instance, is defined on cardinal finiteness, not
-decidable Kuratowski finiteness: an equivalence proof between the two types
-means we can transfer it over, formally, and with good justification.
-Similarly, many of the closure proofs are more naturally defined over the
-enumerated finiteness predicates.
+In this section, we will define and briefly describe each of the five predicates
+in Figure~\ref{finite-classification}.
+The reason we explore predicates other than our focus (Kuratowski finiteness) is
+that we can often prove things like closure much more readily on the simpler
+predicates.
+The relations (which we will prove in the next section) then allow us to
+transfer those proofs onto Kuratowski finiteness.
 \subsection{Kuratowski Finiteness}
 The first thing we must define is a representation of subsets.
 \begin{rm-definition}[Kuratowski Finite Subset]
@@ -148,26 +148,21 @@ The first thing we must define is a representation of subsets.
 \end{rm-definition}
 The Kuratowski finite subset is a free join semilattice (or, equivalently, a
 free commutative idempotent monoid).
-From a programming perspective, it could well be seen as a finite set (in the
-sense of the data structure).
-In most languages, it might be represented by a hash table or some balanced
-tree: HITs allow us to represent precisely the notion of a finite set, without
-putting any constraints on the contents, or choosing any internal data
-structure.
+More prosaically, \(\mathcal{K}\) is the abstract data type for finite sets, as
+defined in the Boom hierarchy \cite{boomFurtherThoughtsAbstracto1981,
+  bunkenburgBoomHierarchy1994}.
+However, rather than just being a specification, \(\mathcal{K}\) is fully usable
+as a data type in its own right, thanks to HITs.
 
-Though it would be possible to use this type as-is, we found it easier to work
-with the following type as it has fewer path constructors.
-What we've done here is basically pulled out the ``monoid'' part of ``free
-commutative idempotent monoid'': the first two constructors now construct a
-list, which is a representation of the free monoid \emph{without} quotient
-types.
-This obviates the need for the associative and identity constructors.
-We have proven both types equivalent in our formalisation.
+Other definitions of \(\mathcal{K}\) exist (such as the one in
+\cite{fruminFiniteSetsHomotopy2018}) which make the fact that \(\mathcal{K}\) is
+the free join semilattice more obvious.
+We have included such a definition in our formalisation, and proven it
+equivalent to the one above.
 
-Next, we need a way to say that a type is Kuratowski finite, rather than just
-some subset.
+Next, we need a way to say that an entire type is Kuratowski finite.
 For that, we will need to define membership of \(\mathcal{K}\).
-\begin{rm-definition}[Membership of \mathcal{K}]
+\begin{rm-definition}[Membership of \(\mathcal{K}\)]
   First, we need to provide equations for the two point constructors.
   \(x \in [] = \bot\), and \(x \in y \dblcolon \mathit{xs} = \lVert (x \equiv y)
   + (x \in \mathit{xs}) \rVert \).
@@ -176,13 +171,13 @@ For that, we will need to define membership of \(\mathcal{K}\).
   The type of propositions is itself a set, satisfying the \(\text{trunc}\)
   constructor.
 \end{rm-definition}
+Finally, we have enough background to define Kuratowski finiteness.
 \begin{rm-definition}[Kuratowski Finiteness]
-  A type is Kuratowski finite iff there exists a Kuratowski finite subset which
-  contains all of its elements.
   \begin{equation}
     \mathcal{K}^{f}(A) = \Sigma {(\mathit{xs} : \mathcal{K}(A))} , \Pi (x : A) , x \in \mathit{xs}
   \end{equation}
 \end{rm-definition}
+\todo[inline]{Kf is a proposition, circle is Kf}
 
 
 
