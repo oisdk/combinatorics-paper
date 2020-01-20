@@ -110,7 +110,7 @@ module _ {X Y : Ob} (f : X ⟶ Y) where
 
   open Pullback KernelPair
 
-  lem : ∀ {H : Ob} (h : X ⟶ H) → h ∘ p₁ ≡ h ∘ p₂ → Σ[ f ⦂ Π[ x ⦂ Im .fst ] H .fst ] Π[ x ⦂ Im .fst ] (∀ y → im y ≡ x → h y ≡ f x)
+  lem : ∀ {H : Ob} (h : X ⟶ H) → h ∘ p₁ ≡ h ∘ p₂ → Σ[ f ⦂ (Im ⟶ H) ] Π[ x ⦂ Im .fst ] (∀ y → im y ≡ x → h y ≡ f x)
   lem {H = H} h eq = uniqueChoice R prf
     where
     R : Im .fst → H .fst → hProp _
@@ -118,14 +118,16 @@ module _ {X Y : Ob} (f : X ⟶ Y) where
     R w x .snd = hLevelPi 1 λ _ → hLevelPi 1 λ _ → H .snd _ _
 
     prf : Π[ x ⦂ Im .fst ] ∃!′ (H .fst) (λ u → ∀ y → im y ≡ x → h y ≡ u)
-    prf (xy , p) .fst = (λ { (z , r) → h z , λ y imy≡xyp → let q = cong (_$ ((y , z) , cong fst imy≡xyp ; sym r)) eq in {!!}}) ∥$∥ p
-    prf (xy , p) .snd x₁ x₂ Px₁ Px₂ = sym (Px₁ {!!} {!!}) ; Px₂ {!!} {!!}
+    prf (xy , p) .fst = (λ { (z , r) → h z , λ y imy≡xyp → cong (_$ ((y , z) , cong fst imy≡xyp ; sym r)) eq }) ∥$∥ p
+    prf (xy , p) .snd x₁ x₂ Px₁ Px₂ = recPropTrunc (H .snd x₁ x₂) (λ { (z , zs) → sym (Px₁ z (ΣProp≡ (λ _ → squash) zs)) ; Px₂ z (ΣProp≡ (λ _ → squash) zs) } ) p
 
+  lem₂ : ∀ (H : Ob) (h : X ⟶ H) (i : Im ⟶ H) (x : Im .fst) (hi : h ≡ i ∘ im) (eq : h ∘ p₁ ≡ h ∘ p₂) → i x ≡ lem {H = H} h eq .fst x
+  lem₂ H h i x hi eq = recPropTrunc (H .snd _ _) (λ { (y , ys) → (cong i (ΣProp≡ (λ _ → squash) (sym ys)) ; sym (cong (_$ y) hi)) ; lem {H = H} h eq .snd x y (ΣProp≡ (λ _ → squash) ys) }) (x .snd)
 
   hSetCoeq : Coequalizer hSetCategory {X = P} {Y = X} p₁ p₂
   hSetCoeq .Coequalizer.obj = Im
   hSetCoeq .Coequalizer.arr = im
   hSetCoeq .Coequalizer.equality = funExt λ x → ΣProp≡ (λ _ → squash) λ i → commute i x
   hSetCoeq .Coequalizer.coequalize {H = H} {h = h} eq = lem {H = H} h eq .fst
-  hSetCoeq .Coequalizer.universal {H = H} {h = h} {eq = eq} = let p = lem {H = H} h eq .snd in {!!}
-  hSetCoeq .Coequalizer.unique {H = H} {h = h} {i = i} {eq = eq} prf = funExt λ x → let p = lem {H = H} h eq .snd x in {!!}
+  hSetCoeq .Coequalizer.universal {H = H} {h = h} {eq = eq} = funExt λ x → lem {H = H} h eq .snd (im x) x refl
+  hSetCoeq .Coequalizer.unique {H = H} {h = h} {i = i} {eq = eq} prf = funExt λ x → lem₂ H h i x prf eq
