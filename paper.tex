@@ -86,6 +86,8 @@ Each unlabelled arrow is a weakening: i.e., every manifest Bishop finite set
 is manifest enumerable.
 The labelled arrows are strengthening proofs: i.e., every manifest enumerable set
 \emph{with decidable equality} is manifest Bishop finite.
+Our most significant result here is the proof that a cardinal finite set with a
+decidable total order is manifestly Bishop finite.
 
 We will then characterise each predicate as some form of topos.
 Our proofs follow the structure of \cite[Chapters 9, 10]{hottbook} and
@@ -94,10 +96,12 @@ This means we will define first the precategory of sets, and then the category
 of sets, and prove the required closures and limits to get us to a topos.
 We say ``some form of'' topos here because of course the category of sets in
 HoTT do \emph{not}, in fact, form a topos, rather a \(\Pi W\)-pretopos.
+Our main result here is that the category of decidable Kuratowski finite sets
+forms a \(\Pi\)-pretopos.
 
-\todo[inline]{redo these last two paragraphs}
 After the finite predicates, we will briefly look at the infinite countable
 types, and classify them in a parallel way to the finite predicates.
+We here show that countably finite sets form a \(W\)-pretopos.
 
 All of our work is formalised in Cubical Agda
 \cite{vezzosiCubicalAgdaDependently2019}.
@@ -113,39 +117,46 @@ them for equality, synthesising them, etc.
 \todo[inline]{Basic MLTT Notation: \(\Pi\), \(\Sigma\), etc}
 \todo[inline]{Paths, Univalence, isomorphisms}
 \todo[inline]{HITs}
-
 \section{Finiteness Predicates}
+While our primary interest is in decidable Kuratowski finiteness, we found it
+useful to examine the other finiteness predicates as well, if only as a way to
+construct proofs which can then be transferred to proof on Kuratowski
+finiteness.
+This, in turn, is why the relation proofs are so important: in HoTT, if two
+types are proved equivalent, we get access to the extremely powerful univalence
+axiom, which allows us to switch between types freely depending on what is more
+convenient.
+The \(\Pi\)-topos proof, for instance, is defined on cardinal finiteness, not
+decidable Kuratowski finiteness: an equivalence proof between the two types
+means we can transfer it over, formally, and with good justification.
+Similarly, many of the closure proofs are more naturally defined over the
+enumerated finiteness predicates.
 \subsection{Kuratowski Finiteness}
+The first thing we must define is a representation of subsets.
 \begin{rm-definition}[Kuratowski Finite Subset]
   \(\mathcal{K}(A)\) is the type of Kuratowski-finite subsets of \(A\).
   \begin{equation}
     \begin{aligned}
       \mathcal{K}(A) =&
-             \; \eta : A \rightarrow \mathcal{K}(A) ; \\
-      \vert& \; \emptyset : \mathcal{K}(A) ; \\
-      \vert& \; \wc \cup \wc : \mathcal{K}(A) \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
-      \vert& \; \text{associative} : \Pi (\mathit{xs}, \mathit{ys}, \mathit{zs}: \mathcal{K}(A)) , (\mathit{xs} \cup \mathit{ys}) \cup \mathit{zs} \equiv \mathit{xs} \cup (\mathit{ys} \cup \mathit{zs}) ; \\
-      \vert& \; \text{identity} : \Pi (\mathit{xs}: \mathcal{K}(A)) , \emptyset \cup \mathit{xs} \equiv \mathit{xs} ; \\
-      \vert& \; \text{commutative} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \mathit{xs} \cup \mathit{ys} \equiv \mathit{ys} \cup \mathit{xs} ; \\
-      \vert& \; \text{idempotent} : \Pi (\mathit{xs}: \mathcal{K}(A)) , \mathit{xs} \cup \mathit{xs} \equiv \mathit{xs} ; \\
+      \; [] : \mathcal{K}(A) ; \\
+      \vert& \; \wc \dblcolon \wc : A \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
+      \vert& \; \text{com} : \Pi (x, y: A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} ; \\
+      \vert& \; \text{dup} : \Pi (x : A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} ; \\
       \vert& \; \text{trunc} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q ;
     \end{aligned}
   \end{equation}
 \end{rm-definition}
 The Kuratowski finite subset is a free join semilattice (or, equivalently, a
 free commutative idempotent monoid).
+From a programming perspective, it could well be seen as a finite set (in the
+sense of the data structure).
+In most languages, it might be represented by a hash table or some balanced
+tree: HITs allow us to represent precisely the notion of a finite set, without
+putting any constraints on the contents, or choosing any internal data
+structure.
+
 Though it would be possible to use this type as-is, we found it easier to work
 with the following type as it has fewer path constructors.
-\begin{equation}
-  \begin{aligned}
-    \mathcal{K}(A) =&
-           \; [] : \mathcal{K}(A) ; \\
-    \vert& \; \wc \dblcolon \wc : A \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
-    \vert& \; \text{com} : \Pi (x, y: A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} ; \\
-    \vert& \; \text{dup} : \Pi (x : A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} ; \\
-    \vert& \; \text{trunc} : \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q ;
-  \end{aligned}
-\end{equation}
 What we've done here is basically pulled out the ``monoid'' part of ``free
 commutative idempotent monoid'': the first two constructors now construct a
 list, which is a representation of the free monoid \emph{without} quotient
@@ -209,6 +220,9 @@ This
 \subsection{Cardinal}
 \section{Relations Between Each Finiteness Definition}
 \section{Topos}
+\begin{itemize}
+  \item Complete (pullbacks + terminal object)
+\end{itemize}
 \section{Countably Infinite Types}
 \section{Search}
 

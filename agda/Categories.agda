@@ -39,6 +39,12 @@ record PreCategory ℓ₁ ℓ₂ : Type (ℓsuc (ℓ₁ ℓ⊔ ℓ₂)) where
   _≅_ : Ob → Ob → Type _
   X ≅ Y = Σ (X ⟶ Y) Isomorphism
 
+  Domain : (X ⟶ Y) → Ob
+  Domain {X} {Y} _ = X
+
+  Codomain : (X ⟶ Y) → Ob
+  Codomain {X} {Y} _ = Y
+
   module _ {X Y : Ob} where
     Monic : (X ⟶ Y) → Type _
     Monic f = ∀ {Z} → (g₁ g₂ : Z ⟶ X) → f · g₁ ≡ f · g₂ → g₁ ≡ g₂

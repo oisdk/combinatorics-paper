@@ -24,5 +24,7 @@ record Pullback (f : X ⟶ Z) (g : Y ⟶ Z) : Type (ℓ₁ ℓ⊔ ℓ₂) where
     p₂·universal≡h₂  : ∀ {A : Ob} {h₁ : A ⟶ X} {h₂ : A ⟶ Y} {eq : f · h₁ ≡ g · h₂} →
                          p₂ · universal eq ≡ h₂
 
-record HasPullbacks : Type (ℓ₁ ℓ⊔ ℓ₂) where
-  field pullback : ∀ {X Y Z} (f : X ⟶ Z) (g : Y ⟶ Z) → Pullback f g
+HasPullbacks : Type (ℓ₁ ℓ⊔ ℓ₂)
+HasPullbacks = ∀ {X Y Z} (f : X ⟶ Z) (g : Y ⟶ Z) → Pullback f g
+-- where
+--   field pullback : ∀ {X Y Z} (f : X ⟶ Z) (g : Y ⟶ Z) → Pullback f g
