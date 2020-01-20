@@ -144,3 +144,52 @@ module PullbackSurjProofs {X Y : Ob} (f : X ⟶ Y) (fSurj : Surjective f) where
   p₂surj : Surjective p₂
   p₂surj y = ∣ ((y , y) , refl) , refl ∣
 
+open import Relation.Binary
+open import Cubical.HITs.SetQuotients
+
+module _ {A : Type a} {R : A → A → Type b} {C : Type c}
+         (isSetC : isSet C)
+         (f : A → C)
+         (coh : ∀ x y → R x y → f x ≡ f y)
+         where
+
+  recQuot : A / R → C
+  recQuot [ a ] = f a
+  recQuot (eq/ a b r i) = coh a b r i
+  recQuot (squash/ xs ys x y i j) =
+        isOfHLevel→isOfHLevelDep {n = 2}
+          (λ xs → isSetC)
+          (recQuot xs) (recQuot ys)
+          (cong recQuot x) (cong recQuot y)
+          (squash/ xs ys x y)
+          i j
+
+
+-- module ExtactProofs {X : Ob} {R : X .fst → X .fst → hProp ℓ}
+--   (symR : Symmetric (λ x y → R x y .fst))
+--   (transR : Transitive (λ x y → R x y .fst))
+--   (reflR : Reflexive (λ x y → R x y .fst))
+--   where
+--   Src : Ob
+--   Src .fst = ∃[ x,y ] (R (x,y .fst) (x,y .snd) .fst)
+--   Src .snd = isOfHLevelΣ 2 (isOfHLevelΣ 2 (X .snd) (λ _ → X .snd)) λ _ → isProp→isSet (R _ _ .snd)
+
+--   pr₁ pr₂ : Src ⟶ X
+--   pr₁ = fst ∘ fst
+--   pr₂ = snd ∘ fst
+
+--   ROb : Ob
+--   ROb = X .fst / (λ x y → R x y .fst) , squash/
+
+--   lemma : ∀ (H : Ob) (h : X ⟶ H) (i : ROb ⟶ H)  (e : h ∘ pr₁ ≡ h ∘ pr₂) (p : h ≡ i ∘ [_]) (x : ROb .fst) → i x ≡ recQuot (H .snd) h (λ y z y~z j → e j ((y , z) , y~z)) x
+--   lemma H h i e p [ a ] j = p (~ j) a
+--   lemma H h i e p (eq/ a b r j) = {!refl!}
+--   lemma H h i e p (squash/ xs ys x y j k) = {!!}
+
+--   CR : Coequalizer hSetCategory {X = Src} {Y = X} pr₁ pr₂
+--   CR .Coequalizer.obj = ROb
+--   CR .Coequalizer.arr = [_]
+--   CR .Coequalizer.equality = funExt λ { ((x , y) , x~y) → eq/ x y x~y}
+--   CR .Coequalizer.coequalize {H = H} {h = h} e = recQuot (H .snd) h λ x y x~y → cong (_$ ((x , y) , x~y)) e
+--   CR .Coequalizer.universal {H = H} {h = h} {eq = e} = refl
+--   CR .Coequalizer.unique {H = H} {h = h} {i = i} {eq = e} p = funExt (lemma H h i e p)
