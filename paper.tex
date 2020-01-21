@@ -149,11 +149,11 @@ For the various type formers we use the following notation:
     \end{equation}
     However, we prefer to use it as an inductively defined type (though the two
     are equivalent).
-    The two constructors are:
     \begin{equation}
       \begin{aligned}
+        A \uplus B \coloneqq & \;
         \text{inl} &: A \rightarrow A \uplus B \\
-        \text{inr} &: B \rightarrow A \uplus B
+        | & \;  \text{inr} &: B \rightarrow A \uplus B
       \end{aligned}
     \end{equation}
   \item[Equalities, equivalences, and paths] We use the symbol \(\coloneqq\)
@@ -170,7 +170,7 @@ It allows us to do much of the same theory as in HoTT, but crucially the
 univalence ``axiom'' is a \emph{theorem}, rather than an axiom.
 This allows us to actually compute with univalent proofs, a capability missing
 from HoTT.
-\begin{romdefinition}[Path Types]
+\begin{romdefinition}[Path Types] \label{path-types}
   The equality type (which we denote with \(\equiv\)) in CuTT is the type of
   Paths\footnotemark.
   The internal structure of paths is largely irrelevant to us here, as we will
@@ -184,7 +184,7 @@ from HoTT.
   We do not use this type anywhere in our work, however, so we will not consider
   it here.
 }
-\begin{romdefinition}[Homotopy Levels]
+\begin{romdefinition}[Homotopy Levels] \label{homotopy-types}
   Types in HoTT and CuTT are not necessarily sets, as they are in MLTT.
   This means that equalities are not necessarily unique.
   In fact, we have an entire hierarchy of homotopy levels, of which sets are
@@ -201,13 +201,13 @@ from HoTT.
     \text{isOfHLevel}(n+1 , A) &\coloneqq \Pi(x , y : A) , \text{isOfHLevel}(n , x \equiv y)
   \end{align}
 \end{romdefinition}
-\begin{romdefinition}[Fibers]
+\begin{romdefinition}[Fibers] \label{fibers}
   A fiber is defined over some function \(f : A \rightarrow B\).
   \begin{equation}
     \text{fib}_f(y) = \Sigma(x : A) , (f x \equiv y)
   \end{equation}
 \end{romdefinition}
-\begin{romdefinition}[Equivalences]
+\begin{romdefinition}[Equivalences] \label{equivalences}
   We will take contractible maps \cite[definition 4.4.1]{hottbook} as our
   ``default'' definition of equivalences.
   \begin{equation}
@@ -220,8 +220,7 @@ from HoTT.
     (A \simeq B) \simeq (A \equiv B)
   \end{equation}
 \end{romlemma}
-
-\begin{romdefinition}[Isomorphism]
+\begin{romdefinition}[Isomorphism] \label{isomorphism}
   We say two types \(A\) and \(B\) are isomorphic, denoted with \(A \iff B\), if
   there is a pair of functions \(f : A \rightarrow B\), \(g : B \rightarrow A\)
   such that
@@ -243,25 +242,69 @@ from HoTT.
   \end{equation}
   However, if one of \(A\) or \(B\) is a set, then the above holds.
 \end{romdefinition}
+\begin{romdefinition}[Higher Inductive Types] \label{HITs}
+  \todo[inline]{define}
+\end{romdefinition}
+\begin{romdefinition}[Surjections] \label{surjections}
+  \begin{alignat}{3}
+    &\text{surj}(f)             &&\coloneqq \Pi(y : B) , \lVert \text{fib}_f(y) \rVert \\
+    &A \twoheadrightarrow B     &&\coloneqq \Sigma (f : A \rightarrow B) , \text{surj}(f) \\
+    &\text{sp-surj}(f)          &&\coloneqq \Pi(y : B) , \text{fib}_f(y) \label{sp-surj-eqn} \\
+    &A \twoheadrightarrow! \; B &&\coloneqq \Sigma (f : A \rightarrow B) , \text{sp-surj}(f) \label{sp-surj-arrow-eqn}
+  \end{alignat}
+\end{romdefinition}
+\begin{romdefinition}[Containers] \label{container-def}
+  A container \cite{abbottContainersConstructingStrictly2005} is a pair
+  \(S , P\) where \(S\) is a type, the elements of which are called
+  the \emph{shapes} of the container, and \(P\) is a type family on \(S\), where
+  the elements of \(P(s)\) are called the \emph{positions} of a container.
+  We ``interpret'' a container into a functor defined like so:
+  \begin{equation} \label{container-interp}
+    \llbracket S , P \rrbracket(A) \coloneqq \Sigma {(s : S)} , \left( P(s) \rightarrow A \right)
+  \end{equation}
+  Membership of a container can be defined like so:
+  \begin{equation} \label{container-membership}
+    x \in \mathit{xs} \coloneqq \text{fib}_{\text{snd}(\mathit{xs})}(x)
+  \end{equation}
+\end{romdefinition}
+\begin{romdefinition}[\(\mathbf{List}\)] \label{List}
+  \begin{equation}
+    \mathbf{List} \coloneqq \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket
+  \end{equation}
+\end{romdefinition}
+\begin{romdefinition}[\(\mathbf{Fin}\)] \label{Fin}
+  \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\).
+  We define it the standard way, where \(\mathbf{Fin}(0) = \bot\) and
+  \(\mathbf{Fin}(n + 1) &= \top + \mathbf{Fin}(n)\).
+\end{romdefinition}
+\begin{romdefinition}[Propositional Truncation] \label{prop-trunc}
+  The type \(\lVert A \rVert\) on some type \(A\) is a propositionally truncated
+  proof of \(A\) \cite[3.7]{hottbook}.
+  In other words, it is a proof that some \(A\) exists, but it does not tell you
+  \emph{which} \(A\).
 
-
-% \item[Isomorphisms and Biconditionals] A pair of functions \(f : A \rightarrow
-%   B\) and \(g : B \rightarrow A\) will be described by the type \(A
-%   \leftrightarrow B\).
-%   If \(g\) is a quasi-inverse \cite[definition 2.4.6]{hottbook} of \(f\), we
-%   have an isomorphism between \(A\) and \(B\), denoted \(A \iff B\).
-%   Note that while we can derive an equivalence from an isomorphism, we do not
-%   have \((A \iff B) \simeq (A \simeq B)\).
-
-
-We will use the standard \(\Pi\) and \(\Sigma\) notation for dependent products
-and sums, respectively.
-
-\todo[inline]{HITs}
-\todo[inline]{Surjections}
-\todo[inline]{Containers}
-\todo[inline]{Fin}
-\todo[inline]{Biconditional, Isomorphism, Equivalence, Equals}
+  It is defined as a Higher Inductive Type:
+  \begin{equation} {
+    \begin{alignat*}{3}
+      \lVert A \rVert \coloneqq & \; \lvert \wc \rvert &&: A \rightarrow \lVert A \rVert ; \\
+                              | & \; \text{squash}     &&: \Pi {(x, y : \lVert A \rVert)} , x \equiv y  ; 
+    \end{alignat*} }
+  \end{equation}
+  We will use three eliminators from \(\lVert A \rVert\) in this paper.
+  \begin{enumerate}
+  \item \label{elim-prop-prop} For any function \(A \rightarrow B\), where
+    \(\text{isProp}(B)\), we have a function \(\lVert A \rVert \rightarrow B\).
+  \item \label{elim-prop-monad} A special case of \ref{elim-prop-prop} implies
+    that \(\lVert \cdot \rVert\) forms a monad: this means that we get the usual
+    Monadic operators on \(\lVert \cdot \rVert\) (bind, pure, fmap, etc.).
+    \item \label{elim-prop-coh} We can eliminate from \(\lVert A \rVert\) with a
+      function \(f : A \rightarrow B\) iff \(f\) ``doesn't care'' about the
+      choice of \(A\) (\(\Pi {(x , y : A)} , f(x) \equiv f(y) \)).
+      Formally speaking, \(f\) needs to be ``coherently constant''
+      \cite{krausGeneralUniversalProperty2015}, and \(B\) needs to be an
+      \(n\)-type for some finite \(n\).
+  \end{enumerate}
+\end{romdefinition}
 \section{Finiteness Predicates}
 In this section, we will define and briefly describe each of the five predicates
 in Figure~\ref{finite-classification}.
@@ -271,9 +314,9 @@ predicates.
 The relations (which we will prove in the next section) then allow us to
 transfer those proofs onto Kuratowski finiteness.
 \subsection{Split Enumerable}
-\begin{romdefinition}[Split Enumerable Set]
-  \begin{equation}
-    \mathcal{E}!(A) = \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
+\begin{romdefinition}[Split Enumerable Set] \label{split-enum-def}
+  \begin{equation} \label{split-enum-def-eqn}
+    \mathcal{E}!(A) \coloneqq \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
   \end{equation}
   We call the first component of this pair the ``support'' list, and the second
   component the ``cover'' proof.
@@ -291,30 +334,29 @@ numbers.
     \mathcal{E}!(A) \simeq \Sigma (n : \mathbb{N}) , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
   \end{equation}
 \end{romlemma}
-\todo[inline]{Put refs for each ``definition of''}
 \begin{proof}
   \begin{align*}
     \mathcal{E}!(A)
     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , x \in \mathit{xs}
-    & \text{Definition of } \mathcal{E}!
+    && \text{Def.~\ref{split-enum-def} }(\mathcal{E}!)
     \\
     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{fib}_{\text{snd}(\mathit{xs})}(x)
-    & \text{Definition of } \in
+    && \text{Eqn.~\ref{container-membership} } (\in)
     \\
     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \text{sp-surj}(\text{snd}(\mathit{xs}))
-    & \text{Definition of sp-surj}
+    && \text{Eqn.~\ref{sp-surj-eqn} (sp-surj)}
     \\
     & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket (A)) , \text{sp-surj}(\text{snd}(\mathit{xs}))
-    & \text{Definition of } \mathbf{List}
+    && \text{Def.~\ref{List} } (\mathbf{List})
     \\
     & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \mathbf{Fin}(n)) , A) , \text{sp-surj}(\text{snd}(\mathit{xs}))
-    & \text{Definition of } \llbracket \wc \rrbracket
+    && \text{Eqn.~\ref{container-interp} } (\llbracket \wc \rrbracket)
     \\
     & \simeq \Sigma (n : \mathbb{N}) , \Sigma (f : \mathbf{Fin}(n) \rightarrow A) , \text{sp-surj}(f)
-    & \text{Reassociation of } \Sigma
+    && \text{Reassociation of } \Sigma
     \\
     & \simeq \Sigma (n : \mathbb{N}) , ( \mathbf{Fin}(n) \twoheadrightarrow ! \; A )
-    & \text{Definition of } \twoheadrightarrow!
+    && \text{Eqn.~\ref{sp-surj-arrow-eqn} } (\twoheadrightarrow!)
   \end{align*}
   \qed
 \end{proof}
@@ -343,8 +385,8 @@ formalisation:
   Let \(A\) be a split enumerable type.
   By lemma~\ref{split-enum-is-split-surj}, there is a surjection from
   \(\mathbf{Fin}(n)\) for some \(n\).
-  Also, by lemma \todo[noline]{Fin is discrete}, we know that
-  \(\mathbf{Fin}(n)\) is discrete.
+  Also, we know that \(\mathbf{Fin}(n)\) is discrete (proven in our
+  formalisation).
   Therefore, by lemma~\ref{discrete-surj}, \(A\) is discrete.
   \qed
 \end{proof}
@@ -696,31 +738,6 @@ equality from a proof of Kuratowski finiteness.
 % Before giving the definition of the predicate, we will first define lists (and
 % membership thereof): we have chosen a \emph{container}-based definition for this
 % work.
-% \begin{romdefinition}[Container] \label{container-def}
-%   A container \cite{abbottContainersConstructingStrictly2005} is a pair
-%   \(S \triangleright P\) where \(S\) is a type, the elements of which are called
-%   the \emph{shapes} of the container, and \(P\) is a type family on \(S\), where
-%   the elements of \(P(s)\) are called the \emph{positions} of a container.
-%   We ``interpret'' a container into a functor defined like so:
-%   \begin{equation}
-%     \llbracket S \triangleright P \rrbracket(A) = \Sigma {(s : S)} , \left( P(s) \rightarrow A \right)
-%   \end{equation}
-%   Membership of a container can be defined like so:
-%   \begin{equation}
-%     x \in \mathit{xs} = \text{fiber}(\text{snd}(\mathit{xs}), x)
-%   \end{equation}
-%   Where \(\text{fiber}\) is from \cite[definition 4.2.4]{hottbook}.
-% \end{romdefinition}
-% \begin{romdefinition}[Lists]
-%   \begin{equation}%
-%     \mathbf{List} = \llbracket \mathbb{N} \triangleright \mathbf{Fin} \rrbracket
-%   \end{equation}
-% \end{romdefinition}
-% \begin{romdefinition}[\mathbf{Fin}]
-%   \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\).
-%   We define it the standard way, where \(\mathbf{Fin}(0) = \bot\) and
-%   \(\mathbf{Fin}(n + 1) &= \top + \mathbf{Fin}(n)\).
-% \end{romdefinition}
 
 % Internally, in our formalisation, we actually use the standard
 % inductive definition of lists more often (it tends to work better in more
@@ -734,18 +751,6 @@ equality from a proof of Kuratowski finiteness.
 
 % Finally, we can define formally split enumerability.
 % \subsection{Split Surjections}
-% \begin{romdefinition}[Surjections]
-%   \begin{multicols}{2}
-%     \begin{equation}
-%       A \twoheadrightarrow B = \Sigma (f : A \rightarrow B) , \text{surjective}(f)
-%     \end{equation} \break
-%     \begin{equation}
-%       A \twoheadrightarrow! \; B = \Sigma (f : A \rightarrow B) , \text{split surjective}(f)
-%     \end{equation}
-%   \end{multicols}
-%   Where the definitions of surjective are taken from \cite[definition
-%   4.6.1]{hottbook}.
-% \end{romdefinition}
 % \begin{romtheorem} \label{split-enum-surj}
 %   Split enumerability is equivalent to a split surjection from a finite prefix
 %   of the natural numbers.
@@ -1156,7 +1161,7 @@ equality from a proof of Kuratowski finiteness.
 % have a support \emph{stream}, which is its infinite.
 % \begin{romdefinition}[Stream]
 %   \begin{equation}
-%     \mathbf{Stream}(A) = \llbracket \top \triangleright \text{const} (\mathbb{N}) \rrbracket(A) \simeq \mathbb{N} \rightarrow A
+%     \mathbf{Stream}(A) = \llbracket \top , \text{const} (\mathbb{N}) \rrbracket(A) \simeq \mathbb{N} \rightarrow A
 %   \end{equation}
 % \end{romdefinition}
 % \begin{romdefinition}[Split Countability]
