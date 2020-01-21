@@ -121,6 +121,7 @@ Furthermore, the extensionality afforded to us by HoTT means that we can have
 functions from specifications alone.
 \subsection{Related Work}
 \subsection{Notation and Background}
+\subsubsection{Notation}
 We work in Cubical Type Theory \cite{cohenCubicalTypeTheory2016}.
 For the various type formers we use the following notation:
 \begin{description}
@@ -161,6 +162,71 @@ For the various type formers we use the following notation:
     Of course, we know that \((A \simeq B) \simeq (A \equiv B)\) by univalence,
     so the distinction isn't terribly important in usage.
 \end{description}
+\subsubsection{Cubical Type Theory}
+Cubical Type Theory \cite{cohenCubicalTypeTheory2016} is a constructive type
+theory with an implementation in Cubical Agda
+\cite{vezzosiCubicalAgdaDependently2019}.
+It allows us to do much of the same theory as in HoTT, but crucially the
+univalence ``axiom'' is a \emph{theorem}, rather than an axiom.
+This allows us to actually compute with univalent proofs, a capability missing
+from HoTT.
+\begin{romdefinition}[Path Types]
+  The equality type (which we denote with \(\equiv\)) in CuTT is the type of
+  Paths\footnotemark.
+  The internal structure of paths is largely irrelevant to us here, as we will
+  generally treat \(\equiv\) as a black-box equivalence relation with
+  substitution and congruence.
+\end{romdefinition}
+
+\footnotetext{
+  Actually, CuTT does have an identity type with similar semantics to the
+  identity type in MLTT.
+  We do not use this type anywhere in our work, however, so we will not consider
+  it here.
+}
+\begin{romdefinition}[Homotopy Levels]
+  Types in HoTT and CuTT are not necessarily sets, as they are in MLTT.
+  This means that equalities are not necessarily unique.
+  In fact, we have an entire hierarchy of homotopy levels, of which sets are
+  level 2.
+  \begin{align}
+    \text{isContr}(A)    &\coloneqq \Sigma(x : A) , \Pi(y : A) , (x \equiv y) \\
+    \text{isProp}(A)     &\coloneqq \Pi(x, y : A) , (x \equiv y) \\
+    \text{isSet}(A)      &\coloneqq \Pi(x, y : A) , \text{isProp}(x \equiv y) \\
+    \text{isGroupoid}(A) &\coloneqq \Pi(x, y : A) , \text{isSet}(x \equiv y)
+  \end{align}
+  We can define the above types inductively like so:
+  \begin{align}
+    \text{isOfHLevel}(0 , A) &\coloneqq \text{isContr}(A) \\
+    \text{isOfHLevel}(n+1 , A) &\coloneqq \Pi(x , y : A) , \text{isOfHLevel}(n , x \equiv y)
+  \end{align}
+  
+\end{romdefinition}
+
+
+\begin{romdefinition}[Isomorphism]
+  We say two types \(A\) and \(B\) are isomorphic, denoted with \(A \iff B\), if
+  there is a pair of functions \(f : A \rightarrow B\), \(g : B \rightarrow A\)
+  such that
+  \begin{equation}
+    \begin{aligned}
+      \Pi(x : A) , (g(f(x)) \equiv x) \\
+      \Pi(x : B) , (f(g(x)) \equiv x)
+    \end{aligned}
+  \end{equation}
+  While we can derive an equivalence from an isomorphism:
+  \begin{equation}
+    \text{isoToEquiv} : (A \iff B) \rightarrow (A \simeq B)
+  \end{equation}
+  It is not the case that an isomorphism is the \emph{same} as an equivalence in
+  all cases.
+  In other words, we do not have:
+  \begin{equation}
+    (A \iff B) \simeq (A \simeq B)
+  \end{equation}
+  However, if one of \(A\) or \(B\) is a set, then the above holds.
+\end{romdefinition}
+
 
 % \item[Isomorphisms and Biconditionals] A pair of functions \(f : A \rightarrow
 %   B\) and \(g : B \rightarrow A\) will be described by the type \(A
@@ -174,9 +240,6 @@ For the various type formers we use the following notation:
 We will use the standard \(\Pi\) and \(\Sigma\) notation for dependent products
 and sums, respectively.
 
-
-\todo[inline]{Basic MLTT Notation: \(\Pi\), \(\Sigma\), etc}
-\todo[inline]{Paths, Univalence, isomorphisms}
 \todo[inline]{HITs}
 \todo[inline]{Surjections}
 \todo[inline]{Containers}
