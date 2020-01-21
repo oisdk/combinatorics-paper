@@ -189,17 +189,17 @@ from HoTT.
   This means that equalities are not necessarily unique.
   In fact, we have an entire hierarchy of homotopy levels, of which sets are
   level 2.
-  \begin{align}
-    \text{isContr}(A)    &\coloneqq \Sigma(x : A) , \Pi(y : A) , (x \equiv y) \\
-    \text{isProp}(A)     &\coloneqq \Pi(x, y : A) , (x \equiv y) \\
-    \text{isSet}(A)      &\coloneqq \Pi(x, y : A) , \text{isProp}(x \equiv y) \\
-    \text{isGroupoid}(A) &\coloneqq \Pi(x, y : A) , \text{isSet}(x \equiv y)
-  \end{align}
+  \begin{alignat}{2}
+    &\text{isContr}(A)    &&\coloneqq \Sigma(x : A) , \Pi(y : A) , (x \equiv y) \\
+    &\text{isProp}(A)     &&\coloneqq \Pi(x, y : A) , (x \equiv y) \\
+    &\text{isSet}(A)      &&\coloneqq \Pi(x, y : A) , \text{isProp}(x \equiv y) \\
+    &\text{isGroupoid}(A) &&\coloneqq \Pi(x, y : A) , \text{isSet}(x \equiv y)
+  \end{alignat}
   We can define the above types inductively like so:
-  \begin{align}
-    \text{isOfHLevel}(0 , A) &\coloneqq \text{isContr}(A) \\
-    \text{isOfHLevel}(n+1 , A) &\coloneqq \Pi(x , y : A) , \text{isOfHLevel}(n , x \equiv y)
-  \end{align}
+  \begin{alignat}{2}
+    &\text{isOfHLevel}(0 , A)   &&\coloneqq \text{isContr}(A) \\
+    &\text{isOfHLevel}(n+1 , A) &&\coloneqq \Pi(x , y : A) , \text{isOfHLevel}(n , x \equiv y)
+  \end{alignat}
 \end{romdefinition}
 \begin{romdefinition}[Fibers] \label{fibers}
   A fiber is defined over some function \(f : A \rightarrow B\).
@@ -210,9 +210,10 @@ from HoTT.
 \begin{romdefinition}[Equivalences] \label{equivalences}
   We will take contractible maps \cite[definition 4.4.1]{hottbook} as our
   ``default'' definition of equivalences.
-  \begin{equation}
-    A \simeq B \coloneqq \Sigma(f : A \rightarrow B) , \Pi(y : B) , \text{isContr}(\text{fib}_f(y))
-  \end{equation}
+  \begin{alignat}{2}
+    &\text{isEquiv}(f) &&\coloneqq \Pi(y : B) , \text{isContr}(\text{fib}_f(y)) \label{is-equiv-def} \\
+    &A \simeq B        &&\coloneqq \Sigma(f : A \rightarrow B) , \text{isEquiv}(f)
+  \end{alignat}
 \end{romdefinition}
 \begin{romlemma}
   Univalence
@@ -248,7 +249,7 @@ from HoTT.
 \begin{romdefinition}[Surjections] \label{surjections}
   \begin{alignat}{3}
     &\text{surj}(f)             &&\coloneqq \Pi(y : B) , \lVert \text{fib}_f(y) \rVert \\
-    &A \twoheadrightarrow B     &&\coloneqq \Sigma (f : A \rightarrow B) , \text{surj}(f) \\
+    &A \twoheadrightarrow B     &&\coloneqq \Sigma (f : A \rightarrow B) , \text{surj}(f) \label{surj-arrow-eqn} \\
     &\text{sp-surj}(f)          &&\coloneqq \Pi(y : B) , \text{fib}_f(y) \label{sp-surj-eqn} \\
     &A \twoheadrightarrow! \; B &&\coloneqq \Sigma (f : A \rightarrow B) , \text{sp-surj}(f) \label{sp-surj-arrow-eqn}
   \end{alignat}
@@ -313,7 +314,7 @@ that we can often prove things like closure much more readily on the simpler
 predicates.
 The relations (which we will prove in the next section) then allow us to
 transfer those proofs onto Kuratowski finiteness.
-\subsection{Split Enumerable}
+\subsection{Split Enumerability}
 \begin{romdefinition}[Split Enumerable Set] \label{split-enum-def}
   \begin{equation} \label{split-enum-def-eqn}
     \mathcal{E}!(A) \coloneqq \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
@@ -390,15 +391,20 @@ formalisation:
   Therefore, by lemma~\ref{discrete-surj}, \(A\) is discrete.
   \qed
 \end{proof}
-\subsection{Manifest Bishop}
+\subsection{Manifest Bishop Finiteness}
 \begin{romdefinition}[Manifest Bishop Finiteness]
-  \begin{equation}
-    \mathcal{B}(A) = \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \inunique xs
+  \begin{equation} \label{bish-def}
+    \mathcal{B}(A) \coloneqq \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \inunique xs
   \end{equation}
 \end{romdefinition}
 The only difference between manifest Bishop finiteness and split enumerability
 is the membership term: here we require unique membership (\(\inunique\)),
 rather than simple membership (\(\in\)).
+\begin{romdefinition}[Unique Membership] \label{uniq-memb-def}
+  \begin{equation}
+    x \inunique \mathit{xs} \coloneqq \text{isContr}(x \in \mathit{xs})
+  \end{equation}
+\end{romdefinition}
 
 Where split enumerability was the enumeration form of a split surjection from
 \(\mathbf{Fin}\), manifest Bishop finiteness is the enumeration form of an
@@ -412,25 +418,25 @@ Where split enumerability was the enumeration form of a split surjection from
   \begin{align*}
     \mathcal{B}(A)
     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , x \inunique \mathit{xs}
-    & \text{Definition of } \mathcal{B}
+    && \text{Def.~\ref{bish-def} } (\mathcal{B})
     \\
     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{isContr} \left(\text{fib}_{\text{snd}(\mathit{xs})}(x)\right)
-    & \text{Definition of } \inunique
+    && \text{Def.~\ref{uniq-memb-def} } (\inunique)
     \\
     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
-    & \text{\cite[theorem 4.4.5]{hottbook}}
+    && \text{Eqn.~\ref{is-equiv-def} (isEquiv)}
     \\
     & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket (A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
-    & \text{Definition of } \mathbf{List}
+    && \text{Def.~\ref{List} } (\mathbf{List})
     \\
     & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \mathbf{Fin}(n)) , A) , \text{isEquiv}(\text{snd}(\mathit{xs}))
-    & \text{Definition of } \llbracket \wc \rrbracket
+    && \text{Eqn.~\ref{container-interp} } (\llbracket \wc \rrbracket)
     \\
     & \simeq \Sigma (n : \mathbb{N}) , \Sigma (f : \mathbf{Fin}(n) \rightarrow A) , \text{isEquiv}(f)
-    & \text{Reassociation of } \Sigma
+    && \text{Reassociation of } \Sigma
     \\
     & \simeq \Sigma (n : \mathbb{N}) , ( \mathbf{Fin}(n) \simeq \; A )
-    & \text{Definition of } \twoheadrightarrow!
+    && \text{Eqn.~\ref{surj-arrow-eqn} } (\twoheadrightarrow)
   \end{align*}
   \qed
 \end{proof}
