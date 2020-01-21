@@ -200,9 +200,26 @@ from HoTT.
     \text{isOfHLevel}(0 , A) &\coloneqq \text{isContr}(A) \\
     \text{isOfHLevel}(n+1 , A) &\coloneqq \Pi(x , y : A) , \text{isOfHLevel}(n , x \equiv y)
   \end{align}
-  
 \end{romdefinition}
-
+\begin{romdefinition}[Fibers]
+  A fiber is defined over some function \(f : A \rightarrow B\).
+  \begin{equation}
+    \text{fib}_f(y) = \Sigma(x : A) , (f x \equiv y)
+  \end{equation}
+\end{romdefinition}
+\begin{romdefinition}[Equivalences]
+  We will take contractible maps \cite[definition 4.4.1]{hottbook} as our
+  ``default'' definition of equivalences.
+  \begin{equation}
+    A \simeq B \coloneqq \Sigma(f : A \rightarrow B) , \Pi(y : B) , \text{isContr}(\text{fib}_f(y))
+  \end{equation}
+\end{romdefinition}
+\begin{romlemma}
+  Univalence
+  \begin{equation}
+    (A \simeq B) \simeq (A \equiv B)
+  \end{equation}
+\end{romlemma}
 
 \begin{romdefinition}[Isomorphism]
   We say two types \(A\) and \(B\) are isomorphic, denoted with \(A \iff B\), if
