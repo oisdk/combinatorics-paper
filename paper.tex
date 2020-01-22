@@ -274,9 +274,9 @@ from HoTT.
   \end{equation}
 \end{romdefinition}
 \begin{romdefinition}[\(\mathbf{Fin}\)] \label{Fin}
-  \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\).
-  We define it the standard way, where \(\mathbf{Fin}(0) = \bot\) and
-  \(\mathbf{Fin}(n + 1) &= \top + \mathbf{Fin}(n)\).
+  \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\). We
+  define it the standard way, where \(\mathbf{Fin}(0) \coloneqq \bot\) and
+  \(\mathbf{Fin}(n + 1) &\coloneqq \top \uplus \mathbf{Fin}(n)\).
 \end{romdefinition}
 \begin{romdefinition}[Propositional Truncation] \label{prop-trunc}
   The type \(\lVert A \rVert\) on some type \(A\) is a propositionally truncated
@@ -391,7 +391,7 @@ formalisation:
       }
   \end{equation}
 \end{romlemma}
-\begin{romlemma}
+\begin{romlemma} \label{split-enum-discrete}
   Every split enumerable type is discrete.
 \end{romlemma}
 \begin{proof}
@@ -595,20 +595,167 @@ equality from a proof of Kuratowski finiteness.
 We now look at under what conditions a given finiteness predicate satisfies
 another.
 \subsection{Split Enumerability and Manifest Bishop Finiteness}
+While manifest Bishop finiteness might seem stronger than split enumerability,
+it turns out this is not the case.
+Both types imply the other.
+\begin{romlemma}
+  Any manifest Bishop finite type is split enumerable.
+\end{romlemma}
+\begin{proof}
+  The only difference between \(\mathcal{B}\) and \(\mathcal{E}!\) is the
+  membership term.
+  To derive \(\mathcal{E}!\) from \(\mathcal{B}\), then, we need to derive
+  \(\in\) from \(\inunique\).
+  We can do this with fst.
+  \begin{alignat*}{4}
+    &\text{fst} : && \; \Sigma(x : A) , U(x) \rightarrow A \\
+    && \simeq      & \; \text{isContr}(A) \rightarrow A \\
+    && \simeq      & \; (x \in \mathit{xs}) \rightarrow (x \inunique \mathit{xs})
+  \end{alignat*}
+  \qed
+\end{proof}
+
+To derive \(\mathcal{B}\) from \(\mathcal{E}!\) takes significantly more work.
+The ``unique membership'' condition in \(\mathcal{B}\) means that we are not
+permitted duplicates in the support list.
+The first step in the proof, then, is to filter those duplicates out from the
+support list of the \(\mathcal{E}!\) proof: we can do this using the decidable
+equality provided by \(\mathcal{E}!\) (lemma~\ref{split-enum-discrete}).
+From there, all we need to show is that the membership proof carries over
+appropriately.
+\begin{romlemma} \label{split-enum-to-manifest-bishop}
+  Any split enumerable set is manifest Bishop finite.
+\end{romlemma}
 \subsection{Manifest Bishop Finiteness and Manifest Enumerability}
+\begin{romlemma}
+  Any manifestly Bishop finite type is manifestly enumerable.
+\end{romlemma}
+\begin{romlemma}
+  A manifestly enumerable type with decidable equality is manifest Bishop
+  finite.
+\end{romlemma}
 \subsection{Manifest Bishop Finiteness and Cardinal Finiteness}
+\begin{romlemma}
+  Any manifest Bishop finite type is cardinal finite.
+\end{romlemma}
+\begin{romtheorem}
+  Any cardinal finite type with a total order is Bishop finite.
+\end{romtheorem}
 \subsection{Manifest Enumerability and Kuratowski Finiteness}
+\begin{romlemma}
+  Any manifest enumerable type is Kuratowski finite.
+\end{romlemma}
 \subsection{Cardinal Finiteness and Kuratowski Finiteness}
+\begin{romtheorem} \label{kuratowski-cardinal}
+  \begin{equation}
+    \mathcal{K}^f(A) \times \text{Discrete}(A) \simeq \mathcal{C}(A)
+  \end{equation}
+\end{romtheorem}
 \section{Topos}
-\begin{itemize}
-  \item \(\bot\)
-  \item \(\top\)
-  \item Bool
-  \item \(\Sigma\)
-  \item \(\Pi\)
-  \item Pre-categories to categories
-  \item \(\Pi\)-pretopos
-\end{itemize}
+Our main result in this section is the formal proof that decidable Kuratowski
+finite types form a \(Pi\)-pretopos.
+As we saw in theorem~\ref{kuratowski-cardinal}, decidable Kuratowski finite
+types are equivalent to cardinal finite types, so we will work with the latter
+from now on.
+Our first task is to show that cardinal finite types are closed under several
+operations.
+\subsection{Closure}
+For the first two closure proofs, we only consider manifest Bishop finiteness:
+as it is the strongest of the finiteness predicates, we can derive the other
+closure proofs from it.
+\begin{romlemma}
+  \(\bot\) is manifest Bishop finite.
+\end{romlemma}
+\begin{proof}
+  From lemma~\ref{bishop-equiv} we can prove the goal by constructing a term of
+  the type:
+  \begin{equation}
+    \Sigma(n : \mathbb{N}) , (\mathbf{Fin}(n) \simeq \bot)
+  \end{equation}
+  To do so, we take \(n\) to be 0, and by definition~\ref{Fin},
+  \(\mathbf{Fin}(0) = \bot\).
+  The equivalence is simply the identity equivalence.
+\end{proof}
+\begin{romlemma}
+  \(\top\) is manifest Bishop finite.
+\end{romlemma}
+\begin{proof}
+  Again, we need only provide a suitable cardinality (in this case 1), and an
+  equivalence with \(\mathbf{Fin}(1)\) to prove our goal.
+  \begin{align*}
+    \top &\simeq \mathbf{Fin}(1) \\
+          &\simeq \top \uplus \mathbf{Fin}(0) \\
+          &\simeq \top \uplus \bot \\
+          &\simeq \top
+  \end{align*}
+  \qed
+\end{proof}
+\begin{romlemma}
+  \(\mathbf{Bool}\) is manifest Bishop finite.
+\end{romlemma}
+\begin{proof}
+  We prove this by showing an isomorphism with \(\mathbf{Fin}(2)\).
+  \begin{align*}
+    \text{false} & \leftrightarrow 0 \\
+    \text{true} & \leftrightarrow 1
+  \end{align*}
+  \qed
+\end{proof}
+
+\begin{romlemma}
+  Split enumerability is closed under \(\Sigma\),
+\end{romlemma}
+\begin{romlemma}
+  Manifest bishop finiteness is closed over dependent functions
+  (\(\prod\)-types).
+  \begin{equation}
+    \frac{
+      \mathcal{B}(A) \; \; \; \Pi {(x : A)} , \mathcal{B}\left( U(x) \right)
+    }{
+      \mathcal{B}\left(\Pi {(x : A)} , U(x)\right)
+    }
+  \end{equation}
+\end{romlemma}
+\begin{proof}
+  This proof is essentially the composition of two transport operations, made
+  available to us via univalence.
+  
+  First, we will simplify things slightly by working only with split
+  enumerability.
+  As this is equal in strength to manifest Bishop finiteness, any closure proofs
+  carry over.
+
+  Secondly, we will replace \(A\) in all places with \(\mathbf{Fin}(n)\).
+  Since we have already seen an equivalence between these two types, we are
+  permitted to transport along these lines.
+  This is the first transport operation.
+
+  The bulk of the proof now is concerned with proving the following:
+  \begin{equation}
+    \left( \Pi {(x : \mathbf{Fin}(n))} , \mathcal{E}!(A(x)) \right) \rightarrow \mathcal{E}!\left( \Pi {(x : \mathbf{Fin}(n))} , A(x) \right)
+  \end{equation}
+  Our strategy to accomplish this will be to consider functions from
+  \(\mathbf{Fin}(n)\) as \(n\)-tuples over some type family \(T : \mathbb{N}
+  \rightarrow \text{Type}\).
+  \begin{equation}
+    \begin{aligned}
+      \mathbf{Tuple}(T, 0)   &= \top \\
+      \mathbf{Tuple}(T, n+1) &= T(0) \times \mathbf{Tuple}(T \circ \text{suc}, n)
+    \end{aligned}
+  \end{equation}
+  This type is manifestly Bishop finite, as it is constructed only from products
+  and the unit type.
+  
+  We then prove an isomorphism between this representation and \(\Pi\)-types.
+  \begin{equation}
+    \mathbf{Tuple}(T, n) \iff \Pi {(x : \mathbf{Fin}(n))} , T(x)
+  \end{equation}
+  This allows us to transport our proof of finiteness on tuples to one on
+  functions from \(\mathbf{Fin}\) (our second transport operation), proving our
+  goal.
+\end{proof}
+\subsection{The Category of Finite Sets}
+\subsection{The \(\Pi\)-pretopos of Finite Sets}
 \section{Countably Infinite Types}
 \begin{itemize}
   \item Definition
