@@ -201,8 +201,8 @@ from HoTT.
     &\text{isOfHLevel}(n+1 , A) &&\coloneqq \Pi(x , y : A) , \text{isOfHLevel}(n , x \equiv y)
   \end{alignat}
 \end{romdefinition}
-\begin{romdefinition}[Fibers] \label{fibers}
-  A fiber is defined over some function \(f : A \rightarrow B\).
+\begin{romdefinition}[Fibers] \label{fibres}
+  A fibre is defined over some function \(f : A \rightarrow B\).
   \begin{equation}
     \text{fib}_f(y) = \Sigma(x : A) , (f x \equiv y)
   \end{equation}
@@ -404,6 +404,7 @@ formalisation:
   \qed
 \end{proof}
 \subsection{Manifest Bishop Finiteness}
+\todo[noline]{Add explanation for word ``manifest''}
 \begin{romdefinition}[Manifest Bishop Finiteness]
   \begin{equation} \label{bish-def}
     \mathcal{B}(A) \coloneqq \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \inunique xs
@@ -641,16 +642,6 @@ appropriately.
 \begin{romtheorem}
   Any cardinal finite type with a total order is Bishop finite.
 \end{romtheorem}
-\subsection{Manifest Enumerability and Kuratowski Finiteness}
-\begin{romlemma}
-  Any manifest enumerable type is Kuratowski finite.
-\end{romlemma}
-\subsection{Cardinal Finiteness and Kuratowski Finiteness}
-\begin{romtheorem} \label{kuratowski-cardinal}
-  \begin{equation}
-    \mathcal{K}^f(A) \times \text{Discrete}(A) \simeq \mathcal{C}(A)
-  \end{equation}
-\end{romtheorem}
 \section{Topos}
 Our main result in this section is the formal proof that decidable Kuratowski
 finite types form a \(Pi\)-pretopos.
@@ -693,14 +684,6 @@ closure proofs from it.
 \begin{romlemma}
   \(\mathbf{Bool}\) is manifest Bishop finite.
 \end{romlemma}
-\begin{proof}
-  We prove this by showing an isomorphism with \(\mathbf{Fin}(2)\).
-  \begin{align*}
-    \text{false} & \leftrightarrow 0 \\
-    \text{true} & \leftrightarrow 1
-  \end{align*}
-  \qed
-\end{proof}
 
 \begin{romlemma}
   Split enumerability is closed under \(\Sigma\),
@@ -755,8 +738,123 @@ closure proofs from it.
   goal.
 \end{proof}
 \subsection{The Category of Finite Sets}
+HoTT and CuTT seem to be especially suitable settings for formalisations of
+category theory.
+The univalence axiom in particular allows us to treat categorical isomorphisms
+as the important, useful objects that they are, upgrading them to full
+equalities.
+
+We follow \cite[chapter 9]{hottbook} in its treatment of
+categories in HoTT, and in its proof that sets do indeed form a category.
+We will first briefly go through the construction of the category
+\(\mathit{Set}\), as it differs slightly from the usual method in type theory.
+
+First, the type of objects and arrows:
+\begin{alignat}{3}
+  &\text{Obj}_\mathit{Set}      &&\coloneqq \Sigma(x : \mathbf{Type}) , \text{isProp}(x) \\
+  &\text{Hom}_\mathit{Set}(x , y) &&\coloneqq  \text{fst}(x) \rightarrow \text{fst}(y)
+\end{alignat}
+As is plain in the type of objects, we have already departed slightly from the
+simpler \(\text{Obj}_\mathit{Set} \coloneqq \mathbf{Type}\) way of doing things:
+of course we have to, as HoTT allows non-set types.
+Furthermore, after proving the usual associativity and identity laws for
+composition (which are definitionally true in this case), we must further show
+\(\text{isSet}(\text{Hom}_\mathit{Set}(x,y))\); even then we only have a
+precategory.
+
+To show that \(\mathit{Set}\) is a category, we must show that categorical
+isomorphisms are equivalent to equivalences.
+In a sense, we must give a univalence rule for the category we are working in.
+
+We have provided formal proofs that \(\mathit{Set}\) does indeed form a
+category, and the following:
+\begin{romtheorem}[The Category of Finite Sets]
+  Finite sets form a category in HoTT when defined like so:
+  \begin{equation}
+    \begin{aligned}
+      &\text{Obj}_\mathit{FinSet}      &&\coloneqq \Sigma(x : \mathbf{Type}) , \mathcal{C}(x) \\
+      &\text{Hom}_\mathit{FinSet}(x , y) &&\coloneqq  \text{fst}(x) \rightarrow \text{fst}(y)
+    \end{aligned}
+  \end{equation}
+\end{romtheorem}
 \subsection{The \(\Pi\)-pretopos of Finite Sets}
+For this proof, we follow again the proof that \(\mathit{Set}\) forms a \(\Pi
+W\)-pretopos from \cite[chapter 10]{hottbook} and
+\cite{rijkeSetsHomotopyType2015}.
 \section{Countably Infinite Types}
+In the previous sections we saw different flavours of finiteness which were
+really just different flavours of relations to \(\mathbf{Fin}\).
+In this section we will see that we can construct a similar classification of
+relations to \(\mathbb{N}\), in the form of the countably infinite types.
+\subsection{Split Countable Types}
+Our first foray into the world of countable types will be a straightforward
+analogue to the split enumerable types.
+We need change only one element: instead of a support \emph{list}, we instead
+have a support \emph{stream}, which is its infinite.
+\begin{romdefinition}[Stream]
+  \begin{equation}
+    \mathbf{Stream}(A) = \llbracket \top \triangleright \text{const} (\mathbb{N}) \rrbracket(A) \simeq \mathbb{N} \rightarrow A
+  \end{equation}
+\end{romdefinition}
+\begin{romdefinition}[Split Countability]
+  \begin{equation}
+    \mathcal{E}!(A) = \Sigma {(\mathit{xs} : \mathbf{Stream}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
+  \end{equation}
+\end{romdefinition}
+This type is definitionally equal to it surjection equivalent (\(\mathbb{N}
+\twoheadrightarrow ! \; A\)).
+\subsubsection{Closure}
+We know that countable infinity is not closed under the exponential (function
+arrow), so the only closure we need to prove is \(\Sigma\) to cover all of
+what's left.
+\input{figures/pairing-functions.tex}
+\begin{romtheorem} \label{split-countability-sigma}
+  Split countability is closed under \(\Sigma\).
+\end{romtheorem}
+\begin{proof}
+  The main task here is to figure out a pattern which will pair elements of the
+  two support streams without diverging.
+  Figure~\ref{cartesian} illustrates why the pairing function we used for lists
+  won't work: it needs to exhaust one of the input lists before inspecting
+  anything other than the first element of the other.
+  Of course, we can't exhaust a stream, so this diverges.
+
+  Instead, we will use the pattern in figure~\ref{cantor}.
+  We will produce a stream of lists (where each list is a diagonal), which is
+  then concatenated to the final output stream.
+  The intermediate stream is sometimes called the discrete convolution of the
+  two input streams.
+\end{proof}
+\subsubsection{Kleene Star}
+While we lose some closures with the inclusion of infinite types, we gain some
+others.
+In particular, we have the Kleene star.
+This means that we have closure under lists.
+\begin{romtheorem}
+  Split countability is closed under Kleene star.
+  \begin{equation}
+    \mathcal{E}!(A) \rightarrow \mathcal{E}!(\mathbf{List}(A))
+  \end{equation}
+\end{romtheorem}
+\begin{proof}
+  As with the proof of closure under \(\Sigma\), our main task here is to figure
+  out a pattern that reaches any given finite list in finite time.
+  Our first step is to split up the problem as we did for \(\Sigma\)-closure: we
+  produce an intermediate stream of lists, which we then concatenate to give the
+  final result.
+  The intermediate stream is constructed like so:
+  \begin{equation}
+    \mathit{xs}^\star_i = \left\{ \text{map}(\mathit{xs} , x) \mid \mathit{x} \in \mathbf{List}(\mathbb{N}) , \text{sum}(\text{map}(1+, x)) \equiv i \right\}
+  \end{equation}
+  In other words, the \(i\)th element is all lists such that the sum of the
+  successor of the indices in the list is equal to \(i\).
+\end{proof}
+\subsection{Other Types of Countability}
+There are of course other forms of countability available to us: manifest
+countability, cardinal, etc.
+We have a similar structure of relationships to the finite types, with the
+exception that we cannot construct an isomorphism with \(\mathbb{N}\) fiven a
+surjection from \(\mathbb{N}\).
 \begin{itemize}
   \item Definition
   \item \(\Sigma\)
@@ -765,13 +863,119 @@ closure proofs from it.
   \item Topos
 \end{itemize}
 \section{Search}
-\begin{itemize}
-  \item Omniscience
-  \item Search
-  \item Curry / uncurry
-  \item Synth function
-\end{itemize}
+\subsection{Omniscience}
+In this section we are interested in restricted forms of the limited principle
+of omniscience \cite{myhillErrettBishopFoundations1972}.
+\begin{romdefinition}[Limited Principle of Omniscience]
+  For any type \(A\) and predicate \(P\) on \(A\), the limited principle of
+  omniscience is as follows:
+  \begin{equation}
+    \left( \Pi {(x : A)} , \mathbf{Dec}(P(x)) \right) \rightarrow \mathbf{Dec} \left( \Sigma {(x : A)} , P(x) \right)
+  \end{equation}
+  In other words, for any decidable predicate the existential quantification of
+  that predicate is also decidable.
+\end{romdefinition}
+The limited principle of omniscience is non-constructive, but individual types
+can themselves satisfy omniscience.
+In particular, \emph{finite} types are omniscient.
 
+There is also a universal form of omniscience, which we call exhaustibility.
+\begin{romdefinition}[Exhaustibility]
+  We say a type \(A\) is exhaustible if, for any decidable predicate \(P\) on
+  \(A\), the universal quantification of the predicate is decidable.
+  \begin{equation}
+    \left( \Pi {(x : A)} , \mathbf{Dec}(P(x)) \right) \rightarrow \mathbf{Dec} \left( \Pi {(x : A)} , P(x) \right)
+  \end{equation}
+\end{romdefinition}
+
+All of the finiteness predicates we have seen justify exhaustibility.
+We will only prove it once, then, for the weakest:
+\begin{romtheorem}
+  Kuratowski-finite types are exhaustible.
+\end{romtheorem}
+
+Omniscience is stronger than exhaustibility, as we can derive the latter from
+the former:
+\begin{romlemma} \label{omniscient-is-exhaustible}
+  Any omniscient type is exhaustible.
+\end{romlemma}
+\begin{proof}
+  For decidable propositions, we know the following:
+  \begin{equation} \label{lem-conversion}
+    \Pi (x : A) , P(x) \leftrightarrow \neg \Sigma (x : A) , \neg P(x) 
+  \end{equation}
+  To derive exhaustibility from omniscience, then, we run the predicate in its
+  negated form, and then subsequently negate the result.
+  The resulting decision over \(\neg \Sigma(x : A) , \neg P(x)\) can be
+  converted into \(\Pi (x : A) , P(x)\).
+\end{proof}
+We cannot derive, however, that any exhaustible type is omniscient, as we do not
+have the inverse of equation~\ref{lem-conversion}:
+\begin{equation} \label{choice-conversion}
+  \Sigma (x : A) , P(x) \leftrightarrow \neg \Pi (x : A) , \neg P(x)
+\end{equation}
+Such an equation would allow us to pick a representative element from any type,
+which is therefore non-constructive.
+In a sense, equation~\ref{lem-conversion} requires a form of LEM on the
+proposition (i.e. requires it to be decidable), whereas
+equation~\ref{choice-conversion} requires a form of choice.
+Those finiteness predicates which are ordered do in fact give us this form of
+choice, so the conversion is valid.
+As such, all of the ordered finiteness predicates imply omniscience.
+Again, we will prove it only for the weakest.
+\begin{romtheorem}
+  Manifest enumerable types are omniscient.
+\end{romtheorem}
+Finally, we do have a form of omniscience for prop-valued predicates, as they do
+not care about the chosen representative.
+\begin{romtheorem}
+  Kuratowski finite types are omniscient about prop-valued predicates.
+\end{romtheorem}
+\subsection{Synthesising Pattern-Matching Proofs}
+In particular, they can automate large proofs by analysing every possible case.
+In \cite{firsovDependentlyTypedProgramming2015}, the \(\AgdaDatatype{Pauli}\)
+group is used as an example.
+\ExecuteMetaData[agda/Data/Pauli.tex]{def}
+As \(\AgdaDatatype{Pauli}\) has 4 constructors, \(n\)-ary functions on
+\(\AgdaDatatype{Pauli}\) may require up to \(4^n\) cases, making even simple
+proofs prohibitively verbose.
+
+The alternative is to derive the things we need from \(\mathcal{E}!\) somehow.
+As \(\AgdaDatatype{Pauli}\) is a simple finite type, the instance can be defined
+in a similar way to those in lemma~\ref{split-enum-bool-top-bot}.
+From here we can already derive decidable equality, a function which requires 16
+cases if implemented manually.
+
+For proof search, the procedure is a well-known one in Agda
+\cite{devrieseBrightSideType2011}: we ask for the result of a decision procedure
+as an \emph{instance argument}, which will demand computation during
+typechecking.
+\subsection{Multiple Arguments}
+The automation machinery above only deals with single-argument predicates.
+This is not a problem, as we know that we can work with multiple arguments by
+currying and uncurrying, since all of the finiteness predicates are closed under
+\(\times\).
+To automate away the curry/uncurry noise we will use instance search, building
+on \cite{allaisGenericLevelPolymorphic2019} to develop a small interface to
+generic \(n\)-ary functions and properties.
+Our generic representation can handle dependent \(\Sigma\) and \(\prod\)
+types (rather than their non-dependent counterparts, \(\times\) and
+\(\rightarrow\)).
+This extension was necessary for our use case: it is mentioned in the paper
+as the obvious next step. 
+We also implement the curry-uncurry combinators as (verified) isomorphisms.
+
+A full explanation of our implementation is beyond the scope of this work, so we
+only present the finished interface, which is used like so:
+\ExecuteMetaData[agda/Data/Pauli.tex]{assoc-prf}
+\subsection{Synthesising Functions}
+Finally, thanks to extensionality provided to us by HoTT, and the computation
+properties provided by CuTT, we can derive decidable equality on functions over
+finite types.
+We can also use functions in our proof search.
+Here, for instance, is a automated procedure which finds the
+\(\AgdaFunction{not}\) function on \(\mathbf{Bool}\), given a specification.
+\ExecuteMetaData[agda/Data/Pauli.tex]{not-spec}
 
 
 \todo[inline]{Add funding ack:

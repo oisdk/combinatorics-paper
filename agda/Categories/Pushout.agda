@@ -28,5 +28,5 @@ record Pushout (f : X ⟶ Y) (g : X ⟶ Z) : Type (ℓ₁ ℓ⊔ ℓ₂) where
     universal·i₂≡h₂  : ∀ {eq : h₁ · f ≡ h₂ · g} →
                          universal eq · i₂ ≡ h₂
 
-record HasPushouts : Type (ℓ₁ ℓ⊔ ℓ₂) where
-  field pushout : ∀ {X Y Z} → (f : X ⟶ Y) → (g : X ⟶ Z) → Pushout f g
+HasPushouts : Type (ℓ₁ ℓ⊔ ℓ₂)
+HasPushouts = ∀ {X Y Z} → (f : X ⟶ Y) → (g : X ⟶ Z) → Pushout f g

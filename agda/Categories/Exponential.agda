@@ -18,5 +18,5 @@ module _ {ℓ₁ ℓ₂} (C : Category ℓ₁ ℓ₂) (hasProducts : HasProducts
         uniq : ∀ (X : Ob) (f : C [ X × Y , Z ]) →
               ∃![ f~ ] (C [ eval ∘ (f~ |×| Category.Id C) ] ≡ f)
 
-  record HasExponentials : Type (ℓ₁ ℓ⊔ ℓ₂) where
-    field exponent : ∀ X Y → Exponential X Y
+  HasExponentials : Type (ℓ₁ ℓ⊔ ℓ₂)
+  HasExponentials = ∀ X Y → Exponential X Y

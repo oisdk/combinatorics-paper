@@ -51,11 +51,11 @@ hSetProd .HasProducts.product X Y .Product.ump f g .snd .fst .snd = refl
 hSetProd .HasProducts.product X Y .Product.ump f g .snd .snd (f≡ , g≡) i x = f≡ (~ i) x , g≡ (~ i) x
 
 hSetExp : HasExponentials hSetCategory hSetProd
-hSetExp .HasExponentials.exponent X Y .Exponential.obj = (X .fst → Y .fst) , hLevelPi 2 λ _ → Y .snd
-hSetExp .HasExponentials.exponent X Y .Exponential.eval (f , x) = f x
-hSetExp .HasExponentials.exponent X Y .Exponential.uniq X₁ f .fst = curry f
-hSetExp .HasExponentials.exponent X Y .Exponential.uniq X₁ f .snd .fst = refl
-hSetExp .HasExponentials.exponent X Y .Exponential.uniq X₁ f .snd .snd {y} x = cong curry (sym x)
+hSetExp  X Y .Exponential.obj = (X .fst → Y .fst) , hLevelPi 2 λ _ → Y .snd
+hSetExp  X Y .Exponential.eval (f , x) = f x
+hSetExp  X Y .Exponential.uniq X₁ f .fst = curry f
+hSetExp  X Y .Exponential.uniq X₁ f .snd .fst = refl
+hSetExp  X Y .Exponential.uniq X₁ f .snd .snd {y} x = cong curry (sym x)
 
 open import Categories.Pullback
 
@@ -64,10 +64,10 @@ hSetHasPullbacks {X = X} {Y = Y} {Z = Z} f g .Pullback.P = ∃[ ab ] (f (fst ab)
 hSetHasPullbacks f g .Pullback.p₁ ((x , _) , _) = x
 hSetHasPullbacks f g .Pullback.p₂ ((_ , y) , _) = y
 hSetHasPullbacks f g .Pullback.commute = funExt snd
-hSetHasPullbacks f g .Pullback.universal {A = A} {h₁} {h₂} p x = (h₁ x , h₂ x) , λ i → p i x
-hSetHasPullbacks {Z = Z} f g .Pullback.unique {A = A} {h₁} {h₂} {eq} {i} p₁e p₂e = funExt (λ x → ΣProp≡ (λ _ → Z .snd _ _) λ j → p₁e j x , p₂e j x)
-hSetHasPullbacks f g .Pullback.p₁·universal≡h₁ = refl
-hSetHasPullbacks f g .Pullback.p₂·universal≡h₂ = refl
+hSetHasPullbacks f g .Pullback.ump {A = A} h₁ h₂ p .fst x = (h₁ x , h₂ x) , λ i → p i x
+hSetHasPullbacks f g .Pullback.ump {A = A} h₁ h₂ p .snd .fst .fst = refl
+hSetHasPullbacks f g .Pullback.ump {A = A} h₁ h₂ p .snd .fst .snd = refl
+hSetHasPullbacks {Z = Z} f g .Pullback.ump {A = A} h₁ h₂ p .snd .snd {i} (p₁e , p₂e) = funExt (λ x → ΣProp≡ (λ _ → Z .snd _ _) λ j → p₁e (~ j) x , p₂e (~ j) x)
 
 hSetTerminal : Terminal
 hSetTerminal .fst = Lift _ ⊤ , isProp→isSet λ _ _ → refl
