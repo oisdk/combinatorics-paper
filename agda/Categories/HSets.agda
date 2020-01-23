@@ -24,6 +24,10 @@ hSetPreCategory .PreCategory.Hom-Set {X} {Y} = hLevelPi 2 λ _ → Y .snd
 
 open PreCategory hSetPreCategory
 
+
+_⟨×⟩_ : isSet A → isSet B → isSet (A Prelude.× B)
+xs ⟨×⟩ ys = isOfHLevelΣ 2 xs (const ys)
+
 module _ {X Y : Ob} where
   iso-iso : (X ≅ Y) ⇔ (fst X ⇔ fst Y)
   iso-iso .fun (f , g , f∘g , g∘f) = iso f g (λ x i → g∘f i x) (λ x i → f∘g i x)
@@ -42,7 +46,7 @@ hSetCategory .Category.preCategory = hSetPreCategory
 hSetCategory .Category.univalent = isoToEquiv univ⇔
 
 hSetProd : HasProducts hSetCategory
-hSetProd .HasProducts.product X Y .Product.obj = (X .fst Prelude.× Y .fst) , isOfHLevelΣ 2 (X .snd) λ _ → Y .snd
+hSetProd .HasProducts.product X Y .Product.obj = (X .fst Prelude.× Y .fst) , X .snd ⟨×⟩ Y .snd
 hSetProd .HasProducts.product X Y .Product.proj₁ = fst
 hSetProd .HasProducts.product X Y .Product.proj₂ = snd
 hSetProd .HasProducts.product X Y .Product.ump f g .fst z = f z , g z
@@ -60,7 +64,7 @@ hSetExp  X Y .Exponential.uniq X₁ f .snd .snd {y} x = cong curry (sym x)
 open import Categories.Pullback
 
 hSetHasPullbacks : HasPullbacks hSetCategory
-hSetHasPullbacks {X = X} {Y = Y} {Z = Z} f g .Pullback.P = ∃[ ab ] (f (fst ab) ≡ g (snd ab)) , isOfHLevelΣ 2 (isOfHLevelΣ 2 (X .snd) λ _ → Y .snd) λ xy → isProp→isSet (Z .snd (f (xy .fst)) (g (xy .snd)))
+hSetHasPullbacks {X = X} {Y = Y} {Z = Z} f g .Pullback.P = ∃[ ab ] (f (fst ab) ≡ g (snd ab)) , isOfHLevelΣ 2 (X .snd ⟨×⟩ Y .snd) λ xy → isProp→isSet (Z .snd (f (xy .fst)) (g (xy .snd)))
 hSetHasPullbacks f g .Pullback.p₁ ((x , _) , _) = x
 hSetHasPullbacks f g .Pullback.p₂ ((_ , y) , _) = y
 hSetHasPullbacks f g .Pullback.commute = funExt snd
@@ -156,40 +160,33 @@ module _ {A : Type a} {R : A → A → Type b} {C : Type c}
   recQuot : A / R → C
   recQuot [ a ] = f a
   recQuot (eq/ a b r i) = coh a b r i
-  recQuot (squash/ xs ys x y i j) =
-        isOfHLevel→isOfHLevelDep {n = 2}
-          (λ xs → isSetC)
-          (recQuot xs) (recQuot ys)
-          (cong recQuot x) (cong recQuot y)
-          (squash/ xs ys x y)
-          i j
+  recQuot (squash/ xs ys x y i j) = isSetC (recQuot xs) (recQuot ys) (cong recQuot x) (cong recQuot y) i j
 
+open import Path.Reasoning
 
--- module ExtactProofs {X : Ob} {R : X .fst → X .fst → hProp ℓ}
---   (symR : Symmetric (λ x y → R x y .fst))
---   (transR : Transitive (λ x y → R x y .fst))
---   (reflR : Reflexive (λ x y → R x y .fst))
---   where
---   Src : Ob
---   Src .fst = ∃[ x,y ] (R (x,y .fst) (x,y .snd) .fst)
---   Src .snd = isOfHLevelΣ 2 (isOfHLevelΣ 2 (X .snd) (λ _ → X .snd)) λ _ → isProp→isSet (R _ _ .snd)
+module ExtactProofs {X : Ob} {R : X .fst → X .fst → hProp ℓ}
+  (symR : Symmetric (λ x y → R x y .fst))
+  (transR : Transitive (λ x y → R x y .fst))
+  (reflR : Reflexive (λ x y → R x y .fst))
+  where
+  ℛ : X .fst → X .fst → Type ℓ
+  ℛ x y = R x y .fst
 
---   pr₁ pr₂ : Src ⟶ X
---   pr₁ = fst ∘ fst
---   pr₂ = snd ∘ fst
+  Src : Ob
+  Src .fst = ∃[ x,y ] (uncurry ℛ x,y)
+  Src .snd = isOfHLevelΣ 2 (X .snd ⟨×⟩ X .snd) λ _ → isProp→isSet (R _ _ .snd)
 
---   ROb : Ob
---   ROb = X .fst / (λ x y → R x y .fst) , squash/
+  pr₁ pr₂ : Src ⟶ X
+  pr₁ = fst ∘ fst
+  pr₂ = snd ∘ fst
 
---   lemma : ∀ (H : Ob) (h : X ⟶ H) (i : ROb ⟶ H)  (e : h ∘ pr₁ ≡ h ∘ pr₂) (p : h ≡ i ∘ [_]) (x : ROb .fst) → i x ≡ recQuot (H .snd) h (λ y z y~z j → e j ((y , z) , y~z)) x
---   lemma H h i e p [ a ] j = p (~ j) a
---   lemma H h i e p (eq/ a b r j) = {!refl!}
---   lemma H h i e p (squash/ xs ys x y j k) = {!!}
+  ROb : Ob
+  ROb = X .fst / ℛ , squash/
 
---   CR : Coequalizer hSetCategory {X = Src} {Y = X} pr₁ pr₂
---   CR .Coequalizer.obj = ROb
---   CR .Coequalizer.arr = [_]
---   CR .Coequalizer.equality = funExt λ { ((x , y) , x~y) → eq/ x y x~y}
---   CR .Coequalizer.coequalize {H = H} {h = h} e = recQuot (H .snd) h λ x y x~y → cong (_$ ((x , y) , x~y)) e
---   CR .Coequalizer.universal {H = H} {h = h} {eq = e} = refl
---   CR .Coequalizer.unique {H = H} {h = h} {i = i} {eq = e} p = funExt (lemma H h i e p)
+  CR : Coequalizer hSetCategory {X = Src} {Y = X} pr₁ pr₂
+  CR .Coequalizer.obj = ROb
+  CR .Coequalizer.arr = [_]
+  CR .Coequalizer.equality = funExt λ { ((x , y) , x~y) → eq/ x y x~y}
+  CR .Coequalizer.coequalize {H = H} {h = h} e = recQuot (H .snd) h λ x y x~y → cong (_$ ((x , y) , x~y)) e
+  CR .Coequalizer.universal {H = H} {h = h} {eq = e} = refl
+  CR .Coequalizer.unique {H = H} {h = h} {i = i} {eq = e} p = funExt (elimSetQuotientsProp (λ _ → H .snd _ _) λ x j → p (~ j) x)

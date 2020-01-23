@@ -754,7 +754,7 @@ First, the type of objects and arrows:
   &\text{Obj}_\mathit{Set}      &&\coloneqq \Sigma(x : \mathbf{Type}) , \text{isProp}(x) \\
   &\text{Hom}_\mathit{Set}(x , y) &&\coloneqq  \text{fst}(x) \rightarrow \text{fst}(y)
 \end{alignat}
-As is plain in the type of objects, we have already departed slightly from the
+As the type of objects makes clear, we have already departed slightly from the
 simpler \(\text{Obj}_\mathit{Set} \coloneqq \mathbf{Type}\) way of doing things:
 of course we have to, as HoTT allows non-set types.
 Furthermore, after proving the usual associativity and identity laws for
@@ -781,6 +781,17 @@ category, and the following:
 For this proof, we follow again the proof that \(\mathit{Set}\) forms a \(\Pi
 W\)-pretopos from \cite[chapter 10]{hottbook} and
 \cite{rijkeSetsHomotopyType2015}.
+The difference here is that clearly we do not have access to \(W\)-types, as
+they would permit infinitary structures.
+
+We first must show that \(\mathit{Set}\) has an initial object and finite,
+disjoint sums, which are stable under pullback.
+We also must show that \(\mathit{Set}\) is a regular category with effective
+quotients.
+We now have a pretopos: the presence of \(\Pi\) types make it a
+\(\Pi\)-pretopos.
+
+
 \section{Countably Infinite Types}
 In the previous sections we saw different flavours of finiteness which were
 really just different flavours of relations to \(\mathbf{Fin}\).
