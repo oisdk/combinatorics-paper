@@ -791,88 +791,68 @@ quotients.
 We now have a pretopos: the presence of \(\Pi\) types make it a
 \(\Pi\)-pretopos.
 
-
+We have proven the above statements for both \(\mathit{Set}\) and
+\(\mathit{FinSet}\).
+As far as we know, this is the first formalisation of either.
 \section{Countably Infinite Types}
 In the previous sections we saw different flavours of finiteness which were
 really just different flavours of relations to \(\mathbf{Fin}\).
 In this section we will see that we can construct a similar classification of
 relations to \(\mathbb{N}\), in the form of the countably infinite types.
-\subsection{Split Countable Types}
-Our first foray into the world of countable types will be a straightforward
-analogue to the split enumerable types.
-We need change only one element: instead of a support \emph{list}, we instead
-have a support \emph{stream}, which is its infinite.
+\subsection{Two Countable Types}
+The two types for countability we will consider are analogous to split
+enumerability and cardinal finiteness.
+The change will be a simple one: in terms of surjections and bijections, we will
+swap out \(\mathbf{Fin}\) for \(\mathbb{N}\).
+In terms of support lists and cover proofs, we will swap out lists for streams.
+A stream can be defined many ways in type theory: we take rather a low-tech
+approach here, saying that a stream is a function from the natural numbers.
 \begin{romdefinition}[Stream]
   \begin{equation}
-    \mathbf{Stream}(A) = \llbracket \top \triangleright \text{const} (\mathbb{N}) \rrbracket(A) \simeq \mathbb{N} \rightarrow A
+    \mathbf{Stream}(A) \coloneqq \mathbb{N} \rightarrow A
   \end{equation}
+  Streams are also definable as containers:
+  \begin{equation}
+    \mathbf{Stream}(A) \simeq \llbracket \top , \text{const}(\mathbb{N}) \rrbracket
+  \end{equation}
+  However the two definitions are clearly equivalent, and furthermore it is
+  simpler to work with the first.
 \end{romdefinition}
+
+From this, we can define ``split countability''.
 \begin{romdefinition}[Split Countability]
   \begin{equation}
-    \mathcal{E}!(A) = \Sigma {(\mathit{xs} : \mathbf{Stream}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
+    \mathcal{E}!(A) \coloneqq \Sigma {(\mathit{xs} : \mathbf{Stream}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
   \end{equation}
 \end{romdefinition}
 This type is definitionally equal to it surjection equivalent (\(\mathbb{N}
 \twoheadrightarrow ! \; A\)).
-\subsubsection{Closure}
+We construct the unordered, propositional version of the predicate in much the
+same way as we constructed cardinal finiteness.
+\begin{romdefinition}[Countability]
+  \begin{equation}
+    \mathcal{E}(A) \coloneqq \lVert \mathcal{E}!(A) \rVert
+  \end{equation}
+\end{romdefinition}
+
+From both of these types we can derive decidable equality.
+\begin{romlemma}
+  Any countable type has decidable equality.
+\end{romlemma}
+\subsection{Closure}
 We know that countable infinity is not closed under the exponential (function
 arrow), so the only closure we need to prove is \(\Sigma\) to cover all of
 what's left.
-\input{figures/pairing-functions.tex}
 \begin{romtheorem} \label{split-countability-sigma}
   Split countability is closed under \(\Sigma\).
 \end{romtheorem}
-\begin{proof}
-  The main task here is to figure out a pattern which will pair elements of the
-  two support streams without diverging.
-  Figure~\ref{cartesian} illustrates why the pairing function we used for lists
-  won't work: it needs to exhaust one of the input lists before inspecting
-  anything other than the first element of the other.
-  Of course, we can't exhaust a stream, so this diverges.
-
-  Instead, we will use the pattern in figure~\ref{cantor}.
-  We will produce a stream of lists (where each list is a diagonal), which is
-  then concatenated to the final output stream.
-  The intermediate stream is sometimes called the discrete convolution of the
-  two input streams.
-\end{proof}
-\subsubsection{Kleene Star}
-While we lose some closures with the inclusion of infinite types, we gain some
-others.
-In particular, we have the Kleene star.
-This means that we have closure under lists.
 \begin{romtheorem}
   Split countability is closed under Kleene star.
   \begin{equation}
     \mathcal{E}!(A) \rightarrow \mathcal{E}!(\mathbf{List}(A))
   \end{equation}
 \end{romtheorem}
-\begin{proof}
-  As with the proof of closure under \(\Sigma\), our main task here is to figure
-  out a pattern that reaches any given finite list in finite time.
-  Our first step is to split up the problem as we did for \(\Sigma\)-closure: we
-  produce an intermediate stream of lists, which we then concatenate to give the
-  final result.
-  The intermediate stream is constructed like so:
-  \begin{equation}
-    \mathit{xs}^\star_i = \left\{ \text{map}(\mathit{xs} , x) \mid \mathit{x} \in \mathbf{List}(\mathbb{N}) , \text{sum}(\text{map}(1+, x)) \equiv i \right\}
-  \end{equation}
-  In other words, the \(i\)th element is all lists such that the sum of the
-  successor of the indices in the list is equal to \(i\).
-\end{proof}
-\subsection{Other Types of Countability}
-There are of course other forms of countability available to us: manifest
-countability, cardinal, etc.
-We have a similar structure of relationships to the finite types, with the
-exception that we cannot construct an isomorphism with \(\mathbb{N}\) fiven a
-surjection from \(\mathbb{N}\).
-\begin{itemize}
-  \item Definition
-  \item \(\Sigma\)
-  \item Kleene star
-  \item Truncated
-  \item Topos
-\end{itemize}
+\subsection{Categories}
 \section{Search}
 \subsection{Omniscience}
 In this section we are interested in restricted forms of the limited principle
