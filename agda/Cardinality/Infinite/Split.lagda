@@ -152,4 +152,18 @@ x≢¬x true  p = subst (bool ⊥ ⊤) p tt
 
 cantor-diag : ¬ (ℰ! (Stream Bool))
 cantor-diag (sup , cov) = let n , p = cov (λ n → not (sup n n)) in x≢¬x _ (cong (_$ n) p)
+
+ℰ : Type a → Type a
+ℰ A = ∥ ℰ! A ∥
+
+open import Function.Surjective.Properties
+open import Data.Nat.Properties using (discreteℕ)
+open import HITs.PropositionalTruncation
+open import Relation.Nullary.Discrete.Properties
+
+ℰ!⇒Discrete : ℰ! A → Discrete A
+ℰ!⇒Discrete xs = Discrete↠!A⇒Discrete⟨A⟩ xs discreteℕ
+
+ℰ⇒Discrete : ℰ A → Discrete A
+ℰ⇒Discrete = recPropTrunc isPropDiscrete ℰ!⇒Discrete
 \end{code}
