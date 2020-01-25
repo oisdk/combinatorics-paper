@@ -122,11 +122,21 @@ We work in Cubical Type Theory \cite{cohenCubicalTypeTheory2016}.
 For the various type formers we use the following notation:
 \begin{description}
   \item[Type] We use \(\mathbf{Type}\) to denote the universe of (small) types.
-    ``Type families'' are functions into type.
+    ``Type families'' are functions into \(\mathbf{Type}\).
   \item[Universes]
-    Implicitly, types will exist at some point in a universe hierarchy,
-    beginning with \(\mathbf{Type}\) (\(\mathbf{Type} : \mathbf{Type}_1\),
-    \(\mathbf{Type}_1 : \mathbf{Type}_2\), and so on).
+    To avoid Girard's paradox
+    \cite{girardInterpretationFonctionelleElimination1972} we use explicit
+    universe levels.
+    A full explanation is beyond the scope of this work, but it means that there
+    is a hierarchy of types starting with \(\mathbf{Type}\).
+    \begin{equation}
+      \begin{alignat}{3}
+        & 2               &&: \mathbb{N} \\
+        & \mathbb{N}      &&: \mathbf{Type} \\
+        & \mathbf{Type}   &&: \mathbf{Type}_1 \\
+        & \mathbf{Type}_1 &&: \mathbf{Type}_2
+      \end{alignat}
+    \end{equation}
     In our formalisation, every proof is done in the most universe polymorphic
     way possible: the proof that the cardinally finite sets form a
     \(\Pi\)-pretopos, for instance, is defined over any universe level.
@@ -134,6 +144,8 @@ For the various type formers we use the following notation:
     \(\mathbf{2}\) types \(\bot\), \(\top\), and \(\mathbf{Bool}\) respectively.
     The single inhabitant of \(\top\) is tt, and the two inhabitants of
     \(\mathbf{Bool}\) are false and true.
+    The ``negation'' of a type, written \(\neg A\), means \(A \rightarrow
+    \bot\).
   \item[Dependent Sum and Product] We use \(\Sigma\) and \(\Pi\) for the
     dependent sum and product, respectively.
     The two projections from \(\Sigma\) are called fst and snd.
@@ -156,7 +168,9 @@ For the various type formers we use the following notation:
     for definitions.
     \(\simeq\) will be used for equivalences, and \(\equiv\) for equalities.
     Of course, we know that \((A \simeq B) \simeq (A \equiv B)\) by univalence,
-    so the distinction isn't terribly important in usage.
+    so the distinction isn't terribly important in usage: we will only use one
+    or the other as a suggestion of how we constructed it or how it is to be
+    used.
 \end{description}
 \subsubsection{Cubical Type Theory}
 Cubical Type Theory \cite{cohenCubicalTypeTheory2016} is a constructive type
@@ -196,9 +210,12 @@ from HoTT.
     &\text{isOfHLevel}(0 , A)   &&\coloneqq \text{isContr}(A) \\
     &\text{isOfHLevel}(n+1 , A) &&\coloneqq \Pi(x , y : A) , \text{isOfHLevel}(n , x \equiv y)
   \end{alignat}
+  This type is defined similarly in \cite[definition 7.1.1]{hottbook}, although
+  there the numbering starts at \(-2\).
 \end{romdefinition}
-\begin{romdefinition}[Fibers] \label{fibres}
-  A fibre is defined over some function \(f : A \rightarrow B\).
+\begin{romdefinition}[Fibres] \label{fibres}
+  A fibre \cite[definition 4.2.4]{hottbook} is defined over some function \(f :
+  A \rightarrow B\).
   \begin{equation}
     \text{fib}_f(y) = \Sigma(x : A) , (f x \equiv y)
   \end{equation}
@@ -216,63 +233,26 @@ from HoTT.
   \begin{equation}
     (A \simeq B) \simeq (A \equiv B)
   \end{equation}
+  This is the so-called univalence ``axiom'', which is a theorem in CuTT.
 \end{romlemma}
-\begin{romdefinition}[Isomorphism] \label{isomorphism}
-  We say two types \(A\) and \(B\) are isomorphic, denoted with \(A \iff B\), if
-  there is a pair of functions \(f : A \rightarrow B\), \(g : B \rightarrow A\)
-  such that
+\begin{romdefinition}[Decision]
   \begin{equation}
-    \begin{aligned}
-      \Pi(x : A) , (g(f(x)) \equiv x) \\
-      \Pi(x : B) , (f(g(x)) \equiv x)
-    \end{aligned}
+    \mathbf{Dec}(A) \coloneqq A \uplus \neg A
   \end{equation}
-  While we can derive an equivalence from an isomorphism:
+\end{romdefinition}
+\begin{romdefinition}[Discrete]
+  A discrete type is one with decidable equality.
   \begin{equation}
-    \text{isoToEquiv} : (A \iff B) \rightarrow (A \simeq B)
+    \text{Discrete}(A) \coloneqq \Pi(x, y : A) , \mathbf{Dec}(x \equiv y)
   \end{equation}
-  It is not the case that an isomorphism is the \emph{same} as an equivalence in
-  all cases.
-  In other words, we do not have:
-  \begin{equation}
-    (A \iff B) \simeq (A \simeq B)
-  \end{equation}
-  However, if one of \(A\) or \(B\) is a set, then the above holds.
+  By Hedberg's theorem \cite{hedbergCoherenceTheoremMartinLof1998} any discrete
+  type is a set.
 \end{romdefinition}
 \begin{romdefinition}[Higher Inductive Types] \label{HITs}
-  \todo[inline]{define}
-\end{romdefinition}
-\begin{romdefinition}[Surjections] \label{surjections}
-  \begin{alignat}{3}
-    &\text{surj}(f)             &&\coloneqq \Pi(y : B) , \lVert \text{fib}_f(y) \rVert \\
-    &A \twoheadrightarrow B     &&\coloneqq \Sigma (f : A \rightarrow B) , \text{surj}(f) \label{surj-arrow-eqn} \\
-    &\text{sp-surj}(f)          &&\coloneqq \Pi(y : B) , \text{fib}_f(y) \label{sp-surj-eqn} \\
-    &A \twoheadrightarrow! \; B &&\coloneqq \Sigma (f : A \rightarrow B) , \text{sp-surj}(f) \label{sp-surj-arrow-eqn}
-  \end{alignat}
-\end{romdefinition}
-\begin{romdefinition}[Containers] \label{container-def}
-  A container \cite{abbottContainersConstructingStrictly2005} is a pair
-  \(S , P\) where \(S\) is a type, the elements of which are called
-  the \emph{shapes} of the container, and \(P\) is a type family on \(S\), where
-  the elements of \(P(s)\) are called the \emph{positions} of a container.
-  We ``interpret'' a container into a functor defined like so:
-  \begin{equation} \label{container-interp}
-    \llbracket S , P \rrbracket(A) \coloneqq \Sigma {(s : S)} , \left( P(s) \rightarrow A \right)
-  \end{equation}
-  Membership of a container can be defined like so:
-  \begin{equation} \label{container-membership}
-    x \in \mathit{xs} \coloneqq \text{fib}_{\text{snd}(\mathit{xs})}(x)
-  \end{equation}
-\end{romdefinition}
-\begin{romdefinition}[\(\mathbf{List}\)] \label{List}
-  \begin{equation}
-    \mathbf{List} \coloneqq \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket
-  \end{equation}
-\end{romdefinition}
-\begin{romdefinition}[\(\mathbf{Fin}\)] \label{Fin}
-  \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\). We
-  define it the standard way, where \(\mathbf{Fin}(0) \coloneqq \bot\) and
-  \(\mathbf{Fin}(n + 1) &\coloneqq \top \uplus \mathbf{Fin}(n)\).
+  Normal inductive types have \emph{point} constructors: constructors which
+  construct values of the type.
+  Higher Inductive Types (HITs) also have \emph{path} constructors: ways to
+  construct paths in the type.
 \end{romdefinition}
 \begin{romdefinition}[Propositional Truncation] \label{prop-trunc}
   The type \(\lVert A \rVert\) on some type \(A\) is a propositionally truncated
@@ -302,18 +282,6 @@ from HoTT.
       \(n\)-type for some finite \(n\).
   \end{enumerate}
 \end{romdefinition}
-\begin{romdefinition}[\(S^1\)] \label{circle-def}
-  The circle, \(S^1\), can be represented in HoTT as a higher inductive type.
-  \begin{equation}
-    \begin{alignat}{5}
-      S^1 \coloneqq & \; \text{base} &&: S^1 ; \\
-                  | & \; \text{loop} &&: \text{base} \equiv \text{base} ; 
-    \end{alignat}
-  \end{equation}
-  We will use it here as an example of a non-set type, i.e. a type for which not
-  all paths are equal.
-  This also means that it does not have decidable equality.
-\end{romdefinition}
 \section{Finiteness Predicates} \label{finiteness-predicates}
 In this section, we will define and briefly describe each of the five predicates
 in Figure~\ref{finite-classification}.
@@ -333,11 +301,47 @@ transfer those proofs onto Kuratowski finiteness.
   \cite{firsovDependentlyTypedProgramming2015}.
 \end{romdefinition}
 
+We used some extra types in the above definition, which we will define here:
+\begin{romdefinition}[Containers] \label{container-def}
+  A container \cite{abbottContainersConstructingStrictly2005} is a pair
+  \(S , P\) where \(S\) is a type, the elements of which are called
+  the \emph{shapes} of the container, and \(P\) is a type family on \(S\), where
+  the elements of \(P(s)\) are called the \emph{positions} of a container.
+  We ``interpret'' a container into a functor defined like so:
+  \begin{equation} \label{container-interp}
+    \llbracket S , P \rrbracket(A) \coloneqq \Sigma {(s : S)} , \left( P(s) \rightarrow A \right)
+  \end{equation}
+  Membership of a container can be defined like so:
+  \begin{equation} \label{container-membership}
+    x \in \mathit{xs} \coloneqq \text{fib}_{\text{snd}(\mathit{xs})}(x)
+  \end{equation}
+\end{romdefinition}
+\begin{romdefinition}[\(\mathbf{List}\)] \label{List}
+  \begin{equation}
+    \mathbf{List} \coloneqq \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket
+  \end{equation}
+\end{romdefinition}
+\begin{romdefinition}[\(\mathbf{Fin}\)] \label{Fin}
+  \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\). We
+  define it the standard way, where \(\mathbf{Fin}(0) \coloneqq \bot\) and
+  \(\mathbf{Fin}(n + 1) &\coloneqq \top \uplus \mathbf{Fin}(n)\).
+\end{romdefinition}
+
 We tend to prefer list-based definitions of finiteness, rather than ones based
 on bijections or surjections.
 This is purely a matter of perspective, however: the definition above is
 precisely equivalent to a split surjection from a finite prefix of the natural
 numbers.
+\begin{romdefinition}[Surjections] \label{surjections}
+  We define both surjections and \emph{split} surjections here \cite[definition
+  4.6.1]{hottbook}.
+  \begin{alignat}{3}
+    &\text{surj}(f)             &&\coloneqq \Pi(y : B) , \lVert \text{fib}_f(y) \rVert \\
+    &A \twoheadrightarrow B     &&\coloneqq \Sigma (f : A \rightarrow B) , \text{surj}(f) \label{surj-arrow-eqn} \\
+    &\text{sp-surj}(f)          &&\coloneqq \Pi(y : B) , \text{fib}_f(y) \label{sp-surj-eqn} \\
+    &A \twoheadrightarrow! \; B &&\coloneqq \Sigma (f : A \rightarrow B) , \text{sp-surj}(f) \label{sp-surj-arrow-eqn}
+  \end{alignat}
+\end{romdefinition}
 \begin{romlemma} \label{split-enum-is-split-surj}
   \begin{equation}
     \mathcal{E}!(A) \simeq \Sigma (n : \mathbb{N}) , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
@@ -400,7 +404,6 @@ formalisation:
   \qed
 \end{proof}
 \subsection{Manifest Bishop Finiteness}
-\todo[noline]{Add explanation for word ``manifest''}
 \begin{romdefinition}[Manifest Bishop Finiteness]
   \begin{equation} \label{bish-def}
     \mathcal{B}(A) \coloneqq \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \inunique xs
@@ -414,6 +417,12 @@ rather than simple membership (\(\in\)).
     x \inunique \mathit{xs} \coloneqq \text{isContr}(x \in \mathit{xs})
   \end{equation}
 \end{romdefinition}
+
+We use the word ``manifest'' here to distinguish from another common
+interpretation of Bishop finiteness, which we have called Cardinal finiteness in
+this paper.
+The ``manifest'' refers to the fact that we have a concrete, non-truncated list
+of the elements in the proof.
 
 Where split enumerability was the enumeration form of a split surjection from
 \(\mathbf{Fin}\), manifest Bishop finiteness is the enumeration form of an
@@ -449,7 +458,7 @@ Where split enumerability was the enumeration form of a split surjection from
   \end{align*}
   \qed
 \end{proof}
-\subsection{Cardinal}
+\subsection{Cardinal Finiteness}
 Each finiteness predicate so far has contained an \emph{ordering} of the
 underlying type.
 For our purposes, this is too much information: it means that when constructing
@@ -504,7 +513,19 @@ split surjection) from \(\mathbf{Fin}\).
 
 Secondly, it means the predicate does not imply decidable equality.
 More significantly, it allows the predicate to be defined over non-set types,
-like the circle (def.~\ref{circle-def}).
+like the circle.
+\begin{romdefinition}[\(S^1\)] \label{circle-def}
+  The circle, \(S^1\), can be represented in HoTT as a higher inductive type.
+  \begin{equation}
+    \begin{alignat}{5}
+      S^1 \coloneqq & \; \text{base} &&: S^1 ; \\
+      | & \; \text{loop} &&: \text{base} \equiv \text{base} ; 
+    \end{alignat}
+  \end{equation}
+  We will use it here as an example of a non-set type, i.e. a type for which not
+  all paths are equal.
+  This also means that it does not have decidable equality.
+\end{romdefinition}
 \begin{romlemma}
   The circle \(S^1\) is manifestly enumerable.
 \end{romlemma}
