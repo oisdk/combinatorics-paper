@@ -74,39 +74,37 @@ proof search based on the finiteness predicates.
 \input{figures/finite-classification}
 
 The finiteness predicates we are interested in are organised in
-Figure~\ref{finite-classification}.
+figure~\ref{finite-classification}, and defined in
+section~\ref{finiteness-predicates}.
 We will explore two aspects of each predicate: its relation to the other
 predicates, and its topos-theoretic classification.
 
 When we say ``relation'' we are referring to the arrows in
-Figure~\ref{finite-classification}.
-The proofs, then, amount to a function which inhabits each arrow.
+figure~\ref{finite-classification}.
+In section~\ref{relations} we will provide a function which inhabits each arrow.
 Each unlabelled arrow is a weakening: i.e., every manifest Bishop finite set
-is manifest enumerable.
+is manifest enumerable (lemma~\ref{manifest-bishop-to-manifest-enum}).
 The labelled arrows are strengthening proofs: i.e., every manifest enumerable set
-\emph{with decidable equality} is manifest Bishop finite.
+\emph{with decidable equality} is manifest Bishop finite
+(lemma~\ref{manifest-enum-to-manifest-bishop}).
 Our most significant result here is the proof that a cardinal finite set with a
 decidable total order is manifestly Bishop finite.
 
-We will then characterise each predicate as some form of topos.
+We will then examine the closure properties of each predicate in
+section~\ref{topos}, culminating in a proof that decidable Kuratowski finite
+sets form a \(\Pi\)-pretopos (theorem~\ref{finite-topos}).
 Our proofs follow the structure of \cite[Chapters 9, 10]{hottbook} and
 \cite{rijkeSetsHomotopyType2015}.
-This means we will define first the precategory of sets, and then the category
-of sets, and prove the required closures and limits to get us to a topos.
-We say ``some form of'' topos here because of course the category of sets in
-HoTT do \emph{not}, in fact, form a topos, rather a \(\Pi W\)-pretopos.
-Our main result here is that the category of decidable Kuratowski finite sets
-forms a \(\Pi\)-pretopos.
 
 After the finite predicates, we will briefly look at the infinite countable
-types, and classify them in a parallel way to the finite predicates.
-We here show that countably finite sets form a \(W\)-pretopos.
+types, and classify them in a parallel way to the finite predicates
+(section~\ref{infinite}).
 
 All of our work is formalised in Cubical Agda
 \cite{vezzosiCubicalAgdaDependently2019}.
 We will make mention of the few occasions where the formalisation of some proof
-is of interest, but the main place where we will discuss the code is in the
-final section, where we implement a library for proof search, based on
+is of interest, but the main place where we will discuss the code is in
+section~\ref{search}, where we implement a library for proof search, based on
 omniscience and exhaustibility.
 While proof search based on finiteness is not new, implementing it here does
 give us an opportunity to demonstrate some actual \emph{computation} in a
@@ -115,9 +113,9 @@ Many of the finiteness predicates are built using univalence, so for the proof
 search functionality to work at all we require computational content in the
 univalence axiom.
 Furthermore, the extensionality afforded to us by HoTT means that we can have
-\(\Pi\) types in the domain of the search, meaning we can synthesise full
-functions from specifications alone.
-\subsection{Related Work}
+\(\Pi\) types in the domain of the search, making our library more powerful than
+comparable libraries.
+We will demonstrate some interesting uses for this feature in particular.
 \subsection{Notation and Background}
 \subsubsection{Notation}
 We work in Cubical Type Theory \cite{cohenCubicalTypeTheory2016}.
@@ -316,7 +314,7 @@ from HoTT.
   all paths are equal.
   This also means that it does not have decidable equality.
 \end{romdefinition}
-\section{Finiteness Predicates}
+\section{Finiteness Predicates} \label{finiteness-predicates}
 In this section, we will define and briefly describe each of the five predicates
 in Figure~\ref{finite-classification}.
 The reason we explore predicates other than our focus (cardinal finiteness) is
@@ -590,29 +588,16 @@ We also have the following two lemmas, proven in both
 The second of these in particular tells us that the ``Kuratowski-finite types''
 are not necessarily sets; it also tells us that we cannot derive decidable
 equality from a proof of Kuratowski finiteness.
-\section{Relations Between Each Finiteness Definition}
+\section{Relations Between Each Finiteness Definition} \label{relations}
 We now look at under what conditions a given finiteness predicate satisfies
 another.
 \subsection{Split Enumerability and Manifest Bishop Finiteness}
 While manifest Bishop finiteness might seem stronger than split enumerability,
 it turns out this is not the case.
 Both types imply the other.
-\begin{romlemma}
+\begin{romlemma} \label{manifest-bishop-to-split-enum}
   Any manifest Bishop finite type is split enumerable.
 \end{romlemma}
-\begin{proof}
-  The only difference between \(\mathcal{B}\) and \(\mathcal{E}!\) is the
-  membership term.
-  To derive \(\mathcal{E}!\) from \(\mathcal{B}\), then, we need to derive
-  \(\in\) from \(\inunique\).
-  We can do this with fst.
-  \begin{alignat*}{4}
-    &\text{fst} : && \; \Sigma(x : A) , U(x) \rightarrow A \\
-    && \simeq      & \; \text{isContr}(A) \rightarrow A \\
-    && \simeq      & \; (x \in \mathit{xs}) \rightarrow (x \inunique \mathit{xs})
-  \end{alignat*}
-  \qed
-\end{proof}
 
 To derive \(\mathcal{B}\) from \(\mathcal{E}!\) takes significantly more work.
 The ``unique membership'' condition in \(\mathcal{B}\) means that we are not
@@ -626,21 +611,27 @@ appropriately.
   Any split enumerable set is manifest Bishop finite.
 \end{romlemma}
 \subsection{Manifest Bishop Finiteness and Manifest Enumerability}
-\begin{romlemma}
+\begin{romlemma} \label{manifest-bishop-to-manifest-enum}
   Any manifestly Bishop finite type is manifestly enumerable.
 \end{romlemma}
-\begin{romlemma}
+\begin{romlemma} \label{manifest-enum-to-manifest-bishop}
   A manifestly enumerable type with decidable equality is manifest Bishop
   finite.
 \end{romlemma}
 \subsection{Manifest Bishop Finiteness and Cardinal Finiteness}
-\begin{romlemma}
+\begin{romlemma} \label{manifest-bishop-to-cardinal}
   Any manifest Bishop finite type is cardinal finite.
 \end{romlemma}
-\begin{romtheorem}
+\begin{romtheorem} \label{cardinal-to-manifest-bishop}
   Any cardinal finite type with a total order is Bishop finite.
 \end{romtheorem}
-\section{Topos}
+\subsection{Cardinal Finiteness and Kuratowski Finiteness}
+\begin{romlemma} \label{cardinal-kuratowski}
+  \begin{equation}
+    \mathcal{C}(A) \simeq \mathcal{K}(A) \times \text{Discrete}(A)
+  \end{equation}
+\end{romlemma}
+\section{Topos} \label{topos}
 Our main result in this section is the formal proof that decidable Kuratowski
 finite types form a \(Pi\)-pretopos.
 As we saw in theorem~\ref{kuratowski-cardinal}, decidable Kuratowski finite
@@ -792,7 +783,10 @@ We now have a pretopos: the presence of \(\Pi\) types make it a
 We have proven the above statements for both \(\mathit{Set}\) and
 \(\mathit{FinSet}\).
 As far as we know, this is the first formalisation of either.
-\section{Countably Infinite Types}
+\begin{romtheorem} \label{finite-topos}
+  The category of finite sets, \(\mathit{FinSet}\), forms a \(\Pi\)-topos.
+\end{romtheorem}
+\section{Countably Infinite Types} \label{infinite}
 In the previous sections we saw different flavours of finiteness which were
 really just different flavours of relations to \(\mathbf{Fin}\).
 In this section we will see that we can construct a similar classification of
@@ -851,7 +845,7 @@ what's left.
   \end{equation}
 \end{romtheorem}
 \subsection{Categories}
-\section{Search}
+\section{Search} \label{search}
 \subsection{Omniscience}
 In this section we are interested in restricted forms of the limited principle
 of omniscience \cite{myhillErrettBishopFoundations1972}.
