@@ -31,16 +31,15 @@
   \keywords{Agda \and Homotopy Type Theory \and Cubical Type Theory \and
     Dependent Types \and Finiteness \and Topos \and Kuratowski finite}
 \end{abstract}
-
 \section{Introduction}
 \subsection{Foreword}
 In constructive mathematics we are often preoccupied with \emph{why} something
 is true.
 Take finiteness, for example.
 There are a handful of ways to demonstrate some type is finite: we could provide
-a surjection from another finite type; we could show that any collection of its
-elements larger than some bound contains duplicates; or that any stream of its
-elements contain duplicates.
+a surjection to it from another finite type; we could show that any collection
+of its elements larger than some bound contains duplicates; or we could show
+that any stream of its elements contain duplicates.
 
 Classically, all of these proofs end up proving the same thing: that our type is
 finite.
@@ -58,14 +57,14 @@ Secondly, HoTT gives us a principled and powerful way to construct quotients,
 allowing us to regain some of the flexibility of classical definitions by
 ``forgetting'' the parts of a proof we would be forced to remember in MLTT.
 
-Finally, the other important property of constructive mathematics is that we can
-actually \emph{compute} with proofs.
+Finally, for a computer scientist constructive mathematics has one invaluable
+feature missing from classical mathematics: computation.
 Cubical Type Theory \cite{cohenCubicalTypeTheory2016}, and its implementation in
 Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}, realise this property
 even in the presence of univalence, giving computational content to programs
 written in HoTT.
 \subsection{Contributions}
-In this work we will examine five notions of finiteness in Homotopy Type Theory,
+In this work we will examine five notions of finiteness in Cubical Type Theory,
 the relationships between them, and their topos-theoretic characterisation.
 We also briefly examine a predicate for countable sets, comparing it to the
 finiteness predicates.
