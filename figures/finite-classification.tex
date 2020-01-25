@@ -15,20 +15,20 @@
     \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     &
     &
-    \text{Split Enumerable}
+    \text{Manifest Bishop}
       \ar[d, xshift=-1ex, bend right=30]
+      \ar[rrd, end anchor=north west, start anchor=east, bend left=10, crossing over]
       &
     &
     \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \text{Discrete} &
     &
-    \text{Manifest Bishop}
+    \text{Split Enumerable}
       \ar[u, xshift=1ex, bend right=30]
-      \ar[rr, end anchor=south west, start anchor=south east, bend right=10, crossing over]
       &
     &
     \text{Cardinal}
-      \ar[ll, start anchor=north west, end anchor=north east, bend right=10, "\text{linOrd}" description]
+      \ar[ll, start anchor=west, end anchor=east, "\text{Ord}" description]
     \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \ar[rrrr, dash, dashed, start anchor={[xshift=-6ex]}, end anchor={[xshift=10ex]}] &
     &
@@ -41,7 +41,7 @@
     \text{Manifest Enumerable}
       \ar[from=uu, xshift=-1ex, bend right=30, crossing over]
       \ar[uu, bend right=30,  "\text{Discrete}" description]
-      \ar[rr, start anchor=south east, end anchor=south west, bend right=10, crossing over]
+      \ar[rr, start anchor=east, end anchor=west, crossing over]
       &
     {}
     &
@@ -50,6 +50,6 @@
       \ar[from=uu, xshift=-1ex, bend right=30, crossing over]
   \end{tikzcd}
   \caption{Classification of finiteness predicates according to whether they are
-    discrete (imply decidable equality) and whether they induce a linear order.}
+    discrete (imply decidable equality) and whether they imply a total order.}
   \label{finite-classification}
 \end{figure}%
