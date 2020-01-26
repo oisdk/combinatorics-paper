@@ -1059,6 +1059,32 @@ Here, for instance, is a automated procedure which finds the
 \(\AgdaFunction{not}\) function on \(\mathbf{Bool}\), given a specification.
 \ExecuteMetaData[agda/Data/Pauli.tex]{not-spec}
 \section{Related Work}
+The univalent foundations program is the main basis for this work
+\cite{hottbook}.
+In particular, our formalisation in section~\ref{topos} relied heavily on
+\cite[chapter 10]{hottbook}, and \cite{rijkeSetsHomotopyType2015}, a paper which
+contains much of the same material.
+
+In \cite{fruminFiniteSetsHomotopy2018} the topic of Kuratowski finite sets in
+HoTT is studied extensively: we have focused more on the non-truncated versions
+of finiteness (the ``manifest'' predicates), and we have provided the missing
+\(\Pi\)-pretopos proof of decidable Kuratowski finite sets.
+
+\cite{iversenUnivalentCategoriesFormalization2018} provided a starting point for
+our categorical formalisation: it contains a proof, for instance, that homotopy
+sets form a category.
+
+Finite sets in a constructive setting has been studied extensively before:
+In \cite{coquandConstructivelyFinite2010} four separate predicates for
+finiteness were considered (split-enumerable being the only one explored in this
+work), and \cite{firsovVariationsNoetherianness2016} explores Noetherianness.
+\cite{firsovDependentlyTypedProgramming2015} explored what we have called split
+enumerability and manifest Bishop finiteness (although they are stated slightly
+differently), and they use these to build a library for proof search.
+
+Our formalisation is made possible by Cubical Type Theory
+\cite{cohenCubicalTypeTheory2016} and Cubical Agda
+\cite{vezzosiCubicalAgdaDependently2019}.
 \section*{Acknowledgement}
 This work has been supported by the Science Foundation Ireland under the
 following grant: 13/RC/2D94 to Irish Software Research Centre.
