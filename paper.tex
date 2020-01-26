@@ -762,59 +762,81 @@ from now on.
 Our first task is to show that cardinal finite types are closed under several
 operations.
 \subsection{Closure}
-For the first two closure proofs, we only consider manifest Bishop finiteness:
+For the first three closure proofs, we only consider split enumerability:
 as it is the strongest of the finiteness predicates, we can derive the other
 closure proofs from it.
-\begin{romlemma}
-  \(\bot\), \(\top\), and \(\mathbf{Bool}\) are manifest Bishop finite.
-\end{romlemma}
-\begin{romlemma}
-  Split enumerability is closed under \(\Sigma\)
-\end{romlemma}
-To show closure under \(\Sigma\), we take the Cartesian product of the support
-lists.
 
 \begin{romlemma}
-  Manifest bishop finiteness is closed over dependent functions
-  (\(\prod\)-types).
+  \(\bot\), \(\top\), and \(\mathbf{Bool}\) are split enumerable.
+\end{romlemma}
+\begin{romlemma} \label{split-enum-sigma}
+  Split enumerability is closed under \(\Sigma\).
   \begin{equation}
     \frac{
-      \mathcal{B}(A) \; \; \; \Pi {(x : A)} , \mathcal{B}\left( U(x) \right)
+      \mathcal{E}!(A) \; \; \; \Pi(x : A) , \mathcal{E}!(U(x))
     }{
-      \mathcal{B}\left(\Pi {(x : A)} , U(x)\right)
+      \mathcal{E}!(\Sigma(x : A) , U(x))
+    }
+  \end{equation}
+\end{romlemma}
+From this we can derive split enumerability of non-dependent sums and products,
+as both are definable in terms of \(\Sigma\).
+
+\begin{romlemma}
+  Split enumerability is closed under dependent functions.
+  (\(\Pi\)-types).
+  \begin{equation}
+    \frac{
+      \mathcal{E}!(A) \; \; \; \Pi {(x : A)} , \mathcal{E}!\left( U(x) \right)
+    }{
+      \mathcal{E}!\left(\Pi {(x : A)} , U(x)\right)
     }
   \end{equation}
 \end{romlemma}
 \begin{proof}
-  Firstly, we will simplify things slightly by working only with split
-  enumerability.
-  As this is equal in strength to manifest Bishop finiteness, any closure proofs
-  carry over.
-  Secondly, we will replace \(A\) in all places with \(\mathbf{Fin}(n)\), using
-  the equivalence provided by lemma~\ref{bishop-equiv}.
+  Let \(A\) be a split enumerable type, and \(U\) be a type family from \(A\),
+  which is split enumerable over all points of \(A\).
 
-  The remainder of the proof now is concerned with proving the following:
-  \begin{equation} \label{given-transp-sublemma}
-    \left( \Pi {(x : \mathbf{Fin}(n))} , \mathcal{E}!(U(x)) \right) \rightarrow \mathcal{E}!\left( \Pi {(x : \mathbf{Fin}(n))} , U(x) \right)
+  As \(A\) is split enumerable, we know that it is also manifestly Bishop finite
+  (lemma~\ref{split-enum-to-manifest-bishop}), and consequently we know \(A
+  \simeq \mathbf{Fin}(n)\), for some \(n\) (lemma~\ref{bishop-equiv}).
+  We can therefore replace all occurrences of \(A\) with \(\mathbf{Fin}(n)\),
+  changing our goal to:
+  \begin{equation}
+    \frac{
+      \mathcal{E}!(\mathbf{Fin}(n)) \; \; \; \Pi (x : \mathbf{Fin}(n)) , \mathcal{E}!\left( U(x) \right)
+    }{
+      \mathcal{E}!\left(\Pi (x : \mathbf{Fin}(n)) , U(x)\right)
+    }
   \end{equation}
-
-  To prove this goal, consider the following type of \(n\)-tuples.
+  
+  We then define the type of \(n\)-tuples over some type family \(T :
+  \mathbf{Fin}(n) \rightarrow \mathbf{Type}\).
   \begin{equation}
     \begin{alignat}{3}
-      & \mathbf{Tuple}(T, 0)   &&\coloneqq \top \\
-      & \mathbf{Tuple}(T, n+1) &&\coloneqq T(0) \times \mathbf{Tuple}(T \circ \text{suc}, n)
+      & \mathbf{Tuple}(0, T)   &&\coloneqq \top \\
+      & \mathbf{Tuple}(n+1, T) &&\coloneqq T(0) \times \mathbf{Tuple}(n, T \circ \text{suc})
     \end{alignat}
   \end{equation}
-  We have the following equivalence, proven in our formalisation.
-  \begin{equation} \label{fin-equiv-sublemma}
-    \mathbf{Tuple}(T, n) \simeq \Pi {(x : \mathbf{Fin}(n))} , T(x)
+  We can show that this type is equivalent to functions (proven in our formalisation):
+  \begin{equation}
+    \Pi(x : \mathbf{Fin}(n)) , U(x) \simeq \mathbf{Tuple}(n, U)
   \end{equation}
-
-  By the given proof of finiteness in equation~\ref{given-transp-sublemma}, we
-  know that \(\mathbf{Tuple}(T , n)\) is split enumerable, since it is made of
-  products of the points of \(U\).
-  We can then transport along the equivalence in
-  equation~\ref{fin-equiv-sublemma}, proving our goal.
+  And therefore we can simplify again our goal to the following:
+  \begin{equation}
+    \frac{
+      \mathcal{E}!(\mathbf{Fin}(n)) \; \; \; \Pi (x : \mathbf{Fin}(n)) , \mathcal{E}!\left( U(x) \right)
+    }{
+      \mathcal{E}!\left(\mathbf{Tuple}(n, U)\right)
+    }
+  \end{equation}
+  
+  We can prove this goal by showing that \(\mathbf{Tuple}(n, U)\) is split
+  enumerable: it is made up of finitely many products of points of \(U\), which
+  are themselves split enumerable, and \(\top\), which is also split enumerable.
+  Lemma~\ref{split-enum-sigma} shows us that the product of finitely many split
+  enumerable types is itself split enumerable, proving our goal.
+  \qed
 \end{proof}
 
 The dependent cases of each of these proofs do not transfer simply to proofs on
