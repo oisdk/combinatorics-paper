@@ -938,13 +938,37 @@ what's left.
 \begin{romtheorem} \label{split-countability-sigma}
   Split countability is closed under \(\Sigma\).
 \end{romtheorem}
+This proof does not mirror the proof of \(\Sigma\) closure on finite types,
+surprisingly.
+A different pattern is needed to pair up the members of each support stream: a
+\emph{Cantor} pairing pattern.
+Using the simple finite pairing function would diverge, not properly exploring
+one of the two lists.
+Instead, our function works in two stages.
+First, it builds a stream of non-empty lists.
+From two support streams \(\mathit{xs}\) and \(\mathit{ys}\), this intermediate
+stream \(\mathcal{CV}\) is defined like so:
+\begin{equation}
+  \mathcal{CV}_i \coloneqq \left[ (\mathit{xs}_j , \mathit{ys}_k) \mid j, k \in \mathbb{N}; j + k = i \right]
+\end{equation}
+This is then concatenated to give our result.
+
+Finally, while we have lost certain closure proofs by allowing for infinite
+types, we also \emph{gain} some: in particular the Kleene star.
 \begin{romtheorem}
   Split countability is closed under Kleene star.
   \begin{equation}
     \mathcal{E}!(A) \rightarrow \mathcal{E}!(\mathbf{List}(A))
   \end{equation}
 \end{romtheorem}
-\subsection{Categories}
+Again, this proof requires a particular pattern to ensure non divergence.
+The pattern here is slightly more complicated, but works on the same basic idea,
+building an intermediate stream \(\mathcal{KV}\) of non-empty lists from the
+input support stream \(\mathit{xs}\).
+\begin{equation}
+  \mathcal{KV}_i \coloneqq \left[ \left[ \mathit{xs}_{j - 1} \mid j \in \mathit{js} \right] \mid \mathit{js} \in \mathbf{List}(\mathbb{N}) ; \text{sum}(\mathit{js}) = i ; 0 \notin \mathit{js}  \right]
+\end{equation}
+Again, this is subsequently flattened.
 \section{Search} \label{search}
 \subsection{Omniscience}
 In this section we are interested in restricted forms of the limited principle
@@ -976,36 +1000,13 @@ We will only prove it once, then, for the weakest:
 \begin{romtheorem}
   Kuratowski-finite types are exhaustible.
 \end{romtheorem}
-
 Omniscience is stronger than exhaustibility, as we can derive the latter from
 the former:
 \begin{romlemma} \label{omniscient-is-exhaustible}
   Any omniscient type is exhaustible.
 \end{romlemma}
-\begin{proof}
-  For decidable propositions, we know the following:
-  \begin{equation} \label{lem-conversion}
-    \Pi (x : A) , P(x) \leftrightarrow \neg \Sigma (x : A) , \neg P(x) 
-  \end{equation}
-  To derive exhaustibility from omniscience, then, we run the predicate in its
-  negated form, and then subsequently negate the result.
-  The resulting decision over \(\neg \Sigma(x : A) , \neg P(x)\) can be
-  converted into \(\Pi (x : A) , P(x)\).
-\end{proof}
-We cannot derive, however, that any exhaustible type is omniscient, as we do not
-have the inverse of equation~\ref{lem-conversion}:
-\begin{equation} \label{choice-conversion}
-  \Sigma (x : A) , P(x) \leftrightarrow \neg \Pi (x : A) , \neg P(x)
-\end{equation}
-Such an equation would allow us to pick a representative element from any type,
-which is therefore non-constructive.
-In a sense, equation~\ref{lem-conversion} requires a form of LEM on the
-proposition (i.e. requires it to be decidable), whereas
-equation~\ref{choice-conversion} requires a form of choice.
-Those finiteness predicates which are ordered do in fact give us this form of
-choice, so the conversion is valid.
-As such, all of the ordered finiteness predicates imply omniscience.
-Again, we will prove it only for the weakest.
+All of the ordered finiteness predicates imply omniscience.
+We will again only prove it for the weakest.
 \begin{romtheorem}
   Manifest enumerable types are omniscient.
 \end{romtheorem}
@@ -1023,9 +1024,7 @@ As \(\AgdaDatatype{Pauli}\) has 4 constructors, \(n\)-ary functions on
 \(\AgdaDatatype{Pauli}\) may require up to \(4^n\) cases, making even simple
 proofs prohibitively verbose.
 
-The alternative is to derive the things we need from \(\mathcal{E}!\) somehow.
-As \(\AgdaDatatype{Pauli}\) is a simple finite type, the instance can be defined
-in a similar way to those in lemma~\ref{split-enum-bool-top-bot}.
+The alternative is to derive the things we need from \(\mathcal{E}!\).
 From here we can already derive decidable equality, a function which requires 16
 cases if implemented manually.
 
@@ -1059,13 +1058,10 @@ We can also use functions in our proof search.
 Here, for instance, is a automated procedure which finds the
 \(\AgdaFunction{not}\) function on \(\mathbf{Bool}\), given a specification.
 \ExecuteMetaData[agda/Data/Pauli.tex]{not-spec}
-
-
-\todo[inline]{Add funding ack:
-
-  This work has been supported by the Science Foundation Ireland under the
-  following grant: 13/RC/2D94 to Irish Software Research Centre.
-}
+\section{Related Work}
+\section*{Acknowledgement}
+This work has been supported by the Science Foundation Ireland under the
+following grant: 13/RC/2D94 to Irish Software Research Centre.
 \bibliographystyle{splncs04}
 \bibliography{bibliography.bib}
 \end{document} 
