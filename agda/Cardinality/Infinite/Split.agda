@@ -1,4 +1,3 @@
-\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Cardinality.Infinite.Split where
@@ -31,25 +30,14 @@ infixl 6 _*_ _*⋆_[_]
 _*_ : Stream A → (∀ x → Stream (U x)) → Stream (Σ A U ⁺)
 _*⋆_[_] : Stream A → (∀ x → Stream (U x)) → Stream (Σ A U ⋆)
 cantor : Stream A → (∀ x → Stream (U x)) → Stream (Σ A U)
-\end{code}
-%<*cantor>
-\begin{code}
 cantor xs ys = concat (xs * ys)
-\end{code}
-%</cantor>
-%<*convstar>
-\begin{code}
+
 xs *⋆ ys [ zero   ] = []
 xs *⋆ ys [ suc n  ] = ∹ (xs * ys) n
-\end{code}
-%</convstar>
-%<*convplus>
-\begin{code}
+
 (xs * ys) n .head  = x , ys x n where x = xs 0
 (xs * ys) n .tail  = (xs ∘ suc) *⋆ ys [ n ]
-\end{code}
-%</convplus>
-\begin{code}
+
 *-cover : ∀ (x : A) xs (y : U x) (ys : ∀ x → Stream (U x)) → x ∈ xs → y ∈ ys x → (x , y) ∈² xs * ys
 *-cover {U = U} x xs y ys (n , x∈xs) (m , y∈ys) = (n + m) , lemma xs n x∈xs
   where
@@ -166,4 +154,3 @@ open import Relation.Nullary.Discrete.Properties
 
 ℰ⇒Discrete : ℰ A → Discrete A
 ℰ⇒Discrete = recPropTrunc isPropDiscrete ℰ!⇒Discrete
-\end{code}

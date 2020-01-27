@@ -1,4 +1,3 @@
-\begin{code}
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
 module Cardinality.Finite.SplitEnumerable where
@@ -28,9 +27,7 @@ module _ {a} {A : Type a} where
  open import Container.List
  open import Container.Membership (ℕ ▷ Fin)
  open import Relation.Binary.Equivalence.Reasoning (⇔-equiv {a})
-\end{code}
-%<*split-surj>
-\begin{code}
+
  ℰ!⇔Fin↠! : ℰ! A ⇔ Σ[ n ⦂ ℕ ] (Fin n ↠! A)
  ℰ!⇔Fin↠! =
    ℰ! A                                                  ≋⟨⟩ -- ℰ!
@@ -38,9 +35,7 @@ module _ {a} {A : Type a} where
    Σ[ xs ⦂ List A ] Π[ x ⦂ A ] fiber (xs .snd) x         ≋⟨ reassoc ⟩
    Σ[ n ⦂ ℕ ] Σ[ f ⦂ (Fin n → A) ] Π[ x ⦂ A ] fiber f x  ≋⟨⟩ -- ↠!
    Σ[ n ⦂ ℕ ] (Fin n ↠! A) ∎
-\end{code}
-%</split-surj>
-\begin{code}
+
  ℰ!⇒Discrete : ℰ! A → Discrete A
  ℰ!⇒Discrete = flip Discrete↠!A⇒Discrete⟨A⟩ discreteFin
              ∘ snd
@@ -51,37 +46,24 @@ module _ where
  open import Data.List.Sugar hiding ([_])
  open import Data.List.Syntax
  open import Data.List.Membership
-\end{code}
-%<*bool>
-\begin{code}
+
  ℰ!⟨2⟩ : ℰ! Bool
  ℰ!⟨2⟩ .fst = [ false , true ]
  ℰ!⟨2⟩ .snd false  = 0  , refl
  ℰ!⟨2⟩ .snd true   = 1  , refl
-\end{code}
-%</bool>
-%<*top>
-\begin{code}
+
  ℰ!⟨⊤⟩ : ℰ! ⊤
  ℰ!⟨⊤⟩ .fst = [ tt ]
  ℰ!⟨⊤⟩ .snd _ = 0 , refl
-\end{code}
-%</top>
-%<*bot>
-\begin{code}
+
  ℰ!⟨⊥⟩ : ℰ! ⊥
  ℰ!⟨⊥⟩ = [] , λ ()
-\end{code}
-%</bot>
-%<*sigma-sup>
-\begin{code}
+
  sup-Σ : List A → (∀ x → List (U x)) → List (Σ A U)
  sup-Σ xs ys = do  x ← xs
                    y ← ys x
                    [ x , y ]
-\end{code}
-%</sigma-sup>
-\begin{code}
+
  cov-Σ : (x : A)
        → (y : U x)
        → (xs : List A)
@@ -119,4 +101,3 @@ module _ where
  ℰ!⟨Lift⟩ : ℰ! A → ℰ! (Lift b A)
  ℰ!⟨Lift⟩ xs .fst = map lift (xs .fst)
  ℰ!⟨Lift⟩ xs .snd x = cong-∈ lift (xs .fst) (xs .snd (x .lower))
-\end{code}

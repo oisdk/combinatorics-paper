@@ -1,4 +1,3 @@
-\begin{code}
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
 module Cardinality.Finite.Cardinal where
@@ -65,14 +64,9 @@ open import Cubical.Foundations.HLevels
 cardinality : ∥ ∃[ n ] (Fin n ≃ A) ∥ → ∃[ n ] ∥ Fin n ≃ A ∥
 cardinality {A = A} = recPropTrunc→Set (isOfHLevelΣ 2 isSetℕ λ _ → isProp→isSet squash) alg const-alg
   where
-\end{code}
-%<*trunc-alg>
-\begin{code}
   alg : Σ[ n ⦂ ℕ ] (Fin n ≃ A) → Σ[ n ⦂ ℕ ] ∥ Fin n ≃ A ∥
   alg (n , f≃A) = n , ∣ f≃A ∣
-\end{code}
-%</trunc-alg>
-\begin{code}
+
   const-alg : (x y : ∃[ n ] (Fin n ≃ A)) → alg x ≡ alg y
   const-alg (n , x) (m , y) =
     ΣProp≡
@@ -145,4 +139,3 @@ module _ {e r} {E : Type e} (totalOrder : TotalOrder E r) where
       ΣProp≡
         (λ _ → hLevelPi 1 (λ _ → squash))
         (perm-invar (xs .fst) (ys .fst) (perm-ℬ xs ys))
-\end{code}
