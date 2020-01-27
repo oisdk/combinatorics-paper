@@ -19,6 +19,9 @@ open import Data.Fin
 𝒞 : Type a → Type a
 𝒞 A = ∥ ℬ A ∥
 
+𝒞≃Fin≃ : 𝒞 A ≃ ∥ Σ[ n ⦂ ℕ ] (Fin n ≃ A) ∥
+𝒞≃Fin≃ = isoToEquiv (iso (ℬ⇔Fin≃ .fun ∘ 𝕃⇔ℒ⟨ℬ⟩ .fun ∥$∥_) (𝕃⇔ℒ⟨ℬ⟩ .inv ∘ ℬ⇔Fin≃ .inv ∥$∥_) (λ _ → squash _ _) λ _ → squash _ _)
+
 private
   variable
     u : Level

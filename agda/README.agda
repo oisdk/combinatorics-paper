@@ -85,111 +85,127 @@ import Container.Membership using (_∈!_)
 -- Lemma 4
 import Cardinality.Finite.ManifestBishop using (ℬ⇔Fin≃)
 
--- Definition 16: Manifest Enumerability
-import Cardinality.Finite.ManifestEnumerable.Container using (ℰ)
-
--- Definition 9: Propositional Truncation (from the cubical agda library)
-import Cubical.HITs.PropositionalTruncation using (∥_∥)
-
--- Theorem 5
-import Cardinality.Finite.ManifestEnumerable using (ℰ⟨S¹⟩)
-
--- Lemma 4
-import Cardinality.Finite.ManifestEnumerable using (ℰ⇔Fin↠)
-
--- Theorem 6
-import Cardinality.Finite.ManifestEnumerable using (ℰ⇒ℰ!)
+-- Definition 16: Cardinal Finiteness
+import Cardinality.Finite.Cardinal using (𝒞; 𝒞≃Fin≃)
 
 -- Lemma 5
-import Cardinality.Finite.ManifestEnumerable using (_∥Σ∥_)
+import Cardinality.Finite.Cardinal using (cardinality)
+
+-- Lemma 6
+import Cardinality.Finite.Cardinal using (𝒞⇒Discrete)
+
+-- Definition 17: Manifest Enumerability
+import Cardinality.Finite.ManifestEnumerable.Container using (ℰ)
+
+-- Container based definition is isomorphic to inductive
+import Cardinality.Finite.ManifestEnumerable.Isomorphism using (𝕃⇔ℒ⟨ℰ⟩)
+
+-- Lemma 7
+import Cardinality.Finite.ManifestEnumerable using (ℰ⇔Fin↠)
+
+-- Definition 18: S¹
+open import Cubical.HITs.S1 using (S¹)
+
+-- Lemma 8
+import Cardinality.Finite.ManifestEnumerable using (ℰ⟨S¹⟩)
+
+-- Definition 19: Kuratowski finite subset
+import Algebra.Construct.Free.Semilattice using (𝒦)
+
+-- Definition 20: Membership of 𝒦
+import Algebra.Construct.Free.Semilattice.Relation.Unary using (_∈_)
+
+-- Definition 21: Kuratowski finiteness
+import Cardinality.Finite.Kuratowski using (𝒦ᶠ)
+
+-- Lemma 9
+import Cardinality.Finite.Kuratowski using (isProp𝒦ᶠ)
+
+-- Lemma 10
+import Cardinality.Finite.Kuratowski using (𝒦ᶠ⟨S¹⟩)
 
 --------------------------------------------------------------------------------
 -- Section 5: Cardinal Finiteness
 --------------------------------------------------------------------------------
 
--- Definition 10: Cardinal Finiteness
-import Cardinality.Finite.Cardinal using (𝒞)
+-- -- Theorem 6
+-- import Cardinality.Finite.ManifestEnumerable using (ℰ⇒ℰ!)
 
--- Lemma 6
-import Cardinality.Finite.Cardinal using (_∥×∥_; _∥⊎∥_; _∥→∥_)
+-- -- Lemma 5
+-- import Cardinality.Finite.ManifestEnumerable using (_∥Σ∥_)
 
--- Theorem 7
-import Cardinality.Finite.Cardinal using (𝒞⇒Discrete)
 
--- Theorem 8
-import Cardinality.Finite.Cardinal using (cardinality)
 
--- Theorem 9
-import Cardinality.Finite.Cardinal using (𝒞⇒ℬ)
+-- -- Lemma 6
+-- import Cardinality.Finite.Cardinal using (_∥×∥_; _∥⊎∥_; _∥→∥_)
 
--- Definition 11
-import Data.List.Relation.Binary.Permutation using (_↭_)
 
--- Lemma 7
-import Data.List.Sort using (perm-invar)
+-- -- Theorem 9
+-- import Cardinality.Finite.Cardinal using (𝒞⇒ℬ)
 
---------------------------------------------------------------------------------
--- Section 6: Kuratowski Finiteness
---------------------------------------------------------------------------------
+-- -- Definition 11
+-- import Data.List.Relation.Binary.Permutation using (_↭_)
 
--- Definition 12: Kuratowski-finite set
-import Algebra.Construct.Free.Semilattice using (𝒦)
+-- -- Lemma 7
+-- import Data.List.Sort using (perm-invar)
 
--- Definition 13: Membership of 𝒦
-import Algebra.Construct.Free.Semilattice.Relation.Unary using (_∈_)
+-- --------------------------------------------------------------------------------
+-- -- Section 6: Kuratowski Finiteness
+-- --------------------------------------------------------------------------------
 
--- Definition 14: Kuratowski finiteness
-import Cardinality.Finite.Kuratowski using (𝒦ᶠ)
+-- -- Definition 12: Kuratowski-finite set
 
--- Theorem 10
-import Cardinality.Finite.Kuratowski using (∥ℰ∥⇔𝒦)
 
---------------------------------------------------------------------------------
--- Section 7: Infinite Cardinalities
---------------------------------------------------------------------------------
 
--- Definition 15: Stream
-import Codata.Stream using (Stream)
+-- -- Theorem 10
+-- import Cardinality.Finite.Kuratowski using (∥ℰ∥⇔𝒦)
 
--- Definition 16: Split Countability
-import Cardinality.Infinite.Split using (ℰ!)
+-- --------------------------------------------------------------------------------
+-- -- Section 7: Infinite Cardinalities
+-- --------------------------------------------------------------------------------
 
--- Theorem 11
-import Cardinality.Infinite.Split using (_|Σ|_)
+-- -- Definition 15: Stream
+-- import Codata.Stream using (Stream)
 
--- Theorem 12
-import Cardinality.Infinite.Split using (star)
+-- -- Definition 16: Split Countability
+-- import Cardinality.Infinite.Split using (ℰ!)
 
---------------------------------------------------------------------------------
--- Section 8: Practical Uses
---------------------------------------------------------------------------------
+-- -- Theorem 11
+-- import Cardinality.Infinite.Split using (_|Σ|_)
 
--- Definition 17: Limited Principle of Omniscience
-import Relation.Nullary.Omniscience using (Omniscient)
+-- -- Theorem 12
+-- import Cardinality.Infinite.Split using (star)
 
--- Definition 18: Exhaustibility
-import Relation.Nullary.Omniscience using (Exhaustible)
+-- --------------------------------------------------------------------------------
+-- -- Section 8: Practical Uses
+-- --------------------------------------------------------------------------------
 
--- Theorem 13
-import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒Exhaustible)
+-- -- Definition 17: Limited Principle of Omniscience
+-- import Relation.Nullary.Omniscience using (Omniscient)
 
--- Theorem 14
-import Cardinality.Finite.ManifestEnumerable using (ℰ⇒Omniscient)
+-- -- Definition 18: Exhaustibility
+-- import Relation.Nullary.Omniscience using (Exhaustible)
 
--- Theorem 15
-import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒∣Omniscient∣)
+-- -- Theorem 13
+-- import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒Exhaustible)
 
--- Automated proofs
-import Data.Pauli
+-- -- Theorem 14
+-- import Cardinality.Finite.ManifestEnumerable using (ℰ⇒Omniscient)
 
--- Lemma 2
-import Cardinality.Finite.SplitEnumerable using (ℰ!⟨2⟩; ℰ!⟨⊤⟩; ℰ!⟨⊥⟩)
+-- -- Theorem 15
+-- import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒∣Omniscient∣)
 
--- Theorem 2
-import Cardinality.Finite.SplitEnumerable using (_|Σ|_)
+-- -- Automated proofs
+-- import Data.Pauli
 
--- Theorem 3
-import Cardinality.Finite.ManifestBishop using (ℰ!⇒ℬ)
+-- -- Lemma 2
+-- import Cardinality.Finite.SplitEnumerable using (ℰ!⟨2⟩; ℰ!⟨⊤⟩; ℰ!⟨⊥⟩)
 
--- Theorem 4
-import Cardinality.Finite.ManifestBishop using (_|Π|_)
+-- -- Theorem 2
+-- import Cardinality.Finite.SplitEnumerable using (_|Σ|_)
+
+-- -- Theorem 3
+-- import Cardinality.Finite.ManifestBishop using (ℰ!⇒ℬ)
+
+-- -- Theorem 4
+-- import Cardinality.Finite.ManifestBishop using (_|Π|_)
