@@ -14,7 +14,7 @@ open import Cubical.Foundations.Univalence
 open import Categories.Product
 open import Categories.Exponential
 open import Data.Fin
-open import Cardinality.Finite.Bishop
+open import Cardinality.Finite.ManifestBishop
 
 finSetPreCategory : PreCategory (ℓsuc ℓ) ℓ
 finSetPreCategory .PreCategory.Ob = Σ (Type ℓ) 𝒞
@@ -53,8 +53,8 @@ finSetHasProducts .HasProducts.product X Y .Product.ump f g .snd .fst .snd = ref
 finSetHasProducts .HasProducts.product X Y .Product.ump f g .snd .snd (f≡ , g≡) i x = f≡ (~ i) x , g≡ (~ i) x
 
 finSetHasExp : HasExponentials finSetCategory finSetHasProducts
-finSetHasExp .HasExponentials.exponent X Y .Exponential.obj = (X .fst → Y .fst) , (X .snd ∥→∥ Y .snd)
-finSetHasExp .HasExponentials.exponent X Y .Exponential.eval (f , x) = f x
-finSetHasExp .HasExponentials.exponent X Y .Exponential.uniq X₁ f .fst = curry f
-finSetHasExp .HasExponentials.exponent X Y .Exponential.uniq X₁ f .snd .fst = refl
-finSetHasExp .HasExponentials.exponent X Y .Exponential.uniq X₁ f .snd .snd x = cong curry (sym x)
+finSetHasExp X Y .Exponential.obj = (X .fst → Y .fst) , (X .snd ∥→∥ Y .snd)
+finSetHasExp X Y .Exponential.eval (f , x) = f x
+finSetHasExp X Y .Exponential.uniq X₁ f .fst = curry f
+finSetHasExp X Y .Exponential.uniq X₁ f .snd .fst = refl
+finSetHasExp X Y .Exponential.uniq X₁ f .snd .snd x = cong curry (sym x)

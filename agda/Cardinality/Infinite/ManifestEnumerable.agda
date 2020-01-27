@@ -22,16 +22,16 @@ private
     s : Level
     S : ℕ → Type s
 
-ℰ : Type a → Type a
-ℰ A = Σ[ xs ⦂ Stream A ] Π[ x ⦂ A ] ∥ x ∈ xs ∥
+-- ℰ : Type a → Type a
+-- ℰ A = Σ[ xs ⦂ Stream A ] Π[ x ⦂ A ] ∥ x ∈ xs ∥
 
-ℰ≡ℕ↠ : ℰ A ≡ (ℕ ↠ A)
-ℰ≡ℕ↠ = refl
+-- ℰ≡ℕ↠ : ℰ A ≡ (ℕ ↠ A)
+-- ℰ≡ℕ↠ = refl
 
-_∥Σ∥_ : ℰ A → (∀ x → ℰ (U x)) → ℰ (Σ A U)
-(xs ∥Σ∥ ys) .fst = cantor (xs .fst) (fst ∘ ys)
-(xs ∥Σ∥ ys) .snd (x , y) =
-  concat-∈
-    (x , y)
-    (xs .fst * (fst ∘ ys)) ∥$∥
-    ⦇ (*-cover x (xs .fst) y (fst ∘ ys)) (xs .snd x) (ys x .snd y) ⦈
+-- _∥Σ∥_ : ℰ A → (∀ x → ℰ (U x)) → ℰ (Σ A U)
+-- (xs ∥Σ∥ ys) .fst = cantor (xs .fst) (fst ∘ ys)
+-- (xs ∥Σ∥ ys) .snd (x , y) =
+--   concat-∈
+--     (x , y)
+--     (xs .fst * (fst ∘ ys)) ∥$∥
+--     ⦇ (*-cover x (xs .fst) y (fst ∘ ys)) (xs .snd x) (ys x .snd y) ⦈
