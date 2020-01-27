@@ -101,3 +101,8 @@ module _ where
  ℰ!⟨Lift⟩ : ℰ! A → ℰ! (Lift b A)
  ℰ!⟨Lift⟩ xs .fst = map lift (xs .fst)
  ℰ!⟨Lift⟩ xs .snd x = cong-∈ lift (xs .fst) (xs .snd (x .lower))
+
+ ℰ!⟨≡⟩ : (x y : A) → ℰ! A → ℰ! (x ≡ y)
+ ℰ!⟨≡⟩ x y e with ℰ!⇒Discrete (𝕃⇔ℒ⟨ℰ!⟩ .fun e) x y
+ ℰ!⟨≡⟩ x y e | yes p = (p ∷ []) , λ q → (f0 , Discrete→isSet (ℰ!⇒Discrete (𝕃⇔ℒ⟨ℰ!⟩ .fun e)) x y p q)
+ ℰ!⟨≡⟩ x y e | no ¬p = [] , (⊥-elim ∘ ¬p)

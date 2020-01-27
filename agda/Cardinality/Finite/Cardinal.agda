@@ -139,3 +139,8 @@ module _ {e r} {E : Type e} (totalOrder : TotalOrder E r) where
       ΣProp≡
         (λ _ → hLevelPi 1 (λ _ → squash))
         (perm-invar (xs .fst) (ys .fst) (perm-ℬ xs ys))
+
+open import Cardinality.Finite.SplitEnumerable using (ℰ!⟨≡⟩)
+
+𝒞⟨≡⟩ : (x y : A) → 𝒞 A → 𝒞 (x ≡ y)
+𝒞⟨≡⟩ x y ca = ℰ!⇒ℬ ∘ ℰ!⟨≡⟩ x y ∘ ℬ⇒ℰ! ∥$∥ ca

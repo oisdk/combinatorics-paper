@@ -10,6 +10,9 @@ open import Data.Product.NAry
 open import Relation.Nullary.Decidable.Properties
 open import Data.Fin
 open import Relation.Nullary.Omniscience
+open import Cardinality.Finite.SplitEnumerable.Isomorphism
+open import HITs.PropositionalTruncation
+open import HITs.PropositionalTruncation.Properties
 
 private variable p : Level
 
@@ -18,6 +21,11 @@ private variable p : Level
 
 ℰ!⇒Exhaustible : ℰ! A → Exhaustible p A
 ℰ!⇒Exhaustible = Omniscient→Exhaustible ∘ ℰ!⇒Omniscient
+
+ℰ!⟨fib⟩ : (f : A → B) → (y : B) → ℰ! A → ℰ! B → ℰ! ∥ fiber f y ∥
+ℰ!⟨fib⟩ f y xs ys with ℰ!⇒Omniscient xs λ x → ℰ!⇒Discrete (𝕃⇔ℒ⟨ℰ!⟩ .fun ys) (f x) y
+ℰ!⟨fib⟩ f y xs ys | yes p = ∣ p ∣ ∷ [] , λ _ → f0 , squash _ _
+ℰ!⟨fib⟩ f y xs ys | no ¬p = [] , ⊥-elim ∘ refute-trunc ¬p
 
 tup-inst′ : ∀ n {ls} {Xs : Types (suc n) ls} → ⦅ map-types ℰ! Xs ⦆⁺ → ℰ! ⦅ Xs ⦆⁺
 tup-inst′ zero x = x

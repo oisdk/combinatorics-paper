@@ -3,158 +3,193 @@
 module README where
 
 --------------------------------------------------------------------------------
--- Section 2: Split Enumerability
+-- Section 1: Introduction
 --------------------------------------------------------------------------------
 
--- Definition 1: Container
-open import Container using (Container; ⟦_⟧)
+-- 0, 1, and 2 types
+import Data.Empty using (⊥)
+import Data.Unit  using (⊤)
+import Data.Bool  using (Bool)
 
--- Definition 2: List
-open import Container.List using (List)
+-- Dependent Sum and Product
+import Data.Sigma using (Σ)
+import Data.Pi    using (Π)
 
--- Definition 3: Fin
-open import Data.Fin.Base using (Fin)
+-- Disjoint Union
+import Data.Sum using (_⊎_)
+import Data.Sum.Properties using (sumAsSigma)
 
--- Definition 4: ℰ!
-open import Cardinality.Finite.SplitEnumerable.Container using (ℰ!)
+-- Definition 1: Path types
+import Path using (_≡_)
+
+-- Definition 2: Homotopy Levels
+import HLevels using (isContr; isProp; isSet)
+
+-- Definition 3: Fibres
+import Function.Fiber using (fiber)
+
+-- Definition 4: Equivalences
+import Equiv using (isEquiv; _≃_)
+
+-- Definition 5: Decidable
+import Relation.Nullary.Decidable using (Dec)
+
+-- Definition 6: Discrete
+import Relation.Nullary.Discrete using (Discrete)
+import Relation.Nullary.Discrete.Properties using (Discrete→isSet)
+
+-- Definition 8: Propositional Truncation
+import HITs.PropositionalTruncation using (∥_∥)
+import HITs.PropositionalTruncation using (recPropTrunc; recPropTrunc→Set)
+
+--------------------------------------------------------------------------------
+-- Section 2: Finiteness Predicates
+--------------------------------------------------------------------------------
+
+-- Definition 9: Split Enumerability
+import Cardinality.Finite.SplitEnumerable.Container using (ℰ!)
 
 -- Container based definition is isomophic to inductive
-open import Cardinality.Finite.SplitEnumerable.Isomorphism using (𝕃⇔ℒ⟨ℰ!⟩)
+import Cardinality.Finite.SplitEnumerable.Isomorphism using (𝕃⇔ℒ⟨ℰ!⟩)
 
--- Definition 5: Surjections
-open import Function.Surjective using (_↠!_; _↠_)
+-- Definition 10: Container
+import Container using (Container; ⟦_⟧)
 
--- Theorem 1
-open import Cardinality.Finite.SplitEnumerable using (ℰ!⇔Fin↠!)
+-- Definition 11: List
+import Container.List using (List)
+
+-- Definition 12: Fin
+import Data.Fin.Base using (Fin)
+
+-- Definition 13: Surjections
+import Function.Surjective using (_↠!_; _↠_)
 
 -- Lemma 1
-open import Cardinality.Finite.SplitEnumerable using (ℰ!⇒Discrete)
+import Cardinality.Finite.SplitEnumerable using (ℰ!⇔Fin↠!)
 
 -- Lemma 2
-open import Cardinality.Finite.SplitEnumerable using (ℰ!⟨2⟩; ℰ!⟨⊤⟩; ℰ!⟨⊥⟩)
-
--- Theorem 2
-open import Cardinality.Finite.SplitEnumerable using (_|Σ|_)
-
---------------------------------------------------------------------------------
--- Section 3: Manifest Bishop Finiteness
---------------------------------------------------------------------------------
-
--- Definition 6: Manifest Bishop Finiteness
-open import Cardinality.Finite.ManifestBishop.Container using (ℬ)
-
--- Defintion 7: Unique Membership
-open import Container.Membership using (_∈!_)
-
--- Container based definition is isomophic to inductive
-open import Cardinality.Finite.ManifestBishop.Isomorphism using (𝕃⇔ℒ⟨ℬ⟩)
+import Function.Surjective.Properties using (Discrete↠!A⇒Discrete⟨A⟩)
 
 -- Lemma 3
-open import Cardinality.Finite.ManifestBishop using (ℬ⇔Fin≃)
+import Cardinality.Finite.SplitEnumerable using (ℰ!⇒Discrete)
 
--- Theorem 3
-open import Cardinality.Finite.ManifestBishop using (ℰ!⇒ℬ)
+-- Definition 14: Manifest Bishop Finiteness
+import Cardinality.Finite.ManifestBishop.Container using (ℬ)
 
--- Theorem 4
-open import Cardinality.Finite.ManifestBishop using (_|Π|_)
+-- Container based definition is isomophic to inductive
+import Cardinality.Finite.ManifestBishop.Isomorphism using (𝕃⇔ℒ⟨ℬ⟩)
 
---------------------------------------------------------------------------------
--- Section 4: Manifest Enumerability
---------------------------------------------------------------------------------
-
--- Definition 8: Manifest Bishop Finiteness
-open import Cardinality.Finite.ManifestEnumerable.Container using (ℰ)
-
--- Definition 9: Propositional Truncation (from the cubical agda library)
-open import Cubical.HITs.PropositionalTruncation using (∥_∥)
-
--- Theorem 5
-open import Cardinality.Finite.ManifestEnumerable using (ℰ⟨S¹⟩)
+-- Definition 15: Unique Membership
+import Container.Membership using (_∈!_)
 
 -- Lemma 4
-open import Cardinality.Finite.ManifestEnumerable using (ℰ⇔Fin↠)
+import Cardinality.Finite.ManifestBishop using (ℬ⇔Fin≃)
+
+-- Definition 16: Manifest Enumerability
+import Cardinality.Finite.ManifestEnumerable.Container using (ℰ)
+
+-- Definition 9: Propositional Truncation (from the cubical agda library)
+import Cubical.HITs.PropositionalTruncation using (∥_∥)
+
+-- Theorem 5
+import Cardinality.Finite.ManifestEnumerable using (ℰ⟨S¹⟩)
+
+-- Lemma 4
+import Cardinality.Finite.ManifestEnumerable using (ℰ⇔Fin↠)
 
 -- Theorem 6
-open import Cardinality.Finite.ManifestEnumerable using (ℰ⇒ℰ!)
+import Cardinality.Finite.ManifestEnumerable using (ℰ⇒ℰ!)
 
 -- Lemma 5
-open import Cardinality.Finite.ManifestEnumerable using (_∥Σ∥_)
+import Cardinality.Finite.ManifestEnumerable using (_∥Σ∥_)
 
 --------------------------------------------------------------------------------
 -- Section 5: Cardinal Finiteness
 --------------------------------------------------------------------------------
 
 -- Definition 10: Cardinal Finiteness
-open import Cardinality.Finite.Cardinal using (𝒞)
+import Cardinality.Finite.Cardinal using (𝒞)
 
 -- Lemma 6
-open import Cardinality.Finite.Cardinal using (_∥×∥_; _∥⊎∥_; _∥→∥_)
+import Cardinality.Finite.Cardinal using (_∥×∥_; _∥⊎∥_; _∥→∥_)
 
 -- Theorem 7
-open import Cardinality.Finite.Cardinal using (𝒞⇒Discrete)
+import Cardinality.Finite.Cardinal using (𝒞⇒Discrete)
 
 -- Theorem 8
-open import Cardinality.Finite.Cardinal using (cardinality)
+import Cardinality.Finite.Cardinal using (cardinality)
 
 -- Theorem 9
-open import Cardinality.Finite.Cardinal using (𝒞⇒ℬ)
+import Cardinality.Finite.Cardinal using (𝒞⇒ℬ)
 
 -- Definition 11
-open import Data.List.Relation.Binary.Permutation using (_↭_)
+import Data.List.Relation.Binary.Permutation using (_↭_)
 
 -- Lemma 7
-open import Data.List.Sort using (perm-invar)
+import Data.List.Sort using (perm-invar)
 
 --------------------------------------------------------------------------------
 -- Section 6: Kuratowski Finiteness
 --------------------------------------------------------------------------------
 
 -- Definition 12: Kuratowski-finite set
-open import Algebra.Construct.Free.Semilattice using (𝒦)
+import Algebra.Construct.Free.Semilattice using (𝒦)
 
 -- Definition 13: Membership of 𝒦
-open import Algebra.Construct.Free.Semilattice.Relation.Unary using (_∈_)
+import Algebra.Construct.Free.Semilattice.Relation.Unary using (_∈_)
 
 -- Definition 14: Kuratowski finiteness
-open import Cardinality.Finite.Kuratowski using (𝒦ᶠ)
+import Cardinality.Finite.Kuratowski using (𝒦ᶠ)
 
 -- Theorem 10
-open import Cardinality.Finite.Kuratowski using (∥ℰ∥⇔𝒦)
+import Cardinality.Finite.Kuratowski using (∥ℰ∥⇔𝒦)
 
 --------------------------------------------------------------------------------
 -- Section 7: Infinite Cardinalities
 --------------------------------------------------------------------------------
 
 -- Definition 15: Stream
-open import Codata.Stream using (Stream)
+import Codata.Stream using (Stream)
 
 -- Definition 16: Split Countability
-open import Cardinality.Infinite.Split using (ℰ!)
+import Cardinality.Infinite.Split using (ℰ!)
 
 -- Theorem 11
-open import Cardinality.Infinite.Split using (_|Σ|_)
+import Cardinality.Infinite.Split using (_|Σ|_)
 
 -- Theorem 12
-open import Cardinality.Infinite.Split using (star)
+import Cardinality.Infinite.Split using (star)
 
 --------------------------------------------------------------------------------
 -- Section 8: Practical Uses
 --------------------------------------------------------------------------------
 
 -- Definition 17: Limited Principle of Omniscience
-open import Relation.Nullary.Omniscience using (Omniscient)
+import Relation.Nullary.Omniscience using (Omniscient)
 
 -- Definition 18: Exhaustibility
-open import Relation.Nullary.Omniscience using (Exhaustible)
+import Relation.Nullary.Omniscience using (Exhaustible)
 
 -- Theorem 13
-open import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒Exhaustible)
+import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒Exhaustible)
 
 -- Theorem 14
-open import Cardinality.Finite.ManifestEnumerable using (ℰ⇒Omniscient)
+import Cardinality.Finite.ManifestEnumerable using (ℰ⇒Omniscient)
 
 -- Theorem 15
-open import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒∣Omniscient∣)
+import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒∣Omniscient∣)
 
 -- Automated proofs
-open import Data.Pauli
+import Data.Pauli
+
+-- Lemma 2
+import Cardinality.Finite.SplitEnumerable using (ℰ!⟨2⟩; ℰ!⟨⊤⟩; ℰ!⟨⊥⟩)
+
+-- Theorem 2
+import Cardinality.Finite.SplitEnumerable using (_|Σ|_)
+
+-- Theorem 3
+import Cardinality.Finite.ManifestBishop using (ℰ!⇒ℬ)
+
+-- Theorem 4
+import Cardinality.Finite.ManifestBishop using (_|Π|_)
