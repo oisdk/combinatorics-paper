@@ -27,6 +27,9 @@ module Bools where
  not-spec = ∃↯ⁿ 1 λ f → (f ∘ f ≟ id) && ! (f ≟ id)
 \end{code}
 %</not-spec>
+\begin{code}
+open Bools using (not-spec) public
+\end{code}
 %<*def>
 \begin{code}
 data Pauli : Type₀ where X Y Z I : Pauli

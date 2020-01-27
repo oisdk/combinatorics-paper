@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical --safe #-}
+{-# OPTIONS --cubical --safe --postfix-projections #-}
 
 module Cardinality.Finite.Kuratowski where
 
@@ -53,6 +53,18 @@ open import Cubical.HITs.S1 using (S¹)
 ∥ℰ∥⇔𝒦 .inv = 𝒦ᶠ⇒∥ℰ∥
 ∥ℰ∥⇔𝒦 .leftInv x = squash _ x
 ∥ℰ∥⇔𝒦 .rightInv x = isProp𝒦ᶠ _ x
+
+open import Cardinality.Finite.Cardinal using (𝒞; 𝒞⇒Discrete)
+open import Cardinality.Finite.ManifestBishop using (ℬ⇒ℰ!; ℰ!⇒ℬ)
+open import Cardinality.Finite.ManifestEnumerable using (ℰ!⇒ℰ; ℰ⇒ℰ!)
+open import Relation.Nullary.Discrete.Properties
+
+𝒞⇔𝒦×Discrete : 𝒞 A ⇔ 𝒦ᶠ A × Discrete A
+𝒞⇔𝒦×Discrete .fun ca .fst = ∥ℰ∥⇔𝒦 .fun (ℰ!⇒ℰ ∘ ℬ⇒ℰ! ∥$∥ ca)
+𝒞⇔𝒦×Discrete .fun ca .snd = 𝒞⇒Discrete ca
+𝒞⇔𝒦×Discrete .inv (ka , d) = ℰ!⇒ℬ ∘ ℰ⇒ℰ! d ∥$∥ ∥ℰ∥⇔𝒦 .inv ka
+𝒞⇔𝒦×Discrete .rightInv _ = isOfHLevelΣ 1 isProp𝒦ᶠ (λ _ → isPropDiscrete) _ _
+𝒞⇔𝒦×Discrete .leftInv  _ = squash _ _
 
 open import Relation.Nullary.Decidable.Properties
 open import Relation.Nullary.Omniscience

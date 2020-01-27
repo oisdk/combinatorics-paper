@@ -135,6 +135,7 @@ module CoeqProofs {X Y : Ob} (f : X ⟶ Y) where
   hSetCoeq .Coequalizer.coequalize {H = H} {h = h} eq = lem {H = H} h eq .fst
   hSetCoeq .Coequalizer.universal {H = H} {h = h} {eq = eq} = funExt λ x → lem {H = H} h eq .snd (im x) x refl
   hSetCoeq .Coequalizer.unique {H = H} {h = h} {i = i} {eq = eq} prf = funExt λ x → lem₂ H h i x prf eq
+open CoeqProofs using (hSetCoeq) public
 
 module PullbackSurjProofs {X Y : Ob} (f : X ⟶ Y) (fSurj : Surjective f) where
   KernelPair : Pullback hSetCategory {X = X} {Z = Y} {Y = X} f f

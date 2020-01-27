@@ -125,87 +125,118 @@ import Cardinality.Finite.Kuratowski using (isProp𝒦ᶠ)
 import Cardinality.Finite.Kuratowski using (𝒦ᶠ⟨S¹⟩)
 
 --------------------------------------------------------------------------------
--- Section 5: Cardinal Finiteness
+-- Section 3: Relations Between Each Finiteness Definition
 --------------------------------------------------------------------------------
 
--- -- Theorem 6
--- import Cardinality.Finite.ManifestEnumerable using (ℰ⇒ℰ!)
+-- Lemma 11
+import Cardinality.Finite.ManifestBishop using (ℰ!⇒ℬ)
 
--- -- Lemma 5
--- import Cardinality.Finite.ManifestEnumerable using (_∥Σ∥_)
+-- Lemma 12
+import Cardinality.Finite.ManifestBishop using (ℬ⇒ℰ!)
 
+-- Lemma 13
+import Cardinality.Finite.ManifestEnumerable using (ℰ!⇒ℰ)
 
+-- Lemma 14
+import Cardinality.Finite.ManifestEnumerable using (ℰ⇒ℰ!)
 
--- -- Lemma 6
--- import Cardinality.Finite.Cardinal using (_∥×∥_; _∥⊎∥_; _∥→∥_)
+-- Lemma 15
+import Cardinality.Finite.Cardinal using (ℬ⇒𝒞)
 
+-- Theorem 1
+import Cardinality.Finite.Cardinal using (𝒞⇒ℬ)
 
--- -- Theorem 9
--- import Cardinality.Finite.Cardinal using (𝒞⇒ℬ)
+-- Definition 22: List Permutations
+import Data.List.Relation.Binary.Permutation using (_↭_)
 
--- -- Definition 11
--- import Data.List.Relation.Binary.Permutation using (_↭_)
+-- Lemma 16
+import Cardinality.Finite.Kuratowski using (𝒞⇔𝒦×Discrete)
 
--- -- Lemma 7
--- import Data.List.Sort using (perm-invar)
+--------------------------------------------------------------------------------
+-- Section 4: Relations Between Each Finiteness Definition
+--------------------------------------------------------------------------------
 
--- --------------------------------------------------------------------------------
--- -- Section 6: Kuratowski Finiteness
--- --------------------------------------------------------------------------------
+-- Lemma 17
+import Cardinality.Finite.SplitEnumerable using (ℰ!⟨⊥⟩; ℰ!⟨⊤⟩; ℰ!⟨2⟩)
 
--- -- Definition 12: Kuratowski-finite set
+-- Lemma 18
+import Cardinality.Finite.SplitEnumerable using (_|Σ|_)
 
+-- Lemma 19
+import Cardinality.Finite.ManifestBishop using (_|Π|_)
 
+-- Lemma 20
+import Cardinality.Finite.Cardinal using (𝒞⇒Choice)
 
--- -- Theorem 10
--- import Cardinality.Finite.Kuratowski using (∥ℰ∥⇔𝒦)
+-- Resulting closures on 𝒞:
+import Cardinality.Finite.Cardinal using
+  (_∥Σ∥_; _∥⊎∥_; _∥Π∥_; _∥→∥_; _∥×∥_; _∥⇔∥_; 𝒞⟨⊥⟩; 𝒞⟨⊤⟩; 𝒞⟨Bool⟩)
 
--- --------------------------------------------------------------------------------
--- -- Section 7: Infinite Cardinalities
--- --------------------------------------------------------------------------------
+-- Theorem 2:
+import Cardinality.Finite.Cardinal.Category using (finSetCategory)
 
--- -- Definition 15: Stream
--- import Codata.Stream using (Stream)
+-- Quotients are effective
+import Cubical.HITs.SetQuotients.Properties using (isEquivRel→isEffective)
 
--- -- Definition 16: Split Countability
--- import Cardinality.Infinite.Split using (ℰ!)
+-- Theorem 3:
+import Cardinality.Finite.Cardinal.Category using
+  ( finSetHasProducts
+  ; finSetHasExp
+  ; finSetHasPullbacks
+  ; finSetTerminal
+  ; finSetInitial
+  ; finSetCoeq
+  ; module PullbackSurjProofs
+  )
 
--- -- Theorem 11
--- import Cardinality.Infinite.Split using (_|Σ|_)
+-- Same for hSets
+import Categories.HSets using
+  ( hSetProd
+  ; hSetExp
+  ; hSetHasPullbacks
+  ; hSetTerminal
+  ; hSetInitial
+  ; hSetCoeq
+  ; module PullbackSurjProofs
+  )
 
--- -- Theorem 12
--- import Cardinality.Infinite.Split using (star)
+--------------------------------------------------------------------------------
+-- Section 5: Countably Infinite Types
+--------------------------------------------------------------------------------
 
--- --------------------------------------------------------------------------------
--- -- Section 8: Practical Uses
--- --------------------------------------------------------------------------------
+-- Definition 23: Streams
+import Codata.Stream using (Stream)
 
--- -- Definition 17: Limited Principle of Omniscience
--- import Relation.Nullary.Omniscience using (Omniscient)
+-- Definition 24: Split Countability
+import Cardinality.Infinite.Split using (ℰ!)
 
--- -- Definition 18: Exhaustibility
--- import Relation.Nullary.Omniscience using (Exhaustible)
+-- Definition 25: Countability
+import Cardinality.Infinite.Split using (ℰ)
 
--- -- Theorem 13
--- import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒Exhaustible)
+-- Lemma 21
+import Cardinality.Infinite.Split using (ℰ⇒Discrete)
 
--- -- Theorem 14
--- import Cardinality.Finite.ManifestEnumerable using (ℰ⇒Omniscient)
+-- Theorem 4
+import Cardinality.Infinite.Split using (_|Σ|_)
 
--- -- Theorem 15
--- import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒∣Omniscient∣)
+-- Theorem 5
+import Cardinality.Infinite.Split using (|star|)
 
--- -- Automated proofs
--- import Data.Pauli
+--------------------------------------------------------------------------------
+-- Section 6: Search
+--------------------------------------------------------------------------------
 
--- -- Lemma 2
--- import Cardinality.Finite.SplitEnumerable using (ℰ!⟨2⟩; ℰ!⟨⊤⟩; ℰ!⟨⊥⟩)
+-- Definition 26: Omniscience
+import Relation.Nullary.Omniscience using (Omniscient)
 
--- -- Theorem 2
--- import Cardinality.Finite.SplitEnumerable using (_|Σ|_)
+-- Definition 27: Exhaustibility
+import Relation.Nullary.Omniscience using (Exhaustible)
 
--- -- Theorem 3
--- import Cardinality.Finite.ManifestBishop using (ℰ!⇒ℬ)
+import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒Exhaustible)
+import Relation.Nullary.Omniscience using (Omniscient→Exhaustible)
+import Cardinality.Finite.ManifestEnumerable using (ℰ⇒Omniscient)
+import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒∣Omniscient∣)
 
--- -- Theorem 4
--- import Cardinality.Finite.ManifestBishop using (_|Π|_)
+import Data.Pauli using (Pauli)
+import Data.Pauli using (assoc-·)
+import Data.Pauli using (not-spec)

@@ -140,6 +140,7 @@ module CoeqProofs {X Y : Ob} (f : X ⟶ Y) where
   finSetCoeq .Coequalizer.coequalize {H = H} {h = h} eq = lem {H = H} h eq .fst
   finSetCoeq .Coequalizer.universal {H = H} {h = h} {eq = eq} = funExt λ x → lem {H = H} h eq .snd (im x) x refl
   finSetCoeq .Coequalizer.unique {H = H} {h = h} {i = i} {eq = eq} prf = funExt λ x → lem₂ H h i x prf eq
+open CoeqProofs public using (finSetCoeq)
 
 module PullbackSurjProofs {X Y : Ob} (f : X ⟶ Y) (fSurj : Surjective f) where
   KernelPair : Pullback finSetCategory {X = X} {Z = Y} {Y = X} f f
@@ -152,48 +153,3 @@ module PullbackSurjProofs {X Y : Ob} (f : X ⟶ Y) (fSurj : Surjective f) where
 
   p₂surj : Surjective p₂
   p₂surj y = ∣ ((y , y) , refl) , refl ∣
-
-open import Relation.Binary
-open import Cubical.HITs.SetQuotients
-
-module _ {A : Type a} {R : A → A → Type b} {C : Type c}
-         (isSetC : isSet C)
-         (f : A → C)
-         (coh : ∀ x y → R x y → f x ≡ f y)
-         where
-
-  recQuot : A / R → C
-  recQuot [ a ] = f a
-  recQuot (eq/ a b r i) = coh a b r i
-  recQuot (squash/ xs ys x y i j) = isSetC (recQuot xs) (recQuot ys) (cong recQuot x) (cong recQuot y) i j
-
-open import Path.Reasoning
-
-
-
--- module ExtactProofs {X : Ob} {R : X .fst → X .fst → hProp ℓ}
---   (symR : Symmetric (λ x y → R x y .fst))
---   (transR : Transitive (λ x y → R x y .fst))
---   (reflR : Reflexive (λ x y → R x y .fst))
---   where
---   ℛ : X .fst → X .fst → Type ℓ
---   ℛ x y = R x y .fst
-
---   Src : Ob
---   Src .fst = ∃[ x,y ] (uncurry ℛ x,y)
---   Src .snd = (X .snd ∥×∥ X .snd) ∥Σ∥ λ _ → {!!}
-
---   pr₁ pr₂ : Src ⟶ X
---   pr₁ = fst ∘ fst
---   pr₂ = snd ∘ fst
-
---   ROb : Ob
---   ROb = X .fst / ℛ , {!!}
-
---   CR : Coequalizer finSetCategory {X = Src} {Y = X} pr₁ pr₂
---   CR .Coequalizer.obj = ROb
---   CR .Coequalizer.arr = [_]
---   CR .Coequalizer.equality = funExt λ { ((x , y) , x~y) → eq/ x y x~y}
---   CR .Coequalizer.coequalize {H = H} {h = h} e = recQuot (𝒞⇒isSet (H .snd)) h λ x y x~y → cong (_$ ((x , y) , x~y)) e
---   CR .Coequalizer.universal {H = H} {h = h} {eq = e} = refl
---   CR .Coequalizer.unique {H = H} {h = h} {i = i} {eq = e} p = funExt (elimSetQuotientsProp (λ _ → 𝒞⇒isSet (H .snd) _ _) λ x j → p (~ j) x)
