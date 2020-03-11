@@ -28,9 +28,15 @@
 > meant "any discrete totally ordered Kuratowski finite type is manifestly
 > Bishop finite" (Theorem 1+Lemma 16) or "any totally ordered cardinal finite
 > type is manifestly Bishop" (Theorem 1).
-> 
+
+Our definition of "totally ordered" itself implies discreteness, which we now
+see is unclear.
+We will clarify the statement.
+
 > In Definition 3, = should be :=.
-> 
+
+Fixed.
+
 > The proof of Lemma 10 in the formalization depends on knowing that manifest
 > enumerability implies Kuratowski finiteness. It might be worth saying this in
 > the text, or maybe having it as a lemma between the current Lemmas 9 and 10.
@@ -39,7 +45,9 @@
 > this, unless I've missed it. In the formalization the result is here:
 >
 > https://oisdk.github.io/finiteness-in-cubical-type-theory/Cardinality.Finite.Kuratowski.html#1293
->
+
+We will include the missing lemma.
+
 > On Page 10 between Lemmas 13 and 14 is the text "This lemma is proven by
 > truncating...". From the context, it's not clear if "This lemma" refers to the
 > previous one (Lemma 13) or the next one (Lemma 14). Based on the definitions
@@ -49,17 +57,28 @@
 > The instance of "recompute" uses the fact that the list membership predicate
 > over the discrete type is decidable. I would prefer to see a brief explanation
 > of how to prove Lemma 14 instead of (or in addition to) Lemma 13.
->
+
+We will include an explanation of lemma 14.
+
 > On Page 12 the last sentence before Lemma 20 doesn't seem to be a sentence. I
 > suspect "prove" should be "to prove".
->
+
+Fixed.
+
 > On Page 12, Equation (42) says "isProp" where I expect it to say "isSet." As
 > it is, it would give a category of propositions instead of a category of sets.
->
+
+This is correct: in the paper, isProp is a typo.
+We use isSet in the formalisation.
+
 > Section 4.3 is titled "The Pi-pretopos of Finite Sets." However, Theorem 3
 > proves it's not just a Pi-pretopos but a Pi-topos. It might be better to
 > retitle the section "The Pi-topos of Finite Sets."
->
+
+This is a mistake in the statement of Theorem 3.
+Finite sets do not form a Pi-topos, as that would require a subobject
+classifier, which is not present without choice.
+
 > On Page 14 is the sentence "In particular, finite types are omniscient." It's
 > not clear what *finite* means here. Whatever it means, it seems to be in
 > conflict with the last two sentences of Section 6: "All of the ordered
@@ -67,9 +86,13 @@
 > definitions, we have omniscience for prop-valued predicates." These last two
 > statements are supported by the formalization. Maybe the authors meant "In
 > particular, all types Fin(n) are omniscient."?
->
+
+Fixed.
+
 > Page 15: "a automated" -> "an automated"
->
+
+Fixed.
+
 > Throughout the paper there are some proper nouns I think should be capitalized
 > (e.g. "theorem 16" should be "Theorem 16"), but as long as the authors are
 > consistent I wouldn't insist on this.
@@ -105,7 +128,13 @@
 > work involved and what the authors really add here, even though this was a key
 > point of the abstract. Where is the computational behavior of univalence used
 > in particular?
->
+
+We agree.
+Section 6.2 was originally much larger, however it was cut down for space
+significantly.
+We will include a more thorough examination of the algorithms involved, and in
+particular an explanation of the role of univalence.
+
 > Overall I think the paper is relatively well-written but too succint in some
 > places. It is a walkthrough a formalization on finiteness in HoTT but doesn't
 > really highlight interesting use of Cubical Type Theory or difficulty of
@@ -118,16 +147,25 @@
 > Finiteness by Bezem et Al. (TYPES'16). It includes two other
 > (classically-equivalent) notions of finiteness, it would be interesting to see
 > how they would compare with the ones you study.
->
+
+The two finiteness predicates in the mentioned paper are stremlessness and
+noetherianness, which we mention in the related work section.
+
 > p12: "we have proven the above... As far as we know this is the first
 > formalization of either". That's unclear to me for Set's, isn't it precisely
 > the case that it was proven in the HoTT book that hSets form a Pi-pretopos? Do
 > you mean the original part is with this presentation of finite sets as C(A),
 > or the fact that you replayed the HoTT book proof in CuTT?
->
+
+We meant "formalization" in the sense of "computer-formalized".
+In particular, the HoTT book describes its proofs as "unformalized" versions of
+formal computer-assisted proofs (p10).
+
 > Typos:
 > p12 "to" prove closure under...
 > p12 (42) I guess it should rather be isSet(X)
+
+Fixed.
 
 # Review 3
 
@@ -143,6 +181,27 @@
 > a purpose (e.g. refactoring it). If I am wrong, this must be mentioned in the
 > paper, and in the absence of one of above ingredients, I consider the content
 > a slightly too weak for publication.
+
+The uses of this library are twofold:
+
+* We intend to integrate it with the cubical Agda library, itself a large
+  formalisation of Homotopy Type Theory.
+  Our library already integrates with the cubical Agda library (we depend on
+  many of its definitions), so further integration is a matter of upstream
+  merging.
+  In particular, our proofs that both sets and finite sets form pretoposes are
+  missing from the cubical Agda library, and as such are an important
+  formalisation step.
+
+* Several libraries for proof search based on finiteness exist already in Agda
+  as well as Coq: it is a relatively common method of proof automation.
+  Our work contributes to this area in three ways:
+  - It extends the domain of items to be searched over to include functions, a
+    capability possible only with a constructive interpretation of the
+    univalence axiom.
+  - It provides a pure Agda interface for multiple dependent arguments.
+  - The language of a Pi-pretopos provides a principled and simple interface for
+    constructing proofs of finiteness.
 
 > Besides this main criticism, here are (more or less) minor problems I detected
 > in this paper:

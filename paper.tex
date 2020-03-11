@@ -180,7 +180,7 @@ univalence ``axiom'' is a \emph{theorem}, giving it computational content.
   A fibre \cite[definition 4.2.4]{hottbook} is defined over some function \(f :
   A \rightarrow B\).
   \begin{equation}
-    \text{fib}_f(y) = \Sigma(x : A) , (f (x) \equiv y)
+    \text{fib}_f(y) \coloneqq \Sigma(x : A) , (f (x) \equiv y)
   \end{equation}
 \end{romdefinition}
 \begin{romdefinition}[Equivalences] \label{equivalences}
@@ -730,7 +730,7 @@ From this, we can derive closure under \(\bot\), \(\top\), \(\mathbf{Bool}\),
 \(\times\), \(\uplus\), and \(\rightarrow\).
 The dependent case is not so straightforward.
 We need the following lemma, a version of the axiom of choice on finite sets,
-prove closure under \(\Sigma\) and \(\Pi\).
+to prove closure under \(\Sigma\) and \(\Pi\).
 \begin{romlemma}
   \begin{equation}
     \mathcal{C}(A) \rightarrow (\Pi(x : A) , \lVert U(x) \rVert) \rightarrow \lVert \Pi(x : A) , U(x) \rVert
@@ -749,7 +749,7 @@ We will first briefly go through the construction of the category
 
 First, the type of objects and arrows:
 \begin{alignat}{3}
-  &\text{Obj}_\mathit{Set}      &&\coloneqq \Sigma(x : \mathbf{Type}) , \text{isProp}(x) \\
+  &\text{Obj}_\mathit{Set}      &&\coloneqq \Sigma(x : \mathbf{Type}) , \text{isSet}(x) \\
   &\text{Hom}_\mathit{Set}(x , y) &&\coloneqq  \text{fst}(x) \rightarrow \text{fst}(y)
 \end{alignat}
 As the type of objects makes clear, we have already departed slightly from the
@@ -793,7 +793,7 @@ We have proven the above statements for both \(\mathit{Set}\) and
 \(\mathit{FinSet}\).
 As far as we know, this is the first formalisation of either.
 \begin{romtheorem} \label{finite-topos}
-  The category of finite sets, \(\mathit{FinSet}\), forms a \(\Pi\)-topos.
+  The category of finite sets, \(\mathit{FinSet}\), forms a \(\Pi\)-pretopos.
 \end{romtheorem}
 \section{Countably Infinite Types} \label{infinite}
 In the previous sections we saw different flavours of finiteness which were
@@ -869,7 +869,7 @@ flattened.
 \end{romdefinition}
 The limited principle of omniscience is non-constructive, but individual types
 can themselves satisfy omniscience.
-In particular, \emph{finite} types are omniscient.
+In particular, cardinal finite types are omniscient.
 
 There is also a universal form of omniscience, which we call exhaustibility.
 \begin{romdefinition}[Exhaustibility]
@@ -908,7 +908,7 @@ fully level-polymorphic dependent currying and uncurrying, building on
 
 Finally, we can derive decidable equality on functions over finite types.
 We can also use functions in our proof search.
-Here, for instance, is a automated procedure which finds the
+Here, for instance, is an automated procedure which finds the
 \(\AgdaFunction{not}\) function on \(\mathbf{Bool}\), given a specification.
 \ExecuteMetaData[agda/Data/Pauli.tex]{not-spec}
 \section{Related Work}
