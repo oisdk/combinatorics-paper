@@ -182,26 +182,34 @@ Fixed.
 > paper, and in the absence of one of above ingredients, I consider the content
 > a slightly too weak for publication.
 
-The uses of this library are twofold:
+We respectfully disagree: we feel that the core contribution of
+our paper (the relation between finiteness predicates, and the proof that
+cardinal finite sets form a Pi-pretopos in the setting of HoTT) is significant
+and of impact in general. 
+Finiteness in dependent type theory, and in particular in HoTT, has been an
+important area of study for a number of years now: fully expressing some of the
+finiteness predicates in topos theory is an important step.
+
+As for applications, our library has two:
 
 * We intend to integrate it with the cubical Agda library, itself a large
   formalisation of Homotopy Type Theory.
-  Our library already integrates with the cubical Agda library (we depend on
-  many of its definitions), so further integration is a matter of upstream
-  merging.
-  In particular, our proofs that both sets and finite sets form pretoposes are
-  missing from the cubical Agda library, and as such are an important
-  formalisation step.
+  This integration already exists "downstream" (we depend on the cubical Agda
+  library and reuse many of its definitions): further integration is a matter of
+  upstream merging.
 
-* Several libraries for proof search based on finiteness exist already in Agda
-  as well as Coq: it is a relatively common method of proof automation.
-  Our work contributes to this area in three ways:
+* It is relatively standard to use finiteness formalisations as a basis for a
+  proof search and proof automation library (many examples exist in Agda and
+  Coq).
+  Our work aims to replace these libraries in Agda, with the following
+  improvements:
   - It extends the domain of items to be searched over to include functions, a
     capability possible only with a constructive interpretation of the
     univalence axiom.
   - It provides a pure Agda interface for multiple dependent arguments.
   - The language of a Pi-pretopos provides a principled and simple interface for
     constructing proofs of finiteness.
+  We will expand on the uses of this proof search library in our rewrites.
 
 > Besides this main criticism, here are (more or less) minor problems I detected
 > in this paper:
