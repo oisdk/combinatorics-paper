@@ -209,26 +209,41 @@ The uses of this library are twofold:
 >   appreciate at least one line for each lemma/theorem, *after the statement*,
 >   containing either the idea of the proof or at least a citation to find it
 >   written down somewhere.
->
+
+We will include a short summary of each lemma, and an appendix of lemmas that
+are too long to fit in the paper itself.
+
 > * p7 "Each finiteness predicate so far has contained an ordering of the
 >   underlying type." I think the word "ordering" is misnomer here (especially
 >   with split enumerability where an element may occur twice in the list). "[...]
 >   has contained a manifest enumeration of the elements of the underlying type"
 >   seems more appropriate to me.
->
+
+We agree.
+
 > * The paper alternates between "discrete (type)" and "decidable [...] set", the
 >   authors should commit to one of them (probably "discrete...")
->
+
+We agree.
+
 > * The notation $\mathcal{E}$ is used twice in the paper, about finiteness on one
 >   hand and on the other hand about countability. This is disturbing... please
 >   avoid reusing twice the same notation for different objects within the same
 >   paper.
->
+
+We agree.
+
 > * I think the lightning thing is more interesting than most of the paper but
 >   merely got one paragraph...
->
+
+We agree (see the other answer also).
+
 > * p10 Lemma 16 I believe one should read $\mathcal{K}^f(A)$ instead of
 >   $\mathcal{K}(A)$...
->
+
+Fixed.
+
 > * "This proof does not mirror the proof of Sigma closure on finite types,
 >   surprisingly." This does not surprise me...
+
+Removed.
