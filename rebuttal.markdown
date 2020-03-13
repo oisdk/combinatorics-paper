@@ -129,7 +129,6 @@ Fixed.
 > point of the abstract. Where is the computational behavior of univalence used
 > in particular?
 
-
 We agree that section 6.2 is an important part of the paper: it was much larger
 and more detailed in earlier drafts, and we will add back that detail to the
 next version.
@@ -187,12 +186,16 @@ Fixed.
 We respectfully disagree: we feel that the core contribution of
 our paper (the relation between finiteness predicates, and the proof that
 cardinal finite sets form a Pi-pretopos in the setting of HoTT) is significant
-and of impact in general. 
-Finiteness in dependent type theory, and in particular in HoTT, has been an
-important area of study for a number of years now: fully expressing some of the
-finiteness predicates in topos theory is an important step.
+and of impact in general.
+Constructive finiteness is an area of important study, and putting it in
+topos-theoretic terms is perhaps an obvious step, but an important one (indeed
+it is called for in [Finite Sets in Homotopy Type Theory]).
+Moreover, it is HoTT specifically which allows for the topos-theoretic
+treatment ([Sets in Homotopy Type Theory] examined sets from a topos-theoretic
+point of view), and CuTT which gives a constructive interpretation which we use
+to build our proof automation from.
 
-As for applications, our library has two:
+As for applications, our work has two:
 
 * We intend to integrate it with the cubical Agda library, itself a large
   formalisation of Homotopy Type Theory.
