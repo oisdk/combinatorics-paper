@@ -129,11 +129,13 @@ Fixed.
 > point of the abstract. Where is the computational behavior of univalence used
 > in particular?
 
-We agree.
-Section 6.2 was originally much larger, however it was cut down for space
-significantly.
-We will include a more thorough examination of the algorithms involved, and in
-particular an explanation of the role of univalence.
+
+We agree that section 6.2 is an important part of the paper: it was much larger
+and more detailed in earlier drafts, and we will add back that detail to the
+next version.
+In particular we will describe in detail the relation between the library and
+other similar libraries, and especially the importance of computational
+univalence (which is indeed essential to the function of the library).
 
 > Overall I think the paper is relatively well-written but too succint in some
 > places. It is a walkthrough a formalization on finiteness in HoTT but doesn't
