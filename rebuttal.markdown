@@ -1,3 +1,6 @@
+We thank the reviewers for their time, and for their thorough and insightful
+reviews.
+
 # Review 1
 
 > 2: (accept)
@@ -22,6 +25,9 @@
 >
 > Here are a few issues the authors might want to correct or reconsider.
 > 
+proof automation section is possible as a direct consequence of a constructive
+interpretation of the univalence axiom.
+
 > The abstract says: "any totally ordered Kuratowski finite type is manifestly
 > Bishop finite." Looking at Figure 1, as well as Theorem 1 and Lemmas 16, I
 > think the statement in the abstract is wrong. Probably the authors either
@@ -33,37 +39,17 @@ Our definition of "totally ordered" itself implies discreteness, which we now
 see is unclear.
 We will clarify the statement.
 
-> In Definition 3, = should be :=.
-
-Fixed.
-
 > The proof of Lemma 10 in the formalization depends on knowing that manifest
-> enumerability implies Kuratowski finiteness. It might be worth saying this in
-> the text, or maybe having it as a lemma between the current Lemmas 9 and 10.
-> Figure 1 displays an arrow for "manifest enumerability implies Kuratowski
-> finiteness" but I don't see a lemma or theorem in the paper that justifies
-> this, unless I've missed it. In the formalization the result is here:
->
-> https://oisdk.github.io/finiteness-in-cubical-type-theory/Cardinality.Finite.Kuratowski.html#1293
+> enumerability implies Kuratowski finiteness. It might be worth saying this...
 
 We will include the missing lemma.
 
 > On Page 10 between Lemmas 13 and 14 is the text "This lemma is proven by
-> truncating...". From the context, it's not clear if "This lemma" refers to the
-> previous one (Lemma 13) or the next one (Lemma 14). Based on the definitions
-> it must mean Lemma 13, but this means there is no explanation of how Lemma 14
-> is proven. Lemma 14 is the harder of the two since one needs to reverse the
-> truncation. In the formalization this is done with the "recompute" function.
-> The instance of "recompute" uses the fact that the list membership predicate
-> over the discrete type is decidable. I would prefer to see a brief explanation
+> truncating..." ... 
+> I would prefer to see a brief explanation
 > of how to prove Lemma 14 instead of (or in addition to) Lemma 13.
 
 We will include an explanation of lemma 14.
-
-> On Page 12 the last sentence before Lemma 20 doesn't seem to be a sentence. I
-> suspect "prove" should be "to prove".
-
-Fixed.
 
 > On Page 12, Equation (42) says "isProp" where I expect it to say "isSet." As
 > it is, it would give a category of propositions instead of a category of sets.
@@ -75,59 +61,23 @@ We use isSet in the formalisation.
 > proves it's not just a Pi-pretopos but a Pi-topos. It might be better to
 > retitle the section "The Pi-topos of Finite Sets."
 
-This is a mistake in the statement of Theorem 3.
-Finite sets do not form a Pi-topos, as that would require a subobject
-classifier, which is not present without choice.
-
-> On Page 14 is the sentence "In particular, finite types are omniscient." It's
-> not clear what *finite* means here. Whatever it means, it seems to be in
-> conflict with the last two sentences of Section 6: "All of the ordered
-> finiteness predicates imply omniscience. For the unordered finiteness
-> definitions, we have omniscience for prop-valued predicates." These last two
-> statements are supported by the formalization. Maybe the authors meant "In
-> particular, all types Fin(n) are omniscient."?
-
-Fixed.
-
-> Page 15: "a automated" -> "an automated"
-
-Fixed.
+This is indeed a mistake, however it is in the statement of Theorem 3.
+Finite sets do not form a Pi-topos (in HoTT): we will fix the statement to say
+they form a Pi-pretopos.
 
 > Throughout the paper there are some proper nouns I think should be capitalized
 > (e.g. "theorem 16" should be "Theorem 16"), but as long as the authors are
 > consistent I wouldn't insist on this.
 
+We will capitalize the proper nouns.
+
 # Review 2
 
-> 0: (borderline paper)
-> This paper explores different notions of finiteness in homotopy type theory,
-> from Manifest Bishop / Split Enumerable sets (think a finite list with or
-> without duplicates), Manifest Enumerable Sets (the membership proof being
-> truncated), Cardinal Sets (a truncated equivalence to `Fin n` for some n,
-> which can be extracted) and Kuratowski sets (representable as an HIT for
-> finite sets as lists quotiented by permutation and duplication).
->
-> The authors study the various relationships between these notions, summarized
-> in figure 1. The discreteness and decidable ordering properties of a given
-> type are essential to prove equivalence of the various notions, which is not a
-> new result when studying finiteness in constructive type theory. The
-> contribution here is rather in laying out the proofs formally in Cubical Type
-> Theory as implemented in Cubical Agda. The authors develop general proofs of
-> closure properties for the most restrictive Split Enumerable sets (for basic
-> types, Pi and Sigma) and the relation properties in full generality. Then they
-> develop a proof that the category of finite sets (as Discrete Kuratowski
-> finite sets) forms a Pi-pretopos, taking the HoTT book proof for homotopy sets
-> as inspiration.
->
-> An additional section presents quickly the treatment of infinite types
-> (enumerations based on streams instead of lists) and show some of their
-> closure properties, which requires different proof methods than for finite
-> ones.
-> 
-> Finally the section 6.2 about automation is too succint to get any idea of the
-> work involved and what the authors really add here, even though this was a key
-> point of the abstract. Where is the computational behavior of univalence used
-> in particular?
+> Overall I think the paper is relatively well-written but too succint in some
+> places. It is a walkthrough a formalization on finiteness in HoTT but doesn't
+> really highlight interesting use of Cubical Type Theory or difficulty of
+> interest in the formalization. The only potential case could have been section
+> 6.2 but it's simply too short. I'm hence not sure it has its place at IJCAR.
 
 We agree that section 6.2 is an important part of the paper: it was much larger
 and more detailed in earlier drafts, and we will add back that detail to the
@@ -136,21 +86,17 @@ In particular we will describe in detail the relation between the library and
 other similar libraries, and especially the importance of computational
 univalence (which is indeed essential to the function of the library).
 
-> Overall I think the paper is relatively well-written but too succint in some
-> places. It is a walkthrough a formalization on finiteness in HoTT but doesn't
-> really highlight interesting use of Cubical Type Theory or difficulty of
-> interest in the formalization. The only potential case could have been section
-> 6.2 but it's simply too short. I'm hence not sure it has its place at IJCAR.
->
-> Questions:
->
 > You do not cite Realizability at Work: Separating Two Constructive Notions of
 > Finiteness by Bezem et Al. (TYPES'16). It includes two other
 > (classically-equivalent) notions of finiteness, it would be interesting to see
 > how they would compare with the ones you study.
 
-The two finiteness predicates in the mentioned paper are stremlessness and
-noetherianness, which we mention in the related work section.
+The two finiteness predicates in the mentioned paper are streamlessness and
+noetherianness, which are explored in [1], which we do mention in the related
+work section.
+Although we would of course like to explore more notions of finiteness in a
+longer paper, we chose to discuss only the notions of finiteness which were
+necessary to our main results.
 
 > p12: "we have proven the above... As far as we know this is the first
 > formalization of either". That's unclear to me for Set's, isn't it precisely
@@ -162,15 +108,16 @@ We meant "formalization" in the sense of "computer-formalized".
 In particular, the HoTT book describes its proofs as "unformalized" versions of
 formal computer-assisted proofs (p10).
 
-> Typos:
-> p12 "to" prove closure under...
-> p12 (42) I guess it should rather be isSet(X)
-
-Fixed.
-
 # Review 3
 
-> 0: (borderline paper)
+> * Several Lemmas and Theorems have no proof text in the paper. I would
+>   appreciate at least one line for each lemma/theorem, *after the statement*,
+>   containing either the idea of the proof or at least a citation to find it
+>   written down somewhere.
+
+We will include a short summary of each lemma, and an appendix of lemmas that
+are too long to fit in the paper itself.
+
 > This paper describes and establishes implications and equivalences between
 > various notions of finiteness and countability in Cubical/Homotopy Type
 > Theory. The paper is fairly well written and quite easy to understand, it goes
@@ -183,17 +130,11 @@ Fixed.
 > paper, and in the absence of one of above ingredients, I consider the content
 > a slightly too weak for publication.
 
-We respectfully disagree: we feel that the core contribution of
-our paper (the relation between finiteness predicates, and the proof that
-cardinal finite sets form a Pi-pretopos in the setting of HoTT) is significant
-and of impact in general.
-Constructive finiteness is an area of important study, and putting it in
-topos-theoretic terms is perhaps an obvious step, but an important one (indeed
-it is called for in [Finite Sets in Homotopy Type Theory]).
-Moreover, it is HoTT specifically which allows for the topos-theoretic
-treatment ([Sets in Homotopy Type Theory] examined sets from a topos-theoretic
-point of view), and CuTT which gives a constructive interpretation which we use
-to build our proof automation from.
+We respectfully disagree with regards to the content: we feel that the core
+contribution of our paper (the relation between finiteness predicates, and the
+proof that cardinal finite sets form a Pi-pretopos in the setting of HoTT) is
+significant and of impact in general.
+See our response to Reviewer 1's summary.
 
 As for applications, our work has two:
 
@@ -204,59 +145,19 @@ As for applications, our work has two:
   upstream merging.
 
 * It is relatively standard to use finiteness formalisations as a basis for a
-  proof search and proof automation library (many examples exist in Agda and
-  Coq).
+  proof search and proof automation library (see [4]).
   Our work aims to replace these libraries in Agda, with the following
-  improvements:
+  improvements allowed by CuTT:
   - It extends the domain of items to be searched over to include functions, a
     capability possible only with a constructive interpretation of the
     univalence axiom.
   - It provides a pure Agda interface for multiple dependent arguments.
   - The language of a Pi-pretopos provides a principled and simple interface for
-    constructing proofs of finiteness.
+    constructing proofs of finiteness: from these one can automatically derive
+    equivalences to other finite types.
   We will expand on the uses of this proof search library in our rewrites.
 
-> Besides this main criticism, here are (more or less) minor problems I detected
-> in this paper:
-> * Several Lemmas and Theorems have no proof text in the paper. I would
->   appreciate at least one line for each lemma/theorem, *after the statement*,
->   containing either the idea of the proof or at least a citation to find it
->   written down somewhere.
-
-We will include a short summary of each lemma, and an appendix of lemmas that
-are too long to fit in the paper itself.
-
-> * p7 "Each finiteness predicate so far has contained an ordering of the
->   underlying type." I think the word "ordering" is misnomer here (especially
->   with split enumerability where an element may occur twice in the list). "[...]
->   has contained a manifest enumeration of the elements of the underlying type"
->   seems more appropriate to me.
-
-We agree.
-
-> * The paper alternates between "discrete (type)" and "decidable [...] set", the
->   authors should commit to one of them (probably "discrete...")
-
-We agree.
-
-> * The notation $\mathcal{E}$ is used twice in the paper, about finiteness on one
->   hand and on the other hand about countability. This is disturbing... please
->   avoid reusing twice the same notation for different objects within the same
->   paper.
-
-We agree.
-
-> * I think the lightning thing is more interesting than most of the paper but
->   merely got one paragraph...
-
-We agree (see the other answer also).
-
-> * p10 Lemma 16 I believe one should read $\mathcal{K}^f(A)$ instead of
->   $\mathcal{K}(A)$...
-
-Fixed.
-
-> * "This proof does not mirror the proof of Sigma closure on finite types,
->   surprisingly." This does not surprise me...
-
-Removed.
+[1]T. Coquand and A. Spiwack, “Constructively finite?,” in Contribuciones científicas en honor de Mirian Andrés Gómez, 2010, pp. 217–230.
+[2]D. Frumin, H. Geuvers, L. Gondelman, and N. van der Weide, “Finite Sets in Homotopy Type Theory,” in Proceedings of the 7th ACM SIGPLAN International Conference on Certified Programs and Proofs, New York, NY, USA, 2018, pp. 201–214, doi: 10.1145/3167085.
+[3]E. Rijke and B. Spitters, “Sets in homotopy type theory,” Math. Struct. Comp. Sci., vol. 25, no. 5, pp. 1172–1202, Jun. 2015, doi: 10.1017/S0960129514000553.
+[4]D. Firsov and T. Uustalu, “Dependently typed programming with finite sets,” in Proceedings of the 11th ACM SIGPLAN Workshop on Generic Programming - WGP 2015, Vancouver, BC, Canada, 2015, pp. 33–44, doi: 10.1145/2808098.2808102.
