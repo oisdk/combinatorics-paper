@@ -17,14 +17,15 @@ reviews.
 > Section 6. Discussion of using decidability results to automate some proofs is
 > briefly considered in Section 7. The results are formalized in Cubical Agda
 > and the sources are available online.
-> 
-> The formalization appears to be a significant amount of work. Modulo a few
-> relatively minor issues listed below, the description in the paper is well
-> written and at a reasonable level of abstraction. I recommend accepting the
-> paper.
->
-> Here are a few issues the authors might want to correct or reconsider.
-> 
+
+We think this summary is accurate, however we would like to emphasise the
+topos-theoretic proofs in the paper as significant.
+Constructive finiteness is an important area of study (see [1, etc]), and
+expressing it formally as a Pi-pretopos was a clear next step (indeed, it was
+called for specifically in [2]).
+Furthermore, our formalisation is fully computer-checked, and a key
+demonstration of two new theories: HoTT and CuTT.
+The first sections of the paper rely specifically on HoTT (as [3] does), and the
 proof automation section is possible as a direct consequence of a constructive
 interpretation of the univalence axiom.
 
