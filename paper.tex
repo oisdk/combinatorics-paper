@@ -228,10 +228,10 @@ univalence ``axiom'' is a \emph{theorem}, giving it computational content.
 
   It is defined as a Higher Inductive Type:
   \begin{equation} {
-    \begin{alignat*}{3}
+    \begin{aligned}
       \lVert A \rVert \coloneqq & \; \lvert \wc \rvert &&: A \rightarrow \lVert A \rVert ; \\
                               | & \; \text{squash}     &&: \Pi {(x, y : \lVert A \rVert)} , x \equiv y  ; 
-    \end{alignat*} }
+    \end{aligned} }
   \end{equation}
   We will use two eliminators from \(\lVert A \rVert\) in this paper.
   \begin{enumerate}
@@ -287,7 +287,7 @@ We used some extra types in the above definition, which we will define here:
 \begin{definition}[\(\mathbf{Fin}\)] \label{Fin}
   \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\). We
   define it the standard way, where \(\mathbf{Fin}(0) \coloneqq \bot\) and
-  \(\mathbf{Fin}(n + 1) &\coloneqq \top \uplus \mathbf{Fin}(n)\).
+  \(\mathbf{Fin}(n + 1) \coloneqq \top \uplus \mathbf{Fin}(n)\).
 \end{definition}
 
 We tend to prefer list-based definitions of finiteness, rather than ones based
@@ -334,7 +334,6 @@ numbers.
     & \simeq \Sigma (n : \mathbb{N}) , ( \mathbf{Fin}(n) \twoheadrightarrow ! \; A )
     && \text{eqn.~\ref{sp-surj-arrow-eqn} } (\twoheadrightarrow!)
   \end{align*}
-  \qed
 \end{proof}
 
 In our formalisation, the proof is a single line: most of the steps above are
@@ -364,7 +363,6 @@ formalisation:
   Also, we know that \(\mathbf{Fin}(n)\) is discrete (proven in our
   formalisation).
   Therefore, by lemma~\ref{discrete-surj}, \(A\) is discrete.
-  \qed
 \end{proof}
 \subsection{Manifest Bishop Finiteness}
 \begin{definition}[Manifest Bishop Finiteness]
@@ -466,10 +464,10 @@ like the circle.
 \begin{definition}[\(S^1\)] \label{circle-def}
   The circle, \(S^1\), can be represented in HoTT as a higher inductive type.
   \begin{equation}
-    \begin{alignat}{5}
+    \begin{aligned}
       S^1 \coloneqq & \; \text{base} &&: S^1 ; \\
       | & \; \text{loop} &&: \text{base} \equiv \text{base} ; 
-    \end{alignat}
+    \end{aligned}
   \end{equation}
   We will use it here as an example of a non-set type, i.e. a type for which not
   all paths are equal.
@@ -483,14 +481,14 @@ The first thing we must define is a representation of subsets.
 \begin{definition}[Kuratowski Finite Subset]
   \(\mathcal{K}(A)\) is the type of Kuratowski-finite subsets of \(A\).
   \begin{equation}
-    \begin{alignat}{2}
+    \begin{aligned}
       \mathcal{K}(A) \coloneqq&
              \; []                &&: \mathcal{K}(A) ; \\
       \vert& \; \wc \dblcolon \wc &&: A \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
       \vert& \; \text{com}        &&: \Pi (x, y: A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} ; \\
       \vert& \; \text{dup}        &&: \Pi (x : A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} ; \\
       \vert& \; \text{trunc}      &&: \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q ;
-    \end{alignat}
+    \end{aligned}
   \end{equation}
   We define it as a HIT (definition~\ref{HITs}).
   The first two constructors are point constructors, giving ways to create
@@ -706,10 +704,10 @@ as both are definable in terms of \(\Sigma\).
   We then define the type of \(n\)-tuples over some type family \(T :
   \mathbf{Fin}(n) \rightarrow \mathbf{Type}\).
   \begin{equation}
-    \begin{alignat}{3}
+    \begin{aligned}
       & \mathbf{Tuple}(0, T)   &&\coloneqq \top \\
       & \mathbf{Tuple}(n+1, T) &&\coloneqq T(0) \times \mathbf{Tuple}(n, T \circ \text{suc})
-    \end{alignat}
+    \end{aligned}
   \end{equation}
   We can show that this type is equivalent to functions (proven in our formalisation):
   \begin{equation}
@@ -729,7 +727,6 @@ as both are definable in terms of \(\Sigma\).
   are themselves split enumerable, and \(\top\), which is also split enumerable.
   Lemma~\ref{split-enum-sigma} shows us that the product of finitely many split
   enumerable types is itself split enumerable, proving our goal.
-  \qed
 \end{proof}
 
 Lifting the above closure proofs to work on proofs of \(\mathcal{C}\) is not
