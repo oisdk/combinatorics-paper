@@ -1,9 +1,8 @@
-\documentclass[runningheads,citeauthouryear]{llncs}
+\documentclass[small,review]{acmart}
 
 \usepackage{catchfilebetweentags}
 \input{agda}
 
-\usepackage{cite}
 \usepackage{tikz-cd}
 \tikzcdset{
   arrow style=tikz,
@@ -104,5 +103,9 @@
   }%
 }
 
+\usepackage[backend=bibtex]{biblatex}
+\addbibresource{bibliography.bib}
+
+\PrerenderUnicode{í}
 
 \usepackage{hyperref}

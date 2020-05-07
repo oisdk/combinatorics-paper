@@ -1,14 +1,22 @@
 \input{preamble}
+\acmConference[TyDe 2020]{Workshop on Type-driven Development}{23 Aug
+  2020}{Jersey City, USA}
+
+\author{Donnacha Oisín Kidney}
+\affiliation{University College Cork}
+\email{o.kidney@cs.ucc.ie}
+\author{Gregory Provan}
+\affiliation{University College Cork}
+\email{g.provan@cs.ucc.ie}
+\author{Nicolas Wu}
+\affiliation{Imperial College London}
+\email{n.wu@imperial.ac.uk}
+
 \title{Finiteness in Cubical Type Theory}
-\author{
-  Donnacha Oisín Kidney\inst{1}\and Gregory Provan \inst{2}
-}
-\institute{
-  University College Cork \email{o.kidney@cs.ucc.ie} \and
-  University College Cork \email{g.provan@cs.ucc.ie}
-}
-\begin{document}
-\maketitle
+
+\keywords{Agda, Homotopy Type Theory, Cubical Type Theory,
+  Dependent Types, Finiteness, Topos, Kuratowski finite}
+
 \begin{abstract}
   We study five different notions of finiteness in Cubical Type Theory and prove
   the relationship between them.
@@ -28,9 +36,11 @@
   Through this library we demonstrate a number of uses for the computational
   content of the univalence axiom, including searching for and synthesising
   functions.
-  \keywords{Agda \and Homotopy Type Theory \and Cubical Type Theory \and
-    Dependent Types \and Finiteness \and Topos \and Kuratowski finite}
 \end{abstract}
+
+
+\begin{document}
+\maketitle
 \section{Introduction}
 \subsection{Foreword}
 In constructive mathematics we are often preoccupied with \emph{why} something
@@ -932,10 +942,9 @@ of finiteness (the ``manifest'' predicates), and we have provided the missing
 \cite{iversenUnivalentCategoriesFormalization2018} provided a starting point for
 our categorical formalisation: it contains a proof, for instance, that homotopy
 sets form a category.
-
-\subsubsection*{Acknowledgement}
-This work has been supported by the Science Foundation Ireland under the
-following grant: 13/RC/2D94 to Irish Software Research Centre.
-\bibliographystyle{splncs04}
-\bibliography{bibliography.bib}
+\begin{acks}
+  This work has been supported by the Science Foundation Ireland under the
+  following grant: 13/RC/2D94 to Irish Software Research Centre.
+\end{acks}
+\printbibliography
 \end{document} 
