@@ -1,4 +1,5 @@
-\documentclass[small,review]{acmart}
+\PassOptionsToPackage{dvipsnames}{xcolor}
+\documentclass[review,anonymous]{acmart}
 
 \usepackage{catchfilebetweentags}
 \input{agda}
@@ -103,8 +104,7 @@
   }%
 }
 
-\usepackage[backend=bibtex]{biblatex}
-\addbibresource{bibliography.bib}
+\usepackage{natbib}
 
 \PrerenderUnicode{í}
 
