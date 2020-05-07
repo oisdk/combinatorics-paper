@@ -159,13 +159,13 @@ theory with an implementation in Cubical Agda
 \cite{vezzosiCubicalAgdaDependently2019}.
 It allows us to do much of the same theory as in HoTT, but crucially the
 univalence ``axiom'' is a \emph{theorem}, giving it computational content.
-\begin{romdefinition}[Path Types] \label{path-types}
+\begin{definition}[Path Types] \label{path-types}
   The equality type (which we denote with \(\equiv\)) in CuTT is the type of
   Paths\footnotemark.
   The internal structure of paths is largely irrelevant to us here, as we will
   generally treat \(\equiv\) as a black-box equivalence relation with
   substitution and congruence.
-\end{romdefinition}
+\end{definition}
 
 \footnotetext{
   Actually, CuTT does have an identity type with similar semantics to the
@@ -173,7 +173,7 @@ univalence ``axiom'' is a \emph{theorem}, giving it computational content.
   We do not use this type anywhere in our work, however, so we will not consider
   it here.
 }
-\begin{romdefinition}[Homotopy Levels] \label{homotopy-types}
+\begin{definition}[Homotopy Levels] \label{homotopy-types}
   Types in HoTT and CuTT are not necessarily sets, as they are in MLTT.
   Some have higher homotopies (paths which aren't unique).
   We actually have a hierarchy of complexity of structure of path spaces in
@@ -185,42 +185,42 @@ univalence ``axiom'' is a \emph{theorem}, giving it computational content.
     &\text{isProp}(A)     &&\coloneqq \Pi(x, y : A) , (x \equiv y) \\
     &\text{isSet}(A)      &&\coloneqq \Pi(x, y : A) , \text{isProp}(x \equiv y)
   \end{alignat}
-\end{romdefinition}
-\begin{romdefinition}[Fibres] \label{fibres}
+\end{definition}
+\begin{definition}[Fibres] \label{fibres}
   A fibre \cite[definition 4.2.4]{hottbook} is defined over some function \(f :
   A \rightarrow B\).
   \begin{equation}
     \text{fib}_f(y) \coloneqq \Sigma(x : A) , (f (x) \equiv y)
   \end{equation}
-\end{romdefinition}
-\begin{romdefinition}[Equivalences] \label{equivalences}
+\end{definition}
+\begin{definition}[Equivalences] \label{equivalences}
   We will take contractible maps \cite[definition 4.4.1]{hottbook} as our
   ``default'' definition of equivalences.
   \begin{alignat}{2}
     &\text{isEquiv}(f) &&\coloneqq \Pi(y : B) , \text{isContr}(\text{fib}_f(y)) \label{is-equiv-def} \\
     &A \simeq B        &&\coloneqq \Sigma(f : A \rightarrow B) , \text{isEquiv}(f)
   \end{alignat}
-\end{romdefinition}
-\begin{romdefinition}[Decidable Types]
+\end{definition}
+\begin{definition}[Decidable Types]
   \begin{equation}
     \mathbf{Dec}(A) \coloneqq A \uplus \neg A
   \end{equation}
-\end{romdefinition}
-\begin{romdefinition}[Discrete Types]
+\end{definition}
+\begin{definition}[Discrete Types]
   A discrete type is one with decidable equality.
   \begin{equation}
     \text{Discrete}(A) \coloneqq \Pi(x, y : A) , \mathbf{Dec}(x \equiv y)
   \end{equation}
   By Hedberg's theorem \cite{hedbergCoherenceTheoremMartinLof1998} any discrete
   type is a set.
-\end{romdefinition}
-\begin{romdefinition}[Higher Inductive Types] \label{HITs}
+\end{definition}
+\begin{definition}[Higher Inductive Types] \label{HITs}
   Normal inductive types have \emph{point} constructors: constructors which
   construct values of the type.
   Higher Inductive Types (HITs) also have \emph{path} constructors: ways to
   construct paths in the type.
-\end{romdefinition}
-\begin{romdefinition}[Propositional Truncation] \label{prop-trunc}
+\end{definition}
+\begin{definition}[Propositional Truncation] \label{prop-trunc}
   The type \(\lVert A \rVert\) on some type \(A\) is a propositionally truncated
   proof of \(A\) \cite[3.7]{hottbook}.
   In other words, it is a proof that some \(A\) exists, but it does not tell you
@@ -244,7 +244,7 @@ univalence ``axiom'' is a \emph{theorem}, giving it computational content.
     \cite{krausGeneralUniversalProperty2015}, and \(B\) needs to be an
     \(n\)-type for some finite \(n\).
   \end{enumerate}
-\end{romdefinition}
+\end{definition}
 \section{Finiteness Predicates} \label{finiteness-predicates}
 In this section, we will define and briefly describe each of the five predicates
 in Figure~\ref{finite-classification}.
@@ -254,7 +254,7 @@ the simpler predicates.
 The relations (which we will prove in the next section) then allow us to
 transfer those proofs.
 \subsection{Split Enumerability}
-\begin{romdefinition}[Split Enumerable Set] \label{split-enum-def}
+\begin{definition}[Split Enumerable Set] \label{split-enum-def}
   \begin{equation} \label{split-enum-def-eqn}
     \mathcal{E}!(A) \coloneqq \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
   \end{equation}
@@ -262,10 +262,10 @@ transfer those proofs.
   component the ``cover'' proof.
   An equivalent version of this predicate was called \verb+Listable+ in
   \cite{firsovDependentlyTypedProgramming2015}.
-\end{romdefinition}
+\end{definition}
 
 We used some extra types in the above definition, which we will define here:
-\begin{romdefinition}[Containers] \label{container-def}
+\begin{definition}[Containers] \label{container-def}
   A container \cite{abbottContainersConstructingStrictly2005} is a pair
   \(S , P\) where \(S\) is a type, the elements of which are called
   the \emph{shapes} of the container, and \(P\) is a type family on \(S\), where
@@ -278,24 +278,24 @@ We used some extra types in the above definition, which we will define here:
   \begin{equation} \label{container-membership}
     x \in \mathit{xs} \coloneqq \text{fib}_{\text{snd}(\mathit{xs})}(x)
   \end{equation}
-\end{romdefinition}
-\begin{romdefinition}[\(\mathbf{List}\)] \label{List}
+\end{definition}
+\begin{definition}[\(\mathbf{List}\)] \label{List}
   \begin{equation}
     \mathbf{List} \coloneqq \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket
   \end{equation}
-\end{romdefinition}
-\begin{romdefinition}[\(\mathbf{Fin}\)] \label{Fin}
+\end{definition}
+\begin{definition}[\(\mathbf{Fin}\)] \label{Fin}
   \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\). We
   define it the standard way, where \(\mathbf{Fin}(0) \coloneqq \bot\) and
   \(\mathbf{Fin}(n + 1) &\coloneqq \top \uplus \mathbf{Fin}(n)\).
-\end{romdefinition}
+\end{definition}
 
 We tend to prefer list-based definitions of finiteness, rather than ones based
 on bijections or surjections.
 This is purely a matter of perspective, however: the definition above is
 precisely equivalent to a split surjection from a finite prefix of the natural
 numbers.
-\begin{romdefinition}[Surjections] \label{surjections}
+\begin{definition}[Surjections] \label{surjections}
   We define both surjections and \emph{split} surjections here \cite[definition
   4.6.1]{hottbook}.
   \begin{alignat}{3}
@@ -304,12 +304,12 @@ numbers.
     &\text{sp-surj}(f)          &&\coloneqq \Pi(y : B) , \text{fib}_f(y) \label{sp-surj-eqn} \\
     &A \twoheadrightarrow! \; B &&\coloneqq \Sigma (f : A \rightarrow B) , \text{sp-surj}(f) \label{sp-surj-arrow-eqn}
   \end{alignat}
-\end{romdefinition}
-\begin{romlemma} \label{split-enum-is-split-surj}
+\end{definition}
+\begin{lemma} \label{split-enum-is-split-surj}
   \begin{equation}
     \mathcal{E}!(A) \simeq \Sigma (n : \mathbb{N}) , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
   \end{equation}
-\end{romlemma}
+\end{lemma}
 \begin{proof}
   \begin{align*}
     \mathcal{E}!(A)
@@ -345,7 +345,7 @@ The only step which isn't definitional equality is the reassociation of
 Split enumerability implies decidable equality on the underlying type.
 To prove this, we will make use of the following lemma, proven in the
 formalisation:
-\begin{romlemma} \label{discrete-surj}
+\begin{lemma} \label{discrete-surj}
   \begin{equation}
     \frac{
         A \twoheadrightarrow! \; B \; \; \; \text{Discrete}(A)
@@ -353,10 +353,10 @@ formalisation:
        \text{Discrete}(B) 
       }
   \end{equation}
-\end{romlemma}
-\begin{romlemma} \label{split-enum-discrete}
+\end{lemma}
+\begin{lemma} \label{split-enum-discrete}
   Every split enumerable type is discrete.
-\end{romlemma}
+\end{lemma}
 \begin{proof}
   Let \(A\) be a split enumerable type.
   By lemma~\ref{split-enum-is-split-surj}, there is a surjection from
@@ -367,19 +367,19 @@ formalisation:
   \qed
 \end{proof}
 \subsection{Manifest Bishop Finiteness}
-\begin{romdefinition}[Manifest Bishop Finiteness]
+\begin{definition}[Manifest Bishop Finiteness]
   \begin{equation} \label{bish-def}
     \mathcal{B}(A) \coloneqq \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \inunique xs
   \end{equation}
-\end{romdefinition}
+\end{definition}
 The only difference between manifest Bishop finiteness and split enumerability
 is the membership term: here we require unique membership (\(\inunique\)),
 rather than simple membership (\(\in\)).
-\begin{romdefinition}[Unique Membership] \label{uniq-memb-def}
+\begin{definition}[Unique Membership] \label{uniq-memb-def}
   \begin{equation}
     x \inunique \mathit{xs} \coloneqq \text{isContr}(x \in \mathit{xs})
   \end{equation}
-\end{romdefinition}
+\end{definition}
 
 We use the word ``manifest'' here to distinguish from another common
 interpretation of Bishop finiteness, which we have called cardinal finiteness in
@@ -390,11 +390,11 @@ of the elements in the proof.
 Where split enumerability was the enumeration form of a split surjection from
 \(\mathbf{Fin}\), manifest Bishop finiteness is the enumeration form of an
 \emph{equivalence} with \(\mathbf{Fin}\).
-\begin{romlemma} \label{bishop-equiv}
+\begin{lemma} \label{bishop-equiv}
   \begin{equation}
     \mathcal{B}(A) \simeq \Sigma {(n : \mathbb{N})} , \left( \mathbf{Fin}(n) \simeq A \right)
   \end{equation}
-\end{romlemma}
+\end{lemma}
 This proof is effectively the same as that of
 lemma~\ref{split-enum-is-split-surj}.
 \subsection{Cardinal Finiteness}
@@ -415,11 +415,11 @@ the type\footnotemark.
 
 To remedy the problem, we will use propositional truncation
 (def.~\ref{prop-trunc}).
-\begin{romdefinition}[Cardinal Finiteness]
+\begin{definition}[Cardinal Finiteness]
   \begin{equation}
     \mathcal{C}(A) \coloneqq \lVert \mathcal{B}(A) \rVert \simeq \lVert \Sigma(n : \mathbb{N}) , (\mathbf{Fin}(n) \simeq A) \rVert
   \end{equation}
-\end{romdefinition}
+\end{definition}
 At first glance, it might seem that we lose any useful properties we could
 derive from \(\mathcal{B}\).
 Luckily, this is not the case: by eliminator \ref{elim-prop-coh} of
@@ -429,41 +429,41 @@ The following two lemmas are proven in
 \cite{yorgeyCombinatorialSpeciesLabelled2014} (Proposition 2.4.9 and 2.4.10,
 respectively), in much the same way as we have done here.
 Our contribution for this section is simply the formalisation.
-\begin{romlemma}
+\begin{lemma}
   Given a cardinally finite type, we can derive the type's cardinality, as well
   as a propositionally truncated proof of equivalence with \(\textbf{Fin}\)s of
   the same cardinality.
   \begin{equation}
     \mathcal{C}(A) \rightarrow \Sigma {(n : \mathbb{N})} , \lVert \textbf{Fin}(n) \simeq A \rVert
   \end{equation}
-\end{romlemma}
-\begin{romlemma} \label{cardinal-finite-discrete}
+\end{lemma}
+\begin{lemma} \label{cardinal-finite-discrete}
   Any cardinal-finite set has decidable equality.
-\end{romlemma}
+\end{lemma}
 \subsection{Manifest Enumerability}
-\begin{romdefinition}[Manifest Enumerability]
+\begin{definition}[Manifest Enumerability]
   \begin{equation}
     \mathcal{E}(A) \coloneqq \Sigma {(\mathit{xs} : \mathbf{List}(A))} , \Pi {(x : A)} , \lVert x \in \mathit{xs} \rVert
   \end{equation}
-\end{romdefinition}
+\end{definition}
 As with manifest Bishop finiteness, the only difference with this type and split
 enumerability is the membership proof: here we have propositionally truncated
 it.
 This has two effects.
 First, it means that this proof represents a true surjection (rather than a
 split surjection) from \(\mathbf{Fin}\).
-\begin{romlemma}
+\begin{lemma}
   \begin{equation}
     \mathcal{E}(A) \simeq \Sigma(n : \mathbb{N}) , (\mathbf{Fin}(n) \twoheadrightarrow A)
   \end{equation}
-\end{romlemma}
+\end{lemma}
 The proof for this lemma is similar in structure to
 lemma~\ref{split-enum-is-split-surj} and lemma~\ref{bishop-equiv}.
 
 Secondly, it means the predicate does not imply decidable equality.
 More significantly, it allows the predicate to be defined over non-set types,
 like the circle.
-\begin{romdefinition}[\(S^1\)] \label{circle-def}
+\begin{definition}[\(S^1\)] \label{circle-def}
   The circle, \(S^1\), can be represented in HoTT as a higher inductive type.
   \begin{equation}
     \begin{alignat}{5}
@@ -474,13 +474,13 @@ like the circle.
   We will use it here as an example of a non-set type, i.e. a type for which not
   all paths are equal.
   This also means that it does not have decidable equality.
-\end{romdefinition}
-\begin{romlemma}
+\end{definition}
+\begin{lemma}
   The circle \(S^1\) is manifestly enumerable.
-\end{romlemma}
+\end{lemma}
 \subsection{Kuratowski Finiteness}
 The first thing we must define is a representation of subsets.
-\begin{romdefinition}[Kuratowski Finite Subset]
+\begin{definition}[Kuratowski Finite Subset]
   \(\mathcal{K}(A)\) is the type of Kuratowski-finite subsets of \(A\).
   \begin{equation}
     \begin{alignat}{2}
@@ -504,7 +504,7 @@ The first thing we must define is a representation of subsets.
   \emph{idempotent} (dup) monoid.
 
   The final constructor enforces that the type \(\mathcal{K}(A)\) must be a set.
-\end{romdefinition}
+\end{definition}
 The Kuratowski finite subset is a free join semilattice (or, equivalently, a
 free commutative idempotent monoid).
 More prosaically, \(\mathcal{K}\) is the abstract data type for finite sets, as
@@ -521,7 +521,7 @@ equivalent to the one above.
 
 Next, we need a way to say that an entire type is Kuratowski finite.
 For that, we will need to define membership of \(\mathcal{K}\).
-\begin{romdefinition}[Membership of \(\mathcal{K}\)]
+\begin{definition}[Membership of \(\mathcal{K}\)]
   Membership is defined by pattern-matching on \(\mathcal{K}\).
   The two point constructors are handled like so:
   \begin{equation}
@@ -534,31 +534,31 @@ For that, we will need to define membership of \(\mathcal{K}\).
   the truncated form of \(\uplus\) is itself commutative and idempotent.
   The type of propositions is itself a set, satisfying the \(\text{trunc}\)
   constructor.
-\end{romdefinition}
+\end{definition}
 Finally, we have enough background to define Kuratowski finiteness.
-\begin{romdefinition}[Kuratowski Finiteness]
+\begin{definition}[Kuratowski Finiteness]
   \begin{equation}
     \mathcal{K}^{f}(A) = \Sigma {(\mathit{xs} : \mathcal{K}(A))} , \Pi (x : A) , x \in \mathit{xs}
   \end{equation}
-\end{romdefinition}
+\end{definition}
 
 We also have the following two lemmas, proven in both
 \cite{fruminFiniteSetsHomotopy2018} and our formalisation.
-\begin{romlemma}
+\begin{lemma}
   \(\mathcal{K}^f\) is a mere proposition.
-\end{romlemma}
-\begin{romlemma}
+\end{lemma}
+\begin{lemma}
   This circle \(S^1\) is Kuratowski finite.
-\end{romlemma}
+\end{lemma}
 \section{Relations Between Each Finiteness Definition} \label{relations}
 We will now look at the arrows in figure~\ref{finite-classification}.
 \subsection{Split Enumerability and Manifest Bishop Finiteness}
 While manifest Bishop finiteness might seem stronger than split enumerability,
 it turns out this is not the case.
 Both predicates imply the other.
-\begin{romlemma} \label{manifest-bishop-to-split-enum}
+\begin{lemma} \label{manifest-bishop-to-split-enum}
   Any manifest Bishop finite type is split enumerable.
-\end{romlemma}
+\end{lemma}
 \begin{proof}
   To construct a proof of split enumerability from one of manifest Bishop
   finiteness, it suffices to convert a proof of \(x \inunique \mathit{xs}\) to
@@ -568,9 +568,9 @@ Both predicates imply the other.
   \qed
 \end{proof}
 
-\begin{romlemma} \label{split-enum-to-manifest-bishop}
+\begin{lemma} \label{split-enum-to-manifest-bishop}
   Any split enumerable set is manifest Bishop finite.
-\end{romlemma}
+\end{lemma}
 This proof takes significantly more work.
 The ``unique membership'' condition in \(\mathcal{B}\) means that we are not
 permitted duplicates in the support list.
@@ -580,22 +580,22 @@ equality provided by \(\mathcal{E}!\) (lemma~\ref{split-enum-discrete}).
 From there, all we need to show is that the membership proof carries over
 appropriately.
 \subsection{Split Enumerability and Manifest Enumerability}
-\begin{romlemma} \label{split-enum-to-manifest-enum}
+\begin{lemma} \label{split-enum-to-manifest-enum}
   Any split enumerable type is manifestly enumerable.
-\end{romlemma}
+\end{lemma}
 This lemma is proven by truncating the membership proof in split enumerability.
 
-\begin{romlemma} \label{manifest-enum-to-split-enum}
+\begin{lemma} \label{manifest-enum-to-split-enum}
   A manifestly enumerable type with decidable equality is split enumerable.
-\end{romlemma}
+\end{lemma}
 
 \subsection{Manifest Bishop Finiteness and Cardinal Finiteness}
-\begin{romlemma} \label{manifest-bishop-to-cardinal}
+\begin{lemma} \label{manifest-bishop-to-cardinal}
   Any manifest Bishop finite type is cardinal finite.
-\end{romlemma}
-\begin{romtheorem} \label{cardinal-to-manifest-bishop}
+\end{lemma}
+\begin{theorem} \label{cardinal-to-manifest-bishop}
   Any cardinal finite type with a total order is Bishop finite.
-\end{romtheorem}
+\end{theorem}
 The proof for this particular theorem is quite involved in the formalisation, so
 we only give its sketch here.
 First, note that we actually convert to manifest enumerability first: this can
@@ -603,13 +603,13 @@ be converted to split enumerability with decidable equality, which is provided
 by cardinal finiteness.
 
 Next, we define permutations.
-\begin{romdefinition}[List Permutations]
+\begin{definition}[List Permutations]
   Two lists are permutations of each other if their membership proofs are all
   equivalent\footnotemark \cite{danielssonBagEquivalenceProofRelevant2012}.
   \begin{equation}
     \mathit{xs} \leftrightsquigarrow \mathit{ys} = \Pi {(x : A)} , x \in \mathit{xs} \simeq x \in \mathit{ys}
   \end{equation}
-\end{romdefinition}
+\end{definition}
 
 \footnotetext{
   The definition in \cite{danielssonBagEquivalenceProofRelevant2012} and our
@@ -632,11 +632,11 @@ eliminator~\ref{elim-prop-coh}) way, pulling the support list out from the
 truncation.
 The cover proof emerges naturally from the definition of the permutation.
 \subsection{Cardinal Finiteness and Kuratowski Finiteness}
-\begin{romlemma} \label{cardinal-kuratowski}
+\begin{lemma} \label{cardinal-kuratowski}
   \begin{equation}
     \mathcal{C}(A) \simeq \mathcal{K}^f(A) \times \text{Discrete}(A)
   \end{equation}
-\end{romlemma}
+\end{lemma}
 This proof is constructed by providing a pair of functions: one from
 \(\mathcal{C}(A)\) to \(\mathcal{K}^f(A) \times \text{Discrete}(A)\), and one the
 other way.
@@ -659,10 +659,10 @@ For the first three closure proofs, we only consider split enumerability:
 as it is the strongest of the finiteness predicates, we can derive the other
 closure proofs from it.
 
-\begin{romlemma}
+\begin{lemma}
   \(\bot\), \(\top\), and \(\mathbf{Bool}\) are split enumerable.
-\end{romlemma}
-\begin{romlemma} \label{split-enum-sigma}
+\end{lemma}
+\begin{lemma} \label{split-enum-sigma}
   Split enumerability is closed under \(\Sigma\).
   \begin{equation}
     \frac{
@@ -671,11 +671,11 @@ closure proofs from it.
       \mathcal{E}!(\Sigma(x : A) , U(x))
     }
   \end{equation}
-\end{romlemma}
+\end{lemma}
 From this we can derive split enumerability of non-dependent sums and products,
 as both are definable in terms of \(\Sigma\).
 
-\begin{romlemma}
+\begin{lemma}
   Split enumerability is closed under dependent functions.
   (\(\Pi\)-types).
   \begin{equation}
@@ -685,7 +685,7 @@ as both are definable in terms of \(\Sigma\).
       \mathcal{E}!\left(\Pi {(x : A)} , U(x)\right)
     }
   \end{equation}
-\end{romlemma}
+\end{lemma}
 \begin{proof}
   Let \(A\) be a split enumerable type, and \(U\) be a type family from \(A\),
   which is split enumerable over all points of \(A\).
@@ -741,11 +741,11 @@ From this, we can derive closure under \(\bot\), \(\top\), \(\mathbf{Bool}\),
 The dependent case is not so straightforward.
 We need the following lemma, a version of the axiom of choice on finite sets,
 to prove closure under \(\Sigma\) and \(\Pi\).
-\begin{romlemma}
+\begin{lemma}
   \begin{equation}
     \mathcal{C}(A) \rightarrow (\Pi(x : A) , \lVert U(x) \rVert) \rightarrow \lVert \Pi(x : A) , U(x) \rVert
   \end{equation}
-\end{romlemma}
+\end{lemma}
 \subsection{The Category of Finite Sets}
 HoTT and CuTT seem to be especially suitable settings for formalisations of
 category theory.
@@ -776,7 +776,7 @@ In a sense, we must give a univalence rule for the category we are working in.
 
 We have provided formal proofs that \(\mathit{Set}\) does indeed form a
 category, and the following:
-\begin{romtheorem}[The Category of Finite Sets]
+\begin{theorem}[The Category of Finite Sets]
   Finite sets form a category in HoTT when defined like so:
   \begin{equation}
     \begin{aligned}
@@ -784,7 +784,7 @@ category, and the following:
       &\text{Hom}_\mathit{FinSet}(x , y) &&\coloneqq  \text{fst}(x) \rightarrow \text{fst}(y)
     \end{aligned}
   \end{equation}
-\end{romtheorem}
+\end{theorem}
 \subsection{The \(\Pi\)-pretopos of Finite Sets}
 For this proof, we follow again the proof that \(\mathit{Set}\) forms a \(\Pi
 W\)-pretopos from \cite[chapter 10]{hottbook} and
@@ -802,9 +802,9 @@ We now have a pretopos: the presence of \(\Pi\) types make it a
 We have proven the above statements for both \(\mathit{Set}\) and
 \(\mathit{FinSet}\).
 As far as we know, this is the first formalisation of either.
-\begin{romtheorem} \label{finite-topos}
+\begin{theorem} \label{finite-topos}
   The category of finite sets, \(\mathit{FinSet}\), forms a \(\Pi\)-pretopos.
-\end{romtheorem}
+\end{theorem}
 \section{Countably Infinite Types} \label{infinite}
 In the previous sections we saw different flavours of finiteness which were
 really just different flavours of relations to \(\mathbf{Fin}\).
@@ -814,50 +814,50 @@ relations to \(\mathbb{N}\), in the form of the countably infinite types.
 The two types for countability we will consider are analogous to split
 enumerability and cardinal finiteness.
 The change will be a simple one: we will swap out lists for streams.
-\begin{romdefinition}[Streams]
+\begin{definition}[Streams]
   \begin{equation}
     \mathbf{Stream}(A) \coloneqq (\mathbb{N} \rightarrow A)
     \simeq \llbracket \top , \text{const}(\mathbb{N}) \rrbracket
   \end{equation}
-\end{romdefinition}
-\begin{romdefinition}[Split Countability]
+\end{definition}
+\begin{definition}[Split Countability]
   \begin{equation}
     \mathcal{E}!(A) \coloneqq \Sigma {(\mathit{xs} : \mathbf{Stream}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
   \end{equation}
-\end{romdefinition}
+\end{definition}
 This type is definitionally equal to it surjection equivalent (\(\mathbb{N}
 \twoheadrightarrow ! \; A\)).
 We construct the unordered, propositional version of the predicate in much the
 same way as we constructed cardinal finiteness.
-\begin{romdefinition}[Countability]
+\begin{definition}[Countability]
   \begin{equation}
     \mathcal{E}(A) \coloneqq \lVert \mathcal{E}!(A) \rVert
   \end{equation}
-\end{romdefinition}
+\end{definition}
 
 From both of these types we can derive decidable equality.
-\begin{romlemma}
+\begin{lemma}
   Any countable type has decidable equality.
-\end{romlemma}
+\end{lemma}
 \subsection{Closure}
 We know that countable infinity is not closed under the exponential (function
 arrow), so the only closure we need to prove is \(\Sigma\) to cover all of
 what's left.
-\begin{romtheorem} \label{split-countability-sigma}
+\begin{theorem} \label{split-countability-sigma}
   Split countability is closed under \(\Sigma\).
-\end{romtheorem}
+\end{theorem}
 This proof does not mirror the proof of \(\Sigma\) closure on finite types.
 The pattern we used to pair up the relevant support lists for the finite types
 would diverge for infinite types: instead, we need a \emph{pairing} function.
 
 Finally, while we have lost certain closure proofs by allowing for infinite
 types, we also \emph{gain} some: in particular the Kleene star.
-\begin{romtheorem}
+\begin{theorem}
   Split countability is closed under Kleene star.
   \begin{equation}
     \mathcal{E}!(A) \rightarrow \mathcal{E}!(\mathbf{List}(A))
   \end{equation}
-\end{romtheorem}
+\end{theorem}
 Again, this proof requires a particular pattern to ensure productivity.
 The pattern here builds an intermediate stream \(\mathcal{KV}\) of non-empty
 lists from the input support stream \(\mathit{xs}\), which is subsequently
@@ -867,7 +867,7 @@ flattened.
 \end{equation}
 \section{Search} \label{search}
 \subsection{Omniscience}
-\begin{romdefinition}[Limited Principle of Omniscience]
+\begin{definition}[Limited Principle of Omniscience]
   For any type \(A\) and predicate \(P\) on \(A\), the limited principle of
   omniscience \cite{myhillErrettBishopFoundations1972} is as follows:
   \begin{equation}
@@ -875,19 +875,19 @@ flattened.
   \end{equation}
   In other words, for any decidable predicate the existential quantification of
   that predicate is also decidable.
-\end{romdefinition}
+\end{definition}
 The limited principle of omniscience is non-constructive, but individual types
 can themselves satisfy omniscience.
 In particular, cardinal finite types are omniscient.
 
 There is also a universal form of omniscience, which we call exhaustibility.
-\begin{romdefinition}[Exhaustibility]
+\begin{definition}[Exhaustibility]
   We say a type \(A\) is exhaustible if, for any decidable predicate \(P\) on
   \(A\), the universal quantification of the predicate is decidable.
   \begin{equation}
     \left( \Pi {(x : A)} , \mathbf{Dec}(P(x)) \right) \rightarrow \mathbf{Dec} \left( \Pi {(x : A)} , P(x) \right)
   \end{equation}
-\end{romdefinition}
+\end{definition}
 
 All of the finiteness predicates we have seen imply exhaustibility.
 Omniscience is stronger than exhaustibility, as we can derive the latter from
