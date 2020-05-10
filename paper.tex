@@ -136,11 +136,11 @@ For the various type formers we use the following notation:
     \(\Pi\) as \(\rightarrow\).
   \item[Disjoint Union] We define disjoint union as an inductive type.
     \begin{equation}
-      \begin{aligned}
+      \begin{alignedat}{3}
         A \uplus B \coloneqq & \;
-        \text{inl} &: A \rightarrow A \uplus B \\
-        | & \;  \text{inr} &: B \rightarrow A \uplus B
-      \end{aligned}
+        \text{inl} &: A \rightarrow A \uplus B ; \\
+        | & \;  \text{inr} &: B \rightarrow A \uplus B ;
+      \end{alignedat}
     \end{equation}
     It is also expressible with only \(\Sigma\):
     \(A \uplus B \simeq \Sigma(x : \mathbf{Bool}) , \text{if } x \text{ then
@@ -228,10 +228,10 @@ univalence ``axiom'' is a \emph{theorem}, giving it computational content.
 
   It is defined as a Higher Inductive Type:
   \begin{equation} {
-    \begin{aligned}
-      \lVert A \rVert \coloneqq & \; \lvert \wc \rvert &&: A \rightarrow \lVert A \rVert ; \\
-                              | & \; \text{squash}     &&: \Pi {(x, y : \lVert A \rVert)} , x \equiv y  ; 
-    \end{aligned} }
+    \begin{alignedat}{3}
+      \lVert A \rVert \coloneqq & \; \lvert \wc \rvert &:& \; A \rightarrow \lVert A \rVert ; \\
+                              | & \; \text{squash}     &:& \; \Pi {(x, y : \lVert A \rVert)} , x \equiv y  ; 
+    \end{alignedat} }
   \end{equation}
   We will use two eliminators from \(\lVert A \rVert\) in this paper.
   \begin{enumerate}
@@ -239,7 +239,8 @@ univalence ``axiom'' is a \emph{theorem}, giving it computational content.
     \(\text{isProp}(B)\), we have a function \(\lVert A \rVert \rightarrow B\).
   \item \label{elim-prop-coh} We can eliminate from \(\lVert A \rVert\) with a
     function \(f : A \rightarrow B\) iff \(f\) ``doesn't care'' about the
-    choice of \(A\) (\(\Pi {(x , y : A)} , f(x) \equiv f(y) \)).
+    choice of \(A\):
+    \[\Pi {(x , y : A)} , f(x) \equiv f(y) \]
     Formally speaking, \(f\) needs to be ``coherently constant''
     \cite{krausGeneralUniversalProperty2015}, and \(B\) needs to be an
     \(n\)-type for some finite \(n\).
@@ -286,8 +287,13 @@ We used some extra types in the above definition, which we will define here:
 \end{definition}
 \begin{definition}[\(\mathbf{Fin}\)] \label{Fin}
   \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\). We
-  define it the standard way, where \(\mathbf{Fin}(0) \coloneqq \bot\) and
-  \(\mathbf{Fin}(n + 1) \coloneqq \top \uplus \mathbf{Fin}(n)\).
+  define it the standard way:
+  \begin{equation}
+    \begin{alignedat}{3}
+      & \mathbf{Fin}(0)     && \coloneqq \bot ; \\
+      & \mathbf{Fin}(n + 1) && \coloneqq \top \uplus \mathbf{Fin}(n) ;
+    \end{alignedat}
+  \end{equation} 
 \end{definition}
 
 We tend to prefer list-based definitions of finiteness, rather than ones based
@@ -464,10 +470,10 @@ like the circle.
 \begin{definition}[\(S^1\)] \label{circle-def}
   The circle, \(S^1\), can be represented in HoTT as a higher inductive type.
   \begin{equation}
-    \begin{aligned}
+    \begin{alignedat}{3}
       S^1 \coloneqq & \; \text{base} &&: S^1 ; \\
       | & \; \text{loop} &&: \text{base} \equiv \text{base} ; 
-    \end{aligned}
+    \end{alignedat}
   \end{equation}
   We will use it here as an example of a non-set type, i.e. a type for which not
   all paths are equal.
@@ -481,14 +487,15 @@ The first thing we must define is a representation of subsets.
 \begin{definition}[Kuratowski Finite Subset]
   \(\mathcal{K}(A)\) is the type of Kuratowski-finite subsets of \(A\).
   \begin{equation}
-    \begin{aligned}
+    \begin{alignedat}{3}
       \mathcal{K}(A) \coloneqq&
-             \; []                &&: \mathcal{K}(A) ; \\
-      \vert& \; \wc \dblcolon \wc &&: A \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
-      \vert& \; \text{com}        &&: \Pi (x, y: A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} ; \\
-      \vert& \; \text{dup}        &&: \Pi (x : A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} ; \\
-      \vert& \; \text{trunc}      &&: \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q ;
-    \end{aligned}
+             \; []                &:& \; \mathcal{K}(A) ; \\
+      \vert& \; \wc \dblcolon \wc &:& \; A \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
+      \vert& \; \text{com}        &:& \; \Pi (x, y: A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , \\
+                                  &&& \; x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} ; \\
+      \vert& \; \text{dup}        &:& \; \Pi (x : A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} ; \\
+      \vert& \; \text{trunc}      &:& \; \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q ;
+    \end{alignedat}
   \end{equation}
   We define it as a HIT (definition~\ref{HITs}).
   The first two constructors are point constructors, giving ways to create
@@ -524,8 +531,8 @@ For that, we will need to define membership of \(\mathcal{K}\).
   The two point constructors are handled like so:
   \begin{equation}
     \begin{alignedat}{2}
-      x \in&& \; []                      &\coloneqq \bot \\
-      x \in&& \; y \dblcolon \mathit{ys} &\coloneqq \lVert x \equiv y \uplus x \in \mathit{ys} \rVert
+      x \in&& \; []                      &\coloneqq \bot ; \\
+      x \in&& \; y \dblcolon \mathit{ys} &\coloneqq \lVert x \equiv y \uplus x \in \mathit{ys} \rVert ;
     \end{alignedat}
   \end{equation}
   The \(\text{com}\) and \(\text{dup}\) constructors are handled by proving that
@@ -703,10 +710,10 @@ as both are definable in terms of \(\Sigma\).
   We then define the type of \(n\)-tuples over some type family \(T :
   \mathbf{Fin}(n) \rightarrow \mathbf{Type}\).
   \begin{equation}
-    \begin{aligned}
+    \begin{alignedat}{3}
       & \mathbf{Tuple}(0, T)   &&\coloneqq \top \\
       & \mathbf{Tuple}(n+1, T) &&\coloneqq T(0) \times \mathbf{Tuple}(n, T \circ \text{suc})
-    \end{aligned}
+    \end{alignedat}
   \end{equation}
   We can show that this type is equivalent to functions (proven in our formalisation):
   \begin{equation}
@@ -775,10 +782,10 @@ category, and the following:
 \begin{theorem}[The Category of Finite Sets]
   Finite sets form a category in HoTT when defined like so:
   \begin{equation}
-    \begin{aligned}
+    \begin{alignedat}{3}
       &\text{Obj}_\mathit{FinSet}      &&\coloneqq \Sigma(x : \mathbf{Type}) , \mathcal{C}(x) \\
       &\text{Hom}_\mathit{FinSet}(x , y) &&\coloneqq  \text{fst}(x) \rightarrow \text{fst}(y)
-    \end{aligned}
+    \end{alignedat}
   \end{equation}
 \end{theorem}
 \subsection{The \(\Pi\)-pretopos of Finite Sets}
@@ -818,7 +825,7 @@ The change will be a simple one: we will swap out lists for streams.
 \end{definition}
 \begin{definition}[Split Countability]
   \begin{equation}
-    \mathcal{E}!(A) \coloneqq \Sigma {(\mathit{xs} : \mathbf{Stream}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
+    \aleph_0!(A) \coloneqq \Sigma {(\mathit{xs} : \mathbf{Stream}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
   \end{equation}
 \end{definition}
 This type is definitionally equal to it surjection equivalent (\(\mathbb{N}
@@ -827,7 +834,7 @@ We construct the unordered, propositional version of the predicate in much the
 same way as we constructed cardinal finiteness.
 \begin{definition}[Countability]
   \begin{equation}
-    \mathcal{E}(A) \coloneqq \lVert \mathcal{E}!(A) \rVert
+    \aleph_0(A) \coloneqq \lVert \aleph_0!(A) \rVert
   \end{equation}
 \end{definition}
 
@@ -851,7 +858,7 @@ types, we also \emph{gain} some: in particular the Kleene star.
 \begin{theorem}
   Split countability is closed under Kleene star.
   \begin{equation}
-    \mathcal{E}!(A) \rightarrow \mathcal{E}!(\mathbf{List}(A))
+    \aleph_0!(A) \rightarrow \aleph_0!(\mathbf{List}(A))
   \end{equation}
 \end{theorem}
 Again, this proof requires a particular pattern to ensure productivity.
