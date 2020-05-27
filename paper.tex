@@ -1,22 +1,28 @@
 \input{preamble}
-\acmConference[TyDe 2020]{Workshop on Type-driven Development}{23 Aug
-  2020}{Jersey City, USA}
 
-\author{Donnacha Oisín Kidney}
-\affiliation{University College Cork}
-\email{o.kidney@cs.ucc.ie}
-\author{Gregory Provan}
-\affiliation{University College Cork}
-\email{g.provan@cs.ucc.ie}
-\author{Nicolas Wu}
-\affiliation{Imperial College London}
-\email{n.wu@imperial.ac.uk}
+\author{
+  Donnacha Oisín Kidney \and
+  Gregory Provan \and
+  Nicolas Wu
+}
+% \affiliation{University College Cork}
+% \email{o.kidney@cs.ucc.ie}
+% \author{Gregory Provan}
+% \affiliation{University College Cork}
+% \email{g.provan@cs.ucc.ie}
+% \author{Nicolas Wu}
+% \affiliation{Imperial College London}
+% \email{n.wu@imperial.ac.uk}
 
 \title{Finiteness in Cubical Type Theory}
 
-\keywords{Agda, Homotopy Type Theory, Cubical Type Theory,
-  Dependent Types, Finiteness, Topos, Kuratowski finite}
+% \keywords{Agda, Homotopy Type Theory, Cubical Type Theory,
+%   Dependent Types, Finiteness, Topos, Kuratowski finite}
 
+
+\begin{document}
+
+\maketitle
 \begin{abstract}
   We study five different notions of finiteness in Cubical Type Theory and prove
   the relationship between them.
@@ -39,8 +45,6 @@
 \end{abstract}
 
 
-\begin{document}
-\maketitle
 \section{Introduction}
 \subsection{Foreword}
 In constructive mathematics we are often preoccupied with \emph{why} something
@@ -318,8 +322,8 @@ numbers.
 \end{lemma}
 \begin{proof}
   \begin{align*}
-    \mathcal{E}!(A)
-    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , x \in \mathit{xs}
+     \mathcal{E}!(A) &
+    \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , x \in \mathit{xs}
     && \text{def.~\ref{split-enum-def} }(\mathcal{E}!)
     \\
     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{fib}_{\text{snd}(\mathit{xs})}(x)
@@ -811,7 +815,7 @@ As far as we know, this is the first formalisation of either.
 \section{Countably Infinite Types} \label{infinite}
 \begin{figure*}
   \centering
-  \begin{subfigure}[b]{.45\linewidth}
+  \begin{subfigure}[b]{.45\textwidth}
     \centering
     \begin{tikzcd}
       (1,e) \ar[rdddd, out=-45, in=135] & (2,e) \ar[rdddd, out=-45, in=135] & (3,e) \ar[rdddd, out=-45, in=135] & (4,e) \ar[rdddd, out=-45, in=135] & (5,e)        \\
@@ -823,7 +827,7 @@ As far as we know, this is the first formalisation of either.
     \caption{Depth-First}
     \label{depth-first}
   \end{subfigure} \hfill
-  \begin{subfigure}[b]{.45\linewidth}
+  \begin{subfigure}[b]{.45\textwidth}
     \centering
     \begin{tikzcd}
       (1,e) \ar[dr] & (2,e) \ar[dr]  & (3,e) \ar[dr]    & (4,e) \ar[dr] & (5,e) \\
@@ -983,11 +987,11 @@ of finiteness (the ``manifest'' predicates), and we have provided the missing
 \cite{iversenUnivalentCategoriesFormalization2018} provided a starting point for
 our categorical formalisation: it contains a proof, for instance, that homotopy
 sets form a category.
-\begin{acks}
-  This work has been supported by the Science Foundation Ireland under the
-  following grant: 13/RC/2D94 to Irish Software Research Centre.
-\end{acks}
+% \begin{acks}
+%   This work has been supported by the Science Foundation Ireland under the
+%   following grant: 13/RC/2D94 to Irish Software Research Centre.
+% \end{acks}
 
-\bibliographystyle{ACM-Reference-Format}
+\bibliographystyle{plain}
 \bibliography{bibliography}
 \end{document} 

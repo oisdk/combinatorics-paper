@@ -1,23 +1,28 @@
 \PassOptionsToPackage{dvipsnames}{xcolor}
-\documentclass[sigplan,review,anonymous]{acmart}
+\documentclass{article}
 
+\usepackage[mono=false]{libertine}
 \usepackage{catchfilebetweentags}
 \input{agda}
 
 \usepackage{tikz-cd}
 \tikzcdset{
   arrow style=tikz,
-  diagrams={>={Straight Barb[scale=0.8]}}
+  diagrams={>={Straight Barb[scale=0.8]}},
+  cramped,
+  every matrix/.append style={nodes={font=\scriptsize}},
+  row    sep/normal=1em,
+  column sep/normal=1em,
 }
 \usepackage{amsmath}
 \usepackage{amsthm}
 \renewcommand{\qed}{\ensuremath{\hfill\blacksquare}}
 
 % Theorem envs without italics
-% \theoremstyle{definition}
-% \newtheorem{romdefinition}{Definition}
-% \newtheorem{romlemma}{Lemma}
-% \newtheorem{romtheorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
 
 % Haskell bind operator >>=
 \newcommand\hbind{%
@@ -104,7 +109,7 @@
   }%
 }
 
-\usepackage{natbib}
+\usepackage[square,numbers]{natbib}
 
 \PrerenderUnicode{í}
 
