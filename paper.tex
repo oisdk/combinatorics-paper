@@ -47,6 +47,88 @@
 
 \section{Introduction}
 \subsection{Foreword}
+Proofs in constructive mathematics are often more substantial than their
+classical counterparts.
+``Substantial'' here doesn't mean the literal length of the proofs (although the
+double meaning is not lost on anyone who has had to struggle with a modern
+constructive proof assistant), but rather refers to their \emph{content}: a
+constructive proof contains more \emph{stuff} than a classical one.
+
+If we were to prove that a set was finite in classical mathematics, we might
+show that it is in bijection with another finite set, say a finite prefix of the
+natural numbers.
+In semi-formal notation, to say that a set \(A\) is finite we would show the
+following:
+\begin{equation} \label{example-finite}
+  \mathbf{Finite}(A) \coloneqq \exists (n : \mathbb{N}) . \; A \Leftrightarrow \left\{ m \mid m < n\right\}
+\end{equation}
+Where \(A \Leftrightarrow B\) means ``a bijection between \(A\) and \(B\)''.
+
+Classically, a proof of equation~\ref{example-finite} is nothing more than
+\emph{evidence} for the proposition of equation~\ref{example-finite}.
+A constructive proof of \ref{example-finite}, however, could include much more:
+\begin{enumerate}
+  \item A number \(n\) representing the cardinality of \(A\).
+  \item A function from \(A\) to \(\left\{ m \mid m < n \right\}\).
+  \item A function from \(\left\{ m \mid m < n \right\}\) to \(A\).
+\end{enumerate}
+In other words, it makes sense constructively to talk about a function of type
+\(\mathbf{Finite}(A) \rightarrow \mathbb{N}\), which takes a \emph{proof} of the
+finiteness of \(A\) and returns \(A\)'s cardinality.
+
+Such functions are perhaps more concrete than this description suggests:
+aside from being interesting in its own right, much of the attention given to
+constructive mathematics comes from its perceived association with
+computers (themselves a burgeoning topic of study, bound to catch on some day). 
+Indeed many constructive proofs are in fact computer programs in disguise (and
+vice-versa \cite{wadlerPropositionsTypes2015}): the functions referred to above
+correspond to honest-to-goodness functions in a programming language (Agda
+\cite{vezzosiCubicalAgdaDependently2019} in our case) which can be run on a
+computer to produce real output.
+
+All of this added information in our proofs is interesting and useful, yes, but
+it also necessitates some extra caution.
+We will see cases where we have provided \emph{too much} information in a
+constructive proof, and we will need to hide it somehow.
+For instance, in order to construct a category of finite sets we will need to
+describe the objects of that category: constructively this would be ``pairs of
+sets along with proofs that they are finite''.
+This gives us the wrong category, however: for a type \(A\) with cardinality
+\(n\), there are \(n!\) proofs that \(A\) is finite.
+This means that we will have \(n!\) objects in the category for the set \(A\),
+where we only want 1.
+The solution is to hide some aspect of the proof: this is accomplished with
+\emph{truncation}, which we will see in \todo{ref}.
+
+
+For all of its benefits, constructive mathematics (especially dependently-typed
+constructive mathematics on a computer) still suffers from many painful
+drawbacks.
+As already hinted at, proofs in a constructive setting can tend to be verbose,
+especially when the arbiter of correctness is as strict as a computer, which
+neither understands nor trusts the time-honoured technique of ``the other cases
+are obviously true''.
+While the goal of using a computer to automate the boring parts of a proof still
+seems attainable, too often getting a computer involved in a proof means adding
+thousands of lines of tedium to satisfy its lack of intuition.
+
+
+
+
+
+
+
+
+
+In this paper we are interested in two things: systematic generation of data,
+and constructive finiteness.
+
+First, let's explain what we mean by ``systematic generation of data''.
+Consider QuickCheck \cite{claessenQuickCheckLightweightTool2011}: this
+well-known Haskell library allows us to quickly and easily test
+\ExecuteMetaData[haskell/PropertyTests.tex]{sort-stable}
+
+
 In constructive mathematics we are often preoccupied with \emph{why} something
 is true.
 Take finiteness, for example.
