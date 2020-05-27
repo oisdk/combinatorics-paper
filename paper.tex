@@ -62,7 +62,7 @@ following:
 \begin{equation} \label{example-finite}
   \mathbf{Finite}(A) \coloneqq \exists (n : \mathbb{N}) . \; A \Leftrightarrow \left\{ m \mid m < n\right\}
 \end{equation}
-Where \(A \Leftrightarrow B\) means ``a bijection between \(A\) and \(B\)''.
+Where \(A~\Leftrightarrow~B\) means ``a bijection between \(A\) and \(B\)''.
 
 Classically, a proof of equation~\ref{example-finite} is nothing more than
 \emph{evidence} for the proposition of equation~\ref{example-finite}.
@@ -72,38 +72,47 @@ A constructive proof of \ref{example-finite}, however, could include much more:
   \item A function from \(A\) to \(\left\{ m \mid m < n \right\}\).
   \item A function from \(\left\{ m \mid m < n \right\}\) to \(A\).
 \end{enumerate}
-In other words, it makes sense constructively to talk about a function of type
-\(\mathbf{Finite}(A) \rightarrow \mathbb{N}\), which takes a \emph{proof} of the
-finiteness of \(A\) and returns \(A\)'s cardinality.
+In other words, it makes sense (in constructive mathematics) to talk about a
+function of type \(\mathbf{Finite}(A)~\rightarrow~\mathbb{N}\), which takes a
+\emph{proof} of the finiteness of \(A\) and returns \(A\)'s cardinality.
 
-Such functions are perhaps more concrete than this description suggests:
-aside from being interesting in its own right, much of the attention given to
-constructive mathematics comes from its perceived association with
-computers (themselves a burgeoning topic of study, bound to catch on some day). 
-Indeed many constructive proofs are in fact computer programs in disguise (and
-vice-versa \cite{wadlerPropositionsTypes2015}): the functions referred to above
-correspond to honest-to-goodness functions in a programming language (Agda
-\cite{vezzosiCubicalAgdaDependently2019} in our case) which can be run on a
-computer to produce real output.
+Such functions are perhaps even more concrete than this description suggests:
+many constructive proofs are in fact computer programs in disguise (and
+vice-versa \cite{wadlerPropositionsTypes2015}).
+All ``proofs'' in this paper correspond to honest-to-goodness proofs in a
+programming language (Cubical Agda \cite{vezzosiCubicalAgdaDependently2019} in
+our case) which can be run on a computer to produce real output.
 
-All of this added information in our proofs is interesting and useful, yes, but
-it also necessitates some extra caution.
-We will see cases where we have provided \emph{too much} information in a
-constructive proof, and we will need to hide it somehow.
+We have now hopefully established, albeit informally, what it means for
+constructive proofs to be ``substantial''.
+Clearly this extra information carried by proofs can add richness to their
+study: we will see, for instance, no fewer than five finiteness predicates in
+this paper which would collapse to one in a classical setting.
+The extra information also presents a challenge, however: occasionally we will
+see that we have revealed \emph{too much} information while proving some
+property.
 For instance, in order to construct a category of finite sets we will need to
 describe the objects of that category: constructively this would be ``pairs of
 sets along with proofs that they are finite''.
-This gives us the wrong category, however: for a type \(A\) with cardinality
-\(n\), there are \(n!\) proofs that \(A\) is finite.
-This means that we will have \(n!\) objects in the category for the set \(A\),
-where we only want 1.
-The solution is to hide some aspect of the proof: this is accomplished with
-\emph{truncation}, which we will see in \todo{ref}.
+The category we're trying to construct has one object for every finite set (up
+to unique isomorphism, etc).
+Here's the problem: if we take our finiteness proof to be a naive translation of
+the predicate in equation~\ref{example-finite}, then the proof includes a
+permutation on the set it refers to.
+This means that two objects \((A, \mathbf{Finite}(A))\) and \((A,
+\mathbf{Finite}(A))\) need not be the same, as they could have \emph{different
+  permutations} embedded in the \(\mathbf{Finite}(A)\) term.
+Where we wanted one object per set, we now have \(n!\) objects for every set of
+cardinality \(n\).
 
+Being able to hide the extra information in a constructive proof when we need to
+is clearly important, then.
+HoTT (and CuTT by extension) facilitate this hiding: how exactly it is
+accomplished will be explored in the subsequent sections.
 
-For all of its benefits, constructive mathematics (especially dependently-typed
-constructive mathematics on a computer) still suffers from many painful
-drawbacks.
+Finally, for all of its benefits, constructive mathematics (especially
+dependently-typed constructive mathematics on a computer) still suffers from
+many painful drawbacks.
 As already hinted at, proofs in a constructive setting can tend to be verbose,
 especially when the arbiter of correctness is as strict as a computer, which
 neither understands nor trusts the time-honoured technique of ``the other cases
@@ -112,53 +121,20 @@ While the goal of using a computer to automate the boring parts of a proof still
 seems attainable, too often getting a computer involved in a proof means adding
 thousands of lines of tedium to satisfy its lack of intuition.
 
-
-
-
-
-
-
-
-
-In this paper we are interested in two things: systematic generation of data,
-and constructive finiteness.
-
-First, let's explain what we mean by ``systematic generation of data''.
-Consider QuickCheck \cite{claessenQuickCheckLightweightTool2011}: this
-well-known Haskell library allows us to quickly and easily test
-\ExecuteMetaData[haskell/PropertyTests.tex]{sort-stable}
-
-
-In constructive mathematics we are often preoccupied with \emph{why} something
-is true.
-Take finiteness, for example.
-There are a handful of ways to demonstrate some type is finite: we could provide
-a surjection to it from another finite type; we could show that any collection
-of its elements larger than some bound contains duplicates; or we could show
-that any stream of its elements contain duplicates.
-
-Classically, all of these proofs end up proving the same thing: that our type is
-finite.
-Constructively (in Martin-Löf Type Theory (MLTT)
-\cite{martin-lofIntuitionisticTypeTheory1980} at least), however, all three
-of the statements above construct a different version of finiteness.
-\emph{How} we show that some type is finite has a significant impact on the
-type of finiteness we end up dealing with.
-
-Homotopy Type Theory (HoTT) \cite{hottbook} adds another wrinkle to the story.
-Firstly, in HoTT we cannot assume that every type is a (homotopy) set: this
-means that the finiteness predicates above can be further split into versions
-which apply to sets only, and those that apply to all types.
-Secondly, HoTT gives us a principled and powerful way to construct quotients,
-allowing us to regain some of the flexibility of classical definitions by
-``forgetting'' the parts of a proof we would be forced to remember in MLTT.
-
-Finally, for a computer scientist constructive mathematics has one invaluable
-feature missing from classical mathematics: computation.
-Cubical Type Theory (CuTT) \cite{cohenCubicalTypeTheory2016}, and its
-implementation in Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}, realise
-this property even in the presence of univalence, giving computational content
-to programs written in HoTT.
+Simple proof search over a finite domain is a simple, if effective, way to
+relieve some of the tedium.
+Many libraries in Agda, Coq, and other languages make use of this fact.
+While the idea for finite proof search is simple, we found that implementing one
+revealed a number of interesting theoretical considerations:
+\begin{description}
+  \item[How should we construct search spaces?]
+    We found that a \(Pi\)-pretopos provided the appropriate ``generator
+    language'' for constructing search spaces for finite types.
+  \item[How do we deal with functions?]
+    We of course would like to be able to search over functions: \todo{?}
+  \item[How do we talk about ``searchability''?]
+    \todo{Omniscience}
+\end{description}
 \subsection{Contributions}
 The finiteness predicates we are interested in are organised in
 figure~\ref{finite-classification}, and defined in
