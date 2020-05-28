@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
 module Cardinality.Finite.SplitEnumerable where
@@ -27,15 +28,14 @@ module _ {a} {A : Type a} where
  open import Container.List
  open import Container.Membership (ℕ ▷ Fin)
  open import Relation.Binary.Equivalence.Reasoning (⇔-equiv {a})
-
+\end{code}
+%<*is-split-inj>
+\begin{code}
  ℰ!⇔Fin↠! : ℰ! A ⇔ Σ[ n ⦂ ℕ ] (Fin n ↠! A)
- ℰ!⇔Fin↠! =
-   ℰ! A                                                  ≋⟨⟩ -- ℰ!
-   Σ[ xs ⦂ List A ] Π[ x ⦂ A ] x ∈ xs                    ≋⟨⟩ -- ∈
-   Σ[ xs ⦂ List A ] Π[ x ⦂ A ] fiber (xs .snd) x         ≋⟨ reassoc ⟩
-   Σ[ n ⦂ ℕ ] Σ[ f ⦂ (Fin n → A) ] Π[ x ⦂ A ] fiber f x  ≋⟨⟩ -- ↠!
-   Σ[ n ⦂ ℕ ] (Fin n ↠! A) ∎
-
+ ℰ!⇔Fin↠! = reassoc
+\end{code}
+%</is-split-inj>
+\begin{code}
  ℰ!⇒Discrete : ℰ! A → Discrete A
  ℰ!⇒Discrete = flip Discrete↠!A⇒Discrete⟨A⟩ discreteFin
              ∘ snd
@@ -106,3 +106,4 @@ module _ where
  ℰ!⟨≡⟩ x y e with ℰ!⇒Discrete (𝕃⇔ℒ⟨ℰ!⟩ .fun e) x y
  ℰ!⟨≡⟩ x y e | yes p = (p ∷ []) , λ q → (f0 , Discrete→isSet (ℰ!⇒Discrete (𝕃⇔ℒ⟨ℰ!⟩ .fun e)) x y p q)
  ℰ!⟨≡⟩ x y e | no ¬p = [] , (⊥-elim ∘ ¬p)
+\end{code}

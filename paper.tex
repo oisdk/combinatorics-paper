@@ -162,9 +162,23 @@ dependently-typed constructive mathematics: through building a practical program
 we unearth theoretically interesting results.
 \todo{rephrase}
 \subsection{Contributions}
-We are interested in constructive notions of finiteness, their classification as
-a topos, their relation to countability, and their use as a proof search library
-in Cubical Agda.
+We are interested in constructive notions of finiteness.
+In particular, we are interested in two different aspects of each predicate for
+finiteness: how informative it is (i.e. how many properties of the underlying
+type we can derive from a proof that it is finite), and how restrictive it is
+(i.e. how many types conform to its particular variety of finiteness).
+Once we explore each of five predicates along these two axes, we will then
+construct a category out of one of them (decidable Kuratowski finiteness), and
+show that it forms a \(\Pi\)-pretopos.
+We will then take a brief detour into predicates for countably infinite types,
+and compare its landscape to that of the finite predicates, before jumping into
+a practical application of the work: a library for proof search over finite
+domains.
+We will show how our earlier work gives a good theoretical foundation for this
+library, and allows for a simple and principled API, and we will demonstrate how
+some of the more complex theoretical results allow for a more powerful library
+with capabilities not seen in comparable proof search libraries.
+
 \subsubsection{Finiteness Predicates}
 Our focus in this work is decidable Kuratowski finiteness.
 We will characterise it, its strength, and its uses, and in particular we will
@@ -247,6 +261,7 @@ For the various type formers we use the following notation:
     so the distinction isn't terribly important in usage: we will only use one
     or the other as a suggestion of how we constructed it or how it is to be
     used.
+  \item[Lambdas] \todo{Figure out how to describe lambdas}
 \end{description}
 \subsubsection{Cubical Type Theory}
 Cubical Type Theory \cite{cohenCubicalTypeTheory2016} is a constructive type
@@ -436,11 +451,13 @@ numbers.
     && \text{eqn.~\ref{sp-surj-arrow-eqn} } (\twoheadrightarrow!)
   \end{align*}
 \end{proof}
-
-In our formalisation, the proof is a single line: most of the steps above are
-simple expansion of definitions.
+\begin{agdalisting}
+In our formalisation, the proof is a single line:
+\ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{is-split-inj}
 The only step which isn't definitional equality is the reassociation of
 \(\Sigma\).
+\ExecuteMetaData[agda/Data/Sigma/Properties.tex]{reassoc}
+\end{agdalisting}
 
 Split enumerability implies decidable equality on the underlying type.
 To prove this, we will make use of the following lemma, proven in the
@@ -586,8 +603,8 @@ The first thing we must define is a representation of subsets.
       \mathcal{K}(A) \coloneqq&
              \; []                &:& \; \mathcal{K}(A) ; \\
       \vert& \; \wc \dblcolon \wc &:& \; A \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
-      \vert& \; \text{com}        &:& \; \Pi (x, y: A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , \\
-                                  &&& \; x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} ; \\
+      \vert& \; \text{com}        &:& \; \Pi (x, y: A) , \Pi (\mathit{xs} : \mathcal{K}(A)) ,
+                                  x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} ; \\
       \vert& \; \text{dup}        &:& \; \Pi (x : A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} ; \\
       \vert& \; \text{trunc}      &:& \; \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q ;
     \end{alignedat}
