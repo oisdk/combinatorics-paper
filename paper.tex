@@ -23,26 +23,26 @@
 \begin{document}
 
 \maketitle
-\begin{abstract}
-  We study five different notions of finiteness in Cubical Type Theory and prove
-  the relationship between them.
-  In particular we show that any totally ordered Kuratowski finite type is
-  manifestly Bishop finite.
+% \begin{abstract}
+%   We study five different notions of finiteness in Cubical Type Theory and prove
+%   the relationship between them.
+%   In particular we show that any totally ordered Kuratowski finite type is
+%   manifestly Bishop finite.
 
-  We also prove closure properties for each finite type, and classify them
-  topos-theoretically.
-  This includes a proof that the category of decidable Kuratowski finite sets
-  (also called the category of cardinal finite sets) form a \(\Pi\)-pretopos.
+%   We also prove closure properties for each finite type, and classify them
+%   topos-theoretically.
+%   This includes a proof that the category of decidable Kuratowski finite sets
+%   (also called the category of cardinal finite sets) form a \(\Pi\)-pretopos.
 
-  We then develop a parallel classification for the countably infinite types, as
-  well as a proof of the countability of \(A^\star\) for a countable type \(A\).
+%   We then develop a parallel classification for the countably infinite types, as
+%   well as a proof of the countability of \(A^\star\) for a countable type \(A\).
 
-  We formalise our work in Cubical Agda, where we implement a library for proof
-  search (including combinators for level-polymorphic fully generic currying).
-  Through this library we demonstrate a number of uses for the computational
-  content of the univalence axiom, including searching for and synthesising
-  functions.
-\end{abstract}
+%   We formalise our work in Cubical Agda, where we implement a library for proof
+%   search (including combinators for level-polymorphic fully generic currying).
+%   Through this library we demonstrate a number of uses for the computational
+%   content of the univalence axiom, including searching for and synthesising
+%   functions.
+% \end{abstract}
 
 
 \section{Introduction}
@@ -66,7 +66,8 @@ Where \(A~\Leftrightarrow~B\) means ``a bijection between \(A\) and \(B\)''.
 
 Classically, a proof of equation~\ref{example-finite} is nothing more than
 \emph{evidence} for the proposition of equation~\ref{example-finite}.
-A constructive proof of \ref{example-finite}, however, could include much more:
+A constructive proof of \ref{example-finite}, however, is a mathematical object
+in its own right, containing:
 \begin{enumerate}
   \item A number \(n\) representing the cardinality of \(A\).
   \item A function from \(A\) to \(\left\{ m \mid m < n \right\}\).
@@ -91,22 +92,43 @@ this paper which would collapse to one in a classical setting.
 The extra information also presents a challenge, however: occasionally we will
 see that we have revealed \emph{too much} information while proving some
 property.
-For instance, in order to construct a category of finite sets we will need to
-describe the objects of that category: constructively this would be ``pairs of
-sets along with proofs that they are finite''.
-The category we're trying to construct has one object for every finite set (up
-to unique isomorphism, etc).
-Here's the problem: if we take our finiteness proof to be a naive translation of
-the predicate in equation~\ref{example-finite}, then the proof includes a
-permutation on the set it refers to.
-This means that two objects \((A, \mathbf{Finite}(A))\) and \((A,
-\mathbf{Finite}(A))\) need not be the same, as they could have \emph{different
-  permutations} embedded in the \(\mathbf{Finite}(A)\) term.
-Where we wanted one object per set, we now have \(n!\) objects for every set of
-cardinality \(n\).
+
+Consider the category of finite sets.
+We will explore this category in much more detail later, but for now we just
+need to know that the objects of this category are---shockingly---finite sets.
+Constructively, the objects of this category can be thought of as \emph{pairs},
+where the first element is a set (like \(\left\{ \text{True}, \text{False}
+\right\}\), the two-element set of the booleans) and the second is a proof that
+that set is finite.
+If we take those proofs to be the kind given in equation~\ref{example-finite},
+we should see that they contain a bijection from the booleans to the set
+\(\left\{ 0, 1 \right\}\): however \emph{two} such bijections exist!
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{.45\textwidth}
+    \centering
+    \begin{tikzcd}
+      \text{True}  \ar[rr, leftrightarrow] & & 0 \\
+      \text{False} \ar[rr, leftrightarrow] & & 1
+    \end{tikzcd}
+  \end{subfigure}
+  \begin{subfigure}[b]{.45\textwidth}
+    \centering
+    \begin{tikzcd}
+      \text{True}  \ar[rrd, leftrightarrow, start anchor=south east, end anchor=north west] & & 0 \\
+      \text{False} \ar[rru, leftrightarrow, start anchor=north east, end anchor=south west, crossing over] & & 1
+    \end{tikzcd}
+  \end{subfigure}
+  \caption{The Two Bijections Between the Booleans and \(\left\{ 0, 1 \right\}\)}
+\end{figure}
+This means that where we wanted one object to correspond to the finite set
+\(\left\{ \text{True}, \text{False} \right\}\), we instead have two.
+In fact, for any finite set of cardinality \(n\) we will have \(n!\) finiteness
+proofs, and therefore \(n!\) objects.
+We have constructed, in other words, entirely the wrong category.
 
 Being able to hide the extra information in a constructive proof when we need to
-is clearly important, then.
+is clearly important.
 HoTT (and CuTT by extension) facilitate this hiding: how exactly it is
 accomplished will be explored in the subsequent sections.
 
@@ -135,17 +157,30 @@ revealed a number of interesting theoretical considerations:
   \item[How do we talk about ``searchability''?]
     \todo{Omniscience}
 \end{description}
+Finiteness is a prime example of a phenomenon which happens quite frequently in
+dependently-typed constructive mathematics: through building a practical program
+we unearth theoretically interesting results.
+\todo{rephrase}
 \subsection{Contributions}
-The finiteness predicates we are interested in are organised in
-figure~\ref{finite-classification}, and defined in
-section~\ref{finiteness-predicates}.
-We will explore two aspects of each predicate: its relation to the other
-predicates, and its topos-theoretic classification.
+We are interested in constructive notions of finiteness, their classification as
+a topos, their relation to countability, and their use as a proof search library
+in Cubical Agda.
+\subsubsection{Finiteness Predicates}
+Our focus in this work is decidable Kuratowski finiteness.
+We will characterise it, its strength, and its uses, and in particular we will
+show that it forms a \(\Pi\)-pretopos.
+Our proofs follow the structure of \cite[Chapters 9, 10]{hottbook} and
+\cite{rijkeSetsHomotopyType2015}.
+We will explore this concept in more detail later, but crucially we will need to
+provide proofs of closure under \(\times\), \(\rightarrow\), etc.
 
-\input{figures/finite-classification}
-
-When we say ``relation'' we are referring to the arrows in
+In order to prove these closure properties, we will define and use some
+intermediate finiteness predicates, classified in
 figure~\ref{finite-classification}.
+These predicates are also interesting in their own right, though!
+
+The arrows in figure~\ref{finite-classification} are implication functions
+between each predicate.
 In section~\ref{relations} we will provide a function which inhabits each arrow.
 Each unlabelled arrow is an unconditional implication: every manifest Bishop
 finite set is cardinal finite (lemma~\ref{manifest-bishop-to-cardinal}), for
@@ -156,16 +191,12 @@ The labelled arrows are strengthening proofs: every manifest enumerable set
 Our most significant result here is the proof that a cardinal finite set with a
 decidable total order is manifestly Bishop finite.
 
-We will then examine the closure properties of each predicate in
-section~\ref{topos}, culminating in a proof that decidable Kuratowski finite
-sets form a \(\Pi\)-pretopos (theorem~\ref{finite-topos}).
-Our proofs follow the structure of \cite[Chapters 9, 10]{hottbook} and
-\cite{rijkeSetsHomotopyType2015}.
-
+\input{figures/finite-classification}
+\subsubsection{Countability Predicates}
 After the finite predicates, we will briefly look at the infinite countable
 types, and classify them in a parallel way to the finite predicates
 (section~\ref{infinite}).
-
+\subsubsection{Search}
 All of our work is formalised in Cubical Agda
 \cite{vezzosiCubicalAgdaDependently2019}.
 We will make mention of the few occasions where the formalisation of some proof
@@ -175,6 +206,8 @@ omniscience and exhaustibility.
 This library relies directly on the computational content of univalence, which
 allows us to (for instance) have \(\Pi\) types in the domain of the search
 space.
+The language of a \(\Pi\)-pretopos turns out to be exactly the right language
+for constructing ``generator''-like expressions.
 
 The full code of the formalisation is available at
 \url{https://github.com/oisdk/finiteness-in-cubical-type-theory}.
@@ -873,6 +906,13 @@ As far as we know, this is the first formalisation of either.
 \section{Countably Infinite Types} \label{infinite}
 \begin{figure*}
   \centering
+
+  \tikzcdset{
+  cramped,
+  every matrix/.append style={nodes={font=\scriptsize}},
+  row    sep/normal=1em,
+  column sep/normal=1em,
+  }
   \begin{subfigure}[b]{.45\textwidth}
     \centering
     \begin{tikzcd}
