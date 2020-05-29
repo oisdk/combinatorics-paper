@@ -1,0 +1,409 @@
+\section{Finiteness Predicates} \label{finiteness-predicates}
+In this section, we will define and briefly describe each of the five predicates
+in Figure~\ref{finite-classification}.
+The reason we explore predicates other than our focus (decidable Kuratowski
+finiteness) is that we can often prove things like closure much more readily on
+the simpler predicates.
+The relations (which we will prove in the next section) then allow us to
+transfer those proofs.
+\subsection{Split Enumerability}
+\begin{definition}[Split Enumerable Set] \label{split-enum-def}
+  \begin{equation} \label{split-enum-def-eqn}
+    \mathcal{E}!(A) \coloneqq \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
+  \end{equation}
+  We call the first component of this pair the ``support'' list, and the second
+  component the ``cover'' proof.
+  An equivalent version of this predicate was called \verb+Listable+ in
+  \cite{firsovDependentlyTypedProgramming2015}.
+\end{definition}
+
+We used some extra types in the above definition, which we will define here:
+\begin{definition}[Containers] \label{container-def}
+  A container \cite{abbottContainersConstructingStrictly2005} is a pair
+  \(S , P\) where \(S\) is a type, the elements of which are called
+  the \emph{shapes} of the container, and \(P\) is a type family on \(S\), where
+  the elements of \(P(s)\) are called the \emph{positions} of a container.
+  We ``interpret'' a container into a functor defined like so:
+  \begin{equation} \label{container-interp}
+    \llbracket S , P \rrbracket(A) \coloneqq \Sigma {(s : S)} , \left( P(s) \rightarrow A \right)
+  \end{equation}
+  Membership of a container can be defined like so:
+  \begin{equation} \label{container-membership}
+    x \in \mathit{xs} \coloneqq \text{fib}_{\text{snd}(\mathit{xs})}(x)
+  \end{equation}
+\end{definition}
+\begin{definition}[\(\mathbf{List}\)] \label{List}
+  \begin{equation}
+    \mathbf{List} \coloneqq \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket
+  \end{equation}
+\end{definition}
+\begin{definition}[\(\mathbf{Fin}\)] \label{Fin}
+  \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\). We
+  define it the standard way:
+  \begin{equation}
+    \begin{alignedat}{3}
+      & \mathbf{Fin}(0)     && \coloneqq \bot ; \\
+      & \mathbf{Fin}(n + 1) && \coloneqq \top \uplus \mathbf{Fin}(n) ;
+    \end{alignedat}
+  \end{equation} 
+\end{definition}
+
+We tend to prefer list-based definitions of finiteness, rather than ones based
+on bijections or surjections.
+This is purely a matter of perspective, however: the definition above is
+precisely equivalent to a split surjection from a finite prefix of the natural
+numbers.
+\begin{definition}[Surjections] \label{surjections}
+  We define both surjections and \emph{split} surjections here \cite[definition
+  4.6.1]{hottbook}.
+  \begin{alignat}{3}
+    &\text{surj}(f)             &&\coloneqq \Pi(y : B) , \lVert \text{fib}_f(y) \rVert \\
+    &A \twoheadrightarrow B     &&\coloneqq \Sigma (f : A \rightarrow B) , \text{surj}(f) \label{surj-arrow-eqn} \\
+    &\text{sp-surj}(f)          &&\coloneqq \Pi(y : B) , \text{fib}_f(y) \label{sp-surj-eqn} \\
+    &A \twoheadrightarrow! \; B &&\coloneqq \Sigma (f : A \rightarrow B) , \text{sp-surj}(f) \label{sp-surj-arrow-eqn}
+  \end{alignat}
+\end{definition}
+\begin{lemma} \label{split-enum-is-split-surj}
+  \begin{equation}
+    \mathcal{E}!(A) \simeq \Sigma (n : \mathbb{N}) , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
+  \end{equation}
+\end{lemma}
+\begin{proof}
+  \begin{align*}
+     \mathcal{E}!(A) &
+    \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , x \in \mathit{xs}
+    && \text{def.~\ref{split-enum-def} }(\mathcal{E}!)
+    \\
+    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{fib}_{\text{snd}(\mathit{xs})}(x)
+    && \text{eqn.~\ref{container-membership} } (\in)
+    \\
+    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \text{sp-surj}(\text{snd}(\mathit{xs}))
+    && \text{eqn.~\ref{sp-surj-eqn} (sp-surj)}
+    \\
+    & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket (A)) , \text{sp-surj}(\text{snd}(\mathit{xs}))
+    && \text{def.~\ref{List} } (\mathbf{List})
+    \\
+    & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \mathbf{Fin}(n)) , A) , \text{sp-surj}(\text{snd}(\mathit{xs}))
+    && \text{eqn.~\ref{container-interp} } (\llbracket \wc \rrbracket)
+    \\
+    & \simeq \Sigma (n : \mathbb{N}) , \Sigma (f : \mathbf{Fin}(n) \rightarrow A) , \text{sp-surj}(f)
+    && \text{Reassociation of } \Sigma
+    \\
+    & \simeq \Sigma (n : \mathbb{N}) , ( \mathbf{Fin}(n) \twoheadrightarrow ! \; A )
+    && \text{eqn.~\ref{sp-surj-arrow-eqn} } (\twoheadrightarrow!)
+  \end{align*}
+\end{proof}
+\begin{agdalisting}
+In our formalisation, the proof is a single line:
+\ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{is-split-inj}
+The only step which isn't definitional equality is the reassociation of
+\(\Sigma\).
+\ExecuteMetaData[agda/Data/Sigma/Properties.tex]{reassoc}
+\end{agdalisting}
+
+Split enumerability implies decidable equality on the underlying type.
+To prove this, we will make use of the following lemma, proven in the
+formalisation:
+\begin{lemma} \label{discrete-surj}
+  \begin{equation}
+    \frac{
+        A \twoheadrightarrow! \; B \; \; \; \text{Discrete}(A)
+      }{
+       \text{Discrete}(B) 
+      }
+  \end{equation}
+\end{lemma}
+\begin{lemma} \label{split-enum-discrete}
+  Every split enumerable type is discrete.
+\end{lemma}
+\begin{proof}
+  Let \(A\) be a split enumerable type.
+  By lemma~\ref{split-enum-is-split-surj}, there is a surjection from
+  \(\mathbf{Fin}(n)\) for some \(n\).
+  Also, we know that \(\mathbf{Fin}(n)\) is discrete (proven in our
+  formalisation).
+  Therefore, by lemma~\ref{discrete-surj}, \(A\) is discrete.
+\end{proof}
+\subsection{Manifest Bishop Finiteness}
+\begin{definition}[Manifest Bishop Finiteness]
+  \begin{equation} \label{bish-def}
+    \mathcal{B}(A) \coloneqq \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \inunique xs
+  \end{equation}
+\end{definition}
+The only difference between manifest Bishop finiteness and split enumerability
+is the membership term: here we require unique membership (\(\inunique\)),
+rather than simple membership (\(\in\)).
+\begin{definition}[Unique Membership] \label{uniq-memb-def}
+  \begin{equation}
+    x \inunique \mathit{xs} \coloneqq \text{isContr}(x \in \mathit{xs})
+  \end{equation}
+\end{definition}
+
+We use the word ``manifest'' here to distinguish from another common
+interpretation of Bishop finiteness, which we have called cardinal finiteness in
+this paper.
+The ``manifest'' refers to the fact that we have a concrete, non-truncated list
+of the elements in the proof.
+
+Where split enumerability was the enumeration form of a split surjection from
+\(\mathbf{Fin}\), manifest Bishop finiteness is the enumeration form of an
+\emph{equivalence} with \(\mathbf{Fin}\).
+\begin{lemma} \label{bishop-equiv}
+  \begin{equation}
+    \mathcal{B}(A) \simeq \Sigma {(n : \mathbb{N})} , \left( \mathbf{Fin}(n) \simeq A \right)
+  \end{equation}
+\end{lemma}
+This proof is effectively the same as that of
+lemma~\ref{split-enum-is-split-surj}.
+\subsection{Cardinal Finiteness}
+Each finiteness predicate so far has contained an \emph{ordering} of the
+underlying type.
+For our purposes, this is too much information: it means that when constructing
+the ``category of finite sets'' later on, instead of each type having one
+canonical representative, it will have \(n!\), where \(n\) is the cardinality of
+the type\footnotemark.
+
+\footnotetext{
+  We actually do get a category (a groupoid, even) from manifest Bishop
+  finiteness \cite{yorgeyCombinatorialSpeciesLabelled2014}: it's the groupoid of
+  finite sets equipped with a linear order, whose morphisms are order-preserving
+  bijections.
+  We do not explore this particular construction in any detail.
+}
+
+To remedy the problem, we will use propositional truncation
+(def.~\ref{prop-trunc}).
+\begin{definition}[Cardinal Finiteness]
+  \begin{equation}
+    \mathcal{C}(A) \coloneqq \lVert \mathcal{B}(A) \rVert \simeq \lVert \Sigma(n : \mathbb{N}) , (\mathbf{Fin}(n) \simeq A) \rVert
+  \end{equation}
+\end{definition}
+At first glance, it might seem that we lose any useful properties we could
+derive from \(\mathcal{B}\).
+Luckily, this is not the case: by eliminator \ref{elim-prop-coh} of
+def.~\ref{prop-trunc}, we need only show that the output is uniquely determined.
+
+The following two lemmas are proven in
+\cite{yorgeyCombinatorialSpeciesLabelled2014} (Proposition 2.4.9 and 2.4.10,
+respectively), in much the same way as we have done here.
+Our contribution for this section is simply the formalisation.
+\begin{lemma}
+  Given a cardinally finite type, we can derive the type's cardinality, as well
+  as a propositionally truncated proof of equivalence with \(\textbf{Fin}\)s of
+  the same cardinality.
+  \begin{equation}
+    \mathcal{C}(A) \rightarrow \Sigma {(n : \mathbb{N})} , \lVert \textbf{Fin}(n) \simeq A \rVert
+  \end{equation}
+\end{lemma}
+\begin{lemma} \label{cardinal-finite-discrete}
+  Any cardinal-finite set has decidable equality.
+\end{lemma}
+\subsection{Manifest Enumerability}
+\begin{definition}[Manifest Enumerability]
+  \begin{equation}
+    \mathcal{E}(A) \coloneqq \Sigma {(\mathit{xs} : \mathbf{List}(A))} , \Pi {(x : A)} , \lVert x \in \mathit{xs} \rVert
+  \end{equation}
+\end{definition}
+As with manifest Bishop finiteness, the only difference with this type and split
+enumerability is the membership proof: here we have propositionally truncated
+it.
+This has two effects.
+First, it means that this proof represents a true surjection (rather than a
+split surjection) from \(\mathbf{Fin}\).
+\begin{lemma}
+  \begin{equation}
+    \mathcal{E}(A) \simeq \Sigma(n : \mathbb{N}) , (\mathbf{Fin}(n) \twoheadrightarrow A)
+  \end{equation}
+\end{lemma}
+The proof for this lemma is similar in structure to
+lemma~\ref{split-enum-is-split-surj} and lemma~\ref{bishop-equiv}.
+
+Secondly, it means the predicate does not imply decidable equality.
+More significantly, it allows the predicate to be defined over non-set types,
+like the circle.
+\begin{definition}[\(S^1\)] \label{circle-def}
+  The circle, \(S^1\), can be represented in HoTT as a higher inductive type.
+  \begin{equation}
+    \begin{alignedat}{3}
+      S^1 \coloneqq & \; \text{base} &&: S^1 ; \\
+      | & \; \text{loop} &&: \text{base} \equiv \text{base} ; 
+    \end{alignedat}
+  \end{equation}
+  We will use it here as an example of a non-set type, i.e. a type for which not
+  all paths are equal.
+  This also means that it does not have decidable equality.
+\end{definition}
+\begin{lemma}
+  The circle \(S^1\) is manifestly enumerable.
+\end{lemma}
+\subsection{Kuratowski Finiteness}
+The first thing we must define is a representation of subsets.
+\begin{definition}[Kuratowski Finite Subset]
+  \(\mathcal{K}(A)\) is the type of Kuratowski-finite subsets of \(A\).
+  \begin{equation}
+    \begin{alignedat}{3}
+      \mathcal{K}(A) \coloneqq&
+             \; []                &:& \; \mathcal{K}(A) ; \\
+      \vert& \; \wc \dblcolon \wc &:& \; A \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
+      \vert& \; \text{com}        &:& \; \Pi (x, y: A) , \Pi (\mathit{xs} : \mathcal{K}(A)) ,
+                                  x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} ; \\
+      \vert& \; \text{dup}        &:& \; \Pi (x : A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} ; \\
+      \vert& \; \text{trunc}      &:& \; \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q ;
+    \end{alignedat}
+  \end{equation}
+  We define it as a HIT (definition~\ref{HITs}).
+  The first two constructors are point constructors, giving ways to create
+  values of type \(\mathcal{K}(A)\).
+  They are also recognisable as the two constructors for finite lists, a type
+  which represents the free monoid.
+
+  The next two constructors add extra paths to the type: equations that usage of
+  the type must obey.
+  These extra paths turn the free monoid into the free \emph{commutative} (com)
+  \emph{idempotent} (dup) monoid.
+
+  The final constructor enforces that the type \(\mathcal{K}(A)\) must be a set.
+\end{definition}
+The Kuratowski finite subset is a free join semilattice (or, equivalently, a
+free commutative idempotent monoid).
+More prosaically, \(\mathcal{K}\) is the abstract data type for finite sets, as
+defined in the Boom hierarchy \cite{boomFurtherThoughtsAbstracto1981,
+  bunkenburgBoomHierarchy1994}.
+However, rather than just being a specification, \(\mathcal{K}\) is fully usable
+as a data type in its own right, thanks to HITs.
+
+Other definitions of \(\mathcal{K}\) exist (such as the one in
+\cite{fruminFiniteSetsHomotopy2018}) which make the fact that \(\mathcal{K}\) is
+the free join semilattice more obvious.
+We have included such a definition in our formalisation, and proven it
+equivalent to the one above.
+
+Next, we need a way to say that an entire type is Kuratowski finite.
+For that, we will need to define membership of \(\mathcal{K}\).
+\begin{definition}[Membership of \(\mathcal{K}\)]
+  Membership is defined by pattern-matching on \(\mathcal{K}\).
+  The two point constructors are handled like so:
+  \begin{equation}
+    \begin{alignedat}{2}
+      x \in&& \; []                      &\coloneqq \bot ; \\
+      x \in&& \; y \dblcolon \mathit{ys} &\coloneqq \lVert x \equiv y \uplus x \in \mathit{ys} \rVert ;
+    \end{alignedat}
+  \end{equation}
+  The \(\text{com}\) and \(\text{dup}\) constructors are handled by proving that
+  the truncated form of \(\uplus\) is itself commutative and idempotent.
+  The type of propositions is itself a set, satisfying the \(\text{trunc}\)
+  constructor.
+\end{definition}
+Finally, we have enough background to define Kuratowski finiteness.
+\begin{definition}[Kuratowski Finiteness]
+  \begin{equation}
+    \mathcal{K}^{f}(A) = \Sigma {(\mathit{xs} : \mathcal{K}(A))} , \Pi (x : A) , x \in \mathit{xs}
+  \end{equation}
+\end{definition}
+
+We also have the following two lemmas, proven in both
+\cite{fruminFiniteSetsHomotopy2018} and our formalisation.
+\begin{lemma}
+  \(\mathcal{K}^f\) is a mere proposition.
+\end{lemma}
+\begin{lemma}
+  This circle \(S^1\) is Kuratowski finite.
+\end{lemma}
+\section{Relations Between Each Finiteness Definition} \label{relations}
+We will now look at the arrows in figure~\ref{finite-classification}.
+\subsection{Split Enumerability and Manifest Bishop Finiteness}
+While manifest Bishop finiteness might seem stronger than split enumerability,
+it turns out this is not the case.
+Both predicates imply the other.
+\begin{lemma} \label{manifest-bishop-to-split-enum}
+  Any manifest Bishop finite type is split enumerable.
+\end{lemma}
+\begin{proof}
+  To construct a proof of split enumerability from one of manifest Bishop
+  finiteness, it suffices to convert a proof of \(x \inunique \mathit{xs}\) to
+  one of \(x \in \mathit{xs}\), for all \(x\) and \(\mathit{xs}\).
+  Since \(\inunique\) is defined as a contraction of \(\in\), such a conversion
+  is simply the \(\text{fst}\) function.
+\end{proof}
+
+\begin{lemma} \label{split-enum-to-manifest-bishop}
+  Any split enumerable set is manifest Bishop finite.
+\end{lemma}
+This proof takes significantly more work.
+The ``unique membership'' condition in \(\mathcal{B}\) means that we are not
+permitted duplicates in the support list.
+The first step in the proof, then, is to filter those duplicates out from the
+support list of the \(\mathcal{E}!\) proof: we can do this using the decidable
+equality provided by \(\mathcal{E}!\) (lemma~\ref{split-enum-discrete}).
+From there, all we need to show is that the membership proof carries over
+appropriately.
+\subsection{Split Enumerability and Manifest Enumerability}
+\begin{lemma} \label{split-enum-to-manifest-enum}
+  Any split enumerable type is manifestly enumerable.
+\end{lemma}
+This lemma is proven by truncating the membership proof in split enumerability.
+
+\begin{lemma} \label{manifest-enum-to-split-enum}
+  A manifestly enumerable type with decidable equality is split enumerable.
+\end{lemma}
+
+\subsection{Manifest Bishop Finiteness and Cardinal Finiteness}
+\begin{lemma} \label{manifest-bishop-to-cardinal}
+  Any manifest Bishop finite type is cardinal finite.
+\end{lemma}
+\begin{theorem} \label{cardinal-to-manifest-bishop}
+  Any cardinal finite type with a total order is Bishop finite.
+\end{theorem}
+The proof for this particular theorem is quite involved in the formalisation, so
+we only give its sketch here.
+First, note that we actually convert to manifest enumerability first: this can
+be converted to split enumerability with decidable equality, which is provided
+by cardinal finiteness.
+
+Next, we define permutations.
+\begin{definition}[List Permutations]
+  Two lists are permutations of each other if their membership proofs are all
+  equivalent\footnotemark \cite{danielssonBagEquivalenceProofRelevant2012}.
+  \begin{equation}
+    \mathit{xs} \leftrightsquigarrow \mathit{ys} = \Pi {(x : A)} , x \in \mathit{xs} \simeq x \in \mathit{ys}
+  \end{equation}
+\end{definition}
+
+\footnotetext{
+  The definition in \cite{danielssonBagEquivalenceProofRelevant2012} and our
+  formalisation is slightly different: we say permutations are lists with
+  \emph{isomorphic} membership proofs.
+  The distinction, as it happens, does not affect our work here.
+}
+
+Next, we define a sort function which relies on the provided total order.
+We further prove the following fact about this sort function:
+\begin{equation}
+  \Pi(\mathit{xs}, \mathit{ys} : \mathbf{List}(A)) , \mathit{xs} \leftrightsquigarrow \mathit{ys} \rightarrow \text{sort}(\mathit{xs}) \equiv \text{sort}(\mathit{ys})
+\end{equation}
+
+Next, notice that the support lists of any two proofs of manifest Bishop
+finiteness must be permutations of each other.
+This will allow us to sort the support list of a proof of cardinal finiteness in
+a coherently constant (definition~\ref{prop-trunc},
+eliminator~\ref{elim-prop-coh}) way, pulling the support list out from the
+truncation.
+The cover proof emerges naturally from the definition of the permutation.
+\subsection{Cardinal Finiteness and Kuratowski Finiteness}
+\begin{lemma} \label{cardinal-kuratowski}
+  \begin{equation}
+    \mathcal{C}(A) \simeq \mathcal{K}^f(A) \times \text{Discrete}(A)
+  \end{equation}
+\end{lemma}
+This proof is constructed by providing a pair of functions: one from
+\(\mathcal{C}(A)\) to \(\mathcal{K}^f(A) \times \text{Discrete}(A)\), and one the
+other way.
+This pair implies an equivalence, because both source and target are
+propositions.
+The actual functions themselves are proven in our formalisation, as well as in
+\cite{fruminFiniteSetsHomotopy2018}.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../paper"
+%%% End:
