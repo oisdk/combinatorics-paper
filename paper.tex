@@ -163,17 +163,25 @@ we unearth theoretically interesting results.
 \todo{rephrase}
 \subsection{Contributions}
 We are interested in constructive notions of finiteness.
-In particular, we are interested in two different aspects of each predicate for
-finiteness: how informative it is (i.e. how many properties of the underlying
-type we can derive from a proof that it is finite), and how restrictive it is
-(i.e. how many types conform to its particular variety of finiteness).
-Once we explore each of five predicates along these two axes, we will then
-construct a category out of one of them (decidable Kuratowski finiteness), and
-show that it forms a \(\Pi\)-pretopos.
+In contrast to classical finiteness, in a constructive setting there is a wide
+variety of predicates which all have some claim to being the formal
+interpretation of ``finiteness''.
+Broadly, they vary along two axes: informativeness (i.e. how many properties
+of the underlying type we can derive from a proof that it is finite), and
+restrictiveness (i.e. how many types conform to its particular variety of
+finiteness).
+We will explore five of these predicates, proving formally their relations and
+implications.
+
+We will then focus on one of the predicates: decidable Kuratowski finiteness.
+We will construct a category of decidable Kuratowski-finite types, and show that
+it forms a \(\Pi\)-pretopos.
+
 We will then take a brief detour into predicates for countably infinite types,
-and compare its landscape to that of the finite predicates, before jumping into
-a practical application of the work: a library for proof search over finite
-domains.
+and compare its landscape to that of the finite predicates.
+
+Finally, we will present a case-study in a practical application of the
+predicates for finiteness we have constructed: a library for total proof search.
 We will show how our earlier work gives a good theoretical foundation for this
 library, and allows for a simple and principled API, and we will demonstrate how
 some of the more complex theoretical results allow for a more powerful library
