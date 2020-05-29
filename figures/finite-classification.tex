@@ -3,9 +3,9 @@
   \begin{tikzcd}[cramped, row sep=small]
     {} &
     {} \ar[ddddd, dash, start anchor={[yshift=4ex]}, end anchor={[yshift=-4ex]}] &
-    \text{Unordered} &
+    \text{Non Discrete} &
     \ar[ddddd, dash, dashed, start anchor={[yshift=4ex]}, end anchor={[yshift=-4ex]}] &
-    \text{Ordered} &
+    \text{Discrete} &
     {}
     \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \ar[rrrr, dash, start anchor={[xshift=-6ex]}, end anchor={[xshift=10ex]}] &
@@ -14,23 +14,37 @@
     &
     {}
     &
+    {}
     \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     &
+    &
+    \text{Manifest Enumerable}
+    \ar[
+      from=rr,
+      bend left=15,
+      crossing over,
+      start anchor=south west,
+      end anchor=south east
+      ]
+    \ar[
+      rr,
+      bend left=15,
+      "\text{Discrete}" description,
+      start anchor=north east,
+      end anchor=north west
+      ]
+    \ar[ddd, crossing over]
+    &
+    &
+    \text{Split Enumerable}
+      \ar[d, xshift=-1ex, bend right=30]
+    &
+    \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \text{Ordered} &
     &
     &
     &
     \text{Manifest Bishop}
-      \ar[d, xshift=-1ex, bend right=30]
-      \ar[lld, end anchor=north east, start anchor=west, bend right=10, crossing over]
-    &
-    \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \text{Discrete} &
-    &
-    \text{Cardinal}
-    \ar[rr, start anchor=east, end anchor=west, "\text{Ord}" description]
-    &
-    &
-    \text{Split Enumerable}
       \ar[u, xshift=1ex, bend right=30]
     &
     \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -41,28 +55,28 @@
     {}
     &
     \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \text{Non Discrete} &
+    \text{Unordered} &
     {} &
     \text{Kuratowski}
-      \ar[from=uu, xshift=-1ex, bend right=30, crossing over]
-      \ar[uu, bend right=30,  "\text{Discrete}" description]
-      &
+    \ar[rr, crossing over, bend left=15, "\text{Discrete}" description, start anchor=north east, end anchor=north west]
+    \ar[from=rr, crossing over, bend left=15, start anchor=south west, end anchor=south east]
+    &
     {}
     &
-    \text{Manifest Enumerable}
-      \ar[uu, xshift=1ex, bend right=30,  "\text{Discrete}" description]
-      \ar[from=uu, xshift=-1ex, bend right=30, crossing over]
-      \ar[ll, start anchor=west, end anchor=east, crossing over]
+    \text{Cardinal}
+      \ar[from=uu, crossing over]
+      \ar[uuu, crossing over, "\text{Ord}" description, end anchor=east, start
+      anchor=east, in=-15, out=20]
     &
     \\
     & & & & &
     \\
-    & \ar[rrrr, "\text{More Informative}" description, end anchor={[xshift=-6ex]}]
+    & \ar[rrrr, "\text{More Restrictive}" description, end anchor={[xshift=-6ex]}]
     &
     &
     &
     &
-    \ar[uuuuuuu, "\text{More Restrictive}" description]
+    \ar[uuuuuu, "\text{More Informative}" {description, near start}]
     {}
   \end{tikzcd}
   \caption{Classification of finiteness predicates according to whether they are
