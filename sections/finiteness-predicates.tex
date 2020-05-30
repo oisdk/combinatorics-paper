@@ -1,23 +1,49 @@
 \section{Finiteness Predicates} \label{finiteness-predicates}
 In this section, we will define and briefly describe each of the five predicates
 in Figure~\ref{finite-classification}.
-The reason we explore predicates other than our focus (decidable Kuratowski
-finiteness) is that we can often prove things like closure much more readily on
-the simpler predicates.
-The relations (which we will prove in the next section) then allow us to
-transfer those proofs.
+As we will see, each of these predicates has subtle differences from the others:
+we will outline how some predicates are too informative, and how others aren't
+powerful enough, for our needs, before settling on decidable Kuratowski
+finiteness as our focus.
+
+As we make our way through each predicate, we will be interested in two aspects:
+how can we build proofs of this predicate (i.e. is the product of two finite
+types finite?) and what do we \emph{get} once we do (i.e. does this predicate
+tell us the number of elements in the finite set?).
 \subsection{Split Enumerability}
+We will start with a simple notion of finiteness, called \emph{split}
+enumerability.
+
 \begin{definition}[Split Enumerable Set] \label{split-enum-def}
+  To say that some type \(A\) is split enumerable is to say that there is a list
+  \(\mathit{support} : \mathbf{List}(A)\) such that any value \(x : A\) is in
+  \(\mathit{support}\).
   \begin{equation} \label{split-enum-def-eqn}
-    \mathcal{E}!(A) \coloneqq \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \in \mathit{xs}
+    \mathcal{E}!(A) \coloneqq \Sigma {(\mathit{support} : \textbf{List}(A))} , \Pi {(x : A)} , x \in \mathit{support}
   \end{equation}
   We call the first component of this pair the ``support'' list, and the second
   component the ``cover'' proof.
   An equivalent version of this predicate was called \verb+Listable+ in
   \cite{firsovDependentlyTypedProgramming2015}.
 \end{definition}
-
 We used some extra types in the above definition, which we will define here:
+
+\begin{definition}[\(\mathbf{List}\)] \label{List}
+  In this paper we define lists as \emph{containers}:
+  \begin{equation}
+    \mathbf{List} \coloneqq \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket
+  \end{equation}
+  This may seem quite foreign or complex in comparison to the usual definition
+  of lists as an inductive data type:
+  \begin{inductivetype}{\mathbf{List}(A)}
+    \inductivetypeclause{\left[ \right]}{\mathbf{List}(A)}
+    \inductivetypeclause{\wc \dblcolon \wc}{A \rightarrow \mathbf{List}(A) \rightarrow \mathbf{List}(A)}
+  \end{inductivetype}
+  But it turns out to be quite useful for later proofs.
+
+  Moreover, the inductive type and the container-based type are equivalent, as
+  is proven in our formalisation.
+\end{definition}
 \begin{definition}[Containers] \label{container-def}
   A container \cite{abbottContainersConstructingStrictly2005} is a pair
   \(S , P\) where \(S\) is a type, the elements of which are called
@@ -32,11 +58,6 @@ We used some extra types in the above definition, which we will define here:
     x \in \mathit{xs} \coloneqq \text{fib}_{\text{snd}(\mathit{xs})}(x)
   \end{equation}
 \end{definition}
-\begin{definition}[\(\mathbf{List}\)] \label{List}
-  \begin{equation}
-    \mathbf{List} \coloneqq \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket
-  \end{equation}
-\end{definition}
 \begin{definition}[\(\mathbf{Fin}\)] \label{Fin}
   \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\). We
   define it the standard way:
@@ -47,6 +68,45 @@ We used some extra types in the above definition, which we will define here:
     \end{alignedat}
   \end{equation} 
 \end{definition}
+\subsubsection{Instances}
+Now that we have a suitable definition of finiteness, we will next prove that
+some things are finite.
+\begin{lemma}
+  \(\bot\), \(\top\), and \(\mathbf{Bool}\) are split enumerable.
+\end{lemma}
+\begin{proof}
+  These three types are represented by fairly simple finite sets:
+  \begin{align}
+    \bot &= \left\{  \right\} \\
+    \top &= \left\{ \text{tt}  \right\} \\
+    \mathbf{Bool} &= \left\{  \text{false}, \text{true} \right\}
+  \end{align}
+  Which leads to quite simple proofs of finiteness.
+
+  The support list for is \(\left[  \right]\), \(\left[ \text{tt} \right]\), and
+  \(\left[ \text{false}, \text{true} \right]\), respectively, and the cover
+  proof is a function that returns the index of the supplied element.
+\end{proof}
+\begin{agdalisting}
+  The code in our formalisation of these three proofs is quite simple.
+  Just as an example, the proof that \(\mathbf{Bool}\) is split enumerable is as
+  follows:
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
+\end{agdalisting}
+
+
+
+\begin{lemma} \label{split-enum-sigma}
+  Split enumerability is closed under \(\Sigma\).
+  \begin{equation}
+    \frac{
+      \mathcal{E}!(A) \; \; \; \Pi(x : A) , \mathcal{E}!(U(x))
+    }{
+      \mathcal{E}!(\Sigma(x : A) , U(x))
+    }
+  \end{equation}
+\end{lemma}
+
 
 We tend to prefer list-based definitions of finiteness, rather than ones based
 on bijections or surjections.
@@ -240,17 +300,13 @@ like the circle.
 The first thing we must define is a representation of subsets.
 \begin{definition}[Kuratowski Finite Subset]
   \(\mathcal{K}(A)\) is the type of Kuratowski-finite subsets of \(A\).
-  \begin{equation}
-    \begin{alignedat}{3}
-      \mathcal{K}(A) \coloneqq&
-             \; []                &:& \; \mathcal{K}(A) ; \\
-      \vert& \; \wc \dblcolon \wc &:& \; A \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A) ; \\
-      \vert& \; \text{com}        &:& \; \Pi (x, y: A) , \Pi (\mathit{xs} : \mathcal{K}(A)) ,
-                                  x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs} ; \\
-      \vert& \; \text{dup}        &:& \; \Pi (x : A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs} ; \\
-      \vert& \; \text{trunc}      &:& \; \Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q ;
-    \end{alignedat}
-  \end{equation}
+  \begin{inductivetype}{\mathcal{K}(A)}
+    \inductivetypeclause{\left[ \right]}{\mathcal{K}(A)}
+    \inductivetypeclause{\wc \dblcolon \wc}{A \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A)}
+    \inductivetypeclause{\text{com}}{\Pi (x, y: A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs}}
+    \inductivetypeclause{\text{dup}}{\Pi (x : A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs}}
+    \inductivetypeclause{\text{trunc}}{\Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q}
+  \end{inductivetype}
   We define it as a HIT (definition~\ref{HITs}).
   The first two constructors are point constructors, giving ways to create
   values of type \(\mathcal{K}(A)\).
@@ -402,6 +458,7 @@ This pair implies an equivalence, because both source and target are
 propositions.
 The actual functions themselves are proven in our formalisation, as well as in
 \cite{fruminFiniteSetsHomotopy2018}.
+
 
 %%% Local Variables:
 %%% mode: latex

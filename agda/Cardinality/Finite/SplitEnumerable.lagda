@@ -46,12 +46,16 @@ module _ where
  open import Data.List.Sugar hiding ([_])
  open import Data.List.Syntax
  open import Data.List.Membership
-
+\end{code}
+%<*bool-inst>
+\begin{code}
  ℰ!⟨2⟩ : ℰ! Bool
  ℰ!⟨2⟩ .fst = [ false , true ]
  ℰ!⟨2⟩ .snd false  = 0  , refl
  ℰ!⟨2⟩ .snd true   = 1  , refl
-
+\end{code}
+%</bool-inst>
+\begin{code}
  ℰ!⟨⊤⟩ : ℰ! ⊤
  ℰ!⟨⊤⟩ .fst = [ tt ]
  ℰ!⟨⊤⟩ .snd _ = 0 , refl
