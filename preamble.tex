@@ -14,13 +14,25 @@
 \usepackage{amsthm}
 \renewcommand{\qed}{\ensuremath{\hfill\blacksquare}}
 
-% Theorem envs without italics
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}
-\newtheorem{lemma}{Lemma}
-\newtheorem{theorem}{Theorem}
+% Boxed theorem envs without italics
 
 \usepackage{mdframed}
+
+\newtheoremstyle{roman}
+{0} % Space above
+{0} % Space below
+{} % Body font
+{} % Indent amount
+{\bfseries} % Theorem head font
+{.} % Punctuation after theorem head
+{.5em} % Space after theorem head
+{} % Theorem head spec (can be left empty, meaning `normal')
+
+\theoremstyle{roman}
+\newmdtheoremenv{definition}{Definition}
+\newmdtheoremenv{lemma}{Lemma}
+\newmdtheoremenv{theorem}{Theorem}
+
 
 \newmdtheoremenv{agdalisting}{Listing}
 
@@ -147,3 +159,8 @@
   & \; #1 &:&& \; #2 ;
   \firstclauseofinductivetypefalse
 }
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "paper"
+%%% End:
