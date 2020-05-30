@@ -150,13 +150,21 @@ From that we can derive a much wider array of finiteness proofs.
   \(U(x)\)).
   Therefore, the pair itself must be in our constructed support list.
 \end{proof}
+\subsubsection{Derivations}
+We have a way to construct finiteness proofs, and a semiring-like toolbox to
+combine them.
+What we're now interested in is what we can \emph{derive} from them.
 
+First, we will look at how this predicate relates to more traditional, classical
+notions of finiteness.
+in a classical setting we likely wouldn't mention ``lists'' or the like, and
+would instead define finiteness based on the existence of some injection or
+surjection.
+As it turns out, our definition of finiteness here is precisely the same as the
+surjection-based one, in quite a deep way!
 
-We tend to prefer list-based definitions of finiteness, rather than ones based
-on bijections or surjections.
-This is purely a matter of perspective, however: the definition above is
-precisely equivalent to a split surjection from a finite prefix of the natural
-numbers.
+First, we will need to define our terms: in HoTT, surjections are a little more
+complex than what you'd find in either MLTT or classical mathematics.
 \begin{definition}[Surjections] \label{surjections}
   We define both surjections and \emph{split} surjections here \cite[definition
   4.6.1]{hottbook}.
@@ -167,6 +175,11 @@ numbers.
     &A \twoheadrightarrow! \; B &&\coloneqq \Sigma (f : A \rightarrow B) , \text{sp-surj}(f) \label{sp-surj-arrow-eqn}
   \end{alignat}
 \end{definition}
+Over sets, the surjections and split surjections are the same thing, but there
+is a difference one we involve non-set types like the circle.
+
+Next, we will show that split enumerability is equivalent to the existence of a
+split surjection from a finite prefix of the natural numbers:
 \begin{lemma} \label{split-enum-is-split-surj}
   \begin{equation}
     \mathcal{E}!(A) \simeq \Sigma (n : \mathbb{N}) , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
@@ -204,6 +217,8 @@ The only step which isn't definitional equality is the reassociation of
 \(\Sigma\).
 \ExecuteMetaData[agda/Data/Sigma/Properties.tex]{reassoc}
 \end{agdalisting}
+(The simplicity of this proof, by the way, is why we preferred the
+container-based definition of lists over the traditional one.)
 
 Split enumerability implies decidable equality on the underlying type.
 To prove this, we will make use of the following lemma, proven in the
@@ -217,6 +232,9 @@ formalisation:
       }
   \end{equation}
 \end{lemma}
+\begin{proof}
+  \todo[inline]{Prose for proof}
+\end{proof}
 \begin{lemma} \label{split-enum-discrete}
   Every split enumerable type is discrete.
 \end{lemma}
