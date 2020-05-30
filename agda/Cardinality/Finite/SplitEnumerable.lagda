@@ -55,6 +55,7 @@ module _ where
  ℰ!⟨2⟩ .snd true   = 1  , refl
 \end{code}
 %</bool-inst>
+%<*top-bot-inst>
 \begin{code}
  ℰ!⟨⊤⟩ : ℰ! ⊤
  ℰ!⟨⊤⟩ .fst = [ tt ]
@@ -62,12 +63,17 @@ module _ where
 
  ℰ!⟨⊥⟩ : ℰ! ⊥
  ℰ!⟨⊥⟩ = [] , λ ()
-
+\end{code}
+%</top-bot-inst>
+%<*sup-sigma>
+\begin{code}
  sup-Σ : List A → (∀ x → List (U x)) → List (Σ A U)
  sup-Σ xs ys = do  x ← xs
                    y ← ys x
                    [ x , y ]
-
+\end{code}
+%</sup-sigma>
+\begin{code}
  cov-Σ : (x : A)
        → (y : U x)
        → (xs : List A)

@@ -94,8 +94,11 @@ some things are finite.
   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
 \end{agdalisting}
 
-
-
+With the most basic simple types out of the way, the obvious next choice is the
+(non-dependent) sums and products: \(\uplus\) and \(\times\).
+Both of these types can be constructed from the \emph{dependent} sum, however,
+so that is the type we will prove finite.
+From that we can derive a much wider array of finiteness proofs.
 \begin{lemma} \label{split-enum-sigma}
   Split enumerability is closed under \(\Sigma\).
   \begin{equation}
@@ -106,6 +109,47 @@ some things are finite.
     }
   \end{equation}
 \end{lemma}
+\begin{proof}
+  Let \(A\) be a type which is split enumerable, and \(U\) be a type family over
+  \(A\) which is split enumerable at every point.
+  Formally, we have the following proofs:
+  \begin{align}
+    \mathcal{E}!_A &: \mathcal{E}!(A) \\
+    \mathcal{E}!_U &: \Pi(x : A) , \mathcal{E}!(U(x))
+  \end{align}
+
+  Our task is to construct a proof of type:
+  \begin{equation}
+    \mathcal{E}!(\Sigma(x : A) , U(x))
+  \end{equation}
+  This proof itself is composed of two components:
+  \begin{align}
+    \mathit{support} &: \mathbf{List}(\Sigma(x : A) , U(x)) \\
+    \mathit{cover} &: \Pi(x : \Sigma(y : A) , U(y)) , x \in \mathit{support}
+  \end{align}
+
+  To construct the support list, we apply the function \(\mathcal{E}!_U\) to
+  every element in the support list of \(\mathcal{E}!_A\), extract the support
+  lists from the resulting finiteness proofs, and concatenate them.
+
+  \begin{agdalisting}
+    This pattern of applying a function to each element in a list and
+    concatenating the result is of course well-known in functional programming,
+    and is in fact the pattern that makes lists a monad.
+    While this insight isn't strictly relevant to our work here, it does mean
+    the implementation of this function can use Agda's do notation, resulting
+    in the following extremely clean implementation:
+    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{sup-sigma}
+  \end{agdalisting}
+
+  To prove that this support list does in fact cover the entirety of the type
+  \(\Sigma \; A \; U\), we note that any element of type \(\Sigma \; A \; U\)
+  must have a first component in the support list of \(\mathcal{E}!_A\), and its
+  second component must be in the result of applying \(\mathcal{E}!_U\) to that
+  first element (since that support list contains every element of type
+  \(U(x)\)).
+  Therefore, the pair itself must be in our constructed support list.
+\end{proof}
 
 
 We tend to prefer list-based definitions of finiteness, rather than ones based
