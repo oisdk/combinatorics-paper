@@ -16,7 +16,7 @@
 
 % Boxed theorem envs without italics
 
-\usepackage{mdframed}
+\usepackage[framemethod=tikz]{mdframed}
 
 \newtheoremstyle{roman}
 {0} % Space above
@@ -32,7 +32,12 @@
 \newmdtheoremenv[default,nobreak=true]{definition}{Definition}
 \newmdtheoremenv[default,nobreak=true]{lemma}{Lemma}
 \newmdtheoremenv[default,nobreak=true]{theorem}{Theorem}
-\newmdtheoremenv[default,nobreak=true]{agdalisting}{Listing}
+\newmdtheoremenv[
+  default,
+  nobreak=true,
+  linecolor=white,
+  tikzsetting = {draw=black, line width = 1pt,dotted},
+  ]{agdalisting}{Listing}
 
 % Haskell bind operator >>=
 \newcommand\hbind{%

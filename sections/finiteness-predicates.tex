@@ -207,7 +207,7 @@ split surjection from a finite prefix of the natural numbers:
     && \text{Reassociation of } \Sigma
     \\
     & \simeq \Sigma (n : \mathbb{N}) , ( \mathbf{Fin}(n) \twoheadrightarrow ! \; A )
-    && \text{eqn.~\ref{sp-surj-arrow-eqn} } (\twoheadrightarrow!)
+    && \text{eqn.~\ref{sp-surj-arrow-eqn} } (\twoheadrightarrow!) \; \qedhere
   \end{align*}
 \end{proof}
 \begin{agdalisting}
@@ -407,7 +407,7 @@ in disguise.
     && \text{Reassociation of } \Sigma
     \\
     & \simeq \Sigma (n : \mathbb{N}) , ( \mathbf{Fin}(n) \simeq A )
-    && \text{eqn.~\ref{equiv-def} } (\simeq)
+    && \text{eqn.~\ref{equiv-def} } (\simeq) \; \qedhere
   \end{align*}
 \end{proof}
 This proof is almost identical\footnotemark to the proof for
@@ -420,6 +420,17 @@ relation-based ones.
   disabled, instead of the definition here which uses \(\Sigma\).
 }
 \subsection{Cardinal Finiteness}
+While we have removed some of the unnecessary information from our finiteness
+predicates, one piece still remains.
+\begin{agdalisting}
+  The two following proofs are both valid proofs of the finiteness of
+  \(\mathbf{Bool}\), and both do not include any duplicates.
+  However they still differ:
+  \begin{multicols}{2}
+    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
+    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-rev}
+  \end{multicols}
+\end{agdalisting}
 Each finiteness predicate so far has contained an \emph{ordering} of the
 underlying type.
 For our purposes, this is too much information: it means that when constructing
@@ -459,9 +470,75 @@ Our contribution for this section is simply the formalisation.
     \mathcal{C}(A) \rightarrow \Sigma {(n : \mathbb{N})} , \lVert \textbf{Fin}(n) \simeq A \rVert
   \end{equation}
 \end{lemma}
+\begin{proof}
+  Let \(A\) be a cardinally-finite type, with proof \(F : \mathcal{C}(A)\).
+  Our task is to extract a natural number \(n : \mathbb{N}\) representing the
+  cardinality of \(A\), and a propositionally-truncated proof that \(A\) is
+  equivalent to \(\mathbf{Fin}(n)\).
+
+  Extracting the second component of the pair is trivial, as it itself is
+  truncated.
+  We will now focus on extracting the cardinality.
+
+  Without the propositional truncation, \(\text{fst}\) would suffice for this
+  task.
+  Given that the pair is hidden under the truncation, then, we need a way to
+  convert a function \(f : A \rightarrow B\) to \(g : \lVert A \rVert
+  \rightarrow B\).
+  This is precisely what eliminator \ref{elim-prop-coh} gives us.
+  For our case, we need to show the following:
+  \begin{equation}
+    \frac{(n : \mathbb{N}) \; \; \; (p : \mathbf{Fin}(n) \simeq A) \; \; \;
+          (m : \mathbb{N}) \; \; \; (q : \mathbf{Fin}(m) \simeq A)
+        }{
+          n \equiv m
+        }
+  \end{equation}
+  Immediately we can construct the following term:
+  \begin{equation}
+    \begin{alignat}{3}
+      \mathbf{Fin}(n) & \simeq A && (p) \\
+                      & \simeq \mathbf{Fin}(m) && (q)
+    \end{alignat}
+  \end{equation}
+  Given univalence we have \(\mathbf{Fin}(n) \equiv \mathbf{Fin}(m)\),
+  and the rest of our task is to prove:
+  \begin{equation}
+    \frac{\mathbf{Fin}(n) \equiv \mathbf{Fin}(m)}{n \equiv m}
+  \end{equation}
+
+  This is a well-known chestnut in dependently-typed programming, and one that
+  has a surprisingly tricky and complex proof.
+  We do not include it here, since it has already been explored elsewhere, but
+  it is present in our formalisation.
+\end{proof}
 \begin{lemma} \label{cardinal-finite-discrete}
   Any cardinal-finite set has decidable equality.
 \end{lemma}
+\begin{proof}
+  Since we can already derive decidable equality from a proof of manifest Bishop
+  finiteness, it suffices to show that decidable equality is itself a
+  proposition.
+  \begin{equation}
+    \text{isProp}(\Pi(x, y : A) , \mathbf{Dec}(x \equiv y))
+  \end{equation}
+  First, it is clear that \(x \equiv y\) is a proposition: since the type \(A\)
+  has decidable equality, by Hedburg's theorem \todo{ref here} it is a set,
+  meaning precisely that \(x \equiv y\) is a proposition.
+
+  Secondly, we know that any decision over a proposition is itself a
+  proposition.
+  For any two terms \(x, y: \mathbf{Dec}(A)\) we cannot have the case that one
+  is a yes decision and the other is no: from that we could derive \(\bot\).
+  If both are no then they are both equal since \(A \rightarrow \bot\) is a
+  proposition through function extensionality.
+  And finally if both are yes then we know they must be equal because the type
+  decided over is itself a proposition.
+
+  Finally, since we know that \(\mathbf{Dec}(x \equiv y)\) is a proposition, we
+  can derive that \(\Pi(x, y : A) , \mathbf{Dec}(x \equiv y)\) is a proposition
+  (through function extensionality), proving our goal.
+\end{proof}
 \subsection{Manifest Enumerability}
 \begin{definition}[Manifest Enumerability]
   \begin{equation}
