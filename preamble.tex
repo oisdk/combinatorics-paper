@@ -29,12 +29,10 @@
 {} % Theorem head spec (can be left empty, meaning `normal')
 
 \theoremstyle{roman}
-\newmdtheoremenv{definition}{Definition}
-\newmdtheoremenv{lemma}{Lemma}
-\newmdtheoremenv{theorem}{Theorem}
-
-
-\newmdtheoremenv{agdalisting}{Listing}
+\newmdtheoremenv[default,nobreak=true]{definition}{Definition}
+\newmdtheoremenv[default,nobreak=true]{lemma}{Lemma}
+\newmdtheoremenv[default,nobreak=true]{theorem}{Theorem}
+\newmdtheoremenv[default,nobreak=true]{agdalisting}{Listing}
 
 % Haskell bind operator >>=
 \newcommand\hbind{%
@@ -159,6 +157,41 @@
   & \; #1 &:&& \; #2 ;
   \firstclauseofinductivetypefalse
 }
+\newmdenv[
+leftmargin = 0pt,
+innerleftmargin = 1em,
+innertopmargin = 0pt,
+innerbottommargin = 0pt,
+innerrightmargin = 0pt,
+rightmargin = 0pt,
+linewidth = 3pt,
+topline = false,
+rightline = false,
+bottomline = false
+]{leftbar}
+
+\makeatletter
+\renewenvironment{proof}[1][\proofname]{%
+  \begin{leftbar}%
+  \par
+  \pushQED{\qed}%
+  \normalfont \topsep6\p@\@plus6\p@\relax
+  \list{}{%
+    \leftmargin=.5em
+    % \rightmargin=\leftmargin
+    \settowidth{\itemindent}{\itshape#1}%
+    \labelwidth=\itemindent
+    % the following line is not needed with amsart, but might be with other classes
+    \parsep=0pt \listparindent=\parindent 
+  }
+\item[\hskip\labelsep
+  \itshape
+  #1\@addpunct{.}]\ignorespaces
+}{%
+  \popQED\endlist\@endpefalse
+  \end{leftbar}
+}
+\makeatother
 
 %%% Local Variables:
 %%% mode: latex

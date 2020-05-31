@@ -46,7 +46,18 @@ module _ where
  open import Data.List.Sugar hiding ([_])
  open import Data.List.Syntax
  open import Data.List.Membership
+
+ private
+  module BoolSlop where
 \end{code}
+%<*bool-slop>
+\begin{code}
+   ℰ!⟨2⟩ : ℰ! Bool
+   ℰ!⟨2⟩ .fst = [ false , true , false ]
+   ℰ!⟨2⟩ .snd false  = 0  , refl
+   ℰ!⟨2⟩ .snd true   = 1  , refl
+\end{code}
+%</bool-slop>
 %<*bool-inst>
 \begin{code}
  ℰ!⟨2⟩ : ℰ! Bool
