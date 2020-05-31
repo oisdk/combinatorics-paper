@@ -1,5 +1,5 @@
-\section{Introduction}
-\subsection{Foreword}
+\chapter{Introduction}
+\section{Foreword}
 Proofs in constructive mathematics are often more substantial than their
 classical counterparts.
 ``Substantial'' here doesn't mean the literal length of the proofs (although the
@@ -114,7 +114,7 @@ Finiteness is a prime example of a phenomenon which happens quite frequently in
 dependently-typed constructive mathematics: through building a practical program
 we unearth theoretically interesting results.
 \todo{rephrase}
-\subsection{Contributions}
+\section{Contributions}
 We are interested in constructive notions of finiteness.
 In contrast to classical finiteness, in a constructive setting there is a wide
 variety of predicates which all have some claim to being the formal
@@ -142,7 +142,7 @@ with capabilities not seen in comparable proof search libraries.
 
 \input{figures/finite-classification}
 
-\subsubsection{Finiteness Predicates}
+\subsection{Finiteness Predicates}
 Our first contribution is a cataloguing and characterisation of five finiteness
 predicates, shown in figure~\ref{finite-classification}.
 
@@ -188,11 +188,11 @@ The labelled arrows are strengthening proofs: every manifest enumerable set
 Our most significant result here is the proof that a cardinal finite set with a
 decidable total order is manifestly Bishop finite.
 
-\subsubsection{Countability Predicates}
+\subsection{Countability Predicates}
 After the finite predicates, we will briefly look at the infinite countable
 types, and classify them in a parallel way to the finite predicates
 (section~\ref{infinite}).
-\subsubsection{Search}
+\subsection{Search}
 All of our work is formalised in Cubical Agda
 \cite{vezzosiCubicalAgdaDependently2019}.
 We will make mention of the few occasions where the formalisation of some proof
@@ -207,8 +207,8 @@ for constructing ``generator''-like expressions.
 
 The full code of the formalisation is available at
 \url{https://github.com/oisdk/finiteness-in-cubical-type-theory}.
-\subsection{Notation and Background}
-\subsubsection{Notation}
+\section{Notation and Background}
+\subsection{Notation}
 We work in Cubical Type Theory \cite{cohenCubicalTypeTheory2016}.
 For the various type formers we use the following notation:
 \begin{description}
@@ -245,7 +245,7 @@ For the various type formers we use the following notation:
     used.
   \item[Lambdas] \todo{Figure out how to describe lambdas}
 \end{description}
-\subsubsection{Cubical Type Theory}
+\subsection{Cubical Type Theory}
 Cubical Type Theory \cite{cohenCubicalTypeTheory2016} is a constructive type
 theory with an implementation in Cubical Agda
 \cite{vezzosiCubicalAgdaDependently2019}.

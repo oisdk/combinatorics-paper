@@ -1,4 +1,4 @@
-\section{Finiteness Predicates} \label{finiteness-predicates}
+\chapter{Finiteness Predicates} \label{finiteness-predicates}
 In this section, we will define and briefly describe each of the five predicates
 in Figure~\ref{finite-classification}.
 As we will see, each of these predicates has subtle differences from the others:
@@ -10,7 +10,7 @@ As we make our way through each predicate, we will be interested in two aspects:
 how can we build proofs of this predicate (i.e. is the product of two finite
 types finite?) and what do we \emph{get} once we do (i.e. does this predicate
 tell us the number of elements in the finite set?).
-\subsection{Split Enumerability}
+\section{Split Enumerability}
 We will start with a simple notion of finiteness, called \emph{split}
 enumerability.
 
@@ -68,7 +68,7 @@ We used some extra types in the above definition, which we will define here:
     \end{alignedat}
   \end{equation} 
 \end{definition}
-\subsubsection{Instances}
+\subsection{Instances}
 Now that we have a suitable definition of finiteness, we will next prove that
 some things are finite.
 \begin{lemma}
@@ -150,7 +150,7 @@ From that we can derive a much wider array of finiteness proofs.
   \(U(x)\)).
   Therefore, the pair itself must be in our constructed support list.
 \end{proof}
-\subsubsection{Derivations}
+\subsection{Derivations}
 We have a way to construct finiteness proofs, and a semiring-like toolbox to
 combine them.
 What we're now interested in is what we can \emph{derive} from them.
@@ -276,7 +276,7 @@ formalisation:
   Therefore, by lemma~\ref{discrete-surj}, \(A\) is discrete.
 \end{proof}
 
-\subsection{Manifest Bishop Finiteness}
+\section{Manifest Bishop Finiteness}
 We mentioned in the introduction that occasionally in constructive mathematics
 proofs will contain ``too much'' information.
 With split enumerability we can see an instance of this.
@@ -335,7 +335,7 @@ this paper.
 The ``manifest'' refers to the fact that we have a concrete, non-truncated list
 of the elements in the proof.
 
-\subsubsection{The Relationship Between Manifest Bishop Finiteness and Split
+\subsection{The Relationship Between Manifest Bishop Finiteness and Split
   Enumerability}
 While manifest Bishop finiteness might seem stronger than split enumerability,
 it turns out this is not the case.
@@ -371,7 +371,7 @@ proofs than there are manifest Bishop finite proofs), they are of equal power,
 so any closure proof we have on one can be transferred to the other.
 In particular, it means that manifest Bishop finiteness is closed under
 \(\Sigma\).
-\subsubsection{From Manifest Bishop Finiteness to Equivalence}
+\subsection{From Manifest Bishop Finiteness to Equivalence}
 We have seen that split enumerability was in fact a split-surjection in
 disguise.
 We will now see that manifest Bishop finiteness is in fact an \emph{equivalence}
@@ -419,7 +419,7 @@ relation-based ones.
   performance reasons \(\simeq\) is defined as a record type with eta-equality
   disabled, instead of the definition here which uses \(\Sigma\).
 }
-\subsection{Cardinal Finiteness}
+\section{Cardinal Finiteness}
 While we have removed some of the unnecessary information from our finiteness
 predicates, one piece still remains.
 \begin{agdalisting}
@@ -539,7 +539,47 @@ Our contribution for this section is simply the formalisation.
   can derive that \(\Pi(x, y : A) , \mathbf{Dec}(x \equiv y)\) is a proposition
   (through function extensionality), proving our goal.
 \end{proof}
-\subsection{Manifest Enumerability}
+\subsection{Restrictiveness}
+So far our explorations into finiteness predicates have pushed us in the
+direction of ``less informative'': however, as mentioned in the introduction, we
+can \emph{also} ask how \emph{restrictive} certain predicates are.
+Since split enumerability and manifest Bishop finiteness imply each other we
+know that there can be no type which satisfies one but not the other.
+We also know that manifest Bishop finiteness implies cardinal finiteness, but we
+do \emph{not} have a function in the other direction:
+\begin{equation}
+  \mathcal{C}(A) \rightarrow \mathcal{B}(A)
+\end{equation}
+So the question arises naturally: is there a cardinally finite type which is
+\emph{not} manifest Bishop finite?
+
+It turns out the answer is no!
+\begin{lemma}
+  \begin{equation}
+    \neg (\Sigma(A : \mathbf{Type}) , \mathcal{C}(A) \times \neg \mathcal{B}(A))
+  \end{equation}
+\end{lemma}
+\begin{proof}
+  We will actually prove a slightly more general statement.
+  For any type \(A\), the following holds:
+  \begin{equation}
+    \neg (\lVert A \rVert \times \neg A)
+  \end{equation}
+  The solution becomes more clear if we write out the definition of \(\neg\):
+  \begin{equation}
+    \frac{\lVert A \rVert \;\;\; A \rightarrow \bot }{\bot}
+  \end{equation}
+  We clearly need to apply a function of type \(A \rightarrow \bot\) to a value
+  of type \(\lVert A \rVert\).
+  Luckily, this is permissible, as \(\bot\) is a mere proposition.
+\end{proof}
+\section{Manifest Enumerability}
+Since we have now discovered that all three predicates defined so far have equal
+restrictiveness, the clear next step is to 
+
+So far, we have pushed finiteness predicates in the direction of making them
+``less informative'': we have not, however, 
+
 \begin{definition}[Manifest Enumerability]
   \begin{equation}
     \mathcal{E}(A) \coloneqq \Sigma {(\mathit{xs} : \mathbf{List}(A))} , \Pi {(x : A)} , \lVert x \in \mathit{xs} \rVert
@@ -577,7 +617,7 @@ like the circle.
 \begin{lemma}
   The circle \(S^1\) is manifestly enumerable.
 \end{lemma}
-\subsection{Kuratowski Finiteness}
+\section{Kuratowski Finiteness}
 The first thing we must define is a representation of subsets.
 \begin{definition}[Kuratowski Finite Subset]
   \(\mathcal{K}(A)\) is the type of Kuratowski-finite subsets of \(A\).
@@ -648,8 +688,8 @@ We also have the following two lemmas, proven in both
 \end{lemma}
 \section{Relations Between Each Finiteness Definition} \label{relations}
 We will now look at the arrows in figure~\ref{finite-classification}.
-\subsection{Split Enumerability and Manifest Bishop Finiteness}
-\subsection{Split Enumerability and Manifest Enumerability}
+\section{Split Enumerability and Manifest Bishop Finiteness}
+\section{Split Enumerability and Manifest Enumerability}
 \begin{lemma} \label{split-enum-to-manifest-enum}
   Any split enumerable type is manifestly enumerable.
 \end{lemma}
@@ -659,7 +699,7 @@ This lemma is proven by truncating the membership proof in split enumerability.
   A manifestly enumerable type with decidable equality is split enumerable.
 \end{lemma}
 
-\subsection{Manifest Bishop Finiteness and Cardinal Finiteness}
+\section{Manifest Bishop Finiteness and Cardinal Finiteness}
 \begin{lemma} \label{manifest-bishop-to-cardinal}
   Any manifest Bishop finite type is cardinal finite.
 \end{lemma}
@@ -701,7 +741,7 @@ a coherently constant (definition~\ref{prop-trunc},
 eliminator~\ref{elim-prop-coh}) way, pulling the support list out from the
 truncation.
 The cover proof emerges naturally from the definition of the permutation.
-\subsection{Cardinal Finiteness and Kuratowski Finiteness}
+\section{Cardinal Finiteness and Kuratowski Finiteness}
 \begin{lemma} \label{cardinal-kuratowski}
   \begin{equation}
     \mathcal{C}(A) \simeq \mathcal{K}^f(A) \times \text{Discrete}(A)
