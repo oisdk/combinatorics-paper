@@ -223,18 +223,47 @@ container-based definition of lists over the traditional one.)
 Split enumerability implies decidable equality on the underlying type.
 To prove this, we will make use of the following lemma, proven in the
 formalisation:
+\begin{definition}[Injections]
+  Injective functions are more straightforward to define constructively than
+  surjective ones:
+  \begin{alignat}{3}
+    & \text{injective}(f) &&\coloneqq \Pi (x, y : A) , f \; x \equiv f \; y \rightarrow x \equiv y \\
+    & A \rightarrowtail B &&\coloneqq \Sigma(f : A \rightarrow B) , \text{injective}(f)
+  \end{alignat}
+\end{definition}
+\begin{lemma} \label{split-surj-to-inj}
+  A split-surjection from \(A\) to \(B\) implies an injection from \(B\) to
+  \(A\).
+  \begin{equation}
+    (A \twoheadrightarrow! \; B) \rightarrow (B \rightarrowtail A)
+  \end{equation}
+\end{lemma}
+\begin{lemma} \label{inj-discrete}
+  For any type \(A\) which injects into a discrete type \(B\), \(A\) is
+  discrete.
+  \begin{equation}
+    \frac{
+      A \rightarrowtail B \; \; \; \text{Discrete}(B)
+    }{
+      \text{Discrete}(A)
+    }
+  \end{equation}
+\end{lemma}
+
 \begin{lemma} \label{discrete-surj}
   \begin{equation}
     \frac{
-        A \twoheadrightarrow! \; B \; \; \; \text{Discrete}(A)
-      }{
-       \text{Discrete}(B) 
-      }
+      A \twoheadrightarrow! \; B \; \; \; \text{Discrete}(A)
+    }{
+      \text{Discrete}(B) 
+    }
   \end{equation}
 \end{lemma}
 \begin{proof}
-  \todo[inline]{Prose for proof}
+  This proof is can be straightforwardly derived from lemmas
+  \ref{split-surj-to-inj} and \ref{inj-discrete}.
 \end{proof}
+
 \begin{lemma} \label{split-enum-discrete}
   Every split enumerable type is discrete.
 \end{lemma}
@@ -247,6 +276,12 @@ formalisation:
   Therefore, by lemma~\ref{discrete-surj}, \(A\) is discrete.
 \end{proof}
 \subsection{Manifest Bishop Finiteness}
+We mentioned in the introduction that occasionally in constructive mathematics
+proofs will contain ``too much'' information.
+With split enumerability we can see an instance of this.
+Consider our proof that the booleans are finite: 
+
+
 \begin{definition}[Manifest Bishop Finiteness]
   \begin{equation} \label{bish-def}
     \mathcal{B}(A) \coloneqq \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \inunique xs
