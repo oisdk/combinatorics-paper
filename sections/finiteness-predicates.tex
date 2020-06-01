@@ -87,13 +87,14 @@ some things are finite.
   \(\left[ \text{false}, \text{true} \right]\), respectively, and the cover
   proof is a function that returns the index of the supplied element.
 \end{proof}
-\begin{agdalisting}
-  The code in our formalisation of these three proofs is quite simple.
-  Just as an example, the proof that \(\mathbf{Bool}\) is split enumerable is as
-  follows:
-  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
-\end{agdalisting}
-
+\begin{marginfigure}%
+  \begin{dottedbox}%
+    % The code in our formalisation of these three proofs is quite simple.
+    % Just as an example, the proof that \(\mathbf{Bool}\) is split enumerable is as
+    % follows:
+    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
+  \end{dottedbox}
+\end{marginfigure}
 With the most basic simple types out of the way, the obvious next choice is the
 (non-dependent) sums and products: \(\uplus\) and \(\times\).
 Both of these types can be constructed from the \emph{dependent} sum, however,
@@ -133,15 +134,6 @@ From that we can derive a much wider array of finiteness proofs.
   every element in the support list of \(\mathcal{E}!_A\), extract the support
   lists from the resulting finiteness proofs, and concatenate them.
 
-  \begin{agdalisting}
-    This pattern of applying a function to each element in a list and
-    concatenating the result is of course well-known in functional programming,
-    and is in fact the pattern that makes lists a monad.
-    While this insight isn't strictly relevant to our work here, it does mean
-    the implementation of this function can use Agda's do notation, resulting
-    in the following extremely clean implementation:
-    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{sup-sigma}
-  \end{agdalisting}
 
   To prove that this support list does in fact cover the entirety of the type
   \(\Sigma \; A \; U\), we note that any element of type \(\Sigma \; A \; U\)
@@ -151,6 +143,16 @@ From that we can derive a much wider array of finiteness proofs.
   \(U(x)\)).
   Therefore, the pair itself must be in our constructed support list.
 \end{proof}
+
+\begin{agdalisting}
+  This pattern of applying a function to each element in a list and
+  concatenating the result is of course well-known in functional programming,
+  and is in fact the pattern that makes lists a monad.
+  While this insight isn't strictly relevant to our work here, it does mean
+  the implementation of this function can use Agda's do notation, resulting
+  in the following extremely clean implementation:
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{sup-sigma}
+\end{agdalisting}
 \subsection{Derivations}
 We have a way to construct finiteness proofs, and a semiring-like toolbox to
 combine them.
@@ -179,10 +181,12 @@ complex than what you'd find in either MLTT or classical mathematics.
 Over sets, the surjections and split surjections are the same thing, but there
 is a difference one we involve non-set types like the circle.
 
-Next, we will show that split enumerability is equivalent to the existence of a
-split surjection from a finite prefix of the natural numbers:
-\begin{lemma} \label{split-enum-is-split-surj}
-  \begin{equation}
+We will now see that split enumerability is in fact a split surjection in
+another form:
+\begin{lemma} \label{split-enum-is-split-surj}%
+  A proof of split enumerability is equivalent to a split surjection from a
+  finite prefix of the natural numbers.
+  \begin{equation}%
     \mathcal{E}!(A) \simeq \Sigma (n : \mathbb{N}) , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
   \end{equation}
 \end{lemma}
@@ -316,12 +320,16 @@ just adding a condition to the returned membership proof in the cover proof.
 To specify that a value must exist uniquely in HoTT we can use the concept of a
 \emph{contraction}.
 \begin{definition}[Unique Membership] \label{uniq-memb-def}
+  Unique list membership is defined in terms of list membership: it is a
+  contraction of it.
   \begin{equation}
     x \inunique \mathit{xs} \coloneqq \text{isContr}(x \in \mathit{xs})
   \end{equation}
 \end{definition}
 With this we can define manifest Bishop finiteness:
 \begin{definition}[Manifest Bishop Finiteness]  \label{bish-def}
+  A type is manifest Bishop finite if there exists a list which contains each
+  value in the type once.
   \begin{equation}
     \mathcal{B}(A) \coloneqq \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \inunique xs
   \end{equation}
@@ -379,6 +387,8 @@ We will now see that manifest Bishop finiteness is in fact an \emph{equivalence}
 in disguise.
 \emph{equivalence} with \(\mathbf{Fin}\).
 \begin{lemma} \label{bishop-equiv}
+  Manifest bishop finiteness is equivalent to an equivalence to a finite prefix
+  of the natural numbers.
   \begin{equation}
     \mathcal{B}(A) \simeq \Sigma {(n : \mathbb{N})} , \left( \mathbf{Fin}(n) \simeq A \right)
   \end{equation}
@@ -527,6 +537,9 @@ the type\footnotemark.
 To remedy the problem, we will use propositional truncation
 (def.~\ref{prop-trunc}).
 \begin{definition}[Cardinal Finiteness]
+  A type \(A\) is cardinally finite if there exists a propositionally truncated
+  proof that \(A\) is manifest Bishop finite or equivalent to a finite prefix of
+  the natural numbers.
   \begin{equation}
     \mathcal{C}(A) \coloneqq \lVert \mathcal{B}(A) \rVert \simeq \lVert \Sigma(n : \mathbb{N}) , (\mathbf{Fin}(n) \simeq A) \rVert
   \end{equation}

@@ -3,6 +3,8 @@
 \chapterstyle{hangnum}
 \hangsecnum
 
+\usepackage{url}
+
 \usepackage[mono=false]{libertine}
 \usepackage{catchfilebetweentags}
 \input{agda}
@@ -20,36 +22,34 @@
 
 \usepackage[framemethod=tikz]{mdframed}
 
+\newmdenv[
+  linecolor=white,
+  tikzsetting = {draw=black, line width = 1pt,dotted},
+]{dottedbox}
+
 \newtheoremstyle{roman}
-{0} % Space above
-{0} % Space below
+{.6\baselineskip} % Space above
+{.6\baselineskip} % Space below
 {} % Body font
 {} % Indent amount
 {} % Theorem head font
 {} % Punctuation after theorem head
-{} % Space after theorem head
+{0pt} % Space after theorem head
 {%
 \noindent%
 \raisebox{0pt}[0pt][0pt]{%
 \llap{%
-\parbox[t][][t]{\marginparwidth}{%
+\parbox[t][][t]{.7\marginparwidth}{%
 \raggedleft%
-{\bfseries\thmname{#1}\thmnumber{ #2}.}\thmnote{\\(#3)}%
-}\hspace{\parindent}}}}
-
-  % \llap{{\bfseries\thmname{#1}\thmnumber{ #2}} \thmnote{ \\ (#3)}}}
-% {{\bfseries \}} % Theorem head spec (can be left empty, meaning `normal')
+{\bfseries\thmname{#1}\thmnumber{ #2}.}\thmnote{\\(#3)}}\hspace{\marginparsep}}}}
 
 \theoremstyle{roman}
-\newmdtheoremenv[default,nobreak=true]{definition}{Definition}
-\newmdtheoremenv[default,nobreak=true]{lemma}{Lemma}
-\newmdtheoremenv[default,nobreak=true]{theorem}{Theorem}
-\newmdtheoremenv[
-  default,
-  nobreak=true,
-  linecolor=white,
-  tikzsetting = {draw=black, line width = 1pt,dotted},
-  ]{agdalisting}{Listing}
+% \newtheorem{definition}{Definition}
+
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{agdalisting}{Listing}
 
 % Haskell bind operator >>=
 \newcommand\hbind{%
@@ -174,42 +174,19 @@
   & \; #1 &:&& \; #2 ;
   \firstclauseofinductivetypefalse
 }
-\mdfdefinestyle{proof}{
-  leftmargin = 0pt,
-  innerleftmargin = 1em,
-  innertopmargin = 0pt,
-  innerbottommargin = 0pt,
-  innerrightmargin = 0pt,
-  rightmargin = 0pt,
-  linewidth = 3pt,
-  topline = false,
-  rightline = false,
-  bottomline = false
-}
-\surroundwithmdframed[style=proof]{proof}
-
-% \makeatletter
-% \renewenvironment{proof}[1][\proofname]{%
-%   \begin{leftbar} \noindent %
-%   % \par
-%   \pushQED{\qed}%
-%   \normalfont \topsep6\p@\@plus6\p@\relax
-%   \list{}{%
-%     \leftmargin=.5em
-%     % \rightmargin=\leftmargin
-%     \settowidth{\itemindent}{\itshape#1}%
-%     \labelwidth=\itemindent
-%     % the following line is not needed with amsart, but might be with other classes
-%     \parsep=0pt \listparindent=\parindent 
-%   }
-% \item[\hskip\labelsep
-%   \itshape
-%   #1\@addpunct{.}]\ignorespaces
-% }{%
-%   \popQED\endlist\@endpefalse
-%   \end{leftbar}
+% \mdfdefinestyle{proof}{
+%   leftmargin = 0pt,
+%   innerleftmargin = 1em,
+%   innertopmargin = 0pt,
+%   innerbottommargin = 0pt,
+%   innerrightmargin = 0pt,
+%   rightmargin = 0pt,
+%   % linewidth = 1pt,
+%   topline = false,
+%   rightline = false,
+%   bottomline = false,
 % }
-% \makeatother
+% \surroundwithmdframed[style=proof]{proof}
 
 %%% Local Variables:
 %%% mode: latex
