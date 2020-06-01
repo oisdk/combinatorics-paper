@@ -89,10 +89,8 @@ some things are finite.
 \end{proof}
 \begin{marginfigure}%
   \begin{dottedbox}%
-    % The code in our formalisation of these three proofs is quite simple.
-    % Just as an example, the proof that \(\mathbf{Bool}\) is split enumerable is as
-    % follows:
     \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
+    \caption{Formalisation of Proof that \(\mathbf{Bool}\) is split enumerable}
   \end{dottedbox}
 \end{marginfigure}
 With the most basic simple types out of the way, the obvious next choice is the
@@ -129,6 +127,7 @@ From that we can derive a much wider array of finiteness proofs.
     \mathit{support} &: \mathbf{List}(\Sigma(x : A) , U(x)) \\
     \mathit{cover} &: \Pi(x : \Sigma(y : A) , U(y)) , x \in \mathit{support}
   \end{align}
+
 
   To construct the support list, we apply the function \(\mathcal{E}!_U\) to
   every element in the support list of \(\mathcal{E}!_A\), extract the support
