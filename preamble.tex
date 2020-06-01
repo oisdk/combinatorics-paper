@@ -25,10 +25,20 @@
 {0} % Space below
 {} % Body font
 {} % Indent amount
-{\bfseries} % Theorem head font
-{.} % Punctuation after theorem head
-{.5em} % Space after theorem head
-{} % Theorem head spec (can be left empty, meaning `normal')
+{} % Theorem head font
+{} % Punctuation after theorem head
+{} % Space after theorem head
+{%
+\noindent%
+\raisebox{0pt}[0pt][0pt]{%
+\llap{%
+\parbox[t][][t]{\marginparwidth}{%
+\raggedleft%
+{\bfseries\thmname{#1}\thmnumber{ #2}.}\thmnote{\\(#3)}%
+}\hspace{\parindent}}}}
+
+  % \llap{{\bfseries\thmname{#1}\thmnumber{ #2}} \thmnote{ \\ (#3)}}}
+% {{\bfseries \}} % Theorem head spec (can be left empty, meaning `normal')
 
 \theoremstyle{roman}
 \newmdtheoremenv[default,nobreak=true]{definition}{Definition}
