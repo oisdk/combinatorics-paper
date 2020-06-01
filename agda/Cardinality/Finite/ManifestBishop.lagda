@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
 module Cardinality.Finite.ManifestBishop where
@@ -31,7 +32,8 @@ module _ where
 module _ where
   open 𝕃
 
-  open import Cardinality.Finite.SplitEnumerable
+  open import Cardinality.Finite.SplitEnumerable hiding (_|×|_)
+  import Cardinality.Finite.SplitEnumerable as SplitEnumerable
   open import Cardinality.Finite.SplitEnumerable.Inductive
   open import Cardinality.Finite.SplitEnumerable.Isomorphism
 
@@ -76,3 +78,14 @@ module _ where
       x′ ← x
       xs′ ← trav n xs
       ∣ x′ , xs′ ∣
+
+  module BishopClosures where
+\end{code}
+%<*times-clos-sig>
+\begin{code}
+    _|×|_ : ℬ A → ℬ B → ℬ (A × B)
+\end{code}
+%</times-clos-sig>
+\begin{code}
+    xs |×| ys = ℰ!⇒ℬ (ℬ⇒ℰ! xs SplitEnumerable.|×| ℬ⇒ℰ! ys)
+\end{code}

@@ -420,6 +420,83 @@ relation-based ones.
   performance reasons \(\simeq\) is defined as a record type with eta-equality
   disabled, instead of the definition here which uses \(\Sigma\).
 }
+
+As we are working in CuTT, a proof of equivalence between two types gives us the
+ability to \emph{transport} proofs from one type to the other.
+This is extremely powerful, as we will see.
+\subsection{Closure Under \(\Pi\)}
+The glaring omission from our closure proofs under type formers so far has been
+the \(\Pi\) type: we have not proved closure under functions, dependent or
+otherwise.
+In MLTT, this is of course not provable: since all of the finiteness predicates
+we have seen so far imply decidable equality, and since we don't have any kind
+of decidable equality on functions in MLTT, we know that we won't be able to
+show that any kind of function is finite; even one like \(\mathbf{Bool}
+\rightarrow \mathbf{Bool}\).
+
+CuTT is not so restricted.
+Since we have things like function extensionality and transport, we can indeed
+prove the finiteness of function types.
+Our proof here makes use directly of the univalence axiom, and makes use
+furthermore of all the previous closure proofs.
+We will prove this closure on split enumerability, rather than on manifest
+Bishop finiteness, as it requires slightly less legwork in the proof itself, but
+of course we can derive the proof on manifest Bishop finiteness in a few lines.
+\begin{lemma} \label{split-enum-pi}
+  Split enumerability is closed under dependent functions.
+  (\(\Pi\)-types).
+  \begin{equation}
+    \frac{
+      \mathcal{E}!(A) \; \; \; \Pi {(x : A)} , \mathcal{E}!\left( U(x) \right)
+    }{
+      \mathcal{E}!\left(\Pi {(x : A)} , U(x)\right)
+    }
+  \end{equation}
+\end{lemma}
+\begin{proof}
+  Let \(A\) be a split enumerable type, and \(U\) be a type family from \(A\),
+  which is split enumerable over all points of \(A\).
+
+  As \(A\) is split enumerable, we know that it is also manifestly Bishop finite
+  (lemma~\ref{split-enum-to-manifest-bishop}), and consequently we know \(A
+  \simeq \mathbf{Fin}(n)\), for some \(n\) (lemma~\ref{bishop-equiv}).
+  We can therefore replace all occurrences of \(A\) with \(\mathbf{Fin}(n)\),
+  changing our goal to:
+  \begin{equation}
+    \frac{
+      \mathcal{E}!(\mathbf{Fin}(n)) \; \; \; \Pi (x : \mathbf{Fin}(n)) , \mathcal{E}!\left( U(x) \right)
+    }{
+      \mathcal{E}!\left(\Pi (x : \mathbf{Fin}(n)) , U(x)\right)
+    }
+  \end{equation}
+  
+  We then define the type of \(n\)-tuples over some type family \(T :
+  \mathbf{Fin}(n) \rightarrow \mathbf{Type}\).
+  \begin{equation}
+    \begin{alignedat}{3}
+      & \mathbf{Tuple}(0, T)   &&\coloneqq \top \\
+      & \mathbf{Tuple}(n+1, T) &&\coloneqq T(0) \times \mathbf{Tuple}(n, T \circ \text{suc})
+    \end{alignedat}
+  \end{equation}
+  We can show that this type is equivalent to functions (proven in our formalisation):
+  \begin{equation}
+    \Pi(x : \mathbf{Fin}(n)) , U(x) \simeq \mathbf{Tuple}(n, U)
+  \end{equation}
+  And therefore we can simplify again our goal to the following:
+  \begin{equation}
+    \frac{
+      \mathcal{E}!(\mathbf{Fin}(n)) \; \; \; \Pi (x : \mathbf{Fin}(n)) , \mathcal{E}!\left( U(x) \right)
+    }{
+      \mathcal{E}!\left(\mathbf{Tuple}(n, U)\right)
+    }
+  \end{equation}
+  
+  We can prove this goal by showing that \(\mathbf{Tuple}(n, U)\) is split
+  enumerable: it is made up of finitely many products of points of \(U\), which
+  are themselves split enumerable, and \(\top\), which is also split enumerable.
+  Lemma~\ref{split-enum-sigma} shows us that the product of finitely many split
+  enumerable types is itself split enumerable, proving our goal.
+\end{proof}
 \section{Cardinal Finiteness}
 While we have removed some of the unnecessary information from our finiteness
 predicates, one piece still remains.
@@ -574,12 +651,146 @@ It turns out the answer is no!
   of type \(\lVert A \rVert\).
   Luckily, this is permissible, as \(\bot\) is a mere proposition.
 \end{proof}
-\section{Manifest Enumerability}
-Since we have now discovered that all three predicates defined so far have equal
-restrictiveness, the clear next step is to 
 
-So far, we have pushed finiteness predicates in the direction of making them
-``less informative'': we have not, however, 
+\subsection{Going from Cardinal Finiteness to Manifest Bishop Finiteness}
+\begin{lemma} \label{manifest-bishop-to-cardinal}
+  Any manifest Bishop finite type is cardinal finite.
+\end{lemma}
+\begin{theorem} \label{cardinal-to-manifest-bishop}
+  Any cardinal finite type with a total order is Bishop finite.
+\end{theorem}
+The proof for this particular theorem is quite involved in the formalisation, so
+we only give its sketch here.
+First, note that we actually convert to manifest enumerability first: this can
+be converted to split enumerability with decidable equality, which is provided
+by cardinal finiteness.
+
+Next, we define permutations.
+\begin{definition}[List Permutations]
+  Two lists are permutations of each other if their membership proofs are all
+  equivalent\footnotemark \cite{danielssonBagEquivalenceProofRelevant2012}.
+  \begin{equation}
+    \mathit{xs} \leftrightsquigarrow \mathit{ys} = \Pi {(x : A)} , x \in \mathit{xs} \simeq x \in \mathit{ys}
+  \end{equation}
+\end{definition}
+
+\footnotetext{
+  The definition in \cite{danielssonBagEquivalenceProofRelevant2012} and our
+  formalisation is slightly different: we say permutations are lists with
+  \emph{isomorphic} membership proofs.
+  The distinction, as it happens, does not affect our work here.
+}
+
+Next, we define a sort function which relies on the provided total order.
+We further prove the following fact about this sort function:
+\begin{equation}
+  \Pi(\mathit{xs}, \mathit{ys} : \mathbf{List}(A)) , \mathit{xs} \leftrightsquigarrow \mathit{ys} \rightarrow \text{sort}(\mathit{xs}) \equiv \text{sort}(\mathit{ys})
+\end{equation}
+
+Next, notice that the support lists of any two proofs of manifest Bishop
+finiteness must be permutations of each other.
+This will allow us to sort the support list of a proof of cardinal finiteness in
+a coherently constant (definition~\ref{prop-trunc},
+eliminator~\ref{elim-prop-coh}) way, pulling the support list out from the
+truncation.
+The cover proof emerges naturally from the definition of the permutation.
+\subsection{Closure}
+Since we don't have a function of type \(\mathcal{C}(A) \rightarrow
+\mathcal{B}(A)\), closure proofs on \(\mathcal{B}\) do not transfer over to
+\(\mathcal{C}\) trivially (unlike with \(\mathcal{E}!\) and \(\mathcal{B}\)).
+The cases for \(\bot\), \(\top\), and \(\mathbf{Bool}\) are simple to adapt: we
+can just propositionally truncate their Bishop finiteness proof.
+
+Non-dependent operators like \(\times\), \(\uplus\), and \(\rightarrow\) are
+also relatively straightforward: since \(\lVert {\wc} \rVert\) forms a monad, we
+can apply \(n\)-ary functions to values inside it, combining them together.
+\begin{agdalisting}
+  The fact that \(\lVert \wc \rVert\) forms a monad means that we can lift
+  \(n\)-ary functions like the following:
+  \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{times-clos-sig}
+  Into a truncated context:
+  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{times-clos-impl}
+\end{agdalisting}
+
+Unfortunately, for the dependent type formers like \(\Sigma\) and \(\Pi\), the
+same trick does not work.
+We have closure proofs like:
+\begin{equation}
+  \frac{
+    \mathcal{B}(A) \; \; \; \Pi(x : A) , \mathcal{B}(U(x))
+  }{
+    \mathcal{B}(\Pi \; A \; U)
+  }
+\end{equation}
+If we apply the monadic truncation trick we can derive closure proofs like the
+following:
+\begin{equation}
+  \frac{
+    \lVert \mathcal{B}(A) \rVert \; \; \; \lVert \Pi(x : A) , \mathcal{B}(U(x)) \rVert
+  }{
+    \lVert \mathcal{B}(\Pi \; A \; U) \rVert
+  }
+\end{equation}
+However our \emph{desired} closure proof is the following:
+\begin{equation}
+  \frac{
+    \lVert \mathcal{B}(A) \rVert \; \; \; \Pi(x : A) , \lVert \mathcal{B}(U(x)) \rVert
+  }{
+    \lVert \mathcal{B}(\Pi \; A \; U) \rVert
+  }
+\end{equation}
+They don't match!
+
+The solution would be to find a function of the following type:
+\begin{equation}
+  (\Pi(x : A) , \lVert \mathcal{B}(U(x)) \rVert) \rightarrow
+  \lVert \Pi(x : A) , \mathcal{B}(U(x)) \rVert
+\end{equation}
+However we might be disheartened at realising that this is a required goal: the
+above equation is \emph{extremely} similar to the axiom of choice!
+\begin{definition}[Axiom of Choice]
+  In HoTT, the axiom of choice is commonly defined as follows \cite[lemma
+  3.8.2]{hottbook}.
+  For any set \(A\), and a type family \(U\) which is a set at all the points
+  of \(A\), the following function exists:
+  \begin{equation}
+    \left( \Pi(x : A) ,  \lVert U(x) \rVert \right) \rightarrow \lVert \Pi(x : A) , U(x) \rVert
+  \end{equation}
+\end{definition}
+Luckily the axiom of choice \emph{does} hold for cardinally finite types,
+allowing us to prove the following:
+\begin{lemma}
+  \begin{equation}
+    \mathcal{C}(A) \rightarrow (\Pi(x : A) , \lVert U(x) \rVert) \rightarrow \lVert \Pi(x : A) , U(x) \rVert
+  \end{equation}
+\end{lemma}
+\begin{proof}
+  Let \(A\) be a cardinally finite type, \(U\) be a type family on \(A\), and
+  \(f\) be a dependent function of type \(\Pi(x : A) , \lVert U(x) \rVert\).
+
+  First, since our goal is itself propositionally truncated, we have access to
+  values under truncations: put another way, in the context of proving our goal,
+  we can rely on the fact that \(A\) is manifestly Bishop finite.
+  Using the same technique as we did in lemma~\ref{split-enum-pi}, we can switch
+  from working with dependent functions from \(A\) to \(n\)-tuples, where \(n\)
+  is the cardinality of \(A\).
+  This changes our goal to the following:
+  \begin{equation}
+    \mathbf{Tuple}(n, \lVert \wc \rVert \circ U) \rightarrow \lVert \mathbf{Tuple}(n, U) \rVert
+  \end{equation}
+  Since \(\lVert \wc \rVert\) is closed under finite products, this function
+  exists (in fact, using the fact that \(\lVert \wc \rVert\) forms a monad, we
+  can recognise this function as \verb+sequenceA+ from the \verb+Traversable+
+  class in Haskell).
+\end{proof}
+
+
+This gets us all of the necessary closure proofs on \(\mathcal{C}\).
+\section{Manifest Enumerability}
+We have now explored quite far in the ``less informative'' direction.
+However, all three predicates we have examined are equally \emph{restrictive}:
+in this section we will see a predicate which is much less restrictive.
+In particular, this predicate ranges over non-set types.
 
 \begin{definition}[Manifest Enumerability]
   \begin{equation}
@@ -617,6 +828,15 @@ like the circle.
 \end{definition}
 \begin{lemma}
   The circle \(S^1\) is manifestly enumerable.
+\end{lemma}
+\subsection{Relation To Split Enumerability }
+\begin{lemma} \label{split-enum-to-manifest-enum}
+  Any split enumerable type is manifestly enumerable.
+\end{lemma}
+This lemma is proven by truncating the membership proof in split enumerability.
+
+\begin{lemma} \label{manifest-enum-to-split-enum}
+  A manifestly enumerable type with decidable equality is split enumerable.
 \end{lemma}
 \section{Kuratowski Finiteness}
 The first thing we must define is a representation of subsets.
@@ -687,62 +907,7 @@ We also have the following two lemmas, proven in both
 \begin{lemma}
   This circle \(S^1\) is Kuratowski finite.
 \end{lemma}
-\section{Relations Between Each Finiteness Definition} \label{relations}
-We will now look at the arrows in figure~\ref{finite-classification}.
-\section{Split Enumerability and Manifest Bishop Finiteness}
-\section{Split Enumerability and Manifest Enumerability}
-\begin{lemma} \label{split-enum-to-manifest-enum}
-  Any split enumerable type is manifestly enumerable.
-\end{lemma}
-This lemma is proven by truncating the membership proof in split enumerability.
-
-\begin{lemma} \label{manifest-enum-to-split-enum}
-  A manifestly enumerable type with decidable equality is split enumerable.
-\end{lemma}
-
-\section{Manifest Bishop Finiteness and Cardinal Finiteness}
-\begin{lemma} \label{manifest-bishop-to-cardinal}
-  Any manifest Bishop finite type is cardinal finite.
-\end{lemma}
-\begin{theorem} \label{cardinal-to-manifest-bishop}
-  Any cardinal finite type with a total order is Bishop finite.
-\end{theorem}
-The proof for this particular theorem is quite involved in the formalisation, so
-we only give its sketch here.
-First, note that we actually convert to manifest enumerability first: this can
-be converted to split enumerability with decidable equality, which is provided
-by cardinal finiteness.
-
-Next, we define permutations.
-\begin{definition}[List Permutations]
-  Two lists are permutations of each other if their membership proofs are all
-  equivalent\footnotemark \cite{danielssonBagEquivalenceProofRelevant2012}.
-  \begin{equation}
-    \mathit{xs} \leftrightsquigarrow \mathit{ys} = \Pi {(x : A)} , x \in \mathit{xs} \simeq x \in \mathit{ys}
-  \end{equation}
-\end{definition}
-
-\footnotetext{
-  The definition in \cite{danielssonBagEquivalenceProofRelevant2012} and our
-  formalisation is slightly different: we say permutations are lists with
-  \emph{isomorphic} membership proofs.
-  The distinction, as it happens, does not affect our work here.
-}
-
-Next, we define a sort function which relies on the provided total order.
-We further prove the following fact about this sort function:
-\begin{equation}
-  \Pi(\mathit{xs}, \mathit{ys} : \mathbf{List}(A)) , \mathit{xs} \leftrightsquigarrow \mathit{ys} \rightarrow \text{sort}(\mathit{xs}) \equiv \text{sort}(\mathit{ys})
-\end{equation}
-
-Next, notice that the support lists of any two proofs of manifest Bishop
-finiteness must be permutations of each other.
-This will allow us to sort the support list of a proof of cardinal finiteness in
-a coherently constant (definition~\ref{prop-trunc},
-eliminator~\ref{elim-prop-coh}) way, pulling the support list out from the
-truncation.
-The cover proof emerges naturally from the definition of the permutation.
-\section{Cardinal Finiteness and Kuratowski Finiteness}
+\subsection{Relation to Cardinal Finiteness}
 \begin{lemma} \label{cardinal-kuratowski}
   \begin{equation}
     \mathcal{C}(A) \simeq \mathcal{K}^f(A) \times \text{Discrete}(A)

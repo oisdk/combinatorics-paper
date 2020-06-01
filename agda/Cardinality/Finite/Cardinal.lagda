@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
 module Cardinality.Finite.Cardinal where
@@ -6,7 +7,7 @@ open import Prelude
 open import Cardinality.Finite.ManifestBishop
 open import Cardinality.Finite.ManifestBishop.Inductive
 open import Cardinality.Finite.ManifestBishop.Isomorphism
-open import Cardinality.Finite.SplitEnumerable
+open import Cardinality.Finite.SplitEnumerable hiding (_|×|_)
 open import Cardinality.Finite.SplitEnumerable.Isomorphism
 
 open import HITs.PropositionalTruncation
@@ -68,10 +69,18 @@ xs ∥Π∥ ys = do
 _∥→∥_ : 𝒞 A → 𝒞 B → 𝒞 (A → B)
 xs ∥→∥ ys = xs ∥Π∥ const ys
 
+open BishopClosures
+\end{code}
+%<*times-clos-impl>
+\begin{code}
 _∥×∥_ : 𝒞 A → 𝒞 B → 𝒞 (A × B)
-xs ∥×∥ ys = xs ∥Σ∥ const ys
-
-
+xs ∥×∥ ys = do
+  x ← xs
+  y ← ys
+  ∣ x |×| y ∣
+\end{code}
+%</times-clos-impl>
+\begin{code}
 𝒞⇒Discrete : 𝒞 A → Discrete A
 𝒞⇒Discrete = recPropTrunc isPropDiscrete (ℰ!⇒Discrete ∘ 𝕃⇔ℒ⟨ℰ!⟩ .fun ∘ ℬ⇒ℰ!)
 
@@ -163,3 +172,4 @@ open import Cardinality.Finite.SplitEnumerable using (ℰ!⟨≡⟩)
 
 𝒞⟨≡⟩ : (x y : A) → 𝒞 A → 𝒞 (x ≡ y)
 𝒞⟨≡⟩ x y ca = ℰ!⇒ℬ ∘ ℰ!⟨≡⟩ x y ∘ ℬ⇒ℰ! ∥$∥ ca
+\end{code}

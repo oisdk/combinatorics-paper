@@ -29,76 +29,7 @@ closure proofs from it.
 % From this we can derive split enumerability of non-dependent sums and products,
 % as both are definable in terms of \(\Sigma\).
 
-\begin{lemma}
-  Split enumerability is closed under dependent functions.
-  (\(\Pi\)-types).
-  \begin{equation}
-    \frac{
-      \mathcal{E}!(A) \; \; \; \Pi {(x : A)} , \mathcal{E}!\left( U(x) \right)
-    }{
-      \mathcal{E}!\left(\Pi {(x : A)} , U(x)\right)
-    }
-  \end{equation}
-\end{lemma}
-\begin{proof}
-  Let \(A\) be a split enumerable type, and \(U\) be a type family from \(A\),
-  which is split enumerable over all points of \(A\).
 
-  As \(A\) is split enumerable, we know that it is also manifestly Bishop finite
-  (lemma~\ref{split-enum-to-manifest-bishop}), and consequently we know \(A
-  \simeq \mathbf{Fin}(n)\), for some \(n\) (lemma~\ref{bishop-equiv}).
-  We can therefore replace all occurrences of \(A\) with \(\mathbf{Fin}(n)\),
-  changing our goal to:
-  \begin{equation}
-    \frac{
-      \mathcal{E}!(\mathbf{Fin}(n)) \; \; \; \Pi (x : \mathbf{Fin}(n)) , \mathcal{E}!\left( U(x) \right)
-    }{
-      \mathcal{E}!\left(\Pi (x : \mathbf{Fin}(n)) , U(x)\right)
-    }
-  \end{equation}
-  
-  We then define the type of \(n\)-tuples over some type family \(T :
-  \mathbf{Fin}(n) \rightarrow \mathbf{Type}\).
-  \begin{equation}
-    \begin{alignedat}{3}
-      & \mathbf{Tuple}(0, T)   &&\coloneqq \top \\
-      & \mathbf{Tuple}(n+1, T) &&\coloneqq T(0) \times \mathbf{Tuple}(n, T \circ \text{suc})
-    \end{alignedat}
-  \end{equation}
-  We can show that this type is equivalent to functions (proven in our formalisation):
-  \begin{equation}
-    \Pi(x : \mathbf{Fin}(n)) , U(x) \simeq \mathbf{Tuple}(n, U)
-  \end{equation}
-  And therefore we can simplify again our goal to the following:
-  \begin{equation}
-    \frac{
-      \mathcal{E}!(\mathbf{Fin}(n)) \; \; \; \Pi (x : \mathbf{Fin}(n)) , \mathcal{E}!\left( U(x) \right)
-    }{
-      \mathcal{E}!\left(\mathbf{Tuple}(n, U)\right)
-    }
-  \end{equation}
-  
-  We can prove this goal by showing that \(\mathbf{Tuple}(n, U)\) is split
-  enumerable: it is made up of finitely many products of points of \(U\), which
-  are themselves split enumerable, and \(\top\), which is also split enumerable.
-  Lemma~\ref{split-enum-sigma} shows us that the product of finitely many split
-  enumerable types is itself split enumerable, proving our goal.
-\end{proof}
-
-Lifting the above closure proofs to work on proofs of \(\mathcal{C}\) is not
-necessarily straightforward.
-\(\lVert \wc \rVert\) forms a monad, giving us access to a powerful syntax for
-combining proofs.
-From this, we can derive closure under \(\bot\), \(\top\), \(\mathbf{Bool}\),
-\(\times\), \(\uplus\), and \(\rightarrow\).
-The dependent case is not so straightforward.
-We need the following lemma, a version of the axiom of choice on finite sets,
-to prove closure under \(\Sigma\) and \(\Pi\).
-\begin{lemma}
-  \begin{equation}
-    \mathcal{C}(A) \rightarrow (\Pi(x : A) , \lVert U(x) \rVert) \rightarrow \lVert \Pi(x : A) , U(x) \rVert
-  \end{equation}
-\end{lemma}
 \section{The Category of Finite Sets}
 HoTT and CuTT seem to be especially suitable settings for formalisations of
 category theory.
