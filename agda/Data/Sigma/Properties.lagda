@@ -13,7 +13,9 @@ private
 \end{code}
 %<*reassoc>
 \begin{code}
-reassoc : Σ (Σ A B) C ⇔ (Σ[ x ⦂ A ] Σ[ y ⦂ B x ] C (x , y))
+reassoc :
+  Σ (Σ A B) C ⇔
+  Σ[ x ⦂ A ] Σ[ y ⦂ B x ] C (x , y)
 \end{code}
 %</reassoc>
 \begin{code}

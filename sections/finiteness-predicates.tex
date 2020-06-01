@@ -87,17 +87,18 @@ some things are finite.
   \(\left[ \text{false}, \text{true} \right]\), respectively, and the cover
   proof is a function that returns the index of the supplied element.
 \end{proof}
-\begin{marginfigure}%
-  \begin{dottedbox}%
-    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
-    \caption{Formalisation of Proof that \(\mathbf{Bool}\) is split enumerable}
-  \end{dottedbox}
-\end{marginfigure}
+\begin{agdalisting}
+  The code in our formalisation of these three proofs is quite simple.
+  Just as an example, the proof that \(\mathbf{Bool}\) is split enumerable is as
+  follows:
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
+\end{agdalisting}
 With the most basic simple types out of the way, the obvious next choice is the
 (non-dependent) sums and products: \(\uplus\) and \(\times\).
 Both of these types can be constructed from the \emph{dependent} sum, however,
 so that is the type we will prove finite.
 From that we can derive a much wider array of finiteness proofs.
+
 
 \begin{lemma} \label{split-enum-sigma}
   Split enumerability is closed under \(\Sigma\).
@@ -127,8 +128,6 @@ From that we can derive a much wider array of finiteness proofs.
     \mathit{support} &: \mathbf{List}(\Sigma(x : A) , U(x)) \\
     \mathit{cover} &: \Pi(x : \Sigma(y : A) , U(y)) , x \in \mathit{support}
   \end{align}
-
-
   To construct the support list, we apply the function \(\mathcal{E}!_U\) to
   every element in the support list of \(\mathcal{E}!_A\), extract the support
   lists from the resulting finiteness proofs, and concatenate them.
@@ -152,6 +151,7 @@ From that we can derive a much wider array of finiteness proofs.
   in the following extremely clean implementation:
   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{sup-sigma}
 \end{agdalisting}
+
 \subsection{Derivations}
 We have a way to construct finiteness proofs, and a semiring-like toolbox to
 combine them.
@@ -287,10 +287,8 @@ With split enumerability we can see an instance of this.
 
 \begin{agdalisting} \label{bool-slop}
   Consider the following two proofs of the finiteness of Bool:
-  \begin{multicols}{2}
-    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-slop}
-    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
-  \end{multicols}
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-slop}
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
   While they both represent the ``same'' information (i.e. they both tell us
   that bool is finite), they are nonetheless not definitionally equal.
 \end{agdalisting}
@@ -513,10 +511,8 @@ predicates, one piece still remains.
   The two following proofs are both valid proofs of the finiteness of
   \(\mathbf{Bool}\), and both do not include any duplicates.
   However they still differ:
-  \begin{multicols}{2}
-    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
-    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-rev}
-  \end{multicols}
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-rev}
 \end{agdalisting}
 Each finiteness predicate so far has contained an \emph{ordering} of the
 underlying type.

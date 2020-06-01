@@ -28,10 +28,10 @@ module _ {a} {A : Type a} where
  open import Container.List
  open import Container.Membership (ℕ ▷ Fin)
  open import Relation.Binary.Equivalence.Reasoning (⇔-equiv {a})
+ ℰ!⇔Fin↠! : ℰ! A ⇔ Σ[ n ⦂ ℕ ] (Fin n ↠! A)
 \end{code}
 %<*is-split-inj>
 \begin{code}
- ℰ!⇔Fin↠! : ℰ! A ⇔ Σ[ n ⦂ ℕ ] (Fin n ↠! A)
  ℰ!⇔Fin↠! = reassoc
 \end{code}
 %</is-split-inj>
@@ -90,7 +90,9 @@ module _ where
 %</top-bot-inst>
 %<*sup-sigma>
 \begin{code}
- sup-Σ : List A → (∀ x → List (U x)) → List (Σ A U)
+ sup-Σ :  List A →
+          Π[ x ⦂ A ] List (U x) →
+          List (Σ A U)
  sup-Σ xs ys = do  x ← xs
                    y ← ys x
                    [ x , y ]
