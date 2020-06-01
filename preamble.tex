@@ -128,7 +128,7 @@
 
 \PrerenderUnicode{í}
 
-\usepackage{hyperref}
+% \usepackage{hyperref}
 
 % Nice typesetting for the definition of an inductive type.
 % For the following Agda-like thing:
@@ -162,41 +162,42 @@
   & \; #1 &:&& \; #2 ;
   \firstclauseofinductivetypefalse
 }
-\newmdenv[
-leftmargin = 0pt,
-innerleftmargin = 1em,
-innertopmargin = 0pt,
-innerbottommargin = 0pt,
-innerrightmargin = 0pt,
-rightmargin = 0pt,
-linewidth = 3pt,
-topline = false,
-rightline = false,
-bottomline = false
-]{leftbar}
-
-\makeatletter
-\renewenvironment{proof}[1][\proofname]{%
-  \begin{leftbar}%
-  \par
-  \pushQED{\qed}%
-  \normalfont \topsep6\p@\@plus6\p@\relax
-  \list{}{%
-    \leftmargin=.5em
-    % \rightmargin=\leftmargin
-    \settowidth{\itemindent}{\itshape#1}%
-    \labelwidth=\itemindent
-    % the following line is not needed with amsart, but might be with other classes
-    \parsep=0pt \listparindent=\parindent 
-  }
-\item[\hskip\labelsep
-  \itshape
-  #1\@addpunct{.}]\ignorespaces
-}{%
-  \popQED\endlist\@endpefalse
-  \end{leftbar}
+\mdfdefinestyle{proof}{
+  leftmargin = 0pt,
+  innerleftmargin = 1em,
+  innertopmargin = 0pt,
+  innerbottommargin = 0pt,
+  innerrightmargin = 0pt,
+  rightmargin = 0pt,
+  linewidth = 3pt,
+  topline = false,
+  rightline = false,
+  bottomline = false
 }
-\makeatother
+\surroundwithmdframed[style=proof]{proof}
+
+% \makeatletter
+% \renewenvironment{proof}[1][\proofname]{%
+%   \begin{leftbar} \noindent %
+%   % \par
+%   \pushQED{\qed}%
+%   \normalfont \topsep6\p@\@plus6\p@\relax
+%   \list{}{%
+%     \leftmargin=.5em
+%     % \rightmargin=\leftmargin
+%     \settowidth{\itemindent}{\itshape#1}%
+%     \labelwidth=\itemindent
+%     % the following line is not needed with amsart, but might be with other classes
+%     \parsep=0pt \listparindent=\parindent 
+%   }
+% \item[\hskip\labelsep
+%   \itshape
+%   #1\@addpunct{.}]\ignorespaces
+% }{%
+%   \popQED\endlist\@endpefalse
+%   \end{leftbar}
+% }
+% \makeatother
 
 %%% Local Variables:
 %%% mode: latex

@@ -99,6 +99,7 @@ With the most basic simple types out of the way, the obvious next choice is the
 Both of these types can be constructed from the \emph{dependent} sum, however,
 so that is the type we will prove finite.
 From that we can derive a much wider array of finiteness proofs.
+
 \begin{lemma} \label{split-enum-sigma}
   Split enumerability is closed under \(\Sigma\).
   \begin{equation}
@@ -496,10 +497,10 @@ Our contribution for this section is simply the formalisation.
   \end{equation}
   Immediately we can construct the following term:
   \begin{equation}
-    \begin{alignat}{3}
+    \begin{alignedat}{3}
       \mathbf{Fin}(n) & \simeq A && (p) \\
                       & \simeq \mathbf{Fin}(m) && (q)
-    \end{alignat}
+    \end{alignedat}
   \end{equation}
   Given univalence we have \(\mathbf{Fin}(n) \equiv \mathbf{Fin}(m)\),
   and the rest of our task is to prove:
@@ -523,7 +524,7 @@ Our contribution for this section is simply the formalisation.
     \text{isProp}(\Pi(x, y : A) , \mathbf{Dec}(x \equiv y))
   \end{equation}
   First, it is clear that \(x \equiv y\) is a proposition: since the type \(A\)
-  has decidable equality, by Hedburg's theorem \todo{ref here} it is a set,
+  has decidable equality, by Hedburg's theorem it is a set,
   meaning precisely that \(x \equiv y\) is a proposition.
 
   Secondly, we know that any decision over a proposition is itself a
