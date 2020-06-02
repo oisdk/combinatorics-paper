@@ -171,7 +171,7 @@ complex than what you'd find in either MLTT or classical mathematics.
   We define both surjections and \emph{split} surjections here \cite[definition
   4.6.1]{hottbook}.
   \begin{alignat}{3}
-    &\text{surj}(f)             &&\coloneqq \Pi(y : B) , \lVert \text{fib}_f(y) \rVert \\
+    &\text{surj}(f)             &&\coloneqq \Pi(y : B) , \lVert \text{fib}_f(y) \rVert \label{surj-eqn} \\
     &A \twoheadrightarrow B     &&\coloneqq \Sigma (f : A \rightarrow B) , \text{surj}(f) \label{surj-arrow-eqn} \\
     &\text{sp-surj}(f)          &&\coloneqq \Pi(y : B) , \text{fib}_f(y) \label{sp-surj-eqn} \\
     &A \twoheadrightarrow! \; B &&\coloneqq \Sigma (f : A \rightarrow B) , \text{sp-surj}(f) \label{sp-surj-arrow-eqn}
@@ -801,24 +801,49 @@ in this section we will see a predicate which is much less restrictive.
 In particular, this predicate ranges over non-set types.
 
 \begin{definition}[Manifest Enumerability]
+  Manifest enumerability is an enumeration predicate like Bishop finiteness or
+  split enumerability with the only difference being a propositionally truncated
+  membership proof.
   \begin{equation}
     \mathcal{E}(A) \coloneqq \Sigma {(\mathit{xs} : \mathbf{List}(A))} , \Pi {(x : A)} , \lVert x \in \mathit{xs} \rVert
   \end{equation}
 \end{definition}
-As with manifest Bishop finiteness, the only difference with this type and split
-enumerability is the membership proof: here we have propositionally truncated
-it.
-This has two effects.
-First, it means that this proof represents a true surjection (rather than a
-split surjection) from \(\mathbf{Fin}\).
+As a function-based definition, this predicate represents surjections.
 \begin{lemma}
+  Manifest enumerability is equivalent to a surjection from a finite prefix of
+  the natural numbers.
   \begin{equation}
     \mathcal{E}(A) \simeq \Sigma(n : \mathbb{N}) , (\mathbf{Fin}(n) \twoheadrightarrow A)
   \end{equation}
 \end{lemma}
-The proof for this lemma is similar in structure to
-lemma~\ref{split-enum-is-split-surj} and lemma~\ref{bishop-equiv}.
+\begin{proof}
+  \begin{align*}
+     \mathcal{E}(A) &
+    \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \lVert x \in \mathit{xs} \rVert
+    && \text{def.~\ref{split-enum-def} }(\mathcal{E})
+    \\
+    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \lVert \text{fib}_{\text{snd}(\mathit{xs})}(x) \rVert
+    && \text{eqn.~\ref{container-membership} } (\in)
+    \\
+    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \text{surj}(\text{snd}(\mathit{xs}))
+    && \text{eqn.~\ref{surj-eqn} (surj)}
+    \\
+    & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket (A)) , \text{surj}(\text{snd}(\mathit{xs}))
+    && \text{def.~\ref{List} } (\mathbf{List})
+    \\
+    & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \mathbf{Fin}(n)) , A) , \text{surj}(\text{snd}(\mathit{xs}))
+    && \text{eqn.~\ref{container-interp} } (\llbracket \wc \rrbracket)
+    \\
+    & \simeq \Sigma (n : \mathbb{N}) , \Sigma (f : \mathbf{Fin}(n) \rightarrow A) , \text{surj}(f)
+    && \text{Reassociation of } \Sigma
+    \\
+    & \simeq \Sigma (n : \mathbb{N}) , ( \mathbf{Fin}(n) \twoheadrightarrow A )
+    && \text{eqn.~\ref{surj-arrow-eqn} } (\twoheadrightarrow) \; \qedhere
+  \end{align*}
+\end{proof}
 
+The other implication of this truncation is that the type we have defined does
+not, in fact, imply decidable equality unlike all of those we have seen so far.
 Secondly, it means the predicate does not imply decidable equality.
 More significantly, it allows the predicate to be defined over non-set types,
 like the circle.
