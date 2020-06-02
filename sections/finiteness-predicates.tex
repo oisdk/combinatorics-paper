@@ -286,11 +286,10 @@ proofs will contain ``too much'' information.
 With split enumerability we can see an instance of this.
 
 \begin{agdalisting} \label{bool-slop}
-  Consider the following two proofs of the finiteness of Bool:
+  Consider the following proof of the finiteness of Bool:
   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-slop}
-  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
-  While they both represent the ``same'' information (i.e. they both tell us
-  that bool is finite), they are nonetheless not definitionally equal.
+  While it represents the ``same'' information as our previous proof, it is
+  clearly not the same \emph{object}.
 \end{agdalisting}
 
 There is ``slop'' in the type of split enumerability: there are more distinct
@@ -511,7 +510,7 @@ predicates, one piece still remains.
   The two following proofs are both valid proofs of the finiteness of
   \(\mathbf{Bool}\), and both do not include any duplicates.
   However they still differ:
-  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst} \smallskip
   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-rev}
 \end{agdalisting}
 Each finiteness predicate so far has contained an \emph{ordering} of the
@@ -543,7 +542,7 @@ At first glance, it might seem that we lose any useful properties we could
 derive from \(\mathcal{B}\).
 Luckily, this is not the case: by eliminator \ref{elim-prop-coh} of
 def.~\ref{prop-trunc}, we need only show that the output is uniquely determined.
-
+\subsection{Deriving Uniquely-Determined Quantities}
 The following two lemmas are proven in
 \cite{yorgeyCombinatorialSpeciesLabelled2014} (Proposition 2.4.9 and 2.4.10,
 respectively), in much the same way as we have done here.
@@ -598,6 +597,24 @@ Our contribution for this section is simply the formalisation.
   We do not include it here, since it has already been explored elsewhere, but
   it is present in our formalisation.
 \end{proof}
+
+In order to prove that cardinal finiteness implies decidable equality, we will
+need to show that decidable equality itself is a proposition.
+In doing that we will use the following lemma:
+\begin{lemma} \label{prop-refute}
+  We can ``refute'' a propositionally-truncated proof of some proposition with a
+  proof that the non-truncated proposition is false.
+  \begin{equation}
+    \frac{\neg A \; \; \; \lVert A \rVert}{\bot}
+  \end{equation}
+\end{lemma}
+\begin{proof}
+  We know we can eliminate from any value of type \(\lVert A \rVert\) into some
+  \(B\) with a function \(A \to B\) if \(B\) is a proposition.
+  That's precisely what we do in this case: \(\neg A\) is a function of type \(A
+  \to \bot\), and we know that \(\bot\) is a proposition.
+\end{proof}
+
 \begin{lemma} \label{cardinal-finite-discrete}
   Any cardinal-finite set has decidable equality.
 \end{lemma}
@@ -841,12 +858,15 @@ As a function-based definition, this predicate represents surjections.
     && \text{eqn.~\ref{surj-arrow-eqn} } (\twoheadrightarrow) \; \qedhere
   \end{align*}
 \end{proof}
-
-The other implication of this truncation is that the type we have defined does
-not, in fact, imply decidable equality unlike all of those we have seen so far.
-Secondly, it means the predicate does not imply decidable equality.
-More significantly, it allows the predicate to be defined over non-set types,
-like the circle.
+\subsection{Instances for Non-Set Types}
+The truncation has another very important implication: it means that the
+predicate doesn't provide decidable equality on the underlying type.
+Remember, this is how we knew that our previous predicates wouldn't allow for
+non-set types: because they implied decidable equality, they also implied that
+all conforming types had homotopy levels of at most 2. \todo{Are we doing the
+  homotopy levels starting from -2 thing or from 0?}
+This suggests that non-set types like the circle could conform to this
+finiteness predicate.
 \begin{definition}[\(S^1\)] \label{circle-def}
   The circle, \(S^1\), can be represented in HoTT as a higher inductive type.
   \begin{equation}
@@ -862,15 +882,56 @@ like the circle.
 \begin{lemma}
   The circle \(S^1\) is manifestly enumerable.
 \end{lemma}
-\subsection{Relation To Split Enumerability }
-\begin{lemma} \label{split-enum-to-manifest-enum}
-  Any split enumerable type is manifestly enumerable.
+\begin{proof}
+  The support list firstly is a list containing the point constructor for the
+  circle.
+  Since the cover proof is truncated, we need only consider the point
+  constructors of the circle: as such, the cover proof is essentially the same
+  as the one for \(\mathcal{E}!(\top)\).
+\end{proof}
+\subsection{Relation To Split Enumerability}
+It is trivially easy to construct a proof that any split enumerable type is
+manifest enumerable: we simply truncate the membership proof.
+Going the other was requires us to extract a non-truncated proof from a
+truncated one.
+This proof relies on the following lemma:
+\begin{lemma}
+  We can ``recompute'' a truncated proof given a decision over a proof of the
+  same type.
+  \begin{equation}
+    \frac{\lVert A \rVert \; \; \; \mathbf{Dec}(A)}{A}
+  \end{equation}
 \end{lemma}
-This lemma is proven by truncating the membership proof in split enumerability.
+\begin{proof}
+  We proceed by case-analysis over the decision over \(A\).
+  In the case where \(A\) is proven, we are done.
+  In the case where \(A\) is disproven, we use lemma~\ref{prop-refute} to
+  derive impossibility.
+\end{proof}
 
 \begin{lemma} \label{manifest-enum-to-split-enum}
   A manifestly enumerable type with decidable equality is split enumerable.
 \end{lemma}
+\begin{proof}
+  The only difference between manifest enumerability and split enumerability is
+  the membership proof: therefor our goal for this proof is to construct a
+  function of the following type:
+  \begin{equation}
+    \lVert x \in \mathit{xs} \rVert \rightarrow x \in \mathit{xs}
+  \end{equation}
+  Given decidable equality over the type of \(x\).
+
+  We do this using the previous recompute lemma: that tells us that all we need
+  to construct is a decision for \(x \in \mathit{xs}\), and it will be able to
+  derive the proof itself.
+  Such a decision procedure is not difficult to construct: for any value \(x\)
+  and list \(\mathit{xs}\), we proceed through the list \(\mathit{xs}\), testing
+  if \(x\) is equal to any of its contents.
+  If it is, we return that we have proven the goal, and that \(x\) is indeed
+  present in \(\mathit{xs}\).
+  Otherwise, we know that \(x\) cannot be in \(\mathit{xs}\) (since we've tested
+  every value), so we return that the goal has been disproven.
+\end{proof}
 \section{Kuratowski Finiteness}
 The first thing we must define is a representation of subsets.
 \begin{definition}[Kuratowski Finite Subset]
