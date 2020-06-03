@@ -24,3 +24,8 @@ A↠!B⇒B↣A (f , surj) .snd x y f⁻¹⟨x⟩≡f⁻¹⟨y⟩ =
 Discrete↠!A⇒Discrete⟨A⟩ : A ↠! B → Discrete A → Discrete B
 Discrete↠!A⇒Discrete⟨A⟩ A↠!B =
   A↣Discrete⇒Discrete⟨A⟩ (A↠!B⇒B↣A A↠!B)
+
+↠!-ident : A ↠! A
+fst ↠!-ident x = x
+fst (snd ↠!-ident y) = y
+snd (snd ↠!-ident y) _ = y
