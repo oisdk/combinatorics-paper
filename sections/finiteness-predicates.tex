@@ -933,9 +933,14 @@ This proof relies on the following lemma:
   every value), so we return that the goal has been disproven.
 \end{proof}
 \section{Kuratowski Finiteness}
-The first thing we must define is a representation of subsets.
-\begin{definition}[Kuratowski Finite Subset]
-  \(\mathcal{K}(A)\) is the type of Kuratowski-finite subsets of \(A\).
+The one big missing definition of finiteness to cover is \emph{Kuratowski}
+finiteness.
+While it's quite important, it's also quite different from the definitions we've
+seen so far.
+It starts with an encoding of the free join semilattice.
+\begin{definition}[Free Join Semilattice]
+  \(\mathcal{K}(A)\) is the free join semilattice, or, alternatively, the type
+  of Kuratowski-finite subsets of \(A\).
   \begin{inductivetype}{\mathcal{K}(A)}
     \inductivetypeclause{\left[ \right]}{\mathcal{K}(A)}
     \inductivetypeclause{\wc \dblcolon \wc}{A \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A)}
@@ -1003,6 +1008,8 @@ We also have the following two lemmas, proven in both
 \end{lemma}
 \subsection{Relation to Cardinal Finiteness}
 \begin{lemma} \label{cardinal-kuratowski}
+  Cardinal finiteness is equivalent to Kuratowski finiteness over a discrete
+  set.
   \begin{equation}
     \mathcal{C}(A) \simeq \mathcal{K}^f(A) \times \text{Discrete}(A)
   \end{equation}
