@@ -15,6 +15,8 @@ open import HITs.PropositionalTruncation.Sugar
 
 open import Relation.Nullary.Discrete.Properties
 
+
+open import Relation.Nullary.Decidable.Logic
 open import Data.Fin
 
 𝒞 : Type a → Type a
@@ -105,14 +107,6 @@ cardinality {A = A} = recPropTrunc→Set (isOfHLevelΣ 2 isSetℕ λ _ → isPro
 # : 𝒞 A → ℕ
 # = fst ∘ cardinality ∘ _∥$∥_ (ℬ⇔Fin≃ .fun ∘ 𝕃⇔ℒ⟨ℬ⟩ .fun)
 
-open import Data.List.Filter
-open import Cardinality.Finite.SplitEnumerable.Inductive
-open import Relation.Nullary.Decidable.Logic
-
-filter-subobject : ∀ {p} {P : A → Type p} (isPropP : ∀ x → isProp (P x)) (P? : ∀ x → Dec (P x)) →
-                   ℰ! A → ℰ! (Σ[ x ⦂ A ] (P x))
-filter-subobject isPropP P? xs .fst = filter P? (xs .fst)
-filter-subobject isPropP P? xs .snd (x , v) = filter-preserves isPropP P? (xs .fst) x v (xs .snd x)
 
 module _ {a b} {A : Type a} {B : Type b} where
  _∥⇔∥_ : 𝒞 A → 𝒞 B → 𝒞 (A ⇔ B)

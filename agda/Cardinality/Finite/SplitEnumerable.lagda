@@ -141,4 +141,12 @@ module _ where
  ℰ!⟨≡⟩ x y e with ℰ!⇒Discrete (𝕃⇔ℒ⟨ℰ!⟩ .fun e) x y
  ℰ!⟨≡⟩ x y e | yes p = (p ∷ []) , λ q → (f0 , Discrete→isSet (ℰ!⇒Discrete (𝕃⇔ℒ⟨ℰ!⟩ .fun e)) x y p q)
  ℰ!⟨≡⟩ x y e | no ¬p = [] , (⊥-elim ∘ ¬p)
+
+ open import Data.List.Filter
+ open import Cardinality.Finite.SplitEnumerable.Inductive
+
+ filter-subobject : ∀ {p} {P : A → Type p} (isPropP : ∀ x → isProp (P x)) (P? : ∀ x → Dec (P x)) →
+                    ℰ! A → ℰ! (Σ[ x ⦂ A ] (P x))
+ filter-subobject isPropP P? xs .fst = filter P? (xs .fst)
+ filter-subobject isPropP P? xs .snd (x , v) = filter-preserves isPropP P? (xs .fst) x v (xs .snd x)
 \end{code}
