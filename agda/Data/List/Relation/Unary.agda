@@ -34,7 +34,7 @@ module Exists {a} {A : Type a} {p} (P : A → Type p) where
   uncons (f0 , p) = inl p
   uncons (fs x , p) = inr (x , p)
 
-
+  infixr 5 _++◇_ _◇++_
   _++◇_ : ∀ {xs} ys → ◇ P xs → ◇ P (ys ++ xs)
   [] ++◇ ys = ys
   (x ∷ xs) ++◇ ys = push (xs ++◇ ys)
