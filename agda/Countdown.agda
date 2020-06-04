@@ -28,6 +28,7 @@ Vec A (suc n) = A × Vec A n
 Subseq : ℕ → Type₀
 Subseq = Vec Bool
 
+-- Consider using an actual perm to show that functions can be enumerated.
 Perm : ℕ → Type₀
 Perm zero    = ⊤
 Perm (suc n) = Fin (suc n) × Perm n
