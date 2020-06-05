@@ -99,3 +99,12 @@ fromDyck-size d = go d leaf []
   go done  t []       = refl
   go (⟨ d) t st       = go d leaf (t ∷ st)
   go (⟩ d) x (y ∷ st) = go d (y * x) st
+
+Sized : ℕ → Type₀
+Sized n = Σ[ t ⦂ Tree ] (size t ≡ n)
+
+fromDyck-sized : Dyck 0 n → Sized n
+fromDyck-sized d = fromDyck d , fromDyck-size d
+
+toDyck-sized : Sized n → Dyck 0 n
+toDyck-sized (xs , p) = subst (Dyck 0) p (toDyck xs)
