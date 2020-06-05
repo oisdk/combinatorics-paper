@@ -2,15 +2,16 @@
 
 module Dyck where
 
-open import Prelude
+open import Prelude hiding (_⟨_⟩_)
 open import Data.List
 open import Cardinality.Finite.SplitEnumerable
 open import Cardinality.Finite.SplitEnumerable.Inductive
 open import Data.Fin
 open import Data.List.Membership
 import Data.Nat as ℕ
-open import Agda.Builtin.Nat using (_-_)
+open import Agda.Builtin.Nat using (_-_; _+_)
 open import Data.Nat.Properties using (pred)
+open import Data.Vec.Inductive
 
 private
   variable
@@ -21,6 +22,16 @@ data Dyck : ℕ → ℕ → Type₀ where
   done : Dyck 0 0
   ⟨_ : Dyck (suc n) m → Dyck n (suc m)
   ⟩_ : Dyck n m → Dyck (suc n) m
+
+-- module _ {p} (P : ℕ → ℕ → Type p)
+--              (lbrack : ∀ {n m} → P (suc n) m → P n (suc m))
+--              (rbrack : ∀ {n m} → P n m → P (suc n) m)
+--              (base : P 0 0)
+--              where
+--   foldrDyck : Dyck n m → P n m
+--   foldrDyck done = base
+--   foldrDyck (⟨ x) = lbrack (foldrDyck x)
+--   foldrDyck (⟩ x) = rbrack (foldrDyck x)
 
 Bal : ℕ → Type₀
 Bal = Dyck 0
@@ -70,11 +81,6 @@ toDyck′ (xs * ys) = toDyck′ xs ∘ ⟨_ ∘ toDyck′ ys ∘ ⟩_
 toDyck : (t : Tree) → Bal (size t)
 toDyck t = toDyck′ t done
 
-infixr 5 _∷_
-data Vec (A : Type a) : ℕ → Type a where
-  [] : Vec A 0
-  _∷_ : A → Vec A n → Vec A (suc n)
-
 fromDyck′ : Dyck n m → Tree → Vec Tree n → Tree
 fromDyck′ done   t _       = t
 fromDyck′ (⟨ xs) t s       = fromDyck′ xs leaf (t ∷ s)
@@ -87,10 +93,9 @@ fromDyck-size : (xs : Dyck 0 n) → size (fromDyck xs) ≡ n
 fromDyck-size d = go d leaf []
   where
   sizes : Vec Tree n → ℕ → ℕ
-  sizes [] = id
-  sizes (x ∷ xs) = sizes xs ∘ sz x ∘ suc
+  sizes = foldr′ (λ x xs → xs ∘ sz x ∘ suc) id
 
   go : (d : Dyck n m) → (t : Tree) → (st : Vec Tree n) → sz (fromDyck′ d t st) 0 ≡ sizes st (sz t m)
-  go done  t [] = refl
-  go (⟨ d) t st = go d leaf (t ∷ st)
+  go done  t []       = refl
+  go (⟨ d) t st       = go d leaf (t ∷ st)
   go (⟩ d) x (y ∷ st) = go d (y * x) st
