@@ -75,23 +75,22 @@ data Vec (A : Type a) : ℕ → Type a where
   [] : Vec A 0
   _∷_ : A → Vec A n → Vec A (suc n)
 
-fromDyck′ : Dyck n m → Vec Tree (suc n) → Tree
-fromDyck′ done   (x ∷ [])    = x
-fromDyck′ (⟨ xs) s           = fromDyck′ xs (leaf ∷ s)
-fromDyck′ (⟩ xs) (x ∷ y ∷ s) = fromDyck′ xs ((y * x) ∷ s)
+fromDyck′ : Dyck n m → Tree → Vec Tree n → Tree
+fromDyck′ done   t _       = t
+fromDyck′ (⟨ xs) t s       = fromDyck′ xs leaf (t ∷ s)
+fromDyck′ (⟩ xs) x (y ∷ s) = fromDyck′ xs (y * x) s
 
 fromDyck : Dyck 0 n → Tree
-fromDyck xs = fromDyck′ xs (leaf ∷ [])
+fromDyck xs = fromDyck′ xs leaf []
 
 fromDyck-size : (xs : Dyck 0 n) → size (fromDyck xs) ≡ n
-fromDyck-size d = go d (leaf ∷ [])
+fromDyck-size d = go d leaf []
   where
-  sizes : Vec Tree (suc n) → ℕ → ℕ
-  sizes (x ∷ []) = sz x
-  sizes (x ∷ y ∷ ys) = sizes (y ∷ ys) ∘ suc ∘ sz x
+  sizes : Vec Tree n → ℕ → ℕ
+  sizes [] = id
+  sizes (x ∷ xs) = sizes xs ∘ sz x ∘ suc
 
-  go : (d : Dyck n m) → (st : Vec Tree (suc n)) → sz (fromDyck′ d st) 0 ≡ sizes st m
-  go done (x ∷ []) = refl
-  go (⟨ d) (x ∷ st) = go d (leaf ∷ x ∷ st)
-  go (⟩ d) (x ∷ y ∷ []) = go d ((y * x) ∷ [])
-  go (⟩ d) (x ∷ y ∷ (x₁ ∷ st)) = go d ((y * x) ∷ (x₁ ∷ st))
+  go : (d : Dyck n m) → (t : Tree) → (st : Vec Tree n) → sz (fromDyck′ d t st) 0 ≡ sizes st (sz t m)
+  go done  t [] = refl
+  go (⟨ d) t st = go d leaf (t ∷ st)
+  go (⟩ d) x (y ∷ st) = go d (y * x) st
