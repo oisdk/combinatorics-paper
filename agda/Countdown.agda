@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical --postfix-projections #-}
+{-# OPTIONS --cubical --postfix-projections --safe #-}
 
 module Countdown where
 
@@ -13,6 +13,8 @@ open import Data.Nat using (_+_; _*_)
 open import Data.Nat.Properties using (pred; _<_)
 open import Data.Fin.Properties using (FinToℕ)
 open import Agda.Builtin.Nat using (_-_; _==_)
+open import Dyck
+open import Data.Vec.Iterated
 
 data Op : Type₀ where
   plus times sub : Op
@@ -20,10 +22,6 @@ data Op : Type₀ where
 private
   variable
     n m k : ℕ
-
-Vec : Type a → ℕ → Type a
-Vec A zero = Lift _ ⊤
-Vec A (suc n) = A × Vec A n
 
 Subseq : ℕ → Type₀
 Subseq = Vec Bool
@@ -33,15 +31,10 @@ Perm zero    = ⊤
 Perm (suc n) = Fin (suc n) × Perm n
 
 count : Subseq n → ℕ
-count {n = zero}  _        = 0
-count {n = suc n} (x , xs) = bool 0 1 x + count xs
+count = foldr′ (λ x xs → bool 0 1 x + xs) 0
 
 Comb : ℕ → Type₀
 Comb n = Σ[ s ⦂ Subseq n ] Perm (count s)
-
-data BinTree : ℕ → Type₀ where
-  leaf : BinTree 1
-  node : Op → BinTree n → BinTree m → BinTree (n + m)
 
 open import Cardinality.Finite.SplitEnumerable
 open import Cardinality.Finite.SplitEnumerable.Inductive
@@ -51,8 +44,14 @@ open import Function.Surjective.Properties
 ℰ!⟨Fin⟩ : ℰ! (Fin n)
 ℰ!⟨Fin⟩ = 𝕃⇔ℒ⟨ℰ!⟩ .inv (ℰ!⇔Fin↠! .inv (_ , ↠!-ident))
 
+import Data.Unit.UniversePolymorphic as Poly
+
+ℰ!⟨Poly⊤⟩ : ∀ {ℓ} → ℰ! (Poly.⊤ {ℓ})
+ℰ!⟨Poly⊤⟩ .fst = _ ∷ []
+ℰ!⟨Poly⊤⟩ .snd _ = f0 , refl
+
 ℰ!⟨Vec⟩ : ℰ! A → ℰ! (Vec A n)
-ℰ!⟨Vec⟩ {n = zero} ℰ!⟨A⟩ = ℰ!⟨Lift⟩ ℰ!⟨⊤⟩
+ℰ!⟨Vec⟩ {n = zero} ℰ!⟨A⟩ = ℰ!⟨Poly⊤⟩
 ℰ!⟨Vec⟩ {n = suc n} ℰ!⟨A⟩ = ℰ!⟨A⟩ |×| ℰ!⟨Vec⟩ ℰ!⟨A⟩
 
 ℰ!⟨Subseq⟩ : ℰ! (Subseq n)
@@ -71,95 +70,84 @@ open import Function.Surjective.Properties
 ℰ!⟨Op⟩ .snd times = 1 , refl
 ℰ!⟨Op⟩ .snd sub = 2 , refl
 
+runSubseq : (xs : List A) → (ys : Subseq (length xs)) → Vec A (count ys)
+runSubseq []       ys = _
+runSubseq (x ∷ xs) (false , snd₁) = runSubseq xs snd₁
+runSubseq (x ∷ xs) (true , snd₁) = x , runSubseq xs snd₁
 
+insert : A → Fin (suc n) → Vec A n → Vec A (suc n)
+insert x f0 xs = x , xs
+insert {n = suc _} x (fs i) (x₂ , xs) = x₂ , insert x i xs
 
+runPerm : Perm n → Vec A n → Vec A n
+runPerm {n = zero} ps _ = _
+runPerm {n = suc n} (fst₁ , snd₁) (x , xs) = insert x fst₁ (runPerm snd₁ xs)
 
--- {-# TERMINATING #-}
--- ℰ!⟨BinTree⟩ : ℰ! (BinTree n)
--- ℰ!⟨BinTree⟩ {n = zero} = ℰ!⟨⊥⟩
--- ℰ!⟨BinTree⟩ {n = suc zero} = ℰ!⟨⊤⟩
--- ℰ!⟨BinTree⟩ {n = suc (suc n)} = ℰ!⟨Op⟩ |×| (ℰ!⟨Fin⟩ |Σ| λ _ → ℰ!⟨BinTree⟩ |×| ℰ!⟨BinTree⟩)
+runComb : (xs : List A) → (c : Comb (length xs)) → Vec A (count (c .fst))
+runComb xs (subs , perm) = runPerm perm (runSubseq xs subs)
 
--- runSubseq : (xs : List A) → (ys : Subseq (length xs)) → Vec A (count ys)
--- runSubseq []       ys = _
--- runSubseq (x ∷ xs) (false , snd₁) = runSubseq xs snd₁
--- runSubseq (x ∷ xs) (true , snd₁) = x , runSubseq xs snd₁
+ExprTree : ℕ → Type₀
+ExprTree zero    = ⊥
+ExprTree (suc n) = Dyck 0 n × Vec Op n
 
--- insert : A → Fin (suc n) → Vec A n → Vec A (suc n)
--- insert x f0 xs = x , xs
--- insert {n = suc _} x (fs i) (x₂ , xs) = x₂ , insert x i xs
+ℰ!⟨ExprTree⟩ : ℰ! (ExprTree n)
+ℰ!⟨ExprTree⟩ {n = zero} = ℰ!⟨⊥⟩
+ℰ!⟨ExprTree⟩ {n = suc n} = ℰ!⟨Dyck⟩ |×| ℰ!⟨Vec⟩ ℰ!⟨Op⟩
 
--- runPerm : Perm n → Vec A n → Vec A n
--- runPerm {n = zero} ps _ = _
--- runPerm {n = suc n} (fst₁ , snd₁) (x , xs) = insert x fst₁ (runPerm snd₁ xs)
+Expr : ℕ → Type₀
+Expr n = Σ[ c ⦂ Comb n ] (ExprTree (count (fst c)))
 
--- vecToList : Vec A n → List A
--- vecToList {n = zero} _ = []
--- vecToList {n = suc n} (x , xs) = x ∷ vecToList xs
+ℰ!⟨Expr⟩ : ℰ! (Expr n)
+ℰ!⟨Expr⟩ = ℰ!⟨Comb⟩ |Σ| λ _ → ℰ!⟨ExprTree⟩
 
--- Expr : ℕ → Type₀
--- Expr n = Σ[ c ⦂ Comb n ] (BinTree (count (fst c)))
+buildExpr : (xs : List ℕ) → Expr (length xs) → Tree Op ℕ
+buildExpr xs (comb , tree) with count (comb .fst) | runComb xs comb
+buildExpr xs (comb , (tree , ops)) | suc n | ys = fromDyck tree ops ys
 
--- ℰ!⟨Expr⟩ : ℰ! (Expr n)
--- ℰ!⟨Expr⟩ = ℰ!⟨Comb⟩ |Σ| λ _ → ℰ!⟨BinTree⟩
+appOneOp : Op → ℕ → ℕ → ℕ
+appOneOp plus = _+_
+appOneOp times = _*_
+appOneOp sub = _-_
 
--- appOneOp : Op → ℕ → ℕ → ℕ
--- appOneOp plus = _+_
--- appOneOp times = _*_
--- appOneOp sub = _-_
+runTree : Tree Op ℕ → ℕ
+runTree (leaf x) = x
+runTree (node o xs ys) = appOneOp o (runTree xs) (runTree ys)
 
--- splitVec : (i : Fin n) → Vec A n → Vec A (FinToℕ i) × Vec A (n - FinToℕ i)
--- splitVec {n = suc n} f0 xs = _ , xs
--- splitVec {n = suc n} (fs i) (x , xs) = map₁ (x ,_) (splitVec i xs)
+data Disp : Type₀ where
+  lit : ℕ → Disp
+  _⟨+⟩_ : Disp → Disp → Disp
+  _⟨*⟩_ : Disp → Disp → Disp
+  _⟨-⟩_ : Disp → Disp → Disp
 
--- {-# TERMINATING #-}
--- appOp : Vec ℕ n → BinTree n → ℕ
--- appOp {n = suc zero} (fst₁ , snd₁) ys = fst₁
--- appOp {n = suc (suc n)} (x , xs) (o , i , ys , zs) = let ys′ , zs′ = splitVec i xs in appOneOp o (appOp (x , ys′) ys) (appOp zs′ zs)
+appDispOp : Op → Disp → Disp → Disp
+appDispOp plus  = _⟨+⟩_
+appDispOp times = _⟨*⟩_
+appDispOp sub   = _⟨-⟩_
 
--- runExpr : (xs : List ℕ) → Expr (length xs) → ℕ
--- runExpr xs ((subs , perm) , ops) = appOp (runPerm perm (runSubseq xs subs)) ops
+open import Agda.Builtin.Strict
 
--- take : ℕ → List A → List A
--- take zero xs = []
--- take (suc n) [] = []
--- take (suc n) (x ∷ xs) = x ∷ take n xs
+infixr 0 _$!_
+_$!_ : ∀ {a b} {A : Set a} {B : A → Set b} → (∀ x → B x) → ∀ x → B x
+f $! x = primForce x f
 
--- filter : (A → Bool) → List A → List A
--- filter p [] = []
--- filter p (x ∷ xs) = if p x then x ∷ filter p xs else filter p xs
+dispTree : Tree Op ℕ → Disp
+dispTree (leaf x) = lit x
+dispTree (node o xs ys) = (appDispOp o $! dispTree xs) $! dispTree ys
 
+take : ℕ → List A → List A
+take zero _ = []
+take (suc n) [] = []
+take (suc n) (x ∷ xs) = x ∷ take n xs
 
--- data Disp : Type₀ where
---   lit : ℕ → Disp
---   _⟨+⟩_ : Disp → Disp → Disp
---   _⟨*⟩_ : Disp → Disp → Disp
---   _⟨-⟩_ : Disp → Disp → Disp
+filter : (A → Bool) → List A → List A
+filter p [] = []
+filter p (x ∷ xs) = if p x then x ∷ filter p xs else filter p xs
 
--- appDispOp : Op → Disp → Disp → Disp
--- appDispOp plus  = _⟨+⟩_
--- appDispOp times = _⟨*⟩_
--- appDispOp sub   = _⟨-⟩_
+example : List Disp
+example = map dispTree (take 1 (filter (λ e → runTree e == 576) (map (buildExpr nums) (ℰ!⟨Expr⟩ .fst))))
+  where
+  nums = (100 ∷ 25 ∷ 1 ∷ 5 ∷ 3 ∷ [])
 
--- open import Agda.Builtin.Strict
-
--- {-# TERMINATING #-}
--- appToDisp : Vec ℕ n → BinTree n → Disp
--- appToDisp {n = suc zero} (fst₁ , snd₁) ys = primForce fst₁ lit
--- appToDisp {n = suc (suc n)} (x , xs) (o , i , ys , zs) =
---   let ys′ , zs′ = splitVec i xs
---       ys″ = appToDisp (x , ys′) ys
---       zs″ = appToDisp zs′ zs
---   in primForce zs″ (primForce ys″ (appDispOp o))
-
--- toDisp : (xs : List ℕ) → Expr (length xs) → Disp
--- toDisp xs ((subs , perm) , ops) = appToDisp (runPerm perm (runSubseq xs subs)) ops
-
--- example : List Disp
--- example = map (toDisp nums) (take 1 (filter (λ e → runExpr nums e == 576) (ℰ!⟨Expr⟩ .fst)))
---   where
---   nums = (100 ∷ 25 ∷ 1 ∷ 5 ∷ 3 ∷ [])
-
--- -- Uncomment for a type error which contains the answer
--- -- prf : example ≡ (lit 0 ∷ [])
--- -- prf = refl
+-- Uncomment for a type error which contains the answer
+-- prf : example ≡ (lit 0 ∷ [])
+-- prf = refl

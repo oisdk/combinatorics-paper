@@ -11,7 +11,7 @@ open import Data.List.Membership
 import Data.Nat as ℕ
 open import Agda.Builtin.Nat using (_-_; _+_)
 open import Data.Nat.Properties using (pred)
-open import Data.Vec.Inductive
+open import Data.Vec.Iterated
 
 private
   variable
@@ -36,28 +36,58 @@ data Dyck : ℕ → ℕ → Type₀ where
 Bal : ℕ → Type₀
 Bal = Dyck 0
 
+Diff : Type₀ → Type₁
+Diff A = ∀ {B : Type₀} → (A → B) → List B → List B
+
 support-dyck : ∀ n m → List (Dyck n m)
-support-dyck = λ n m → end n m ++ (lefts n m ++ rights n m)
+support-dyck = λ n m → sup-k n m id []
   module ListDyck where
-  lefts : ∀ n m → List (Dyck n m)
-  lefts n zero    = []
-  lefts n (suc m) = map ⟨_ (support-dyck (suc n) m)
+  mutual
+    sup-k : ∀ n m → Diff (Dyck n m)
+    sup-k n m k = end n m k ∘ lefts n m k ∘ rights n m k
 
-  rights : ∀ n m → List (Dyck n m)
-  rights (suc n) m = map ⟩_ (support-dyck n m)
-  rights zero    m = []
+    lefts : ∀ n m → Diff (Dyck n m)
+    lefts n zero    k = id
+    lefts n (suc m) k = sup-k (suc n) m (k ∘ ⟨_)
 
-  end : ∀ n m → List (Dyck n m)
-  end (suc _) _ = []
-  end zero (suc _) = []
-  end zero zero = done ∷ []
+    rights : ∀ n m → Diff (Dyck n m)
+    rights (suc n) m k = sup-k n m (k ∘ ⟩_)
+    rights zero    m k = id
+
+    end : ∀ n m → Diff (Dyck n m)
+    end (suc _) _    k = id
+    end zero (suc _) k = id
+    end zero zero    k xs = k done ∷ xs
 
 cover-dyck : (x : Dyck n m) → x ∈ support-dyck n m
-cover-dyck {.0} {.0} done = f0 , refl
-cover-dyck {n} {suc m} (⟨ x) =
-  ListDyck.end n (suc m) ++◇ ListDyck.lefts n (suc m) ◇++ cong-∈ ⟨_ (support-dyck (suc n) m) (cover-dyck x)
-cover-dyck {suc n} {m} (⟩ x) =
-  ListDyck.lefts (suc n) m ++◇ cong-∈ ⟩_ (support-dyck n m) (cover-dyck x)
+cover-dyck x = go _ _ x id []
+  where
+  open ListDyck
+
+  mutual
+    pushLefts : ∀ n m (k : Dyck n m → B) x xs → x ∈ xs → x ∈ lefts n m k xs
+    pushLefts n (suc m) k = pushSup (suc n) m (λ z → k (⟨ z))
+    pushLefts _ zero    k x xs p = p
+
+    pushEnd : ∀ n m (k : Dyck n m → B) x xs → x ∈ xs → x ∈ end n m k xs
+    pushEnd (suc _) _ k x xs p = p
+    pushEnd zero (suc _) k x xs p = p
+    pushEnd zero zero k x xs (i , p) = fs i , p
+
+    pushRights : ∀ n m (k : Dyck n m → B) x xs → x ∈ xs → x ∈ rights n m k xs
+    pushRights (suc n) m k = pushSup n m (λ z → k (⟩ z))
+    pushRights zero _ k x xs p = p
+
+    pushSup : ∀ n m (k : Dyck n m → B) x xs → x ∈ xs → x ∈ sup-k n m k xs
+    pushSup n m k x xs p = pushEnd n m k x (lefts n m k (rights n m k xs)) (pushLefts n m k x (rights n m k xs) (pushRights n m k x xs p))
+
+  go : ∀ n m → (x : Dyck n m) → (k : Dyck n m → A) → (xs : List A) → k x ∈ sup-k n m k xs
+  go zero zero done k xs = f0 , refl
+  go zero    (suc m) (⟨ x) k xs = go (suc zero) m x (k ∘ ⟨_) (rights (zero) (suc m) k xs)
+  go (suc n) (suc m) (⟨ x) k xs = go (suc (suc n)) m x (k ∘ ⟨_) (rights (suc n) (suc m) k xs)
+  go (suc n) m (⟩ x) k xs =
+    let p = go n m x (k ∘ ⟩_) xs
+    in pushEnd (suc n) m k (k (⟩ x)) (lefts (suc n) m k _) (pushLefts (suc n) m k (k (⟩ x)) (rights (suc n) m k xs) p)
 
 ℰ!⟨Dyck⟩ : ℰ! (Dyck n m)
 ℰ!⟨Dyck⟩ .fst = support-dyck _ _
@@ -69,11 +99,11 @@ data Tree (A : Type a) (B : Type b) : Type (a ℓ⊔ b) where
 
 fromDyck′ : Dyck n m → Tree A B → Vec (Tree A B) n → Vec B m → Vec A m → Vec A n → Tree A B
 fromDyck′ done   t _       vls        ops₁ ops₂ = t
-fromDyck′ (⟩ xs) x (y ∷ s) vls        ops₁ (op ∷ ops₂) = fromDyck′ xs (node op y x) s vls ops₁ ops₂
-fromDyck′ (⟨ xs) t s       (vl ∷ vls) (op ∷ ops₁) ops₂ = fromDyck′ xs (leaf vl) (t ∷ s) vls ops₁ (op ∷ ops₂)
+fromDyck′ (⟩ xs) x (y , s) vls        ops₁ (op , ops₂) = fromDyck′ xs (node op y x) s vls ops₁ ops₂
+fromDyck′ (⟨ xs) t s       (vl , vls) (op , ops₁) ops₂ = fromDyck′ xs (leaf vl) (t , s) vls ops₁ (op , ops₂)
 
 fromDyck : Dyck 0 n → Vec A n → Vec B (suc n) → Tree A B
-fromDyck xs ops (val ∷ vals) = fromDyck′ xs (leaf val) [] vals ops []
+fromDyck xs ops (val , vals) = fromDyck′ xs (leaf val) _ vals ops _
 
 -- data Tree : Type₀ where
 --   leaf : Tree
