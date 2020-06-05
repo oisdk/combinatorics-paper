@@ -37,7 +37,7 @@ Bal : ℕ → Type₀
 Bal = Dyck 0
 
 support-dyck : ∀ n m → List (Dyck n m)
-support-dyck = λ n m → end n m ++ ( lefts n m ++ rights n m )
+support-dyck = λ n m → end n m ++ (lefts n m ++ rights n m)
   module ListDyck where
   lefts : ∀ n m → List (Dyck n m)
   lefts n zero    = []
@@ -63,48 +63,52 @@ cover-dyck {suc n} {m} (⟩ x) =
 ℰ!⟨Dyck⟩ .fst = support-dyck _ _
 ℰ!⟨Dyck⟩ .snd = cover-dyck
 
-data Tree : Type₀ where
-  leaf : Tree
-  _*_ : Tree → Tree → Tree
+data Tree (A : Type a) (B : Type b) : Type (a ℓ⊔ b) where
+  leaf : B → Tree A B
+  node : A → Tree A B → Tree A B → Tree A B
 
-sz : Tree → ℕ → ℕ
-sz leaf     = id
-sz (xs * ys) = sz xs ∘ suc ∘ sz ys
+fromDyck′ : Dyck n m → Tree A B → Vec (Tree A B) n → Vec B m → Vec A m → Vec A n → Tree A B
+fromDyck′ done   t _       vls        ops₁ ops₂ = t
+fromDyck′ (⟩ xs) x (y ∷ s) vls        ops₁ (op ∷ ops₂) = fromDyck′ xs (node op y x) s vls ops₁ ops₂
+fromDyck′ (⟨ xs) t s       (vl ∷ vls) (op ∷ ops₁) ops₂ = fromDyck′ xs (leaf vl) (t ∷ s) vls ops₁ (op ∷ ops₂)
 
-size : Tree → ℕ
-size t = sz t 0
+fromDyck : Dyck 0 n → Vec A n → Vec B (suc n) → Tree A B
+fromDyck xs ops (val ∷ vals) = fromDyck′ xs (leaf val) [] vals ops []
 
-toDyck′ : (t : Tree) → Dyck n m → Dyck n (sz t m)
-toDyck′ leaf = id
-toDyck′ (xs * ys) = toDyck′ xs ∘ ⟨_ ∘ toDyck′ ys ∘ ⟩_
+-- data Tree : Type₀ where
+--   leaf : Tree
+--   _*_ : Tree → Tree → Tree
 
-toDyck : (t : Tree) → Bal (size t)
-toDyck t = toDyck′ t done
+-- sz : Tree → ℕ → ℕ
+-- sz leaf     = id
+-- sz (xs * ys) = sz xs ∘ suc ∘ sz ys
 
-fromDyck′ : Dyck n m → Tree → Vec Tree n → Tree
-fromDyck′ done   t _       = t
-fromDyck′ (⟨ xs) t s       = fromDyck′ xs leaf (t ∷ s)
-fromDyck′ (⟩ xs) x (y ∷ s) = fromDyck′ xs (y * x) s
+-- size : Tree → ℕ
+-- size t = sz t 0
 
-fromDyck : Dyck 0 n → Tree
-fromDyck xs = fromDyck′ xs leaf []
+-- toDyck′ : (t : Tree) → Dyck n m → Dyck n (sz t m)
+-- toDyck′ leaf = id
+-- toDyck′ (xs * ys) = toDyck′ xs ∘ ⟨_ ∘ toDyck′ ys ∘ ⟩_
 
-fromDyck-size : (xs : Dyck 0 n) → size (fromDyck xs) ≡ n
-fromDyck-size d = go d leaf []
-  where
-  sizes : Vec Tree n → ℕ → ℕ
-  sizes = foldr′ (λ x xs → xs ∘ sz x ∘ suc) id
+-- toDyck : (t : Tree) → Bal (size t)
+-- toDyck t = toDyck′ t done
 
-  go : (d : Dyck n m) → (t : Tree) → (st : Vec Tree n) → sz (fromDyck′ d t st) 0 ≡ sizes st (sz t m)
-  go done  t []       = refl
-  go (⟨ d) t st       = go d leaf (t ∷ st)
-  go (⟩ d) x (y ∷ st) = go d (y * x) st
+-- fromDyck-size : (xs : Dyck 0 n) → size (fromDyck xs) ≡ n
+-- fromDyck-size d = go d leaf []
+--   where
+--   sizes : Vec Tree n → ℕ → ℕ
+--   sizes = foldr′ (λ x xs → xs ∘ sz x ∘ suc) id
 
-Sized : ℕ → Type₀
-Sized n = Σ[ t ⦂ Tree ] (size t ≡ n)
+--   go : (d : Dyck n m) → (t : Tree) → (st : Vec Tree n) → sz (fromDyck′ d t st) 0 ≡ sizes st (sz t m)
+--   go done  t []       = refl
+--   go (⟨ d) t st       = go d leaf (t ∷ st)
+--   go (⟩ d) x (y ∷ st) = go d (y * x) st
 
-fromDyck-sized : Dyck 0 n → Sized n
-fromDyck-sized d = fromDyck d , fromDyck-size d
+-- Sized : ℕ → Type₀
+-- Sized n = Σ[ t ⦂ Tree ] (size t ≡ n)
 
-toDyck-sized : Sized n → Dyck 0 n
-toDyck-sized (xs , p) = subst (Dyck 0) p (toDyck xs)
+-- fromDyck-sized : Dyck 0 n → Sized n
+-- fromDyck-sized d = fromDyck d , fromDyck-size d
+
+-- toDyck-sized : Sized n → Dyck 0 n
+-- toDyck-sized (xs , p) = subst (Dyck 0) p (toDyck xs)
