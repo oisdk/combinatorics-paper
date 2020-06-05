@@ -8,12 +8,15 @@ open import Cardinality.Finite.SplitEnumerable
 open import Cardinality.Finite.SplitEnumerable.Inductive
 open import Data.Fin
 open import Data.List.Membership
+import Data.Nat as ℕ
+open import Agda.Builtin.Nat using (_-_)
+open import Data.Nat.Properties using (pred)
 
 private
   variable
-    n m : ℕ
+    n m k : ℕ
 
-infixr 5 ⟨_ ⟩_
+infixr 6 ⟨_ ⟩_
 data Dyck : ℕ → ℕ → Type₀ where
   done : Dyck 0 0
   ⟨_ : Dyck (suc n) m → Dyck n (suc m)
@@ -38,7 +41,6 @@ support-dyck = λ n m → end n m ++ ( lefts n m ++ rights n m )
   end zero (suc _) = []
   end zero zero = done ∷ []
 
-
 cover-dyck : (x : Dyck n m) → x ∈ support-dyck n m
 cover-dyck {.0} {.0} done = f0 , refl
 cover-dyck {n} {suc m} (⟨ x) =
@@ -49,3 +51,34 @@ cover-dyck {suc n} {m} (⟩ x) =
 ℰ!⟨Dyck⟩ : ℰ! (Dyck n m)
 ℰ!⟨Dyck⟩ .fst = support-dyck _ _
 ℰ!⟨Dyck⟩ .snd = cover-dyck
+
+data Tree : Type₀ where
+  leaf : Tree
+  _*_ : Tree → Tree → Tree
+
+sz : Tree → ℕ → ℕ
+sz leaf     = id
+sz (xs * ys) = sz xs ∘ suc ∘ sz ys
+
+size : Tree → ℕ
+size t = sz t 0
+
+toDyck′ : (t : Tree) → Dyck n m → Dyck n (sz t m)
+toDyck′ leaf = id
+toDyck′ (xs * ys) = toDyck′ xs ∘ ⟨_ ∘ toDyck′ ys ∘ ⟩_
+
+toDyck : (t : Tree) → Bal (size t)
+toDyck t = toDyck′ t done
+
+infixr 5 _∷_
+data Vec (A : Type a) : ℕ → Type a where
+  [] : Vec A 0
+  _∷_ : A → Vec A n → Vec A (suc n)
+
+fromDyck′ : Dyck n m → Vec Tree (suc n) → Tree
+fromDyck′ done   (x ∷ [])    = x
+fromDyck′ (⟨ xs) s           = fromDyck′ xs (leaf ∷ s)
+fromDyck′ (⟩ xs) (y ∷ x ∷ s) = fromDyck′ xs ((x * y) ∷ s)
+
+fromDyck : Dyck 0 n → Tree
+fromDyck xs = fromDyck′ xs (leaf ∷ [])
