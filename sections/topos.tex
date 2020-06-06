@@ -1,34 +1,22 @@
 \chapter{Topos} \label{topos}
-In this section we will prove that decidable Kuratowski finite types form a
+In this section we will examine the categorical interpretation of finite sets.
+In particular, we will prove that decidable Kuratowski finite types form a
 \(\Pi\)-pretopos.
-Along the way we will provide closure proofs for a number of the other
-finiteness predicates.
-As we saw in theorem~\ref{cardinal-kuratowski}, decidable Kuratowski finite
-types are equivalent to cardinal finite types, so we will work with the latter
-from now on.
-Our first task is to show that cardinal finite types are closed under several
-operations.
+A lot of the work for this proof has been done already: in
+Theorem~\ref{cardinal-kuratowski} we saw that Kuratowski finite types were
+equivalent to Cardinally finite types.
+We will use the latter definition implementation-wise from now on, as it is
+slightly easier to work with: CuTT's transport means we can do this without loss
+of generality.
+
+\section{Categories in HoTT}
+\section{Closure and the Category of Sets}
+\section{The Absence of the Subobject Classifier}
+
 \section{Closure}
 For the first three closure proofs, we only consider split enumerability:
 as it is the strongest of the finiteness predicates, we can derive the other
 closure proofs from it.
-
-% \begin{lemma}
-%   \(\bot\), \(\top\), and \(\mathbf{Bool}\) are split enumerable.
-% \end{lemma}
-% \begin{lemma} \label{split-enum-sigma}
-%   Split enumerability is closed under \(\Sigma\).
-%   \begin{equation}
-%     \frac{
-%       \mathcal{E}!(A) \; \; \; \Pi(x : A) , \mathcal{E}!(U(x))
-%     }{
-%       \mathcal{E}!(\Sigma(x : A) , U(x))
-%     }
-%   \end{equation}
-% \end{lemma}
-% From this we can derive split enumerability of non-dependent sums and products,
-% as both are definable in terms of \(\Sigma\).
-
 
 \section{The Category of Finite Sets}
 HoTT and CuTT seem to be especially suitable settings for formalisations of
