@@ -84,38 +84,33 @@ lhs″ zero (suc xr) (suc yl) (suc yr) = lhs″ zero xr yl (suc yr)
 lhs″ (suc zl) (suc xr) (suc yl) zero = lhs″ (suc zl) xr yl zero ; cong (_- xr) (sym (ℕ.+-suc zl yl))
 lhs″ (suc zl) (suc xr) (suc yl) (suc yr) = cong (_+ (yl - xr)) (cong (suc zl -_) (ℕ.+-suc (xr - yl) yr)) ; lhs″ zl (suc xr) (suc yl) yr
 
-refl″ : ∀ {n : ℕ} → n ≡ n
-refl″ = refl
-
 rhs‴ : ∀ x y z → x + y - z ≡ x - (z - y) + (y - z)
-rhs‴ zero zero zero = refl″
-rhs‴ zero zero (suc z) = refl″
-rhs‴ zero (suc y) zero = refl″
+rhs‴ zero zero zero = refl
+rhs‴ zero zero (suc z) = refl
+rhs‴ zero (suc y) zero = refl
+rhs‴ (suc x) zero zero = refl
+rhs‴ (suc x) (suc y) zero = refl
 rhs‴ zero (suc y) (suc z) = rhs‴ zero y z
-rhs‴ (suc x) zero zero = refl″
 rhs‴ (suc x) zero (suc z) = cong (_- z) (ℕ.+-idʳ x) ; sym (ℕ.+-idʳ (x - z))
-rhs‴ (suc x) (suc y) zero = refl″
 rhs‴ (suc x) (suc y) (suc z) = cong (_- z) (ℕ.+-suc x y) ; rhs‴ (suc x) y z
 
 rhs″ : ∀ xr yl yr zl → ((xr - yl) + yr) - zl ≡ xr - (zl - yr + yl) + (yr - zl)
 rhs″ (suc xr) (suc yl) yr zl = rhs″ xr yl yr zl ; cong (λ zy → suc xr - zy + (yr - zl)) (sym (ℕ.+-suc (zl - yr) yl))
 rhs″ zero zero zero zero = refl
-rhs″ zero zero zero (suc zl) = refl″
-rhs″ zero zero (suc yr) zero = refl″
+rhs″ zero zero zero (suc zl) = refl
+rhs″ zero zero (suc yr) zero = refl
 rhs″ zero zero (suc yr) (suc zl) = rhs″ zero zero yr zl
-rhs″ zero (suc yl) zero zero = refl″
-rhs″ zero (suc yl) zero (suc zl) = refl″
-rhs″ zero (suc yl) (suc yr) zero = refl″
+rhs″ zero (suc yl) zero zero = refl
+rhs″ zero (suc yl) zero (suc zl) = refl
+rhs″ zero (suc yl) (suc yr) zero = refl
 rhs″ zero (suc yl) (suc yr) (suc zl) = rhs″ zero (suc yl) yr zl
-rhs″ (suc xr) zero zero zero = refl″
-rhs″ (suc xr) zero (suc yr) zero = refl″
-rhs″ (suc xr) zero zero (suc zl) = cong (_- zl) (ℕ.+-idʳ xr) ; cong (xr -_) (sym (ℕ.+-idʳ zl)) ; sym (ℕ.+-idʳ (xr - (zl + zero)))
+rhs″ (suc xr) zero zero zero = refl
+rhs″ (suc xr) zero (suc yr) zero = refl
+rhs″ (suc xr) zero zero     (suc zl) = cong (_- zl) (ℕ.+-idʳ xr) ; cong (xr -_) (sym (ℕ.+-idʳ zl)) ; sym (ℕ.+-idʳ (xr - (zl + zero)))
 rhs″ (suc xr) zero (suc yr) (suc zl) = cong (_- zl) (ℕ.+-suc xr yr) ;  rhs‴ (suc xr) yr zl ; sym (cong (λ zy → suc xr - zy + (yr - zl)) (ℕ.+-idʳ (zl - yr)))
 
 ⟨⟩-assoc : Associative _+⟨⟩+_
-⟨⟩-assoc (xl ⟩⟨ xr    ) (zero   ⟩⟨ zero  ) (zl     ⟩⟨ zr) = cong₂ _+⟨⟩+_ (⟨⟩+0 (xl ⟩⟨ xr)) (sym (0+⟨⟩ (zl ⟩⟨ zr)))
-⟨⟩-assoc (xl ⟩⟨ zero  ) (yl     ⟩⟨ yr    ) (zl     ⟩⟨ zr) = cong (_⟩⟨ (left (yr ⟩-⟨ zl) + zr)) (sym (ℕ.+-assoc (right (yr ⟩-⟨ zl)) yl xl))
-⟨⟩-assoc (xl ⟩⟨ xr    ) (yl     ⟩⟨ yr    ) (zl     ⟩⟨ zr) = cong₂ _⟩⟨_ lhs rhs
+⟨⟩-assoc (xl ⟩⟨ xr ) (yl ⟩⟨ yr ) (zl ⟩⟨ zr) = cong₂ _⟩⟨_ lhs rhs
   where
 
   lhs′ : ∀ xr yl yr zl → right (left (xr ⟩-⟨ yl) + yr ⟩-⟨ zl) + right (xr ⟩-⟨ yl) ≡ right (xr ⟩-⟨ right (yr ⟩-⟨ zl) + yl)

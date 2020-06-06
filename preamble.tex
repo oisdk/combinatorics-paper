@@ -1,9 +1,15 @@
 \PassOptionsToPackage{dvipsnames}{xcolor}
-\documentclass{memoir}
+\documentclass[draft]{memoir}
 \chapterstyle{hangnum}
 \hangsecnum
 
 \usepackage{url}
+
+\ifdraftdoc
+\newcommand{\todo}[1]{\sidepar{TODO: \\ #1}}
+\else
+\newcommand{\todo}[1]{}
+\fi
 
 \usepackage[mono=false]{libertine}
 \usepackage{catchfilebetweentags}
@@ -104,9 +110,9 @@
 \renewcommand{\Varid}[1]{\mathit{#1}}
 \renewcommand{\Conid}[1]{\textcolor{OliveGreen}{\textsf{#1}}}
 \usepackage{multicol}
-\usepackage{todonotes}
 \usepackage{tabularx}
 \usepackage{pict2e}
+\usepackage{forest}
 
 % Proper double left paren [( (also ``plano-concave lens'')
 \newcommand{\lbparen}{%
@@ -141,6 +147,8 @@
 }
 
 \usepackage[square,numbers]{natbib}
+
+\usepackage{cancel}
 
 \PrerenderUnicode{í}
 
