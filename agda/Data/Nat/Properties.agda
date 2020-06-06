@@ -39,3 +39,7 @@ isSetℕ = Discrete→isSet discreteℕ
 
 _<_ : ℕ → ℕ → Type₀
 n < m = T (n Nat.< m)
+
++-assoc : ∀ x y z → (x + y) + z ≡ x + (y + z)
++-assoc zero y z = refl
++-assoc (suc x) y z = cong suc (+-assoc x y z)
