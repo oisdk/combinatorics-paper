@@ -144,9 +144,9 @@ filter p [] = []
 filter p (x ∷ xs) = if p x then x ∷ filter p xs else filter p xs
 
 example : List Disp
-example = map dispTree (take 1 (filter (λ e → runTree e == 576) (map (buildExpr nums) (ℰ!⟨Expr⟩ .fst))))
+example = map dispTree (take 1 (filter (λ e → runTree e == 765) (map (buildExpr nums) (ℰ!⟨Expr⟩ .fst))))
   where
-  nums = (100 ∷ 25 ∷ 1 ∷ 5 ∷ 3 ∷ [])
+  nums = (1 ∷ 3 ∷ 7 ∷ 10 ∷ 25 ∷ 50 ∷ [])
 
 -- Uncomment for a type error which contains the answer
 -- prf : example ≡ (lit 0 ∷ [])
