@@ -1,5 +1,4 @@
 \chapter{Countdown}
-\input{figures/countdown-transformation}
 Countdown is a well-known functional programming puzzle (with a spin-off TV show
 in the UK), first popularised as a puzzle in which to demonstrate functional
 algorithms in \cite{huttonCountdownProblem2002}.
@@ -30,16 +29,44 @@ Put simply, it is a way to:
   \item Arrange some or all of the given numbers into a valid expression
   \item Such that the expression, when evaluated, is equal to the target.
 \end{enumerate}
-Our task is to construct a \emph{type} for this transformation.
-We will mainly focus on the first of these two concerns: arranging a list of
-numbers into an expression using the given rules of Countdown.
+The first part of this solution is a transformation (from a list of numbers into
+an expression), and the second is a filter (into valid expressions which
+evaluate to the target).
 
-We can break this transformation into parts, displayed in
-figure~\ref{countdown-transform}.
-\section{Enumerating Combinations and Permutations}
-\section{Enumerating Binary Trees}
-\section{Filtering Out Invalid Expressions with the Subobject Classifier}
-\section{Filtering Out Duplicates with Quotients}
+In order to find and prove countdown solutions, we will prove that the above
+transformation is \emph{finite}: this will allow us to search exhaustively
+through the available transformations, proving the existence or absence of a
+transformation which is a solution.
+
+\input{figures/countdown-transformation}
+
+Let's first look at the transformation part.
+As shown in figure~\ref{countdown-transform}, we can break the transformation
+into four parts.
+First, we notice that we don't have to use all of the given numbers in the
+solution candidate: keeping or discarding input numbers, then, is the first step
+of the transformation (fig.~\ref{countdown-filter}).
+Next, we are allowed to rearrange the order of the numbers in our output: the
+next step of the transformation, then, applies a permutation to the selected
+numbers (fig.~\ref{countdown-permutation}).
+Thirdly, we can choose the operators we're going to use: note that for \(n\)
+chosen numbers, we can choose \(n - 1\) operators
+(fig.~\ref{countdown-operators}).
+Finally, we have to apply the binary operators with some parenthesising order
+(fig.~\ref{countdown-parens}).
+
+There are finitely many of each of these transformations: finitely many filters
+for \(n\) objects, for instance, or finitely many tuples of \(n\) operators.
+We are going to construct a type for each of these transformations, prove it
+finite, and use that type to search.
+The final, completed transformation will then be a dependent product of each
+constituent step.
+
+
+% \section{Filtering and Operators}
+% \section{Enumerating Binary Trees}
+% \section{Filtering Out Invalid Expressions with the Subobject Classifier}
+% \section{Filtering Out Duplicates with Quotients}
 
 
 %%% Local Variables:
