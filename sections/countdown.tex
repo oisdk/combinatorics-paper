@@ -6,17 +6,15 @@ The idea is simple: given a list of numbers, contestants must construct an
 arithmetic expression (using a small set of functions) using some or all of the
 numbers, to reach some target.
 
-Take the following problem as an example:
+Here's an example puzzle:
 \begin{gather*}
   \boxed{1} \boxed{3} \boxed{7} \boxed{10} \boxed{25} \boxed{50} \\
   \boxed{765} \tag{Target}
 \end{gather*}
-It has the following answer:
-\begin{equation}
-  3 \times ((7 \times (50 - 10)) - 25)
-\end{equation}
-Importantly, we do not have to use every number given to get to the target.
-For our problem, we will use the operators \(\times\), \(+\), and \(-\).
+We'll allow the use of \(\times\), \(+\), and \(-\).
+The answer is at the bottom of this page\footnotemark.
+
+\footnotetext{\rotatebox[origin=c]{180}{Answer: \(3 \times ((7 \times (50 - 10)) - 25)\)}}
 
 In this section we will develop a program/proof which can decide countdown
 problems totally.
@@ -33,38 +31,55 @@ The first part of this solution is a transformation (from a list of numbers into
 an expression), and the second is a filter (into valid expressions which
 evaluate to the target).
 
-In order to find and prove countdown solutions, we will prove that the above
-transformation is \emph{finite}: this will allow us to search exhaustively
-through the available transformations, proving the existence or absence of a
-transformation which is a solution.
+We are going to define this transformation/filter pair as a type.
+We will then show that this type is itself finite, and from there we will be
+able to enumerate all possible solutions, derive the cardinality of the
+solutions, and so on.
 
 \input{figures/countdown-transformation}
 
-Let's first look at the transformation part.
-As shown in figure~\ref{countdown-transform}, we can break the transformation
-into four parts.
-First, we notice that we don't have to use all of the given numbers in the
-solution candidate: keeping or discarding input numbers, then, is the first step
-of the transformation (fig.~\ref{countdown-filter}).
-Next, we are allowed to rearrange the order of the numbers in our output: the
-next step of the transformation, then, applies a permutation to the selected
-numbers (fig.~\ref{countdown-permutation}).
-Thirdly, we can choose the operators we're going to use: note that for \(n\)
-chosen numbers, we can choose \(n - 1\) operators
+Let's first look at the transformation aspect of the solution.
+We have broken this transformation into four steps in
+figure~\ref{countdown-transform}, each one feeding into the next.
+
+First, we select which numbers in the input we are going to use in our solution
+candidate: this is the filtering step of the transformation
+(fig.~\ref{countdown-filter}).
+Next we decide the order of the selected numbers in the output: this is the
+permutation step of the transformation (fig.~\ref{countdown-permutation}).
+We then select \(n-1\) operators to use with our \(n\) chosen numbers
 (fig.~\ref{countdown-operators}).
 Finally, we have to apply the binary operators with some parenthesising order
 (fig.~\ref{countdown-parens}).
 
-There are finitely many of each of these transformations: finitely many filters
-for \(n\) objects, for instance, or finitely many tuples of \(n\) operators.
-We are going to construct a type for each of these transformations, prove it
-finite, and use that type to search.
-The final, completed transformation will then be a dependent product of each
-constituent step.
+Each of these transformations can be represented by a finite object: a filter
+for \(n\) items, for instance, can be represented as an \(n\)-tuple of bools.
+The full transformation itself will be a product of each of these intermediate
+steps, which itself is finite by closure under \(\Sigma\).
 
+In this section we will use split-enumerability as our finiteness predicate.
+Most of what we examine would work equally well with the other predicates, but
+split enumerability is the most powerful and the simplest to define.
+Since we will work only with set types, there won't be any need to look at
+non-set predicates like manifest enumerability.
+\section{Filtering and Operators}
+The first component of the transformation is relatively simple: a filter.
+We can represent this transformation as an \(n\)-tuple of bools.
+The filter in fig.~\ref{countdown-filter}, for instance, could be represented
+with the following:
+\begin{equation}
+  \langle 0 , 1 , 1 , 1 , 1 , 1  \rangle
+\end{equation}
+The proof that this type is finite is straightforward: by induction on \(n\), we
+see that any \(n\)-tuple of finite things is itself finite.
 
-% \section{Filtering and Operators}
-% \section{Enumerating Binary Trees}
+At this point we can look forward slightly to an upcoming transformation and
+prove it finite: the selection of \(n\) operators is \emph{also} constructed
+using an \(n\)-tuple.
+Clearly there are finitely many operators available to us, so an \(n\)-tuple of
+operators is finite for the same reason as the filter.
+\section{Permutations}
+\section{Enumerating Binary Trees}
 % \section{Filtering Out Invalid Expressions with the Subobject Classifier}
 % \section{Filtering Out Duplicates with Quotients}
 

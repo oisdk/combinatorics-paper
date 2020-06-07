@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --postfix-projections --safe #-}
 
 module Countdown where
@@ -151,3 +152,4 @@ example = map dispTree (take 1 (filter (λ e → runTree e == 765) (map (buildEx
 -- Uncomment for a type error which contains the answer
 -- prf : example ≡ (lit 0 ∷ [])
 -- prf = refl
+\end{code}

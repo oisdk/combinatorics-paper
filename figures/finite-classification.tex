@@ -1,6 +1,6 @@
 \begin{figure*}
   \centering
-  \begin{tikzcd}[cramped, row sep=small]
+  \begin{tikzcd}[cramped, row sep=small, column sep=2.3em]
     {} &
     {} \ar[ddddd, dash, start anchor={[yshift=4ex]}, end anchor={[yshift=-4ex]}] &
     \text{Non Discrete} &
@@ -16,21 +16,21 @@
     &
     {}
     \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \text{Ordered} &
     &
-    &
-    \text{Manifest Enumerable}
+    \text{\parbox{1.8cm}{\centering Manifest Enumerable}}
     \ar[
       from=rr,
       bend left=15,
       crossing over,
       start anchor=south west,
-      end anchor=south east
+      end anchor={[yshift=-2ex]east}
       ]
     \ar[
       rr,
       bend left=15,
       "\text{Discrete}" description,
-      start anchor=north east,
+      start anchor={[yshift=2ex]east},
       end anchor=north west
       ]
     \ar[ddd, crossing over]
@@ -40,7 +40,7 @@
       \ar[d, xshift=-1ex, bend right=30]
     &
     \\ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \text{Ordered} &
+    &
     &
     &
     &
@@ -83,3 +83,8 @@
     discrete (imply decidable equality) and whether they imply a total order.}
   \label{finite-classification}
 \end{figure*}%
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../paper"
+%%% End:

@@ -75,7 +75,9 @@ open BishopClosures
 \end{code}
 %<*times-clos-impl>
 \begin{code}
-_∥×∥_ : 𝒞 A → 𝒞 B → 𝒞 (A × B)
+_∥×∥_ :  𝒞 A →
+         𝒞 B →
+         𝒞 (A × B)
 xs ∥×∥ ys = do
   x ← xs
   y ← ys

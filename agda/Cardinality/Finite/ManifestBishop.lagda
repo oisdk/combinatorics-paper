@@ -83,7 +83,9 @@ module _ where
 \end{code}
 %<*times-clos-sig>
 \begin{code}
-    _|×|_ : ℬ A → ℬ B → ℬ (A × B)
+    _|×|_ :  ℬ A →
+             ℬ B →
+             ℬ (A × B)
 \end{code}
 %</times-clos-sig>
 \begin{code}
