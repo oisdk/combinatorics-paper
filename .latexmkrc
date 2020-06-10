@@ -1,5 +1,6 @@
 system("bash ./init-missing-lagda.sh");
 system("bash ./init-lhs.sh");
+system("mkdir", "-p", "out/sections");
 add_cus_dep('lagda','tex',0,'lagda2tex');
 add_cus_dep('lhs','tex',0,'lhs2tex');
 @default_files = ('paper.tex');
