@@ -1,30 +1,19 @@
 \PassOptionsToPackage{dvipsnames}{xcolor}
-\documentclass[acmsmall,review,anonymous]{acmart}
-\settopmatter{printfolios=true}
-
-\acmJournal{PACMPL}
-\acmVolume{1}
-\acmNumber{POPL}
-\acmArticle{1}
-\acmYear{2018}
-\acmMonth{1}
-\acmDOI{} % \acmDOI{10.1145/nnnnnnn.nnnnnnn}
-\startPage{1}
-
-\bibliographystyle{ACM-Reference-Format}
-\citestyle{acmauthoryear}
-
-
-% The thesis is organised by chapter, whereas the paper by section.
-% This lets us change between the two without any changes to the tex files.
-\let\chapter\section
-\let\section\subsection
-\let\subsection\subsubsection
-\let\subsubsection\paragraph
+\documentclass[draft]{memoir}
 
 \usepackage{graphicx}
+\chapterstyle{veelo}
+\hangsecnum
+
 \usepackage{url}
 
+\ifdraftdoc
+\newcommand{\todo}[1]{\sidepar{TODO: \\ #1}}
+\else
+\newcommand{\todo}[1]{}
+\fi
+
+\usepackage[mono=false]{libertine}
 \usepackage{catchfilebetweentags}
 \input{agda}
 \AgdaNoSpaceAroundCode{}
@@ -46,9 +35,29 @@
   linecolor=white,
   tikzsetting={draw=black, line width = 1pt,dotted},
 ]{dottedbox}
-\newenvironment{agdalisting}{\begin{figure}\begin{dottedbox}\footnotesize}{\end{dottedbox}\end{figure}}
+% If a figure is desired:
+\newenvironment{agdalisting}{\begin{marginfigure}\begin{dottedbox}\footnotesize}{\end{dottedbox}\end{marginfigure}}
+% \newenvironment{agdalisting}{\begin{marginpar}\begin{dottedbox}}{\end{dottedbox}\end{marginpar}}
 
-\theoremstyle{definition}
+
+
+\newtheoremstyle{roman}
+{.6\baselineskip} % Space above
+{.6\baselineskip} % Space below
+{} % Body font
+{} % Indent amount
+{} % Theorem head font
+{} % Punctuation after theorem head
+{0pt} % Space after theorem head
+{%
+\noindent%
+\raisebox{0pt}[0pt][0pt]{%
+\llap{%
+\parbox[t][][t]{.7\marginparwidth}{%
+\raggedleft%
+{\bfseries\thmname{#1}\thmnumber{ #2}.}\thmnote{\\(#3)}}\hspace{\marginparsep}}}}
+
+\theoremstyle{roman}
 \newtheorem{definition}{Definition}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
@@ -108,8 +117,6 @@
 \usepackage{forest}
 \usepackage{wrapfig}
 
-\usepackage{todonotes}
-
 % Proper double left paren [( (also ``plano-concave lens'')
 \newcommand{\lbparen}{%
   \mathopen{%
@@ -141,6 +148,8 @@
     }%
   }%
 }
+
+\usepackage[square,numbers]{natbib}
 
 \usepackage{cancel}
 
@@ -180,6 +189,19 @@
   & \; #1 &:&& \; #2 ;
   \firstclauseofinductivetypefalse
 }
+% \mdfdefinestyle{proof}{
+%   leftmargin = 0pt,
+%   innerleftmargin = 1em,
+%   innertopmargin = 0pt,
+%   innerbottommargin = 0pt,
+%   innerrightmargin = 0pt,
+%   rightmargin = 0pt,
+%   % linewidth = 1pt,
+%   topline = false,
+%   rightline = false,
+%   bottomline = false,
+% }
+% \surroundwithmdframed[style=proof]{proof}
 
 %%% Local Variables:
 %%% mode: latex
