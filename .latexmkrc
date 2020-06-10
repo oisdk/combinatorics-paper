@@ -13,3 +13,6 @@ sub lhs2tex {
     my $base = shift @_;
     return system("bash ./haskell-from-toplevel.sh $base.lhs");
 }
+
+$aux_dir = 'out';
+$out_dir = 'out';
