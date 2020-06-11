@@ -11,6 +11,7 @@ data 𝔹 : Type₀ where
   1ᵇ∷_ : 𝔹 → 𝔹
   2ᵇ∷_ : 𝔹 → 𝔹
 
+
 inc : 𝔹 → 𝔹
 inc [] = 1ᵇ∷ []
 inc (1ᵇ∷ xs) = 2ᵇ∷ xs
@@ -19,15 +20,6 @@ inc (2ᵇ∷ xs) = 1ᵇ∷ inc xs
 ⟦_⇑⟧ : ℕ → 𝔹
 ⟦ zero  ⇑⟧ = []
 ⟦ suc n ⇑⟧ = inc ⟦ n ⇑⟧
-
-open import Literals.Number
-open import Data.Unit
-open import Data.Nat.Literals
-
-instance
-  numberBin : Number 𝔹
-  Number.Constraint numberBin = λ _ → ⊤
-  Number.fromNat numberBin = λ n → ⟦ n ⇑⟧
 
 ⟦_⇓⟧ : 𝔹 → ℕ
 ⟦ [] ⇓⟧ = 0
@@ -68,16 +60,6 @@ double [] = []
 double (1ᵇ∷ xs) = 2ᵇ∷ double xs
 double (2ᵇ∷ xs) = 2ᵇ∷ 1ᵇ∷ xs
 
-by1 : ℕ → 𝔹 → 𝔹
-by1 zero    xs = xs
-by1 (suc n) xs = 1ᵇ∷ by1 n xs
-
-doublen : ℕ → 𝔹 → 𝔹
-doublen _ [] = []
-doublen n (1ᵇ∷ xs) = 2ᵇ∷ by1 n (double xs)
-doublen n (2ᵇ∷ xs) = 2ᵇ∷ 1ᵇ∷ by1 n xs
-
-
 infixl 7 _*_
 _*_ : 𝔹 → 𝔹 → 𝔹
 xs * [] = []
@@ -94,51 +76,72 @@ xs * (2ᵇ∷ ys) = go xs
   go (1ᵇ∷ xs) = 2ᵇ∷ ys + go xs
   go (2ᵇ∷ xs) = 2ᵇ∷ (1ᵇ∷ ys) + go xs
 
-mutual
-  dec′ : 𝔹 → 𝔹
-  dec′ [] = []
-  dec′ (1ᵇ∷ xs) = 2ᵇ∷ dec′ xs
-  dec′ (2ᵇ∷ xs) = 2ᵇ∷ 1ᵇ∷ xs
+dec′ : 𝔹 → 𝔹
+dec : 𝔹 → 𝔹
 
-  dec : 𝔹 → 𝔹
-  dec [] = []
-  dec (2ᵇ∷ xs) = 1ᵇ∷ xs
-  dec (1ᵇ∷ xs) = dec′ xs
+dec′ [] = []
+dec′ (1ᵇ∷ xs) = 2ᵇ∷ dec′ xs
+dec′ (2ᵇ∷ xs) = 2ᵇ∷ 1ᵇ∷ xs
 
-open import Data.Maybe
+dec [] = []
+dec (2ᵇ∷ xs) = 1ᵇ∷ xs
+dec (1ᵇ∷ xs) = dec′ xs
 
+sub₄ : (𝔹 → 𝔹) → (𝔹 → 𝔹) → 𝔹 → 𝔹 → 𝔹
+sub₃ : (𝔹 → 𝔹) → (𝔹 → 𝔹) → 𝔹 → 𝔹 → 𝔹
 
-sub  : 𝔹 → 𝔹 → Maybe 𝔹
-sub′ : ℕ → 𝔹 → 𝔹 → Maybe 𝔹
+sub₄ o k []           ys       = []
+sub₄ o k (1ᵇ∷ xs)     (1ᵇ∷ ys) = sub₄ (o ∘ k) 2ᵇ∷_ xs ys
+sub₄ o k (2ᵇ∷ xs)     (2ᵇ∷ ys) = sub₄ (o ∘ k) 2ᵇ∷_ xs ys
+sub₄ o k (1ᵇ∷ xs)     (2ᵇ∷ ys) = sub₄ o (k ∘ 1ᵇ∷_) xs ys
+sub₄ o k (2ᵇ∷ xs)     (1ᵇ∷ ys) = sub₃ o (k ∘ 1ᵇ∷_) xs ys
+sub₄ o k (1ᵇ∷ [])     []       = o []
+sub₄ o k (1ᵇ∷ 1ᵇ∷ xs) []       = o (k (1ᵇ∷ (dec′ xs)))
+sub₄ o k (1ᵇ∷ 2ᵇ∷ xs) []       = o (k (1ᵇ∷ (1ᵇ∷ xs)))
+sub₄ o k (2ᵇ∷ xs)     []       = o (k (dec′ xs))
 
-sub′ n [] [] = just []
-sub′ n [] ys = nothing
-sub′ n xs [] = just (doublen n xs)
-sub′ n (1ᵇ∷ xs) (1ᵇ∷ ys) = sub′ (suc n) xs ys
-sub′ n (2ᵇ∷ xs) (2ᵇ∷ ys) = sub′ (suc n) xs ys
-sub′ n (2ᵇ∷ xs) (1ᵇ∷ ys) with sub′ zero xs ys
-... | nothing = nothing
-... | just zs = just (2ᵇ∷ by1 n zs)
-sub′ n (1ᵇ∷ xs) (2ᵇ∷ ys) with sub′ zero xs ys
-... | nothing = nothing
-... | just (2ᵇ∷ zs) = just (2ᵇ∷ by1 n (double zs))
-... | just _ = nothing
+sub₃ o k []       []       = o []
+sub₃ o k []       (1ᵇ∷ ys) = []
+sub₃ o k []       (2ᵇ∷ ys) = []
+sub₃ o k (1ᵇ∷ xs) []       = o (k (dec′ xs))
+sub₃ o k (2ᵇ∷ xs) []       = o (k (1ᵇ∷ xs))
+sub₃ o k (1ᵇ∷ xs) (1ᵇ∷ ys) = sub₃ o (k ∘ 1ᵇ∷_) xs ys
+sub₃ o k (2ᵇ∷ xs) (2ᵇ∷ ys) = sub₃ o (k ∘ 1ᵇ∷_) xs ys
+sub₃ o k (1ᵇ∷ xs) (2ᵇ∷ ys) = sub₄ (o ∘ k) 2ᵇ∷_ xs ys
+sub₃ o k (2ᵇ∷ xs) (1ᵇ∷ ys) = sub₃ (o ∘ k) 2ᵇ∷_ xs ys
 
-sub [] [] = just []
-sub [] ys = nothing
-sub xs [] = just xs
-sub (1ᵇ∷ xs) (1ᵇ∷ ys) = sub′ zero xs ys
-sub (2ᵇ∷ xs) (2ᵇ∷ ys) = sub′ zero xs ys
-sub (2ᵇ∷ xs) (1ᵇ∷ ys) with sub xs ys
-... | nothing = nothing
-... | just zs = just (1ᵇ∷ zs)
-sub (1ᵇ∷ xs) (2ᵇ∷ ys) with sub xs ys
-... | nothing = nothing
-... | just [] = nothing
-... | just zs = just (dec (double zs))
+sub₂ : (𝔹 → 𝔹) → 𝔹 → 𝔹 → 𝔹
+sub₂ k []       ys       = []
+sub₂ k (1ᵇ∷ xs) []       = k (dec′ xs)
+sub₂ k (2ᵇ∷ xs) []       = k (1ᵇ∷ xs)
+sub₂ k (1ᵇ∷ xs) (1ᵇ∷ ys) = sub₂ (1ᵇ∷_ ∘ k) xs ys
+sub₂ k (2ᵇ∷ xs) (2ᵇ∷ ys) = sub₂ (1ᵇ∷_ ∘ k) xs ys
+sub₂ k (1ᵇ∷ xs) (2ᵇ∷ ys) = sub₄ k 2ᵇ∷_ xs ys
+sub₂ k (2ᵇ∷ xs) (1ᵇ∷ ys) = sub₃ k 2ᵇ∷_ xs ys
 
+sub₁ : (𝔹 → 𝔹) → 𝔹 → 𝔹 → 𝔹
+sub₁ k  xs      []       = k xs
+sub₁ k []       (1ᵇ∷ ys) = []
+sub₁ k []       (2ᵇ∷ ys) = []
+sub₁ k (1ᵇ∷ xs) (1ᵇ∷ ys) = sub₃ k 2ᵇ∷_ xs ys
+sub₁ k (2ᵇ∷ xs) (2ᵇ∷ ys) = sub₃ k 2ᵇ∷_ xs ys
+sub₁ k (2ᵇ∷ xs) (1ᵇ∷ ys) = sub₁ (1ᵇ∷_ ∘ k) xs ys
+sub₁ k (1ᵇ∷ xs) (2ᵇ∷ ys) = sub₂ (1ᵇ∷_ ∘ k) xs ys
+
+infixl 6 _-_
 _-_ : 𝔹 → 𝔹 → 𝔹
-xs - ys = maybe [] id (sub xs ys)
+_-_ = sub₁ id
+
+_≡ᵇ_ : 𝔹 → 𝔹 → Bool
+[] ≡ᵇ [] = true
+[] ≡ᵇ (1ᵇ∷ ys) = false
+[] ≡ᵇ (2ᵇ∷ ys) = false
+(1ᵇ∷ xs) ≡ᵇ [] = false
+(1ᵇ∷ xs) ≡ᵇ (1ᵇ∷ ys) = xs ≡ᵇ ys
+(1ᵇ∷ xs) ≡ᵇ (2ᵇ∷ ys) = false
+(2ᵇ∷ xs) ≡ᵇ [] = false
+(2ᵇ∷ xs) ≡ᵇ (1ᵇ∷ ys) = false
+(2ᵇ∷ xs) ≡ᵇ (2ᵇ∷ ys) = xs ≡ᵇ ys
 
 -- testers : ℕ → Type₀
 -- testers n = bins n n ≡ nats n n
@@ -164,5 +167,5 @@ xs - ys = maybe [] id (sub xs ys)
 --     m ← upTo id ms
 --     pure ⟦ n Nat.- m ⇑⟧
 
--- _ : testers 30
+-- _ : testers 100
 -- _ = refl
