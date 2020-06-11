@@ -1,2 +1,2 @@
-paper.pdf: paper.tex
-	latexmk -pdf
+out/paper.pdf: paper.tex
+	latexmk -pdf -bibtex
