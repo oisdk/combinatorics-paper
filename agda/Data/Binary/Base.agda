@@ -68,6 +68,16 @@ double [] = []
 double (1ᵇ∷ xs) = 2ᵇ∷ double xs
 double (2ᵇ∷ xs) = 2ᵇ∷ 1ᵇ∷ xs
 
+by1 : ℕ → 𝔹 → 𝔹
+by1 zero    xs = xs
+by1 (suc n) xs = 1ᵇ∷ by1 n xs
+
+doublen : ℕ → 𝔹 → 𝔹
+doublen _ [] = []
+doublen n (1ᵇ∷ xs) = 2ᵇ∷ by1 n (double xs)
+doublen n (2ᵇ∷ xs) = 2ᵇ∷ 1ᵇ∷ by1 n xs
+
+
 infixl 7 _*_
 _*_ : 𝔹 → 𝔹 → 𝔹
 xs * [] = []
@@ -95,8 +105,43 @@ mutual
   dec (2ᵇ∷ xs) = 1ᵇ∷ xs
   dec (1ᵇ∷ xs) = dec′ xs
 
--- testers : ℕ → ℕ → Type₀
--- testers n m = bins n m ≡ nats n m
+open import Data.Maybe
+
+
+sub  : 𝔹 → 𝔹 → Maybe 𝔹
+sub′ : ℕ → 𝔹 → 𝔹 → Maybe 𝔹
+
+sub′ n [] [] = just []
+sub′ n [] ys = nothing
+sub′ n xs [] = just (doublen n xs)
+sub′ n (1ᵇ∷ xs) (1ᵇ∷ ys) = sub′ (suc n) xs ys
+sub′ n (2ᵇ∷ xs) (2ᵇ∷ ys) = sub′ (suc n) xs ys
+sub′ n (2ᵇ∷ xs) (1ᵇ∷ ys) with sub′ zero xs ys
+... | nothing = nothing
+... | just zs = just (2ᵇ∷ by1 n zs)
+sub′ n (1ᵇ∷ xs) (2ᵇ∷ ys) with sub′ zero xs ys
+... | nothing = nothing
+... | just (2ᵇ∷ zs) = just (2ᵇ∷ by1 n (double zs))
+... | just _ = nothing
+
+sub [] [] = just []
+sub [] ys = nothing
+sub xs [] = just xs
+sub (1ᵇ∷ xs) (1ᵇ∷ ys) = sub′ zero xs ys
+sub (2ᵇ∷ xs) (2ᵇ∷ ys) = sub′ zero xs ys
+sub (2ᵇ∷ xs) (1ᵇ∷ ys) with sub xs ys
+... | nothing = nothing
+... | just zs = just (1ᵇ∷ zs)
+sub (1ᵇ∷ xs) (2ᵇ∷ ys) with sub xs ys
+... | nothing = nothing
+... | just [] = nothing
+... | just zs = just (dec (double zs))
+
+_-_ : 𝔹 → 𝔹 → 𝔹
+xs - ys = maybe [] id (sub xs ys)
+
+-- testers : ℕ → Type₀
+-- testers n = bins n n ≡ nats n n
 --   where
 --   open import Data.List
 --   open import Data.List.Syntax
@@ -107,23 +152,17 @@ mutual
 --   upTo f zero = []
 --   upTo f (suc n) = f zero List.∷ upTo (f ∘ suc) n
 
---   bins : ℕ → ℕ → List ℕ
+--   bins : ℕ → ℕ → List 𝔹
 --   bins ns ms = do
 --     n ← upTo id ns
 --     m ← upTo id ms
---     pure ⟦ ⟦ n ⇑⟧ - ⟦ m ⇑⟧ ⇓⟧
+--     pure (⟦ n ⇑⟧ - ⟦ m ⇑⟧)
 
---   nats : ℕ → ℕ → List ℕ
+--   nats : ℕ → ℕ → List 𝔹
 --   nats ns ms = do
 --     n ← upTo id ns
 --     m ← upTo id ms
---     pure (n Nat.- m)
+--     pure ⟦ n Nat.- m ⇑⟧
 
--- ex = ⟦ 4 ⇑⟧
-
--- -- ex :  ⟦ 5 ⇑⟧ - ⟦ 4 ⇑⟧  ≡ ⟦ 1 ⇑⟧
--- -- ex = refl
-
-
--- -- _ : testers 5 5
--- -- _ = refl
+-- _ : testers 30
+-- _ = refl
