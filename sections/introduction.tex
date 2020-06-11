@@ -1,121 +1,9 @@
 \chapter{Introduction}
 \section{Foreword}
-Proofs in constructive mathematics are often more substantial than their
-classical counterparts.
-``Substantial'' here doesn't mean the literal length of the proofs (although the
-double meaning is not lost on anyone who has had to struggle with a modern
-constructive proof assistant), but rather refers to their \emph{content}: a
-constructive proof contains more \emph{stuff} than a classical one.
-
-If we were to prove that a set was finite in classical mathematics, we might
-show that it is in bijection with another finite set, say a finite prefix of the
-natural numbers.
-In semi-formal notation, to say that a set \(A\) is finite we would show the
-following:
-\begin{equation} \label{example-finite}
-  \mathbf{Finite}(A) \coloneqq \exists (n : \mathbb{N}) . \; A \Leftrightarrow \left\{ m \mid m < n\right\}
-\end{equation}
-Where \(A~\Leftrightarrow~B\) means ``a bijection between \(A\) and \(B\)''.
-
-Classically, a proof of equation~\ref{example-finite} is nothing more than
-\emph{evidence} for the proposition of equation~\ref{example-finite}.
-A constructive proof of \ref{example-finite}, however, is a mathematical object
-in its own right, containing:
-\begin{enumerate}
-  \item A number \(n\) representing the cardinality of \(A\).
-  \item A function from \(A\) to \(\left\{ m \mid m < n \right\}\).
-  \item A function from \(\left\{ m \mid m < n \right\}\) to \(A\).
-\end{enumerate}
-In other words, it makes sense (in constructive mathematics) to talk about a
-function of type \(\mathbf{Finite}(A)~\rightarrow~\mathbb{N}\), which takes a
-\emph{proof} of the finiteness of \(A\) and returns \(A\)'s cardinality.
-
-Such functions are perhaps even more concrete than this description suggests:
-many constructive proofs are in fact computer programs in disguise (and
-vice-versa \cite{wadlerPropositionsTypes2015}).
-All ``proofs'' in this paper correspond to honest-to-goodness proofs in a
-programming language (Cubical Agda \cite{vezzosiCubicalAgdaDependently2019} in
-our case) which can be run on a computer to produce real output.
-
-We have now hopefully established, albeit informally, what it means for
-constructive proofs to be ``substantial''.
-Clearly this extra information carried by proofs can add richness to their
-study: we will see, for instance, no fewer than five finiteness predicates in
-this paper which would collapse to one in a classical setting.
-The extra information also presents a challenge, however: occasionally we will
-see that we have revealed \emph{too much} information while proving some
-property.
-
-Consider the category of finite sets.
-We will explore this category in much more detail later, but for now we just
-need to know that the objects of this category are---shockingly---finite sets.
-Constructively, the objects of this category can be thought of as \emph{pairs},
-where the first element is a set (like \(\left\{ \text{True}, \text{False}
-\right\}\), the two-element set of the booleans) and the second is a proof that
-that set is finite.
-If we take those proofs to be the kind given in equation~\ref{example-finite},
-we should see that they contain a bijection from the booleans to the set
-\(\left\{ 0, 1 \right\}\): however \emph{two} such bijections exist!
-\begin{figure}[h]
-  \centering
-  \begin{subfigure}[b]{.45\textwidth}
-    \centering
-    \begin{tikzcd}
-      \text{True}  \ar[rr, leftrightarrow] & & 0 \\
-      \text{False} \ar[rr, leftrightarrow] & & 1
-    \end{tikzcd}
-  \end{subfigure}
-  \begin{subfigure}[b]{.45\textwidth}
-    \centering
-    \begin{tikzcd}
-      \text{True}  \ar[rrd, leftrightarrow, start anchor=south east, end anchor=north west] & & 0 \\
-      \text{False} \ar[rru, leftrightarrow, start anchor=north east, end anchor=south west, crossing over] & & 1
-    \end{tikzcd}
-  \end{subfigure}
-  \caption{The Two Bijections Between the Booleans and \(\left\{ 0, 1 \right\}\)}
-\end{figure}
-This means that where we wanted one object to correspond to the finite set
-\(\left\{ \text{True}, \text{False} \right\}\), we instead have two.
-In fact, for any finite set of cardinality \(n\) we will have \(n!\) finiteness
-proofs, and therefore \(n!\) objects.
-We have constructed, in other words, entirely the wrong category.
-
-Being able to hide the extra information in a constructive proof when we need to
-is clearly important.
-HoTT (and CuTT by extension) facilitate this hiding: how exactly it is
-accomplished will be explored in the subsequent sections.
-
-Finally, for all of its benefits, constructive mathematics (especially
-dependently-typed constructive mathematics on a computer) still suffers from
-many painful drawbacks.
-As already hinted at, proofs in a constructive setting can tend to be verbose,
-especially when the arbiter of correctness is as strict as a computer, which
-neither understands nor trusts the time-honoured technique of ``the other cases
-are obviously true''.
-While the goal of using a computer to automate the boring parts of a proof still
-seems attainable, too often getting a computer involved in a proof means adding
-thousands of lines of tedium to satisfy its lack of intuition.
-
-Simple proof search over a finite domain is a simple, if effective, way to
-relieve some of the tedium.
-Many libraries in Agda, Coq, and other languages make use of this fact.
-While the idea for finite proof search is simple, we found that implementing one
-revealed a number of interesting theoretical considerations:
-\begin{description}
-  \item[How should we construct search spaces?]
-    We found that a \(Pi\)-pretopos provided the appropriate ``generator
-    language'' for constructing search spaces for finite types.
-  \item[How do we deal with functions?]
-    We of course would like to be able to search over functions: \todo{?}
-  \item[How do we talk about ``searchability''?]
-    \todo{Omniscience}
-\end{description}
-Finiteness is a prime example of a phenomenon which happens quite frequently in
-dependently-typed constructive mathematics: through building a practical program
-we unearth theoretically interesting results.
-\todo{rephrase}
+\todo[inline]{Foreword}
 \section{Contributions}
-We are interested in constructive notions of finiteness.
+We are interested in constructive notions of finiteness, formalised in Cubical
+Type Theory.
 In contrast to classical finiteness, in a constructive setting there is a wide
 variety of predicates which all have some claim to being the formal
 interpretation of ``finiteness''.
@@ -125,6 +13,8 @@ restrictiveness (i.e. how many types conform to its particular variety of
 finiteness).
 We will explore five of these predicates, proving formally their relations and
 implications.
+
+\input{figures/finite-classification}
 
 We will then focus on one of the predicates: decidable Kuratowski finiteness.
 We will construct a category of decidable Kuratowski-finite types, and show that
@@ -140,7 +30,6 @@ library, and allows for a simple and principled API, and we will demonstrate how
 some of the more complex theoretical results allow for a more powerful library
 with capabilities not seen in comparable proof search libraries.
 
-\input{figures/finite-classification}
 
 \subsection{Finiteness Predicates}
 Our first contribution is a cataloguing and characterisation of five finiteness
