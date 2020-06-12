@@ -81,7 +81,8 @@ additional to that.
 After the finite predicates, we will briefly look at the infinite countable
 types, and classify them in a parallel way to the finite predicates
 (Section~\ref{infinite}).
-\todo{Expand}
+We will see that we lose closure under function arrows, but we gain it under the
+Kleene star (Theorem~\ref{split-countability-sigma}).
 \subsection{Search}
 All of our work is formalised in Cubical Agda
 \cite{vezzosiCubicalAgdaDependently2019}: as a result, the constructive
@@ -89,7 +90,18 @@ interpretation of each proof is actually a program which can be run on a
 computer.
 In finiteness in particular, these programs are particularly useful for
 exhaustive search.
-\todo{Expand}
+
+We will use the countdown problem as a running example throughout the paper: we
+will show how to prove that any given puzzle has a finite number of solutions,
+and from that we will show how to enumerate those solutions, thereby solving the
+puzzle in a verified way.
+
+In Section~\ref{search} we will package up the ``search'' aspect of finiteness
+into a library for proof search: similar libraries have been built in
+\cite{fruminFiniteSetsHomotopy2018} and
+\cite{firsovDependentlyTypedProgramming2015}.
+Our library differs from those in two important ways: firstly, it is strictly
+more powerful, 
 \section{Notation and Background}
 \subsection{Notation}
 We work in Cubical Type Theory \cite{cohenCubicalTypeTheory2016}.
