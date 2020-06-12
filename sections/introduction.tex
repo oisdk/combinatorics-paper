@@ -107,6 +107,31 @@ type: this allows transport of proofs between types of the same cardinality.
 Finally, through generic programming we provide a simple syntax for stating
 properties which mimics that of QuickCheck.
 We also ground the library in the theoretical notions of omniscience.
+\section{Countdown}
+Countdown is a well-known functional programming puzzle (later turned into a TV
+show in the UK), first popularised as a puzzle in which to demonstrate
+functional algorithms in \cite{huttonCountdownProblem2002}.
+As a running example in this paper, we will produce a verified program which
+lists all solutions to a given countdown puzzle: here we will briefly explain
+the game and our strategy for solving it.
+
+The idea behind countdown is simple: given a list of numbers, contestants must
+construct an arithmetic expression (using a small set of functions) using some
+or all of the numbers, to reach some target.
+Here's an example puzzle:
+\begin{gather*}
+  \boxed{1} \boxed{3} \boxed{7} \boxed{10} \boxed{25} \boxed{50} \\
+  \boxed{765} \tag{Target}
+\end{gather*}
+We'll allow the use of \(\times\), \(+\), and \(-\).
+The answer is at the bottom of this page\footnotemark.
+
+\footnotetext{\rotatebox[origin=c]{180}{Answer: \(3 \times (7 \times (50 - 10) - 25)\)}}
+
+Our strategy for finding solutions to a given puzzle is to describe precisely
+the type of solutions to a puzzle, and then show that that type is finite.
+So what is a ``solution'' to 
+
 \section{Notation and Background}
 \subsection{Notation}
 We work in Cubical Type Theory \cite{cohenCubicalTypeTheory2016}.
