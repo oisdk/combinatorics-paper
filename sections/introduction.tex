@@ -100,8 +100,13 @@ In Section~\ref{search} we will package up the ``search'' aspect of finiteness
 into a library for proof search: similar libraries have been built in
 \cite{fruminFiniteSetsHomotopy2018} and
 \cite{firsovDependentlyTypedProgramming2015}.
-Our library differs from those in two important ways: firstly, it is strictly
-more powerful, 
+Our library differs from those in three important ways: firstly, it is strictly
+more powerful, as it allows for search over function types.
+Secondly, finiteness proofs also provide equivalence proofs to any other finite
+type: this allows transport of proofs between types of the same cardinality.
+Finally, through generic programming we provide a simple syntax for stating
+properties which mimics that of QuickCheck.
+We also ground the library in the theoretical notions of omniscience.
 \section{Notation and Background}
 \subsection{Notation}
 We work in Cubical Type Theory \cite{cohenCubicalTypeTheory2016}.
