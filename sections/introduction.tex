@@ -3,99 +3,93 @@
 \todo[inline]{Foreword}
 \section{Contributions}
 We are interested in constructive notions of finiteness, formalised in Cubical
-Type Theory.
+Type Theory \cite{cohenCubicalTypeTheory2016}.
+In this paper we will explore five such notions of finiteness, including their
+categorical interpretation, and use them to build a simple proof-search library
+facilitated in a fundamental way by univalence.
+Along the way we will use the Countdown problem
+\cite{huttonCountdownProblem2002} as an example, and provide a program which
+produces verified solutions to the puzzle.
+We will also briefly examine countability, and demonstrate its parallels and
+differences with finiteness.
+\subsection{The Varieties of Finiteness}
+In Section~\ref{finiteness-predicates} we will explore a number of different
+predicates for finiteness.
 In contrast to classical finiteness, in a constructive setting there is a wide
 variety of predicates which all have some claim to being the formal
-interpretation of ``finiteness''.
-Broadly, they vary along two axes: informativeness (i.e. how many properties
-of the underlying type we can derive from a proof that it is finite), and
-restrictiveness (i.e. how many types conform to its particular variety of
-finiteness).
-We will explore five of these predicates, proving formally their relations and
-implications.
+interpretation of ``finiteness'' \cite{coquandConstructivelyFinite2010}.
+The particular predicates we are interested in are organised in
+Figure~\ref{finite-classification}: each arrow in the diagram represents a proof
+that one predicate can be derived from another.
 
 \input{figures/finite-classification}
 
-We will then focus on one of the predicates: decidable Kuratowski finiteness.
-We will construct a category of decidable Kuratowski-finite types, and show that
-it forms a \(\Pi\)-pretopos.
+These finiteness predicates differ along two main axes: informativeness, and
+restrictiveness.
+More ``informative'' predicates have proofs which contain extraneous information
+other than the finiteness of the underlying type: a proof of split enumerability
+(Section~\ref{split-enumerability}), for instance, comes with a strict total
+order on the underlying type.
+We will prove that a more informative finiteness predicate can be
+derived from a less informative one by providing the missing information
+(Theorem~\ref{cardinal-to-manifest-bishop}).
 
-We will then take a brief detour into predicates for countably infinite types,
-and compare its landscape to that of the finite predicates.
+The ``restrictiveness'' of a predicate refers to how many types it admits into
+its notion of ``finite''.
+There are strictly more Kuratowski finite (Section~\ref{kuratowski}) types than
+there are Cardinally finite (Section~\ref{cardinal-finiteness}).
+We will prove that we can always derive the less restrictive predicate from the
+more restrictive one, and that we can go in the other direction by satisfying
+the missing requirement (decidable equality in all of these cases).
 
-Finally, we will present a case-study in a practical application of the
-predicates for finiteness we have constructed: a library for total proof search.
-We will show how our earlier work gives a good theoretical foundation for this
-library, and allows for a simple and principled API, and we will demonstrate how
-some of the more complex theoretical results allow for a more powerful library
-with capabilities not seen in comparable proof search libraries.
+Proofs coming with extra information is a common theme in constructive
+mathematics: often this extra information is in the form of an algorithm which
+can do something useful related to the proof itself.
+Indeed, our proofs of finiteness here will provide an algorithm to solve the
+countdown puzzle.
+Occasionally, however, the extra information is undesirable: we may want to
+assert the existence of some value \(x : A\) which satisfies a predicate \(P\)
+without revealing \emph{which} \(A\) we're referring to.
+More concretely, we will need in this paper to prove that two types are in
+bijection without specifying a particular bijection.
+This facility is provided by Homotopy Type Theory \cite{hottbook} in the form of
+propositional truncation, and it is what allows us to prove the bulk of
+propositions in this paper.
 
+For each predicate we will also prove its closure properties (i.e. that the
+product of two finite sets is finite).
+The most significant of these closure proofs is that of closure under \(\Pi\)
+(dependent functions) (Theorem~\ref{split-enum-pi}).
+\subsection{Toposes and Finite Sets}
+In Section~\ref{topos}, we will explore the categorical interpretation of
+decidable Kuratowski finite sets.
+The motivation here is partially a practical one: by the end of this work we
+will have provided a library for proof search over finite types, and the
+``language'' of a topos is a reasonable choice for a principled language for
+constructing proofs of finiteness in the style of QuickCheck
+\cite{claessenQuickCheckLightweightTool2011} generators.
 
-\subsection{Finiteness Predicates}
-Our first contribution is a cataloguing and characterisation of five finiteness
-predicates, shown in figure~\ref{finite-classification}.
-
-While our focus is decidable Kuratowski finiteness, in order to prove the
-closure properties that we are interested in we will need to work with the
-intermediate predicates as well (though they are also interesting in their own
-right).
-
-Since we have a proof-search library in mind, we will have to consider how to
-present a good API for constructing proofs of finiteness.
-In this vein we will show that some simple base types are finite
-(\(\mathbf{Bool}\), \(\top\), \(\bot\), etc), and we will provide functions to
-combine finiteness proofs together into more complex types (i.e. \(\times\),
-\(\uplus\), \(\Sigma\), \(\Pi\), etc).
-As we will see this choice of toolbox for building finiteness proofs actually
-has a deep categorical justification, but at this point it makes sense to look
-at it as just a suitably general and powerful API.
-
-
-
-Our focus in this work is decidable Kuratowski finiteness.
-We will characterise it, its strength, and its uses, and in particular we will
-show that it forms a \(\Pi\)-pretopos.
-Our proofs follow the structure of \cite[Chapters 9, 10]{hottbook} and
+Theoretically speaking, showing that sets in Homotopy Type Theory form a topos
+(with some caveats) is an important step in characterising the categorical
+implications of Homotopy Type Theory, first proven in
 \cite{rijkeSetsHomotopyType2015}.
-We will explore this concept in more detail later, but crucially we will need to
-provide proofs of closure under \(\times\), \(\rightarrow\), etc.
-
-In order to prove these closure properties, we will define and use some
-intermediate finiteness predicates, classified in
-figure~\ref{finite-classification}.
-These predicates are also interesting in their own right, though!
-
-The arrows in figure~\ref{finite-classification} are implication functions
-between each predicate.
-We will provide a function which inhabits each arrow.
-Each unlabelled arrow is an unconditional implication: every manifest Bishop
-finite set is cardinal finite (lemma~\ref{manifest-bishop-to-cardinal}), for
-instance.
-The labelled arrows are strengthening proofs: every manifest enumerable set
-\emph{with decidable equality} is split enumerable
-(lemma~\ref{manifest-enum-to-split-enum}).
-Our most significant result here is the proof that a cardinal finite set with a
-decidable total order is manifestly Bishop finite.
-
+Our work is a formalisation of this result (and the first such formalisation
+that we are aware of).
+The proof that decidable Kuratowski finite sets form a \(\Pi\)-pretopos is
+additional to that.
 \subsection{Countability Predicates}
 After the finite predicates, we will briefly look at the infinite countable
 types, and classify them in a parallel way to the finite predicates
-(section~\ref{infinite}).
+(Section~\ref{infinite}).
+\todo{Expand}
 \subsection{Search}
 All of our work is formalised in Cubical Agda
-\cite{vezzosiCubicalAgdaDependently2019}.
-We will make mention of the few occasions where the formalisation of some proof
-is of interest, but the main place where we will discuss the code is in
-section~\ref{search}, where we implement a library for proof search, based on
-omniscience and exhaustibility.
-This library relies directly on the computational content of univalence, which
-allows us to (for instance) have \(\Pi\) types in the domain of the search
-space.
-The language of a \(\Pi\)-pretopos turns out to be exactly the right language
-for constructing ``generator''-like expressions.
-
-The full code of the formalisation is available at
-\url{https://github.com/oisdk/finiteness-in-cubical-type-theory}.
+\cite{vezzosiCubicalAgdaDependently2019}: as a result, the constructive
+interpretation of each proof is actually a program which can be run on a
+computer.
+In finiteness in particular, these programs are particularly useful for
+exhaustive search.
+\todo{Expand}
 \section{Notation and Background}
 \subsection{Notation}
 We work in Cubical Type Theory \cite{cohenCubicalTypeTheory2016}.
