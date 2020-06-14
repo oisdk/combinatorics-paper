@@ -130,8 +130,51 @@ The answer is at the bottom of this page\footnotemark.
 
 Our strategy for finding solutions to a given puzzle is to describe precisely
 the type of solutions to a puzzle, and then show that that type is finite.
-So what is a ``solution'' to 
+So what is a ``solution'' to a countdown puzzle?
+Broadly, it has two parts:
+\begin{description}
+  \item[A Transformation] from a list of numbers to an expression.
+  \item[A Predicate] showing that the expression is valid and evaluates to the
+    target.
+\end{description}
+The first part is described in Figure~\ref{countdown-transform}.
 
+\input{figures/countdown-transformation}
+
+This transformation has four steps.
+First (Fig.~\ref{countdown-selection}) we have to pick which numbers we include
+in our solution.
+The representation of this transformation should be fairly simple: to pick from
+\(n\) objects we can have an \(n\)-tuple of booleans.
+
+Secondly (Fig.~\ref{countdown-permutation}) we have to permute the chosen
+numbers.
+The representation for a permutation is a little trickier to envision: proving
+that it's finite is trickier still.
+We will need to rely on some of the more involved lemmas later on for this
+problem.
+
+The third step (Fig.~\ref{countdown-operators}) is quite like the first: it's
+just another \(n\)-tuple of finite objects (in this case operators chosen from
+\(+\), \(\times\), \(-\), and \(\div\)).
+Although it is complicated slightly by the fact that the \(n\) in this
+\(n\)-tuple is dependent on the number of trues in the previously chosen tuple
+of booleans (in terms of types, that means we'll need a \(\Sigma\) rather than a
+\(\times\), explanations of which are forthcoming).
+
+Finally (Fig.~\ref{countdown-parens}), we have to parenthesise the expression in
+a certain way.
+This can be encapsulated by a binary tree with a certain number of leaves:
+proving that that is finite is tricky again.
+
+Once we have proven that there are finitely many transformations for a list of
+numbers, we will then have to filter them down to those transformations which
+are valid, and evaluate to the target.
+This amounts to proving that the decidable subset of a finite set is also
+finite.
+
+Finally, we will also want to optimise our solutions and solver: for this we
+will remove equivalent expressions, which can be accomplished with quotients.
 \section{Notation and Background}
 \subsection{Notation}
 We work in Cubical Type Theory \cite{cohenCubicalTypeTheory2016}.
