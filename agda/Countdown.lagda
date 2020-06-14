@@ -13,12 +13,12 @@ open import Data.Fin.Literals
 open import Data.Nat using (_+_; _*_)
 open import Data.Nat.Properties using (pred; _<_)
 open import Data.Fin.Properties using (FinToℕ)
-open import Agda.Builtin.Nat using (_-_; _==_)
+open import Agda.Builtin.Nat using (_-_; _==_; div-helper)
 open import Dyck
 open import Data.Vec.Iterated
 
 data Op : Type₀ where
-  plus times sub : Op
+  plus times sub div : Op
 
 private
   variable
@@ -66,10 +66,12 @@ import Data.Unit.UniversePolymorphic as Poly
 ℰ!⟨Comb⟩ = ℰ!⟨Subseq⟩ |Σ| λ _ → ℰ!⟨Perm⟩
 
 ℰ!⟨Op⟩ : ℰ! Op
-ℰ!⟨Op⟩ .fst = plus ∷ times ∷ sub ∷ []
+ℰ!⟨Op⟩ .fst = plus ∷ times ∷ sub ∷ div ∷ []
 ℰ!⟨Op⟩ .snd plus = 0 , refl
 ℰ!⟨Op⟩ .snd times = 1 , refl
 ℰ!⟨Op⟩ .snd sub = 2 , refl
+ℰ!⟨Op⟩ .snd div = 3 , refl
+
 
 runSubseq : (xs : List A) → (ys : Subseq (length xs)) → Vec A (count ys)
 runSubseq []       ys = _
@@ -105,10 +107,15 @@ buildExpr : (xs : List ℕ) → Expr (length xs) → Tree Op ℕ
 buildExpr xs (comb , tree) with count (comb .fst) | runComb xs comb
 buildExpr xs (comb , (tree , ops)) | suc n | ys = fromDyck tree ops ys
 
+div′ : ℕ → ℕ → ℕ
+div′ m zero = zero
+div′ m (suc n) = div-helper 0 m n m
+
 appOneOp : Op → ℕ → ℕ → ℕ
 appOneOp plus = _+_
 appOneOp times = _*_
 appOneOp sub = _-_
+appOneOp div = div′
 
 runTree : Tree Op ℕ → ℕ
 runTree (leaf x) = x
@@ -119,11 +126,13 @@ data Disp : Type₀ where
   _⟨+⟩_ : Disp → Disp → Disp
   _⟨*⟩_ : Disp → Disp → Disp
   _⟨-⟩_ : Disp → Disp → Disp
+  _⟨÷⟩_ : Disp → Disp → Disp
 
 appDispOp : Op → Disp → Disp → Disp
 appDispOp plus  = _⟨+⟩_
 appDispOp times = _⟨*⟩_
 appDispOp sub   = _⟨-⟩_
+appDispOp div   = _⟨÷⟩_
 
 open import Agda.Builtin.Strict
 
