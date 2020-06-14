@@ -22,6 +22,8 @@
 \let\subsection\subsubsection
 \let\subsubsection\paragraph
 
+\usepackage{multicol}
+
 \usepackage{graphicx}
 \usepackage{url}
 
@@ -46,7 +48,7 @@
   linecolor=white,
   tikzsetting={draw=black, line width = 1pt,dotted},
 ]{dottedbox}
-\newenvironment{agdalisting}{\begin{figure}\begin{dottedbox}\footnotesize}{\end{dottedbox}\end{figure}}
+\newenvironment{agdalisting}{\begin{dottedbox}}{\end{dottedbox}}
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}

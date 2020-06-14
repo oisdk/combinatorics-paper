@@ -179,9 +179,48 @@ will remove equivalent expressions, which can be accomplished with quotients.
 \subsection{Notation}
 We work in Cubical Type Theory \cite{cohenCubicalTypeTheory2016}.
 For the various type formers we use the following notation:
+\subsubsection{Type}
+We use \(\AgdaDatatype{Type}\) to denote the universe of (small) types.
+The universe level is denoted with a subscript number, starting at 0.
+``Type families'' are functions into \(\AgdaDatatype{Type}\).
+\subsubsection{Simple Types}
+The three basic types---often called 0, 1, and 2---in MLTT here will be denoted
+with their more common names: \(\bot\), \(\top\), and \(\mathbf{Bool}\),
+respectively.
+\begin{figure}[h!]
+  \begin{multicols}{3}
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Snippets/Introduction.tex]{bot}
+    \end{agdalisting}
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Snippets/Introduction.tex]{top}
+    \end{agdalisting}
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Snippets/Introduction.tex]{bool}
+    \end{agdalisting}
+  \end{multicols}
+  \caption{Agda Definitions of the Three Basic Types}
+\end{figure}
+\subsubsection{Dependent Sums}
+Dependent sums are denoted with the usual \(\Sigma\) symbol, and are defined in
+Fig.~\ref{sigma-def}.
+\begin{figure}[h!]
+  \begin{multicols}{2}
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma}
+    \end{agdalisting}
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-1}
+      \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-2}
+      \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-3}
+    \end{agdalisting}
+  \end{multicols}
+  \caption{Agda Definitions of Dependent Sums}
+  \label{sigma-def}
+\end{figure}
+
+
 \begin{description}
-  \item[Type] We use \(\mathbf{Type}\) to denote the universe of (small) types.
-    ``Type families'' are functions into \(\mathbf{Type}\).
   \item[0 , 1 , 2] We call the \(\mathbf{0}\), \(\mathbf{1}\), and
     \(\mathbf{2}\) types \(\bot\), \(\top\), and \(\mathbf{Bool}\) respectively.
     The single inhabitant of \(\top\) is tt, and the two inhabitants of
