@@ -176,62 +176,90 @@ finite.
 Finally, we will also want to optimise our solutions and solver: for this we
 will remove equivalent expressions, which can be accomplished with quotients.
 \section{Notation and Background}
-\subsection{Notation}
 We work in Cubical Type Theory \cite{cohenCubicalTypeTheory2016}.
-For the various type formers we use the following notation:
-\subsubsection{Type}
-We use \(\AgdaDatatype{Type}\) to denote the universe of (small) types.
-The universe level is denoted with a subscript number, starting at 0.
-``Type families'' are functions into \(\AgdaDatatype{Type}\).
-\subsubsection{Simple Types}
-The three basic types---often called 0, 1, and 2---in MLTT here will be denoted
-with their more common names: \(\bot\), \(\top\), and \(\mathbf{Bool}\),
-respectively.
-\begin{figure}[h!]
-  \begin{multicols}{3}
+The notation we use comes from the conventions used in the Agda standard
+library.
+\begin{definition}[Type]
+  We use \(\AgdaDatatype{Type}\) to denote the universe of (small) types.
+  The universe level is denoted with a subscript number, starting at 0.
+  ``Type families'' are functions into \(\AgdaDatatype{Type}\).
+\end{definition}
+\begin{definition}[Basic Types]
+  The three basic types---often called 0, 1, and 2 in MLTT---here will be
+  denoted with their more common names: \(\bot\), \(\top\), and
+  \(\mathbf{Bool}\), respectively.
+  \begin{multicols}{3} \centering
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{bot}
     \end{agdalisting}
+
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{top}
     \end{agdalisting}
+
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{bool}
     \end{agdalisting}
   \end{multicols}
-  \caption{Agda Definitions of the Three Basic Types}
-\end{figure}
-\subsubsection{Dependent Sums}
-Dependent sums are denoted with the usual \(\Sigma\) symbol, and are defined in
-Fig.~\ref{sigma-def}.
-\begin{figure}[h!]
-  \begin{multicols}{2}
+\end{definition}
+\begin{definition}[The Dependent Sum]
+  Dependent sums are denoted with the usual \(\Sigma\) symbol, and has the
+  following definition in Agda:
+
+  \begin{center}
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma}
     \end{agdalisting}
+  \end{center}
+  We will use different notations to refer to this type depending on the
+  setting.
+  The following four expressions all denote the same type:
+
+  \begin{multicols}{4} \centering
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-1}
+    \end{agdalisting}
+
+    \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-2}
+    \end{agdalisting}
+
+    \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-3}
     \end{agdalisting}
-  \end{multicols}
-  \caption{Agda Definitions of Dependent Sums}
-  \label{sigma-def}
-\end{figure}
 
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-4}
+    \end{agdalisting}
+  \end{multicols}
+
+  The non-dependent product is a special instance of the dependent.
+  We indicate a simple pair of types \(A\) and \(B\) as \(A \times B\).
+\end{definition}
+\begin{definition}[Dependent Product]
+  Dependent products (dependent functions) use the \(\Pi\) symbol.
+
+  The three following expressions all denote the same type:
+
+  \begin{multicols}{3} \centering
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Snippets/Introduction.tex]{pi-syntax-1}
+    \end{agdalisting}
+
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Snippets/Introduction.tex]{pi-syntax-2}
+    \end{agdalisting}
+
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Snippets/Introduction.tex]{pi-syntax-3}
+    \end{agdalisting}
+  \end{multicols}
+
+  Again, the non-dependent case is a special case of the dependent case.
+  Non-dependent functions are denoted with the arrow (\(\rightarrow\)).
+\end{definition}
 
 \begin{description}
-  \item[0 , 1 , 2] We call the \(\mathbf{0}\), \(\mathbf{1}\), and
-    \(\mathbf{2}\) types \(\bot\), \(\top\), and \(\mathbf{Bool}\) respectively.
-    The single inhabitant of \(\top\) is tt, and the two inhabitants of
-    \(\mathbf{Bool}\) are false and true.
-    The ``negation'' of a type, written \(\neg A\), means \(A \rightarrow
-    \bot\).
-  \item[Dependent Sum and Product] We use \(\Sigma\) and \(\Pi\) for the
-    dependent sum and product, respectively.
-    The two projections from \(\Sigma\) are called fst and snd.
-    In the non-dependent case, \(\Sigma\) can be written as \(\times\), and
-    \(\Pi\) as \(\rightarrow\).
   \item[Disjoint Union] We define disjoint union as an inductive type.
     \begin{equation}
       \begin{alignedat}{3}

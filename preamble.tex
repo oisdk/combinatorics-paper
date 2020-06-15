@@ -23,6 +23,7 @@
 \let\subsubsection\paragraph
 
 \usepackage{multicol}
+\usepackage{subcaption}
 
 \usepackage{graphicx}
 \usepackage{url}
@@ -42,14 +43,17 @@
 
 % Boxed theorem envs without italics
 
-\usepackage[framemethod=tikz]{mdframed}
-
-\newmdenv[
-  linecolor=white,
-  tikzsetting={draw=black, line width = 1pt,dotted},
-]{dottedbox}
-\newenvironment{agdalisting}{\begin{dottedbox}}{\end{dottedbox}}
-
+\usepackage{dashbox}
+\setlength{\dashlength}{2pt}
+\setlength{\dashdash}{.75pt}
+\usepackage{varwidth}
+\usepackage{environ}
+\NewEnviron{agdalisting}[1][\dbox]{%
+  #1{\begin{varwidth}{\textwidth}%
+        \BODY%
+      \end{varwidth}%
+    }%
+}
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
 \newtheorem{theorem}{Theorem}
