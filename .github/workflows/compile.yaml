@@ -46,7 +46,7 @@ jobs:
         cabal update
         cabal install alex
         cabal install happy
-        cabal install --ghc-options='+RTS -M6G -RTS' Agda-2.6.1
+        cabal install --ghc-options='-O0 +RTS -M6G -RTS' Agda-2.6.1
         export PATH='$HOME/.cabal/bin:$PATH'
 
     - name: Compile Agda HTML
