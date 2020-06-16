@@ -18,6 +18,12 @@ jobs:
         ref: combinatorics-paper-pin
         path: cubical
 
+    - name: Put cubical library in Agda library list
+      run: |
+        mkdir ~/.agda/
+        touch ~/.agda/libraries
+        echo "$GITHUB_WORKSPACE/cubical/cubical.agda-lib" > ~/.agda/libraries
+
     - uses: actions/cache@v2
       name: Cache ~/.cabal/packages, ~/.cabal/store and dist-newstyle
       id: cache-cabal
@@ -35,18 +41,13 @@ jobs:
         cabal-version: "3.2"
 
     - name: Install Agda
-      # if: steps.cache-cabal.outputs.cache-hit != 'true'
+      if: steps.cache-cabal.outputs.cache-hit != 'true'
       run: |
         cabal update
         cabal install alex
         cabal install happy
         cabal install --ghc-options='+RTS -M6G -RTS' Agda-2.6.1
         export PATH='$HOME/.cabal/bin:$PATH'
-
-    - name: Put cubical library in Agda library list
-      run: |
-        touch ~/.agda/libraries
-        echo "$GITHUB_WORKSPACE/cubical/cubical.agda-lib" > ~/.agda/libraries
 
     - name: Compile Agda HTML
       run: |
