@@ -64,3 +64,13 @@ jobs:
       with:
         name: paper
         path: "$GITHUB_WORKSPACE/main/out/paper.pdf"
+
+    - name: Move generated pdf in with html
+      run: |
+        mv "$GITHUB_WORKSPACE/main/out/paper.pdf" "$GITHUB_WORKSPACE/main/docs/paper.pdf"
+
+    - name: Deploy html and pdf to github pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: $GITHUB_WORKSPACE/main/docs
