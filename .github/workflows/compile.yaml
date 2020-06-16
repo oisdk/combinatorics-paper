@@ -60,7 +60,7 @@ jobs:
         root_file: paper.tex
 
     - name: Upload generated pdf
-      uses: actions/upload-artefact@v2
+      uses: actions/upload-artifact@v2
       with:
         name: paper
         path: "$GITHUB_WORKSPACE/main/out/paper.pdf"
