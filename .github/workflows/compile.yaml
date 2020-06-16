@@ -11,17 +11,6 @@ jobs:
       with:
         path: main
 
-    - name: Checkout cubical library
-      uses: actions/checkout@v2
-      with:
-        repository: oisdk/cubical
-        ref: combinatorics-paper-pin
-        path: cubical
-    
-    - name: Put cubical library in Agda library list
-      run: |
-        echo "$GITHUB_WORKSPACE/cubical/cubical.agda-lib" > ~/.agda/libraries
-
     - uses: actions/cache@v2
       name: Cache ~/.cabal/packages, ~/.cabal/store and dist-newstyle
       id: cache-cabal
@@ -46,6 +35,17 @@ jobs:
         cabal install happy
         cabal install -v --ghc-options='+RTS -M2G -RTS' Agda-2.6.1
         export PATH='$HOME/.cabal/bin:$PATH'
+
+    - name: Checkout cubical library
+      uses: actions/checkout@v2
+      with:
+        repository: oisdk/cubical
+        ref: combinatorics-paper-pin
+        path: cubical
+    
+    - name: Put cubical library in Agda library list
+      run: |
+        echo "$GITHUB_WORKSPACE/cubical/cubical.agda-lib" > ~/.agda/libraries
 
     - name: Compile Agda HTML
       run: |
