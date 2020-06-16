@@ -11,21 +11,11 @@ jobs:
       with:
         path: main
 
-    - uses: actions/cache@v2
-      name: Cache ~/.cabal/packages, ~/.cabal/store and dist-newstyle
-      id: cache-cabal
-      with:
-        path: |
-          ~/.cabal/packages
-          ~/.cabal/store
-          dist-newstyle
-        key: ${{ runner.os }}-${{ matrix.ghc }}
-
     - name: Install cabal
-      run: |
-        apt-get update -y
-        apt-get install -y cabal-install
-        apt-get install -y libghc-zlib-dev libghc-zlib-bindings-dev
+      uses: actions/setup-haskell@v1.1
+      with:
+        ghc-version: '8.8'
+        cabal-version: '3.0.0.0'
 
     - name: Install Agda
       if: steps.cache-cabal.outputs.cache-hit != 'true'
