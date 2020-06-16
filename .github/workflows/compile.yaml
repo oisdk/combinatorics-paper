@@ -51,7 +51,7 @@ jobs:
       if: steps.cache-cabal.outputs.cache-hit != 'true'
       run: |
         cabal update
-        cabal v1-install --ghc-options='-O0 +RTS -M6G -RTS' Agda-2.6.1
+        cabal v1-install --ghc-options='-O0 +RTS -M6G -RTS' alex happy Agda-2.6.1
 
     - name: Compile Agda HTML
       run: |
