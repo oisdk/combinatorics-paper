@@ -45,8 +45,7 @@ jobs:
         cabal-version: "3.2"
 
     - name: Put cabal programs in PATH
-      run: |
-        echo "::add-path::~/.cabal/bin"
+      run: echo "::add-path::~/.cabal/bin"
 
     - name: Install Agda
       if: steps.cache-cabal.outputs.cache-hit != 'true'
@@ -55,7 +54,6 @@ jobs:
         cabal install --ghc-options='-O0 +RTS -M6G -RTS' alex
         cabal install --ghc-options='-O0 +RTS -M6G -RTS' happy
         cabal install --ghc-options='-O0 +RTS -M6G -RTS' Agda-2.6.1
-        ls ~/.cabal/bin
 
     - name: Compile Agda HTML
       run: |
@@ -65,6 +63,7 @@ jobs:
     - name: Compile latex
       uses: dante-ev/latex-action@master
       with:
+        working_directory: "$GITHUB_WORKSPACE/main"
         root_file: paper.tex
 
     - name: Upload generated pdf
