@@ -45,18 +45,15 @@ jobs:
         cabal-version: "3.2"
 
     - name: Put cabal programs in PATH
-      run: |
-        export PATH="$HOME/.cabal/bin:$PATH"
-        echo "$PATH"
+      run: echo "::add-path::~/.cabal/bin"
 
     - name: Install Agda
       if: steps.cache-cabal.outputs.cache-hit != 'true'
       run: |
         cabal update
-        cabal install --ghc-options='-O0 +RTS -M6G -RTS' alex
-        cabal install --ghc-options='-O0 +RTS -M6G -RTS' happy
+        cabal install --ghc-options='-O0 +RTS -M6G -RTS' alex-3.2.5
+        cabal install --ghc-options='-O0 +RTS -M6G -RTS' happy-1.19.12
         cabal install --ghc-options='-O0 +RTS -M6G -RTS' Agda-2.6.1
-        ls ~/.cabal/bin
 
     - name: Compile Agda HTML
       run: |
@@ -66,17 +63,18 @@ jobs:
     - name: Compile latex
       uses: dante-ev/latex-action@master
       with:
+        working_directory: main
         root_file: paper.tex
 
     - name: Upload generated pdf
       uses: actions/upload-artifact@v2
       with:
         name: paper
-        path: "$GITHUB_WORKSPACE/main/out/paper.pdf"
+        path: $GITHUB_WORKSPACE/main/out/paper.pdf
 
     - name: Move generated pdf in with html
       run: |
-        mv "$GITHUB_WORKSPACE/main/out/paper.pdf" "$GITHUB_WORKSPACE/main/docs/paper.pdf"
+        mv $GITHUB_WORKSPACE/main/out/paper.pdf $GITHUB_WORKSPACE/main/docs/paper.pdf
 
     - name: Deploy html and pdf to github pages
       uses: peaceiris/actions-gh-pages@v3
