@@ -43,14 +43,17 @@ jobs:
         ghc-version: "8.10.1"
         cabal-version: "3.2"
 
+    - name: Put cabal programs in PATH
+      run: |
+        export PATH='$HOME/.cabal/bin:$PATH'
+
     - name: Install Agda
       if: steps.cache-cabal.outputs.cache-hit != 'true'
       run: |
         cabal update
         cabal install alex
         cabal install happy
-        cabal install --ghc-options='-O0 +RTS -M6G -RTS' Agda-2.6.1
-        export PATH='$HOME/.cabal/bin:$PATH'
+        cabal v1-install --ghc-options='-O0 +RTS -M6G -RTS' Agda-2.6.1
 
     - name: Compile Agda HTML
       run: |
