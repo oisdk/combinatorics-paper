@@ -5,7 +5,7 @@ add_cus_dep('lagda','tex',0,'lagda2tex');
 
 sub lagda2tex {
     my $base = shift @_;
-    return system("bash ./scripts/gda-from-toplevel.sh $base.lagda");
+    return system("bash ./scripts/agda-from-toplevel.sh $base.lagda");
 }
 
 $aux_dir = 'out';
