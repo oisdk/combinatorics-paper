@@ -45,6 +45,7 @@ jobs:
 
     - name: Put cubical library in Agda library list
       run: |
+        touch ~/.agda/libraries
         echo "$GITHUB_WORKSPACE/cubical/cubical.agda-lib" > ~/.agda/libraries
 
     - name: Compile Agda HTML
