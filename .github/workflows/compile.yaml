@@ -47,6 +47,7 @@ jobs:
     - name: Put cabal programs in PATH
       run: |
         export PATH="$HOME/.cabal/bin:$PATH"
+        echo "$PATH"
 
     - name: Install Agda
       if: steps.cache-cabal.outputs.cache-hit != 'true'
