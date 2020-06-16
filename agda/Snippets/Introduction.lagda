@@ -1,7 +1,10 @@
 \begin{code}
+{-# OPTIONS --cubical --safe #-}
+
 module Snippets.Introduction where
 
 open import Level
+open import Path
 \end{code}
 %<*bot>
 \begin{code}
@@ -153,3 +156,21 @@ data _⊎_ (A : Type a) (B : Type b) : Type (a ℓ⊔ b) where
   inr  : B  → A ⊎ B
 \end{code}
 %</disj-union>
+\begin{code}
+isContr : Type a → Type a
+isProp : Type a → Type a
+isSet : Type a → Type a
+\end{code}
+%<*hlevels>
+\begin{code}
+isContr  A = Σ[ x ⦂ A ] ∀ y → x ≡ y
+isProp   A = (x y : A) → x ≡ y
+isSet    A = (x y : A) → isProp (x ≡ y)
+\end{code}
+%</hlevels>
+%<*fiber>
+\begin{code}
+fiber : (A → B) → B → Type _
+fiber f y = ∃[ x ] (f x ≡ y)
+\end{code}
+%</fiber>

@@ -223,8 +223,7 @@ Here we'll define the basic type formers used in MLTT.
   We will use different notations to refer to this type depending on the
   setting.
   The following four expressions all denote the same type:
-
-  \begin{multicols}{4} \centering
+  \begin{multicols}{4}
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-1}
     \end{agdalisting}
@@ -241,7 +240,6 @@ Here we'll define the basic type formers used in MLTT.
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-4}
     \end{agdalisting}
   \end{multicols}
-
   The non-dependent product is a special instance of the dependent.
   We indicate a simple pair of types \(A\) and \(B\) as \(A \times B\).
 \end{definition}
@@ -278,8 +276,7 @@ Here we'll define the basic type formers used in MLTT.
     \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-disj-union}
   \end{agdalisting}
 \end{definition}
-\begin{definition}[Equalities, equivalences, and paths] We use the symbol \(\coloneqq\)
-  for definitions.
+\begin{definition}[Equalities, equivalences, and paths]
   \(\simeq\) will be used for equivalences, and \(\equiv\) for equalities.
   Of course, we know that \((A \simeq B) \simeq (A \equiv B)\) by univalence,
   so the distinction isn't terribly important in usage: we will only use one
@@ -308,18 +305,17 @@ Here we'll define the basic type formers used in MLTT.
   types, starting with the contractions \cite[definition 3.11.1]{hottbook}, then
   the mere propositions \cite[definition 3.3.1]{hottbook}, and the sets
   \cite[definition 3.1.1]{hottbook}.
-  \begin{alignat}{2}
-    &\text{isContr}(A)    &&\coloneqq \Sigma(x : A) , \Pi(y : A) , (x \equiv y) \\
-    &\text{isProp}(A)     &&\coloneqq \Pi(x, y : A) , (x \equiv y) \\
-    &\text{isSet}(A)      &&\coloneqq \Pi(x, y : A) , \text{isProp}(x \equiv y)
-  \end{alignat}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Introduction.tex]{hlevels}
+  \end{agdalisting}
 \end{definition}
-\begin{definition}[Fibres] \label{fibres}
-  A fibre \cite[definition 4.2.4]{hottbook} is defined over some function \(f :
+
+\begin{definition}[Fibers] \label{fibers}
+  A fiber \cite[definition 4.2.4]{hottbook} is defined over some function \(f :
   A \rightarrow B\).
-  \begin{equation}
-    \text{fib}_f(y) \coloneqq \Sigma(x : A) , (f (x) \equiv y)
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Introduction.tex]{fiber}
+  \end{agdalisting}
 \end{definition}
 \begin{definition}[Equivalences] \label{equivalences}
   We will take contractible maps \cite[definition 4.4.1]{hottbook} as our
