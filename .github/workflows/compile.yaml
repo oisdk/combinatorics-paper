@@ -33,7 +33,7 @@ jobs:
         cabal update
         cabal install alex
         cabal install happy
-        cabal install --ghc-options='+RTS -M2G -RTS' Agda-2.6.1
+        cabal install --ghc-options='+RTS -M6G -RTS' Agda-2.6.1
         export PATH='$HOME/.cabal/bin:$PATH'
 
     - name: Checkout cubical library
@@ -52,9 +52,9 @@ jobs:
         cd "$GITHUB_WORKSPACE/main/agda"
         agda --html --html-dir=../docs README.agda
 
-    # - name: Compile latex
-    #   uses: dante-ev/latex-action@master
-    #   with:
-    #     root_file: paper.tex
+    - name: Compile latex
+      uses: dante-ev/latex-action@master
+      with:
+        root_file: paper.tex
 
 
