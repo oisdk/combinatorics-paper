@@ -21,6 +21,11 @@ data Bool : Type₀ where
   false  : Bool
 \end{code}
 %</bool>
+\begin{code}
+if_then_else_ : Bool → A → A → A
+if true  then t else f = t
+if false then t else f = f
+\end{code}
 %<*sigma>
 \begin{code}
 record Σ (A : Type a) (B : A → Type b) : Type (a ℓ⊔ b) where
@@ -132,3 +137,19 @@ module PiSyntaxes {a b} {A : Type a} {B : A → Type b} where
     ∀ x → B x
 \end{code}
 %</pi-syntax-3>
+\begin{code}
+module SigmaDisjUnion where
+\end{code}
+%<*sigma-disj-union>
+\begin{code}
+  _⊎_ : Type a → Type a → Type _
+  A ⊎ B = Σ[ x ⦂ Bool ] if x then A else B
+\end{code}
+%</sigma-disj-union>
+%<*disj-union>
+\begin{code}
+data _⊎_ (A : Type a) (B : Type b) : Type (a ℓ⊔ b) where
+  inl  : A  → A ⊎ B
+  inr  : B  → A ⊎ B
+\end{code}
+%</disj-union>

@@ -49,10 +49,12 @@
 \usepackage{varwidth}
 \usepackage{environ}
 \NewEnviron{agdalisting}[1][\dbox]{%
-  #1{\begin{varwidth}{\textwidth}%
-        \BODY%
-      \end{varwidth}%
+  \begin{center}%
+    #1{\begin{varwidth}{\textwidth}%
+          \BODY%
+        \end{varwidth}%
     }%
+  \end{center}%
 }
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}

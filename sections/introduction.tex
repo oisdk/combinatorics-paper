@@ -176,14 +176,23 @@ finite.
 Finally, we will also want to optimise our solutions and solver: for this we
 will remove equivalent expressions, which can be accomplished with quotients.
 \section{Notation and Background}
-We work in Cubical Type Theory \cite{cohenCubicalTypeTheory2016}.
-The notation we use comes from the conventions used in the Agda standard
-library.
+We work in Cubical Type Theory \cite{cohenCubicalTypeTheory2016}, specifically
+Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}.
+Cubical Agda is a dependently-typed functional programming language, based on
+Martin-Löf Intuitionistic Type Theory, with a Haskell-like syntax.
+
+Being a dependently-typed language, we'll have to be clear about what we mean
+when we say ``type'' in Agda.
 \begin{definition}[Type]
   We use \(\AgdaDatatype{Type}\) to denote the universe of (small) types.
   The universe level is denoted with a subscript number, starting at 0.
   ``Type families'' are functions into \(\AgdaDatatype{Type}\).
 \end{definition}
+
+The are two broad ways to define types in Agda: as an inductive
+\(\AgdaKeyword{data}\) type, similar to data type definitions in Haskell, or as
+a \(\AgdaKeyword{record}\).
+Here we'll define the basic type formers used in MLTT.
 \begin{definition}[Basic Types]
   The three basic types---often called 0, 1, and 2 in MLTT---here will be
   denoted with their more common names: \(\bot\), \(\top\), and
@@ -241,7 +250,7 @@ library.
 
   The three following expressions all denote the same type:
 
-  \begin{multicols}{3} \centering
+  \begin{multicols}{3}
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{pi-syntax-1}
     \end{agdalisting}
@@ -259,33 +268,25 @@ library.
   Non-dependent functions are denoted with the arrow (\(\rightarrow\)).
 \end{definition}
 
-\begin{description}
-  \item[Disjoint Union] We define disjoint union as an inductive type.
-    \begin{equation}
-      \begin{alignedat}{3}
-        A \uplus B \coloneqq & \;
-        \text{inl} &: A \rightarrow A \uplus B ; \\
-        | & \;  \text{inr} &: B \rightarrow A \uplus B ;
-      \end{alignedat}
-    \end{equation}
-    It is also expressible with only \(\Sigma\):
-    \(A \uplus B \simeq \Sigma(x : \mathbf{Bool}) , \text{if } x \text{ then
-    } A \text{ else } B \).
-  \item[Equalities, equivalences, and paths] We use the symbol \(\coloneqq\)
-    for definitions.
-    \(\simeq\) will be used for equivalences, and \(\equiv\) for equalities.
-    Of course, we know that \((A \simeq B) \simeq (A \equiv B)\) by univalence,
-    so the distinction isn't terribly important in usage: we will only use one
-    or the other as a suggestion of how we constructed it or how it is to be
-    used.
-  \item[Lambdas] \todo{Figure out how to describe lambdas}
-\end{description}
-\subsection{Cubical Type Theory}
-Cubical Type Theory \cite{cohenCubicalTypeTheory2016} is a constructive type
-theory with an implementation in Cubical Agda
-\cite{vezzosiCubicalAgdaDependently2019}.
-It allows us to do much of the same theory as in HoTT, but crucially the
-univalence ``axiom'' is a \emph{theorem}, giving it computational content.
+\begin{definition}[Disjoint Union]
+  We define disjoint union as an inductive type.
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Introduction.tex]{disj-union}
+  \end{agdalisting}
+  It is also expressible with only \(\Sigma\):
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-disj-union}
+  \end{agdalisting}
+\end{definition}
+\begin{definition}[Equalities, equivalences, and paths] We use the symbol \(\coloneqq\)
+  for definitions.
+  \(\simeq\) will be used for equivalences, and \(\equiv\) for equalities.
+  Of course, we know that \((A \simeq B) \simeq (A \equiv B)\) by univalence,
+  so the distinction isn't terribly important in usage: we will only use one
+  or the other as a suggestion of how we constructed it or how it is to be
+  used.
+\end{definition}
+
 \begin{definition}[Path Types] \label{path-types}
   The equality type (which we denote with \(\equiv\)) in CuTT is the type of
   Paths\footnotemark.
