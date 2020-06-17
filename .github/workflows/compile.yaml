@@ -59,6 +59,7 @@ jobs:
       run: |
         cd main
         rm .latexmkrc
+        echo "@default_files = ('paper.tex');" > .latexmkrc
         cd agda
         find . -type f -name '*.lagda' -exec agda --latex --latex-dir=. "{}" \;
 
