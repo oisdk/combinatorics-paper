@@ -60,11 +60,7 @@ jobs:
         cd main
         rm .latexmkrc
         cd agda
-        find . -type f -name '*.lagda' | while read -r code ; do
-            dir=$(dirname "$code")
-            file=$(basename "$code" .lagda).tex
-            agda --latex --latex-dir=. "$code"
-        done
+        find . -type f -name '*.lagda' | xargs agda --latex --latex-dir=.
 
     - name: Compile latex
       uses: xu-cheng/texlive-action/full@v1
