@@ -17,10 +17,10 @@
 
 % The thesis is organised by chapter, whereas the paper by section.
 % This lets us change between the two without any changes to the tex files.
-\let\chapter\section
-\let\section\subsection
-\let\subsection\subsubsection
-\let\subsubsection\paragraph
+\let\chapter\section%
+\let\section\subsection%
+\let\subsection\subsubsection%
+\let\subsubsection\paragraph%
 
 \usepackage{multicol}
 \usepackage{subcaption}
@@ -35,7 +35,7 @@
 \AgdaNoSpaceAroundCode{}
 
 \usepackage{tikz-cd}
-\tikzcdset{
+\tikzcdset{%
   arrow style=tikz,
   diagrams={>={Straight Barb[scale=0.8]}},
 }
@@ -105,7 +105,7 @@
   \mathrel{\in\mkern-6mu\raisebox{-0.5pt}{?}}
 }
 % Dot as wildcard character
-\newcommand\wc{{\mkern 2mu\cdot\mkern 2mu}}
+\newcommand\wc{{\mkern2mu\cdot\mkern2mu}}
 % Binary operator !
 \newcommand\ind{\mathbin{!}}
 \usepackage{subcaption}
@@ -168,9 +168,9 @@
 %   \inductivetypeclause{\wc \dblcolon \wc}{A \rightarrow \mathbf{List}(A) \rightarrow \mathbf{List}(A)}
 % \end{inductivetype}
 
-\newif\iffirstclauseofinductivetype
+\newif\iffirstclauseofinductivetype%
 \newenvironment{inductivetype}[1]{%
-  \firstclauseofinductivetypetrue
+  \firstclauseofinductivetypetrue%
   \begin{equation}
     \begin{alignedat}{3}
       #1
@@ -179,13 +179,13 @@
   \end{equation}%
 }
 \newcommand{\inductivetypeclause}[2]{%
-  \iffirstclauseofinductivetype
-    \coloneqq
-  \else
-    \\ \vert
+  \iffirstclauseofinductivetype%
+    \coloneqq%
+  \else%
+    \\ \vert%
   \fi
-  & \; #1 &:&& \; #2 ;
-  \firstclauseofinductivetypefalse
+  & \; #1 &:&& \; #2;
+  \firstclauseofinductivetypefalse%
 }
 
 %%% Local Variables:

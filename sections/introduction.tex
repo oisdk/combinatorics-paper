@@ -1,12 +1,12 @@
 \chapter{Introduction}
 We are interested in constructive notions of finiteness, formalised in Cubical
-Type Theory \cite{cohenCubicalTypeTheory2016}.
+Type Theory~\cite{cohenCubicalTypeTheory2016}.
 In this paper we will explore five such notions of finiteness, including their
 categorical interpretation, and use them to build a simple proof-search library
 facilitated in a fundamental way by univalence.
-Along the way we will use the Countdown problem
-\cite{huttonCountdownProblem2002} as an example, and provide a program which
-produces verified solutions to the puzzle.
+Along the way we will use the Countdown
+problem~\cite{huttonCountdownProblem2002} as an example, and provide a program
+which produces verified solutions to the puzzle.
 We will also briefly examine countability, and demonstrate its parallels and
 differences with finiteness.
 \section{The Varieties of Finiteness}
@@ -14,7 +14,7 @@ In Section~\ref{finiteness-predicates} we will explore a number of different
 predicates for finiteness.
 In contrast to classical finiteness, in a constructive setting there are many
 predicates which all have some claim to being the formal interpretation of
-``finiteness'' \cite{coquandConstructivelyFinite2010}.
+``finiteness''~\cite{coquandConstructivelyFinite2010}.
 The particular predicates we are interested in are organised in
 Figure~\ref{finite-classification}: each arrow in the diagram represents a proof
 that one predicate can be derived from another.
@@ -46,11 +46,11 @@ assert the existence of some value \(x : A\) which satisfies a predicate \(P\)
 without revealing \emph{which} \(A\) we're referring to.
 More concretely, we will need in this paper to prove that two types are in
 bijection without specifying a particular bijection.
-This facility is provided by Homotopy Type Theory \cite{hottbook} in the form of
+This facility is provided by Homotopy Type Theory~\cite{hottbook} in the form of
 propositional truncation, and it is what allows us to prove the bulk of
 propositions in this paper.
 
-For each predicate we will also prove its closure properties (i.e. that the
+For each predicate we will also prove its closure properties (i.e.\ that the
 product of two finite sets is finite).
 The most significant of these closure proofs is that of closure under \(\Pi\)
 (dependent functions) (Theorem~\ref{split-enum-pi}).
@@ -60,13 +60,13 @@ decidable Kuratowski finite sets.
 The motivation here is partially a practical one: by the end of this work we
 will have provided a library for proof search over finite types, and the
 ``language'' of a topos is a reasonable choice for a principled language for
-constructing proofs of finiteness in the style of QuickCheck
-\cite{claessenQuickCheckLightweightTool2011} generators.
+constructing proofs of finiteness in the style of
+QuickCheck~\cite{claessenQuickCheckLightweightTool2011} generators.
 
 Theoretically speaking, showing that sets in Homotopy Type Theory form a topos
 (with some caveats) is an important step in characterising the categorical
-implications of Homotopy Type Theory, first proven in
-\cite{rijkeSetsHomotopyType2015}.
+implications of Homotopy Type Theory, first proven
+in~\cite{rijkeSetsHomotopyType2015}.
 Our work is a formalisation of this result (and the first such formalisation
 that we are aware of).
 The proof that decidable Kuratowski finite sets form a \(\Pi\)-pretopos is
@@ -78,8 +78,8 @@ types, and classify them in a parallel way to the finite predicates
 We will see that we lose closure under function arrows, but we gain it under the
 Kleene star (Theorem~\ref{split-countability-sigma}).
 \section{Search}
-All of our work is formalised in Cubical Agda
-\cite{vezzosiCubicalAgdaDependently2019}: as a result, the constructive
+All of our work is formalised in Cubical
+Agda~\cite{vezzosiCubicalAgdaDependently2019}: as a result, the constructive
 interpretation of each proof is actually a program which can be run on a
 computer.
 In finiteness in particular, these programs are particularly useful for
@@ -91,9 +91,9 @@ and from that we will show how to enumerate those solutions, thereby solving the
 puzzle in a verified way.
 
 In Section~\ref{search} we will package up the ``search'' aspect of finiteness
-into a library for proof search: similar libraries have been built in
-\cite{fruminFiniteSetsHomotopy2018} and
-\cite{firsovDependentlyTypedProgramming2015}.
+into a library for proof search: similar libraries have been built
+in~\cite{fruminFiniteSetsHomotopy2018}
+and~\cite{firsovDependentlyTypedProgramming2015}.
 Our library differs from those in three important ways: firstly, it is strictly
 more powerful, as it allows for search over function types.
 Secondly, finiteness proofs also provide equivalence proofs to any other finite
@@ -102,7 +102,7 @@ Finally, through generic programming we provide a simple syntax for stating
 properties which mimics that of QuickCheck.
 We also ground the library in the theoretical notions of omniscience.
 \section{Countdown}
-The Countdown problem \cite{huttonCountdownProblem2002} is a well-known puzzle
+The Countdown problem~\cite{huttonCountdownProblem2002} is a well-known puzzle
 in functional programming (which was apparently turned into a TV show).
 As a running example in this paper, we will produce a verified program which
 lists all solutions to a given countdown puzzle: here we will briefly explain
@@ -169,8 +169,8 @@ finite.
 Finally, we will also want to optimise our solutions and solver: for this we
 will remove equivalent expressions, which can be accomplished with quotients.
 \section{Notation and Background}
-We work in Cubical Type Theory \cite{cohenCubicalTypeTheory2016}, specifically
-Cubical Agda \cite{vezzosiCubicalAgdaDependently2019}.
+We work in Cubical Type Theory~\cite{cohenCubicalTypeTheory2016}, specifically
+Cubical Agda~\cite{vezzosiCubicalAgdaDependently2019}.
 Cubical Agda is a dependently-typed functional programming language, based on
 Martin-Löf Intuitionistic Type Theory, with a Haskell-like syntax.
 
@@ -185,7 +185,7 @@ when we say ``type'' in Agda.
 The are two broad ways to define types in Agda: as an inductive
 \(\AgdaKeyword{data}\) type, similar to data type definitions in Haskell, or as
 a \(\AgdaKeyword{record}\).
-Here we'll define the basic type formers used in MLTT.
+Here we'll define the basic type formers used in MLTT.\@
 \begin{definition}[Basic Types]
   The three basic types---often called 0, 1, and 2 in MLTT---here will be
   denoted with their more common names: \(\bot\), \(\top\), and
@@ -268,7 +268,7 @@ From this we can see that a vector of \(n\) Booleans has the type
 
 Finally, there is one last thing we must define before moving on to the
 finiteness predicates: paths.
-\begin{definition}[Path Types] \label{path-types}
+\begin{definition}[Path Types]\label{path-types}
   The equality type (which we denote with \(\equiv\)) in CuTT is the type of
   Paths\footnotemark.
   The nature and internal structure of Paths is complex and central to how
@@ -278,9 +278,9 @@ finiteness predicates: paths.
   do indeed compute in Cubical Agda.
 \end{definition}
 
-\footnotetext{
+\footnotetext{%
   Actually, CuTT does have an identity type with similar semantics to the
-  identity type in MLTT.
+  identity type in MLTT.\@
   We do not use this type anywhere in our work, however, so we will not consider
   it here.
 }
