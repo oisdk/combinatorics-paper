@@ -19,9 +19,10 @@ jobs:
       with:
         repository: agda/cubical
         path: cubical
-        run: |
-          cd cubical
-          git checkout a01973ef7264f9454a40697313a2073c51a6b77a .
+
+    - run: |
+        cd cubical
+        git checkout a01973ef7264f9454a40697313a2073c51a6b77a .
 
     - name: Put cubical library in Agda library list
       run: |
