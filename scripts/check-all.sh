@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ( cd agda
 echo '{-# OPTIONS --cubical --safe #-}
 ' > Everything

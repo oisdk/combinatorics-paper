@@ -61,25 +61,22 @@ jobs:
         agda --html --html-dir=../docs README.agda
 
     - name: Compile latex
-      uses: xu-cheng/texlive-action/full@v1
+      uses: dante-ev/latex-action@master
       with:
-        run: |
-          cd main
-          latexmk -pdf
+        working_directory: main
+        root_file: paper.tex
 
-    # - name: Upload generated pdf
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: paper
-    #     path: $GITHUB_WORKSPACE/main/out/paper.pdf
-        path: $GITHUB_WORKSPACE/main/out/paper.pdf
+    - name: Upload generated pdf
+      uses: actions/upload-artifact@v2
+      with:
+        name: paper
+        path: main/out/paper.pdf
 
     - name: Move generated pdf in with html
-      run: |
-        mv $GITHUB_WORKSPACE/main/out/paper.pdf $GITHUB_WORKSPACE/main/docs/paper.pdf
+      run: mv main/out/paper.pdf main/docs/paper.pdf
 
     - name: Deploy html and pdf to github pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: $GITHUB_WORKSPACE/main/docs
+        publish_dir: main/docs
