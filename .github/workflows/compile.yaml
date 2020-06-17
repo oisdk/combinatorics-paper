@@ -51,9 +51,9 @@ jobs:
       if: steps.cache-cabal.outputs.cache-hit != 'true'
       run: |
         cabal update
-        cabal install --ghc-options='-O2 +RTS -M6G -RTS' alex-3.2.5
-        cabal install --ghc-options='-O2 +RTS -M6G -RTS' happy-1.19.12
-        cabal install --ghc-options='-O2 +RTS -M6G -RTS' Agda-2.6.1
+        cabal install --overwrite-policy=always --ghc-options='-O2 +RTS -M6G -RTS' alex-3.2.5
+        cabal install --overwrite-policy=always --ghc-options='-O2 +RTS -M6G -RTS' happy-1.19.12
+        cabal install --overwrite-policy=always --ghc-options='-O2 +RTS -M6G -RTS' Agda-2.6.1
 
     - name: Compile all literate agda
       run: |
