@@ -55,11 +55,6 @@ jobs:
         cabal install --ghc-options='-O0 +RTS -M6G -RTS' happy-1.19.12
         cabal install --ghc-options='-O0 +RTS -M6G -RTS' Agda-2.6.1
 
-    - name: Compile Agda HTML
-      run: |
-        cd "$GITHUB_WORKSPACE/main/agda"
-        agda --html --html-dir=../docs README.agda
-
     - name: Compile latex
       uses: xu-chen/latex-action@v2
       with:
@@ -71,6 +66,11 @@ jobs:
       with:
         name: paper
         path: main/out/paper.pdf
+
+    - name: Compile Agda HTML
+      run: |
+        cd "$GITHUB_WORKSPACE/main/agda"
+        agda --html --html-dir=../docs README.agda
 
     - name: Move generated pdf in with html
       run: mv main/out/paper.pdf main/docs/paper.pdf
