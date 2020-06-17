@@ -64,7 +64,7 @@ jobs:
         find . -type f -name '*.lagda' -exec agda --latex --latex-dir=. {} \; 
 
     - name: Compile latex
-      uses: xu-chen/latex-action@v2
+      uses: xu-cheng/latex-action@v2
       with:
         working_directory: main
         root_file: paper.tex
