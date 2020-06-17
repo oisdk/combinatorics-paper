@@ -14,15 +14,7 @@ jobs:
       with:
         path: main
 
-    - uses: actions/cache@v2
-      name: Cache cubical library
-      id: cache-cubical
-      with:
-        path: $GITHUB_WORKSPACE/cubical
-        key: ${{ runner.os }}
-
     - name: Checkout cubical library
-      if: steps.cache-cubical.outputs.cache-hit != 'true'
       uses: actions/checkout@v2
       with:
         repository: agda/cubical
