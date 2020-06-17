@@ -58,7 +58,7 @@ jobs:
     - name: Compile all literate agda
       run: |
         cd main
-        sh scripts/init-missing-lagda.sh
+        ./scripts/init-missing-lagda.sh
         rm .latexmkrc
         
 
