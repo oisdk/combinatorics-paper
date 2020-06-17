@@ -57,7 +57,7 @@ jobs:
 
     - name: Compile all literate agda
       run: |
-        apt-get install texlive-binaries
+        sudo apt-get install texlive-binaries
         cd main
         rm .latexmkrc
         cd agda
