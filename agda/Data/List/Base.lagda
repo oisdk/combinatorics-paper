@@ -1,9 +1,22 @@
+\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Data.List.Base where
 
-open import Agda.Builtin.List using (List; _∷_; []) public
 open import Prelude
+
+private
+  module DisplayDefinition where
+\end{code}
+%<*list-def>
+\begin{code}
+    data List (A : Type a) : Type a where
+      []   : List A
+      _∷_  : A → List A → List A
+\end{code}
+%</list-def>
+\begin{code}
+open import Agda.Builtin.List using (List; _∷_; []) public
 open import Data.Fin
 
 foldr : (A → B → B) → B → List A → B
@@ -34,3 +47,4 @@ concatMap f = foldr (λ x ys → f x ++ ys) []
 
 map : (A → B) → List A → List B
 map f = foldr (λ x xs → f x ∷ xs) []
+\end{code}

@@ -18,7 +18,7 @@ enumerability.
   To say that some type \(A\) is split enumerable is to say that there is a list
   \(\mathit{support} : \mathbf{List}(A)\) such that any value \(x : A\) is in
   \(\mathit{support}\).
-  \begin{agdalisting}
+  \begin{agdalisting} \label{split-enum-def-eqn}
     \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable/Container.tex]{split-enum-def}
   \end{agdalisting}
   We call the first component of this pair the ``support'' list, and the second
@@ -31,15 +31,14 @@ We used some extra types in the above definition, which we will define here:
 
 \begin{definition}[\(\mathbf{List}\)] \label{List}
   In this paper we define lists as \emph{containers}:
-  \begin{equation}
-    \mathbf{List} \coloneqq \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Container/List.tex]{list-def}
+  \end{agdalisting}
   This may seem quite foreign or complex in comparison to the usual definition
   of lists as an inductive data type:
-  \begin{inductivetype}{\mathbf{List}(A)}
-    \inductivetypeclause{\left[ \right]}{\mathbf{List}(A)}
-    \inductivetypeclause{\wc \dblcolon \wc}{A \rightarrow \mathbf{List}(A) \rightarrow \mathbf{List}(A)}
-  \end{inductivetype}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Data/List/Base.tex]{list-def}
+  \end{agdalisting}
   But it turns out to be quite useful for later proofs.
 
   Moreover, the inductive type and the container-based type are equivalent, as
