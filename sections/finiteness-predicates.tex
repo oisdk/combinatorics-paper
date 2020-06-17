@@ -58,6 +58,30 @@ We used some extra types in the above definition, which we will define here:
     x \in \mathit{xs} \coloneqq \text{fib}_{\text{snd}(\mathit{xs})}(x)
   \end{equation}
 \end{definition}
+
+\begin{definition}[Fibers] \label{fibers}
+  A fiber \cite[definition 4.2.4]{hottbook} is defined over some function \(f :
+  A \rightarrow B\).
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Introduction.tex]{fiber}
+  \end{agdalisting}
+\end{definition}
+
+\begin{definition}[Disjoint Union]
+  We define disjoint union as an inductive type.
+
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Introduction.tex]{disj-union}
+  \end{agdalisting}
+
+  It is also expressible with only \(\Sigma\):
+
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-disj-union}
+  \end{agdalisting}
+
+  Although the inductive type definition is slightly more ergonomic.
+\end{definition}
 \begin{definition}[\(\mathbf{Fin}\)] \label{Fin}
   \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\). We
   define it the standard way:
@@ -167,12 +191,10 @@ surjection-based one, in quite a deep way!
 
 First, we will need to define our terms: in HoTT, surjections are a little more
 complex than what you'd find in either MLTT or classical mathematics.
-\begin{definition}[Surjections] \label{surjections}
-  We define both surjections and \emph{split} surjections here \cite[definition
+\begin{definition}[Split Surjections] \label{split-surjections}
+  We define \emph{split} surjections here \cite[definition
   4.6.1]{hottbook}.
   \begin{alignat}{3}
-    &\text{surj}(f)             &&\coloneqq \Pi(y : B) , \lVert \text{fib}_f(y) \rVert \label{surj-eqn} \\
-    &A \twoheadrightarrow B     &&\coloneqq \Sigma (f : A \rightarrow B) , \text{surj}(f) \label{surj-arrow-eqn} \\
     &\text{sp-surj}(f)          &&\coloneqq \Pi(y : B) , \text{fib}_f(y) \label{sp-surj-eqn} \\
     &A \twoheadrightarrow! \; B &&\coloneqq \Sigma (f : A \rightarrow B) , \text{sp-surj}(f) \label{sp-surj-arrow-eqn}
   \end{alignat}
@@ -254,6 +276,20 @@ formalisation:
   \end{equation}
 \end{lemma}
 
+\begin{definition}[Decidable Types]
+  \begin{equation}
+    \mathbf{Dec}(A) \coloneqq A \uplus \neg A
+  \end{equation}
+\end{definition}
+\begin{definition}[Discrete Types]
+  A discrete type is one with decidable equality.
+  \begin{equation}
+    \text{Discrete}(A) \coloneqq \Pi(x, y : A) , \mathbf{Dec}(x \equiv y)
+  \end{equation}
+  By Hedberg's theorem \cite{hedbergCoherenceTheoremMartinLof1998} any discrete
+  type is a set.
+\end{definition}
+
 \begin{lemma} \label{discrete-surj}
   \begin{equation}
     \frac{
@@ -315,6 +351,19 @@ just adding a condition to the returned membership proof in the cover proof.
 
 To specify that a value must exist uniquely in HoTT we can use the concept of a
 \emph{contraction}.
+
+\begin{definition}[Homotopy Levels] \label{homotopy-types}
+  Types in HoTT and CuTT are not necessarily sets, as they are in MLTT.
+  Some have higher homotopies (paths which aren't unique).
+  We actually have a hierarchy of complexity of structure of path spaces in
+  types, starting with the contractions \cite[definition 3.11.1]{hottbook}, then
+  the mere propositions \cite[definition 3.3.1]{hottbook}, and the sets
+  \cite[definition 3.1.1]{hottbook}.
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Introduction.tex]{hlevels}
+  \end{agdalisting}
+\end{definition}
+
 \begin{definition}[Unique Membership] \label{uniq-memb-def}
   Unique list membership is defined in terms of list membership: it is a
   contraction of it.
@@ -382,6 +431,15 @@ disguise.
 We will now see that manifest Bishop finiteness is in fact an \emph{equivalence}
 in disguise.
 \emph{equivalence} with \(\mathbf{Fin}\).
+
+\begin{definition}[Equivalences] \label{equivalences}
+  We will take contractible maps \cite[definition 4.4.1]{hottbook} as our
+  ``default'' definition of equivalences.
+  \begin{alignat}{2}
+    &\text{isEquiv}(f) &&\coloneqq \Pi(y : B) , \text{isContr}(\text{fib}_f(y)) \label{is-equiv-def} \\
+    &A \simeq B        &&\coloneqq \Sigma(f : A \rightarrow B) , \text{isEquiv}(f) \label{equiv-def}
+  \end{alignat}
+\end{definition}
 \begin{lemma} \label{bishop-equiv}
   Manifest bishop finiteness is equivalent to an equivalence to a finite prefix
   of the natural numbers.
@@ -530,6 +588,39 @@ the type\footnotemark.
 
 To remedy the problem, we will use propositional truncation
 (def.~\ref{prop-trunc}).
+
+\begin{definition}[Higher Inductive Types] \label{HITs}
+  Normal inductive types have \emph{point} constructors: constructors which
+  construct values of the type.
+  Higher Inductive Types (HITs) also have \emph{path} constructors: ways to
+  construct paths in the type.
+\end{definition}
+\begin{definition}[Propositional Truncation] \label{prop-trunc}
+  The type \(\lVert A \rVert\) on some type \(A\) is a propositionally truncated
+  proof of \(A\) \cite[3.7]{hottbook}.
+  In other words, it is a proof that some \(A\) exists, but it does not tell you
+  \emph{which} \(A\).
+
+  It is defined as a Higher Inductive Type:
+  \begin{equation} {
+    \begin{alignedat}{3}
+      \lVert A \rVert \coloneqq & \; \lvert \wc \rvert &:& \; A \rightarrow \lVert A \rVert ; \\
+                              | & \; \text{squash}     &:& \; \Pi {(x, y : \lVert A \rVert)} , x \equiv y  ; 
+    \end{alignedat} }
+  \end{equation}
+  We will use two eliminators from \(\lVert A \rVert\) in this paper.
+  \begin{enumerate}
+  \item \label{elim-prop-prop} For any function \(A \rightarrow B\), where
+    \(\text{isProp}(B)\), we have a function \(\lVert A \rVert \rightarrow B\).
+  \item \label{elim-prop-coh} We can eliminate from \(\lVert A \rVert\) with a
+    function \(f : A \rightarrow B\) iff \(f\) ``doesn't care'' about the
+    choice of \(A\):
+    \[\Pi {(x , y : A)} , f(x) \equiv f(y) \]
+    Formally speaking, \(f\) needs to be ``coherently constant''
+    \cite{krausGeneralUniversalProperty2015}, and \(B\) needs to be an
+    \(n\)-type for some finite \(n\).
+  \end{enumerate}
+\end{definition}
 \begin{definition}[Cardinal Finiteness]
   A type \(A\) is cardinally finite if there exists a propositionally truncated
   proof that \(A\) is manifest Bishop finite or equivalent to a finite prefix of
@@ -817,6 +908,7 @@ However, all three predicates we have examined are equally \emph{restrictive}:
 in this section we will see a predicate which is much less restrictive.
 In particular, this predicate ranges over non-set types.
 
+
 \begin{definition}[Manifest Enumerability]
   Manifest enumerability is an enumeration predicate like Bishop finiteness or
   split enumerability with the only difference being a propositionally truncated
@@ -826,6 +918,15 @@ In particular, this predicate ranges over non-set types.
   \end{equation}
 \end{definition}
 As a function-based definition, this predicate represents surjections.
+
+\begin{definition}[Surjections] \label{surjections}
+  We define proper surjections (not split surjections) here \cite[definition
+  4.6.1]{hottbook}.
+  \begin{alignat}{3}
+    &\text{surj}(f)             &&\coloneqq \Pi(y : B) , \lVert \text{fib}_f(y) \rVert \label{surj-eqn} \\
+    &A \twoheadrightarrow B     &&\coloneqq \Sigma (f : A \rightarrow B) , \text{surj}(f) \label{surj-arrow-eqn}
+  \end{alignat}
+\end{definition}
 \begin{lemma}
   Manifest enumerability is equivalent to a surjection from a finite prefix of
   the natural numbers.
