@@ -58,9 +58,14 @@ jobs:
     - name: Compile all literate agda
       run: |
         cd main
-        ./scripts/init-missing-lagda.sh
         rm .latexmkrc
-        
+        cd agda
+        find . -type f -name '*.lagda' | while read -r code ; do
+            dir=$(dirname "$code")
+            file=$(basename "$code" .lagda).tex
+            agda --latex --latex-dir=. "$code"
+            fi
+        done
 
     - name: Compile latex
       uses: xu-cheng/texlive-action/full@v1
