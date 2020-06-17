@@ -190,14 +190,16 @@ Here we'll define the basic type formers used in MLTT.\@
   The three basic types---often called 0, 1, and 2 in MLTT---here will be
   denoted with their more common names: \(\bot\), \(\top\), and
   \(\mathbf{Bool}\), respectively.
-  \begin{multicols}{3} \centering
+  \begin{multicols}{3}
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{bot}
     \end{agdalisting}
 
+
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{top}
     \end{agdalisting}
+
 
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{bool}
@@ -219,20 +221,17 @@ Here we'll define the basic type formers used in MLTT.\@
   \begin{multicols}{4}
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-1}
-    \end{agdalisting}
-
+    \end{agdalisting} \columnbreak
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-3}
-    \end{agdalisting}
-
+    \end{agdalisting} \columnbreak
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-4}
-    \end{agdalisting}
-
+    \end{agdalisting} \columnbreak
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-2}
     \end{agdalisting}
-  \end{multicols}
+  \end{multicols}\vspace{-1.5\baselineskip}%
   The non-dependent product is a special instance of the dependent.
   We denote a simple pair of types \(A\) and \(B\) as \(A \times B\).
 \end{definition}
@@ -242,16 +241,14 @@ Here we'll define the basic type formers used in MLTT.\@
   \begin{multicols}{3}
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{pi-syntax-1}
-    \end{agdalisting}
-
+    \end{agdalisting} \columnbreak
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{pi-syntax-2}
-    \end{agdalisting}
-
+    \end{agdalisting} \columnbreak
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{pi-syntax-3}
     \end{agdalisting}
-  \end{multicols}
+  \end{multicols}\vspace{-1.5\baselineskip}
   Non-dependent functions are denoted with the arrow (\(\rightarrow\)).
 \end{definition}
 
@@ -264,7 +261,7 @@ unit, a vector of \(n+1\) elements is the product of an element and a vector of
   \ExecuteMetaData[agda/Data/Vec/Iterated.tex]{vec-def}
 \end{agdalisting}
 From this we can see that a vector of \(n\) Booleans has the type
-\(\AgdaDatatype{Vec} \; \AgdaDatatype{Bool} \; n\).
+\(\AgdaDatatype{Vec} \; \AgdaDatatype{Bool} \; n\)
 
 Finally, there is one last thing we must define before moving on to the
 finiteness predicates: paths.

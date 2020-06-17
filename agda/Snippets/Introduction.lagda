@@ -142,10 +142,10 @@ module PiSyntaxes {a b} {A : Type a} {B : A → Type b} where
 %</pi-syntax-3>
 \begin{code}
 module SigmaDisjUnion where
+  _⊎_ : Type a → Type a → Type _
 \end{code}
 %<*sigma-disj-union>
 \begin{code}
-  _⊎_ : Type a → Type a → Type _
   A ⊎ B = Σ[ x ⦂ Bool ] if x then A else B
 \end{code}
 %</sigma-disj-union>

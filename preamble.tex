@@ -51,18 +51,21 @@
 \setlength{\dashdash}{.75pt}
 \usepackage{varwidth}
 \usepackage{environ}
-\NewEnviron{agdalisting}[1][\dbox]{%
-  \par%
-  \refstepcounter{equation}
+\NewEnviron{agdalisting}[1][\dbox]{\vspace{\abovedisplayskip}%
+
+  \refstepcounter{equation}%
   \hfill%
-  #1{\begin{varwidth}{\textwidth}%
+  {\begin{varwidth}{\linewidth}% Add #1 just before { on this line to make agda
+                               % code boxed with dots
         \BODY%
       \end{varwidth}%
+      \vspace{\belowdisplayskip}%
   }%
   \hfill%
   \eqnum%
-  \newline%
+  \break%
 }
+
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
 \newtheorem{theorem}{Theorem}
