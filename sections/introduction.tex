@@ -1,7 +1,4 @@
 \chapter{Introduction}
-\section{Foreword}
-\todo[inline]{Foreword}
-\section{Contributions}
 We are interested in constructive notions of finiteness, formalised in Cubical
 Type Theory \cite{cohenCubicalTypeTheory2016}.
 In this paper we will explore five such notions of finiteness, including their
@@ -12,15 +9,18 @@ Along the way we will use the Countdown problem
 produces verified solutions to the puzzle.
 We will also briefly examine countability, and demonstrate its parallels and
 differences with finiteness.
-\subsection{The Varieties of Finiteness}
+\section{The Varieties of Finiteness}
 In Section~\ref{finiteness-predicates} we will explore a number of different
 predicates for finiteness.
-In contrast to classical finiteness, in a constructive setting there is a wide
-variety of predicates which all have some claim to being the formal
-interpretation of ``finiteness'' \cite{coquandConstructivelyFinite2010}.
+In contrast to classical finiteness, in a constructive setting there are many
+predicates which all have some claim to being the formal interpretation of
+``finiteness'' \cite{coquandConstructivelyFinite2010}.
 The particular predicates we are interested in are organised in
 Figure~\ref{finite-classification}: each arrow in the diagram represents a proof
 that one predicate can be derived from another.
+Each arrow in Figure~\ref{finite-classification} corresponds to a proof of
+implication: cardinal finiteness, for instance, with a strict total order,
+implies split enumerability (Theorem~\ref{cardinal-to-manifest-bishop}).
 
 \input{figures/finite-classification}
 
@@ -30,17 +30,11 @@ More ``informative'' predicates have proofs which contain extraneous information
 other than the finiteness of the underlying type: a proof of split enumerability
 (Section~\ref{split-enumerability}), for instance, comes with a strict total
 order on the underlying type.
-We will prove that a more informative finiteness predicate can be
-derived from a less informative one by providing the missing information
-(Theorem~\ref{cardinal-to-manifest-bishop}).
 
 The ``restrictiveness'' of a predicate refers to how many types it admits into
 its notion of ``finite''.
 There are strictly more Kuratowski finite (Section~\ref{kuratowski}) types than
 there are Cardinally finite (Section~\ref{cardinal-finiteness}).
-We will prove that we can always derive the less restrictive predicate from the
-more restrictive one, and that we can go in the other direction by satisfying
-the missing requirement (decidable equality in all of these cases).
 
 Proofs coming with extra information is a common theme in constructive
 mathematics: often this extra information is in the form of an algorithm which
@@ -60,7 +54,7 @@ For each predicate we will also prove its closure properties (i.e. that the
 product of two finite sets is finite).
 The most significant of these closure proofs is that of closure under \(\Pi\)
 (dependent functions) (Theorem~\ref{split-enum-pi}).
-\subsection{Toposes and Finite Sets}
+\section{Toposes and Finite Sets}
 In Section~\ref{topos}, we will explore the categorical interpretation of
 decidable Kuratowski finite sets.
 The motivation here is partially a practical one: by the end of this work we
@@ -77,13 +71,13 @@ Our work is a formalisation of this result (and the first such formalisation
 that we are aware of).
 The proof that decidable Kuratowski finite sets form a \(\Pi\)-pretopos is
 additional to that.
-\subsection{Countability Predicates}
+\section{Countability Predicates}
 After the finite predicates, we will briefly look at the infinite countable
 types, and classify them in a parallel way to the finite predicates
 (Section~\ref{infinite}).
 We will see that we lose closure under function arrows, but we gain it under the
 Kleene star (Theorem~\ref{split-countability-sigma}).
-\subsection{Search}
+\section{Search}
 All of our work is formalised in Cubical Agda
 \cite{vezzosiCubicalAgdaDependently2019}: as a result, the constructive
 interpretation of each proof is actually a program which can be run on a
@@ -108,9 +102,8 @@ Finally, through generic programming we provide a simple syntax for stating
 properties which mimics that of QuickCheck.
 We also ground the library in the theoretical notions of omniscience.
 \section{Countdown}
-Countdown is a well-known functional programming puzzle (later turned into a TV
-show in the UK), first popularised as a puzzle in which to demonstrate
-functional algorithms in \cite{huttonCountdownProblem2002}.
+The Countdown problem \cite{huttonCountdownProblem2002} is a well-known puzzle
+in functional programming (which was apparently turned into a TV show).
 As a running example in this paper, we will produce a verified program which
 lists all solutions to a given countdown puzzle: here we will briefly explain
 the game and our strategy for solving it.
@@ -123,7 +116,7 @@ Here's an example puzzle:
   \boxed{1} \boxed{3} \boxed{7} \boxed{10} \boxed{25} \boxed{50} \\
   \boxed{765} \tag{Target}
 \end{gather*}
-We'll allow the use of \(\times\), \(+\), and \(-\).
+We'll allow the use of \(+\), \(-\), \(\times\), and \(\div\).
 The answer is at the bottom of this page\footnotemark.
 
 \footnotetext{\rotatebox[origin=c]{180}{Answer: \(3 \times (7 \times (50 - 10) - 25)\)}}
@@ -145,7 +138,7 @@ This transformation has four steps.
 First (Fig.~\ref{countdown-selection}) we have to pick which numbers we include
 in our solution.
 The representation of this transformation should be fairly simple: to pick from
-\(n\) objects we can have an \(n\)-tuple of booleans.
+\(n\) objects we can have a vector of \(n\) booleans.
 
 Secondly (Fig.~\ref{countdown-permutation}) we have to permute the chosen
 numbers.
@@ -155,8 +148,8 @@ We will need to rely on some of the more involved lemmas later on for this
 problem.
 
 The third step (Fig.~\ref{countdown-operators}) is quite like the first: it's
-just another \(n\)-tuple of finite objects (in this case operators chosen from
-\(+\), \(\times\), \(-\), and \(\div\)).
+just another vector of length \(n\) of finite objects (in this case operators
+chosen from \(+\), \(\times\), \(-\), and \(\div\)).
 Although it is complicated slightly by the fact that the \(n\) in this
 \(n\)-tuple is dependent on the number of trues in the previously chosen tuple
 of booleans (in terms of types, that means we'll need a \(\Sigma\) rather than a
@@ -229,25 +222,23 @@ Here we'll define the basic type formers used in MLTT.
     \end{agdalisting}
 
     \begin{agdalisting}
-      \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-2}
-    \end{agdalisting}
-
-    \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-3}
     \end{agdalisting}
 
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-4}
     \end{agdalisting}
+
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-syntax-2}
+    \end{agdalisting}
   \end{multicols}
   The non-dependent product is a special instance of the dependent.
-  We indicate a simple pair of types \(A\) and \(B\) as \(A \times B\).
+  We denote a simple pair of types \(A\) and \(B\) as \(A \times B\).
 \end{definition}
 \begin{definition}[Dependent Product]
   Dependent products (dependent functions) use the \(\Pi\) symbol.
-
   The three following expressions all denote the same type:
-
   \begin{multicols}{3}
     \begin{agdalisting}
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{pi-syntax-1}
@@ -261,17 +252,30 @@ Here we'll define the basic type formers used in MLTT.
       \ExecuteMetaData[agda/Snippets/Introduction.tex]{pi-syntax-3}
     \end{agdalisting}
   \end{multicols}
-
-  Again, the non-dependent case is a special case of the dependent case.
   Non-dependent functions are denoted with the arrow (\(\rightarrow\)).
 \end{definition}
 
+At this point, as a quick example, we can define the first of our objects for
+the countdown transformation: the vector of Booleans for selection.
+A vector is relatively simple to define: a vector of zero elements is simply a
+unit, a vector of \(n+1\) elements is the product of an element and a vector of
+\(n\) elements.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Data/Vec/Iterated.tex]{vec-def}
+\end{agdalisting}
+From this we can see that a vector of \(n\) Booleans has the type
+\(\AgdaDatatype{Vec} \; \AgdaDatatype{Bool} \; n\).
+
+Finally, there is one last thing we must define before moving on to the
+finiteness predicates: paths.
 \begin{definition}[Path Types] \label{path-types}
   The equality type (which we denote with \(\equiv\)) in CuTT is the type of
   Paths\footnotemark.
-  The internal structure of paths is largely irrelevant to us here, as we will
-  generally treat \(\equiv\) as a black-box equivalence relation with
-  substitution and congruence.
+  The nature and internal structure of Paths is complex and central to how
+  Cubical Type Theory ``implements'' Homotopy Type Theory, but those details are
+  not relevant to us here.
+  Instead, we only need to know that univalence holds for paths, and path types
+  do indeed compute in Cubical Agda.
 \end{definition}
 
 \footnotetext{

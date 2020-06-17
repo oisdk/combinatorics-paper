@@ -27,6 +27,8 @@
   Through this library we demonstrate a number of uses for the computational
   content of the univalence axiom, including searching for and synthesising
   functions.
+  We use this library for proof search to develop a verified algorithm to solve
+  the countdown problem.
 \end{abstract}
 
 \keywords{Agda, Homotopy Type Theory, Cubical Type Theory,
@@ -34,16 +36,17 @@
 
 \maketitle
 
-\include{sections/introduction}
+\input{sections/introduction}
+
 \include{sections/finiteness-predicates}
 \include{sections/topos}
 \include{sections/countable-predicates}
 \include{sections/search}
 \include{sections/related-work}
 
-% \begin{acks}
-%   This work has been supported by the Science Foundation Ireland under the
-%   following grant: 13/RC/2D94 to Irish Software Research Centre.
-% \end{acks}
+\begin{acks}
+  This work has been supported by the Science Foundation Ireland under the
+  following grant: 13/RC/2D94 to Irish Software Research Centre.
+\end{acks}
 \bibliography{bibliography}
 \end{document} 

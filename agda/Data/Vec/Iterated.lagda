@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Data.Vec.Iterated where
@@ -9,10 +10,15 @@ open import Data.List using (List; _∷_; []; length)
 private
   variable
     n m : ℕ
-
+\end{code}
+%<*vec-def>
+\begin{code}
 Vec : Type a → ℕ → Type a
-Vec A zero = ⊤
-Vec A (suc n) = A × Vec A n
+Vec A zero     = ⊤
+Vec A (suc n)  = A × Vec A n
+\end{code}
+%</vec-def>
+\begin{code}
 
 foldr : ∀ {p} (P : ℕ → Type p) →
           (∀ {n} → A → P n → P (suc n)) →
@@ -40,3 +46,4 @@ vecFromList (x ∷ xs) = x , vecFromList xs
 
 vecToList : Vec A n → List A
 vecToList = foldr′ _∷_ []
+\end{code}
