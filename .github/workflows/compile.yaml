@@ -64,7 +64,6 @@ jobs:
             dir=$(dirname "$code")
             file=$(basename "$code" .lagda).tex
             agda --latex --latex-dir=. "$code"
-            fi
         done
 
     - name: Compile latex
