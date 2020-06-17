@@ -7,6 +7,3 @@ sub lagda2tex {
     my $base = shift @_;
     return system("bash ./scripts/agda-from-toplevel.sh $base.lagda");
 }
-
-$aux_dir = 'out';
-$out_dir = 'out';

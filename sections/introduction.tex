@@ -268,13 +268,18 @@ Here we'll define the basic type formers used in MLTT.
 
 \begin{definition}[Disjoint Union]
   We define disjoint union as an inductive type.
+
   \begin{agdalisting}
     \ExecuteMetaData[agda/Snippets/Introduction.tex]{disj-union}
   \end{agdalisting}
+
   It is also expressible with only \(\Sigma\):
+
   \begin{agdalisting}
     \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-disj-union}
   \end{agdalisting}
+
+  Although the inductive type definition is slightly more ergonomic.
 \end{definition}
 \begin{definition}[Equalities, equivalences, and paths]
   \(\simeq\) will be used for equivalences, and \(\equiv\) for equalities.

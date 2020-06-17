@@ -1,2 +1,2 @@
 out/paper.pdf: paper.tex
-	latexmk -pdf -bibtex
+	latexmk -pdf -bibtex -output-directory=out -aux-directory=out
