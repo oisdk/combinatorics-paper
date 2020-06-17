@@ -59,6 +59,7 @@ jobs:
       uses: xu-cheng/latex-action@v2
       with:
         working_directory: main
+        root_file: paper.tex
         pre_compile: |
           rm .latexmkrc
           cd agda
