@@ -14,7 +14,15 @@ jobs:
       with:
         path: main
 
+    - uses: actions/cache@v2
+      name: Cache cubical library
+      id: cache-cubical
+      with:
+        path: $GITHUB_WORKSPACE/cubical
+        key: ${{ runner.os }}
+
     - name: Checkout cubical library
+      if: steps.cache-cubical.outputs.cache-hit != 'true'
       uses: actions/checkout@v2
       with:
         repository: agda/cubical
@@ -23,7 +31,7 @@ jobs:
 
     - name: Put cubical library in Agda library list
       run: |
-        mkdir ~/.agda/
+        mkdir -p ~/.agda/
         touch ~/.agda/libraries
         echo "$GITHUB_WORKSPACE/cubical/cubical.agda-lib" > ~/.agda/libraries
 
