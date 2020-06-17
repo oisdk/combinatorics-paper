@@ -26,7 +26,7 @@ private
 module _ {a} {A : Type a} where
  open ℒ
  open import Container.List
- open import Container.Membership (ℕ ▷ Fin)
+ open import Container.Membership (ℕ , Fin)
  open import Relation.Binary.Equivalence.Reasoning (⇔-equiv {a})
  ℰ!⇔Fin↠! : ℰ! A ⇔ Σ[ n ⦂ ℕ ] (Fin n ↠! A)
 \end{code}

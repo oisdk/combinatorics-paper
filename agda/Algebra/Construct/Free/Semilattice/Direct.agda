@@ -16,7 +16,7 @@ data 𝒦 (A : Type a) : Type a where
   ∪-idempotent : ∀ xs → xs ∪ xs ≡ xs
   ∪-identity : ∀ xs → xs ∪ ∅ ≡ xs
   trunc : isSet (𝒦 A)
-  
+
 module _ (semiLattice : Semilattice b) where
   open Semilattice semiLattice
   module _ (sIsSet : isSet 𝑆) (h : A → 𝑆) where
@@ -57,7 +57,7 @@ module Eliminators where
     ⟦ ∪-idempotent xs i ⟧⇓ = ⟦_⟧-idempotent xs ⟦ xs ⟧⇓ i
     ⟦ ∪-identity xs i ⟧⇓ = ⟦_⟧-identity xs ⟦ xs ⟧⇓ i
     ⟦ trunc xs ys x y i j ⟧⇓ =
-        isOfHLevel→isOfHLevelDep {n = 2}
+        isOfHLevel→isOfHLevelDep 2
           (λ xs → ⟦_⟧-set {xs})
           ⟦ xs ⟧⇓ ⟦ ys ⟧⇓
           (cong ⟦_⟧⇓ x) (cong ⟦_⟧⇓ y)

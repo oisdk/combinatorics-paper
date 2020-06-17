@@ -18,14 +18,15 @@ enumerability.
   To say that some type \(A\) is split enumerable is to say that there is a list
   \(\mathit{support} : \mathbf{List}(A)\) such that any value \(x : A\) is in
   \(\mathit{support}\).
-  \begin{equation} \label{split-enum-def-eqn}
-    \mathcal{E}!(A) \coloneqq \Sigma {(\mathit{support} : \textbf{List}(A))} , \Pi {(x : A)} , x \in \mathit{support}
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable/Container.tex]{split-enum-def}
+  \end{agdalisting}
   We call the first component of this pair the ``support'' list, and the second
   component the ``cover'' proof.
   An equivalent version of this predicate was called \verb+Listable+ in
   \cite{firsovDependentlyTypedProgramming2015}.
 \end{definition}
+
 We used some extra types in the above definition, which we will define here:
 
 \begin{definition}[\(\mathbf{List}\)] \label{List}

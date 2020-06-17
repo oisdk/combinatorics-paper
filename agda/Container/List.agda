@@ -7,4 +7,4 @@ open import Data.Fin
 open import Container
 
 List : Type a → Type a
-List = ⟦ ℕ ▷ Fin ⟧
+List = ⟦ ℕ , Fin ⟧

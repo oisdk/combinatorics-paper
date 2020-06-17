@@ -6,7 +6,7 @@ open import Prelude
 open import Container
 open import Container.List
 open import Data.Fin
-open import Container.Membership (ℕ ▷ Fin)
+open import Container.Membership (ℕ , Fin)
 open import Path.Reasoning
 open import Data.Sigma.Properties
 open import Function.Surjective.Properties
@@ -18,7 +18,7 @@ open import Data.List using (_∷_; []; List)
 import Cardinality.Finite.SplitEnumerable.Container as ℒ
 import Cardinality.Finite.SplitEnumerable.Inductive as 𝕃
 
-∈ℒ⇒∈𝕃 : ∀ (x : A) (xs : ⟦ ℕ ▷ Fin ⟧ A) → x ∈ xs → x 𝕃.∈ ℒ→𝕃 xs
+∈ℒ⇒∈𝕃 : ∀ (x : A) (xs : ⟦ ℕ , Fin ⟧ A) → x ∈ xs → x 𝕃.∈ ℒ→𝕃 xs
 ∈ℒ⇒∈𝕃 x (suc l , xs) (f0   , p) = f0 , p
 ∈ℒ⇒∈𝕃 x (suc l , xs) (fs n , p) = 𝕃.push (∈ℒ⇒∈𝕃 x (l , xs ∘ fs) (n , p))
 
