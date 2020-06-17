@@ -61,7 +61,7 @@ jobs:
         rm .latexmkrc
         cd agda
         find . -type f -name '*.lagda' | while read -r code ; do
-            agda --latex ${code:2}
+            agda -v --latex --latex-dir=. ${code:2}
         done
     - name: Compile latex
       uses: xu-cheng/texlive-action/full@v1
