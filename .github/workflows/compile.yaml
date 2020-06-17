@@ -61,7 +61,9 @@ jobs:
         cd main
         rm .latexmkrc
         cd agda
-        find . -type f -name '*.lagda' -exec agda --latex --latex-dir=. {} \; 
+        find . -type f -name '*.lagda' | while read -r code ; do
+            agda --latex --latex-dir=. $code
+        done
 
     - name: Compile latex
       uses: xu-cheng/latex-action@v2
