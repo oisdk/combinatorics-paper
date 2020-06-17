@@ -55,6 +55,12 @@ jobs:
         cabal install --ghc-options='-O0 +RTS -M6G -RTS' happy-1.19.12
         cabal install --ghc-options='-O0 +RTS -M6G -RTS' Agda-2.6.1
 
+    - name: Compile all literate agda
+      run: |
+        sh main/scripts/init-missing-lagda.sh
+        rm main/.latexmkrc
+        
+
     - name: Compile latex
       uses: xu-cheng/texlive-action/full@v1
       with:
@@ -66,7 +72,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: paper
-        path: main/out/paper.pdf
+        path: main/paper.pdf
 
     - name: Compile Agda HTML
       run: |
@@ -74,7 +80,7 @@ jobs:
         agda --html --html-dir=../docs README.agda
 
     - name: Move generated pdf in with html
-      run: mv main/out/paper.pdf main/docs/paper.pdf
+      run: mv main/paper.pdf main/docs/paper.pdf
 
     - name: Deploy html and pdf to github pages
       uses: peaceiris/actions-gh-pages@v3
