@@ -60,13 +60,13 @@ jobs:
       with:
         run: |
           cd main
-          rm .latexmkrc
           cd agda
           find . -type f -name '*.lagda' | while read -r code ; do
-              agda -v --latex --latex-dir=. ${code:2}
+              agda --latex --latex-dir=. ${code:2}
           done
           cd ..
-          latexmk -pdf
+          rm .latexmkrc
+          latexmk -pdf paper.tex
 
     - name: Upload generated pdf
       uses: actions/upload-artifact@v2
