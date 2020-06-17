@@ -56,10 +56,11 @@ jobs:
         cabal install --ghc-options='-O0 +RTS -M6G -RTS' Agda-2.6.1
 
     - name: Compile latex
-      uses: xu-cheng/latex-action@v2
+      uses: xu-cheng/texlive-action/full@v1
       with:
-        working_directory: main
-        root_file: paper.tex
+        run: |
+          cd main
+          latexmk -pdf
 
     - name: Upload generated pdf
       uses: actions/upload-artifact@v2
