@@ -1,3 +1,5 @@
-Compiles with: 
+The paper automatically compiles with a github action on every commit.
 
-* cubical a01973ef7264f9454a40697313a2073c51a6b77a
+It is available at: https://oisdk.github.io/combinatorics-paper/paper.pdf
+
+The (highlighted, clickable) agda code is available at: https://oisdk.github.io/combinatorics-paper/README.html
