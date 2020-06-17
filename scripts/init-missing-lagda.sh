@@ -1,4 +1,4 @@
-#!/use/bin/env bash
+#!/usr/bin/env bash
 cd agda || exit
 find . -type f -name '*.lagda' | while read -r code ; do
     dir=$(dirname "$code")
