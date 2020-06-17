@@ -61,7 +61,7 @@ jobs:
         agda --html --html-dir=../docs README.agda
 
     - name: Compile latex
-      uses: dante-ev/latex-action@master
+      uses: xu-chen/latex-action@v2
       with:
         working_directory: main
         root_file: paper.tex
