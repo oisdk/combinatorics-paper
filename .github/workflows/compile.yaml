@@ -55,17 +55,21 @@ jobs:
         cabal install --ghc-options='-O0 +RTS -M6G -RTS' happy-1.19.12
         cabal install --ghc-options='-O0 +RTS -M6G -RTS' Agda-2.6.1
 
+    - name: Compile all literate agda
+      run: |
+        apt-get install texlive-binaries
+        cd main
+        rm .latexmkrc
+        cd agda
+        find . -type f -name '*.lagda' | while read -r code ; do
+            agda --latex --latex-dir=. $code
+        done
+
     - name: Compile latex
-      uses: xu-cheng/latex-action@v2
+      uses: xu-chen/latex-action@v2
       with:
         working_directory: main
         root_file: paper.tex
-        pre_compile: |
-          rm .latexmkrc
-          cd agda
-          find . -type f -name '*.lagda' | while read -r code ; do
-              agda --latex --latex-dir=. ${code:2}
-          done
 
     - name: Upload generated pdf
       uses: actions/upload-artifact@v2
