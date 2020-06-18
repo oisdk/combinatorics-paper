@@ -121,9 +121,9 @@ From that we can derive a much wider array of finiteness proofs.
   Split enumerability is closed under \(\Sigma\).
   \begin{equation}
     \frac{
-      \mathcal{E}!(A) \; \; \; \Pi(x : A) , \mathcal{E}!(U(x))
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(A) \; \; \; \Pi(x : A) , \AgdaDatatype{\ensuremath{\mathcal{E}!}}(U(x))
     }{
-      \mathcal{E}!(\Sigma(x : A) , U(x))
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(\Sigma(x : A) , U(x))
     }
   \end{equation}
 \end{lemma}
@@ -132,28 +132,28 @@ From that we can derive a much wider array of finiteness proofs.
   \(A\) which is split enumerable at every point.
   Formally, we have the following proofs:
   \begin{align}
-    \mathcal{E}!_A &: \mathcal{E}!(A) \\
-    \mathcal{E}!_U &: \Pi(x : A) , \mathcal{E}!(U(x))
+    \AgdaDatatype{\ensuremath{\mathcal{E}!}}_A &: \AgdaDatatype{\ensuremath{\mathcal{E}!}}(A) \\
+    \AgdaDatatype{\ensuremath{\mathcal{E}!}}_U &: \Pi(x : A) , \AgdaDatatype{\ensuremath{\mathcal{E}!}}(U(x))
   \end{align}
 
   Our task is to construct a proof of type:
   \begin{equation}
-    \mathcal{E}!(\Sigma(x : A) , U(x))
+    \AgdaDatatype{\ensuremath{\mathcal{E}!}}(\Sigma(x : A) , U(x))
   \end{equation}
   This proof itself is composed of two components:
   \begin{align}
     \mathit{support} &: \mathbf{List}(\Sigma(x : A) , U(x)) \\
     \mathit{cover} &: \Pi(x : \Sigma(y : A) , U(y)) , x \in \mathit{support}
   \end{align}
-  To construct the support list, we apply the function \(\mathcal{E}!_U\) to
-  every element in the support list of \(\mathcal{E}!_A\), extract the support
+  To construct the support list, we apply the function \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}_U\) to
+  every element in the support list of \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}_A\), extract the support
   lists from the resulting finiteness proofs, and concatenate them.
 
 
   To prove that this support list does in fact cover the entirety of the type
   \(\Sigma \; A \; U\), we note that any element of type \(\Sigma \; A \; U\)
-  must have a first component in the support list of \(\mathcal{E}!_A\), and its
-  second component must be in the result of applying \(\mathcal{E}!_U\) to that
+  must have a first component in the support list of \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}_A\), and its
+  second component must be in the result of applying \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}_U\) to that
   first element (since that support list contains every element of type
   \(U(x)\)).
   Therefore, the pair itself must be in our constructed support list.
@@ -201,14 +201,14 @@ another form:
   A proof of split enumerability is equivalent to a split surjection from a
   finite prefix of the natural numbers.
   \begin{equation}%
-    \mathcal{E}!(A) \simeq \Sigma (n : \mathbb{N}) , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
+    \AgdaDatatype{\ensuremath{\mathcal{E}!}}(A) \simeq \Sigma (n : \mathbb{N}) , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
   \end{equation}
 \end{lemma}
 \begin{proof}
   \begin{align*}
-     \mathcal{E}!(A) &
+     \AgdaDatatype{\ensuremath{\mathcal{E}!}}(A) &
     \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , x \in \mathit{xs}
-    && \text{def.~\ref{split-enum-def} }(\mathcal{E}!)
+    && \text{def.~\ref{split-enum-def} }(\AgdaDatatype{\ensuremath{\mathcal{E}!}})
     \\
     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{fib}_{\text{snd}(\mathit{xs})}(x)
     && \text{eqn.~\ref{container-membership} } (\in)
@@ -313,13 +313,12 @@ formalisation:
 We mentioned in the introduction that occasionally in constructive mathematics
 proofs will contain ``too much'' information.
 With split enumerability we can see an instance of this.
-
+Consider the following proof of the finiteness of Bool:
 \begin{agdalisting} \label{bool-slop}
-  Consider the following proof of the finiteness of Bool:
   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-slop}
-  While it represents the ``same'' information as our previous proof, it is
-  clearly not the same \emph{object}.
 \end{agdalisting}
+While it represents the ``same'' information as our previous proof, it is
+clearly not the same \emph{object}.
 
 There is ``slop'' in the type of split enumerability: there are more distinct
 values than there are \emph{usefully} distinct values.
@@ -336,7 +335,8 @@ lists, and we have to change the definition of \(\in\) as well.
 
 There is a much simpler and more elegant solution: we insist that every
 \emph{membership proof} must be unique.
-This would disallow a definition of \(\mathcal{E}!(\AgdaDatatype{Bool})\) with
+This would disallow a definition of \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}\;
+\AgdaDatatype{Bool}\) with
 duplicates, as there are multiple values which inhabit the type \(\text{false}
 \in \left[ \text{false}, \text{true}, \text{false} \right]\).
 It also allows us to keep most of the split enumerability definition unchanged,
@@ -405,8 +405,8 @@ This proof takes significantly more work.
 The ``unique membership'' condition in \(\mathcal{B}\) means that we are not
 permitted duplicates in the support list.
 The first step in the proof, then, is to filter those duplicates out from the
-support list of the \(\mathcal{E}!\) proof: we can do this using the decidable
-equality provided by \(\mathcal{E}!\) (lemma~\ref{split-enum-discrete}).
+support list of the \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}\) proof: we can do this using the decidable
+equality provided by \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}\) (lemma~\ref{split-enum-discrete}).
 From there, we need to show that the membership proof carries over
 appropriately.
 \todo{Provide more info on this proof?}
@@ -504,9 +504,9 @@ of course we can derive the proof on manifest Bishop finiteness in a few lines.
   (\(\Pi\)-types).
   \begin{equation}
     \frac{
-      \mathcal{E}!(A) \; \; \; \Pi {(x : A)} , \mathcal{E}!\left( U(x) \right)
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(A) \; \; \; \Pi {(x : A)} , \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left( U(x) \right)
     }{
-      \mathcal{E}!\left(\Pi {(x : A)} , U(x)\right)
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left(\Pi {(x : A)} , U(x)\right)
     }
   \end{equation}
 \end{theorem}
@@ -521,9 +521,9 @@ of course we can derive the proof on manifest Bishop finiteness in a few lines.
   changing our goal to:
   \begin{equation}
     \frac{
-      \mathcal{E}!(\mathbf{Fin}(n)) \; \; \; \Pi (x : \mathbf{Fin}(n)) , \mathcal{E}!\left( U(x) \right)
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(\mathbf{Fin}(n)) \; \; \; \Pi (x : \mathbf{Fin}(n)) , \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left( U(x) \right)
     }{
-      \mathcal{E}!\left(\Pi (x : \mathbf{Fin}(n)) , U(x)\right)
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left(\Pi (x : \mathbf{Fin}(n)) , U(x)\right)
     }
   \end{equation}
   
@@ -542,9 +542,9 @@ of course we can derive the proof on manifest Bishop finiteness in a few lines.
   And therefore we can simplify again our goal to the following:
   \begin{equation}
     \frac{
-      \mathcal{E}!(\mathbf{Fin}(n)) \; \; \; \Pi (x : \mathbf{Fin}(n)) , \mathcal{E}!\left( U(x) \right)
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(\mathbf{Fin}(n)) \; \; \; \Pi (x : \mathbf{Fin}(n)) , \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left( U(x) \right)
     }{
-      \mathcal{E}!\left(\mathbf{Tuple}(n, U)\right)
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left(\mathbf{Tuple}(n, U)\right)
     }
   \end{equation}
   
@@ -806,7 +806,7 @@ The cover proof emerges naturally from the definition of the permutation.
 \subsection{Closure}
 Since we don't have a function of type \(\mathcal{C}(A) \rightarrow
 \mathcal{B}(A)\), closure proofs on \(\mathcal{B}\) do not transfer over to
-\(\mathcal{C}\) trivially (unlike with \(\mathcal{E}!\) and \(\mathcal{B}\)).
+\(\mathcal{C}\) trivially (unlike with \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}\) and \(\mathcal{B}\)).
 The cases for \(\bot\), \(\top\), and \(\AgdaDatatype{Bool}\) are simple to adapt: we
 can just propositionally truncate their Bishop finiteness proof.
 
@@ -981,7 +981,7 @@ finiteness predicate.
   circle.
   Since the cover proof is truncated, we need only consider the point
   constructors of the circle: as such, the cover proof is essentially the same
-  as the one for \(\mathcal{E}!(\top)\).
+  as the one for \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}(\top)\).
 \end{proof}
 \subsection{Relation To Split Enumerability}
 It is trivially easy to construct a proof that any split enumerable type is
