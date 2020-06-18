@@ -27,46 +27,37 @@ enumerability.
   \cite{firsovDependentlyTypedProgramming2015}.
 \end{definition}
 
-We used some extra types in the above definition, which we will define here:
+We have used two types there which we have not yet defined:
+\(\AgdaDatatype{List}\) and \(\AgdaDatatype{\ensuremath{\in}}\).
+We will define them here.
 
 \begin{definition}[\(\mathbf{List}\)] \label{List}
-  In this paper we define lists as \emph{containers}:
-  \begin{agdalisting}
-    \ExecuteMetaData[agda/Container/List.tex]{list-def}
-  \end{agdalisting}
-  This may seem quite foreign or complex in comparison to the usual definition
-  of lists as an inductive data type:
+  In this paper we will work with two equivalent definitions of lists.
+  The first is the standard definition as an inductive type:
   \begin{agdalisting}
     \ExecuteMetaData[agda/Data/List/Base.tex]{list-def}
   \end{agdalisting}
-  But it turns out to be quite useful for later proofs.
 
-  Moreover, the inductive type and the container-based type are equivalent, as
-  is proven in our formalisation.
-\end{definition}
-\begin{definition}[Containers] \label{container-def}
-  A container \cite{abbottContainersConstructingStrictly2005} is a pair
-  \(S , P\) where \(S\) is a type, the elements of which are called
-  the \emph{shapes} of the container, and \(P\) is a type family on \(S\), where
-  the elements of \(P(s)\) are called the \emph{positions} of a container.
-  We ``interpret'' a container into a functor defined like so:
-  \begin{equation} \label{container-interp}
-    \llbracket S , P \rrbracket(A) \coloneqq \Sigma {(s : S)} , \left( P(s) \rightarrow A \right)
-  \end{equation}
-  Membership of a container can be defined like so:
-  \begin{equation} \label{container-membership}
-    x \in \mathit{xs} \coloneqq \text{fib}_{\text{snd}(\mathit{xs})}(x)
-  \end{equation}
-\end{definition}
-
-\begin{definition}[Fibers] \label{fibers}
-  A fiber \cite[definition 4.2.4]{hottbook} is defined over some function \(f :
-  A \rightarrow B\).
+  The second way to define lists is to define them as a \emph{container}:
   \begin{agdalisting}
-    \ExecuteMetaData[agda/Snippets/Introduction.tex]{fiber}
+    \ExecuteMetaData[agda/Container/List.tex]{list-def}
+  \end{agdalisting}
+  The reason we use this second strange definition is that it turns out to be
+  quite useful in some later proofs.
+  We have proven the two types equivalent in our formalisation, however, so we
+  can switch between them freely without loss of generality.
+\end{definition}
+
+In defining lists we have introduced another concept which needs defining:
+\(\AgdaDatatype{Fin}\).
+\begin{definition}[\(\mathbf{Fin}\)] \label{Fin}
+  \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\). We
+  define it the standard way:
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Data/Fin/Base.tex]{fin-def}
   \end{agdalisting}
 \end{definition}
-
+Here \(\uplus\) refers to the disjoint union of two types.
 \begin{definition}[Disjoint Union]
   We define disjoint union as an inductive type.
 
@@ -82,47 +73,49 @@ We used some extra types in the above definition, which we will define here:
 
   Although the inductive type definition is slightly more ergonomic.
 \end{definition}
-\begin{definition}[\(\mathbf{Fin}\)] \label{Fin}
-  \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\). We
-  define it the standard way:
-  \begin{equation}
-    \begin{alignedat}{3}
-      & \mathbf{Fin}(0)     && \coloneqq \bot ; \\
-      & \mathbf{Fin}(n + 1) && \coloneqq \top \uplus \mathbf{Fin}(n) ;
-    \end{alignedat}
-  \end{equation} 
+
+After that interlude, we can get back to defining containers.
+\begin{definition}[Containers] \label{container-def}
+  A container \cite{abbottContainersConstructingStrictly2005} is a pair
+  \(S , P\) where \(S\) is a type, the elements of which are called
+  the \emph{shapes} of the container, and \(P\) is a type family on \(S\), where
+  the elements of \(P(s)\) are called the \emph{positions} of a container.
+  We ``interpret'' a container into a functor defined like so:
+  \begin{agdalisting} \label{container-interp}
+    \ExecuteMetaData[agda/Container.tex]{container-interp}
+  \end{agdalisting}
+  Membership of a container can be defined like so:
+  \begin{agdalisting} \label{container-membership}
+    \ExecuteMetaData[agda/Container/Membership.tex]{membership-def}
+  \end{agdalisting}
 \end{definition}
+
+\begin{definition}[Fibers] \label{fibers}
+  A fiber \cite[definition 4.2.4]{hottbook} is defined over some function \(f :
+  A \rightarrow B\).
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Introduction.tex]{fiber}
+  \end{agdalisting}
+\end{definition}
+
 \subsection{Instances}
 Now that we have a suitable definition of finiteness, we will next prove that
 some things are finite.
 \begin{lemma}
-  \(\bot\), \(\top\), and \(\mathbf{Bool}\) are split enumerable.
+  \(\bot\), \(\top\), and \(\AgdaDatatype{Bool}\) are split enumerable.
 \end{lemma}
 \begin{proof}
-  These three types are represented by fairly simple finite sets:
-  \begin{align}
-    \bot &= \left\{  \right\} \\
-    \top &= \left\{ \text{tt}  \right\} \\
-    \mathbf{Bool} &= \left\{  \text{false}, \text{true} \right\}
-  \end{align}
-  Which leads to quite simple proofs of finiteness.
-
-  The support list for is \(\left[  \right]\), \(\left[ \text{tt} \right]\), and
-  \(\left[ \text{false}, \text{true} \right]\), respectively, and the cover
-  proof is a function that returns the index of the supplied element.
+  These three types are quite obviously finite: we will show only the proof of
+  finiteness for \(\AgdaDatatype{Bool}\) here for brevity's sake.
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
+  \end{agdalisting}
 \end{proof}
-\begin{agdalisting}
-  The code in our formalisation of these three proofs is quite simple.
-  Just as an example, the proof that \(\mathbf{Bool}\) is split enumerable is as
-  follows:
-  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
-\end{agdalisting}
 With the most basic simple types out of the way, the obvious next choice is the
 (non-dependent) sums and products: \(\uplus\) and \(\times\).
 Both of these types can be constructed from the \emph{dependent} sum, however,
 so that is the type we will prove finite.
 From that we can derive a much wider array of finiteness proofs.
-
 
 \begin{lemma} \label{split-enum-sigma}
   Split enumerability is closed under \(\Sigma\).
@@ -343,7 +336,7 @@ lists, and we have to change the definition of \(\in\) as well.
 
 There is a much simpler and more elegant solution: we insist that every
 \emph{membership proof} must be unique.
-This would disallow a definition of \(\mathcal{E}!(\mathbf{Bool})\) with
+This would disallow a definition of \(\mathcal{E}!(\AgdaDatatype{Bool})\) with
 duplicates, as there are multiple values which inhabit the type \(\text{false}
 \in \left[ \text{false}, \text{true}, \text{false} \right]\).
 It also allows us to keep most of the split enumerability definition unchanged,
@@ -495,8 +488,8 @@ otherwise.
 In MLTT, this is of course not provable: since all of the finiteness predicates
 we have seen so far imply decidable equality, and since we don't have any kind
 of decidable equality on functions in MLTT, we know that we won't be able to
-show that any kind of function is finite; even one like \(\mathbf{Bool}
-\rightarrow \mathbf{Bool}\).
+show that any kind of function is finite; even one like \(\AgdaDatatype{Bool}
+\rightarrow \AgdaDatatype{Bool}\).
 
 CuTT is not so restricted.
 Since we have things like function extensionality and transport, we can indeed
@@ -566,7 +559,7 @@ While we have removed some of the unnecessary information from our finiteness
 predicates, one piece still remains.
 \begin{agdalisting}
   The two following proofs are both valid proofs of the finiteness of
-  \(\mathbf{Bool}\), and both do not include any duplicates.
+  \(\AgdaDatatype{Bool}\), and both do not include any duplicates.
   However they still differ:
   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst} \smallskip
   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-rev}
@@ -814,7 +807,7 @@ The cover proof emerges naturally from the definition of the permutation.
 Since we don't have a function of type \(\mathcal{C}(A) \rightarrow
 \mathcal{B}(A)\), closure proofs on \(\mathcal{B}\) do not transfer over to
 \(\mathcal{C}\) trivially (unlike with \(\mathcal{E}!\) and \(\mathcal{B}\)).
-The cases for \(\bot\), \(\top\), and \(\mathbf{Bool}\) are simple to adapt: we
+The cases for \(\bot\), \(\top\), and \(\AgdaDatatype{Bool}\) are simple to adapt: we
 can just propositionally truncate their Bishop finiteness proof.
 
 Non-dependent operators like \(\times\), \(\uplus\), and \(\rightarrow\) are

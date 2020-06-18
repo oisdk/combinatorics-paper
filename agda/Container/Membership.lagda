@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --safe --cubical #-}
 
 open import Container
@@ -9,7 +10,14 @@ open import HLevels
 
 infixr 5 _∈_ _∈!_
 _∈_ : A → ⟦ 𝒞 ⟧ A → Type _
-x ∈ xs = fiber (xs . snd) x
+\end{code}
+%<*membership-def>
+\begin{code}
+x ∈ xs = fiber (snd xs) x
+\end{code}
+%</membership-def>
+\begin{code}
 
 _∈!_ : A → ⟦ 𝒞 ⟧ A → Type _
 x ∈! xs = isContr (x ∈ xs)
+\end{code}
