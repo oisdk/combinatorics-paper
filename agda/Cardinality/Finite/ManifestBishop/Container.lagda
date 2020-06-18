@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Cardinality.Finite.ManifestBishop.Container where
@@ -9,4 +10,9 @@ open import Container.List public
 open import Container.Membership (ℕ , Fin) public
 
 ℬ : Type a → Type a
-ℬ A = Σ[ xs ⦂ List A ] Π[ x ⦂ A ] x ∈! xs
+\end{code}
+%<*bish-def>
+\begin{code}
+ℬ A = Σ[ xs ⦂ List A ] ((x : A) → x ∈! xs)
+\end{code}
+%</bish-def>

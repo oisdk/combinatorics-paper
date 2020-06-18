@@ -29,13 +29,21 @@ module _ {a} {A : Type a} where
  open import Container.Membership (ℕ , Fin)
  open import Relation.Binary.Equivalence.Reasoning (⇔-equiv {a})
  ℰ!⇔Fin↠! : ℰ! A ⇔ Σ[ n ⦂ ℕ ] (Fin n ↠! A)
+ ℰ!⇔Fin↠! =
 \end{code}
 %<*is-split-inj>
 \begin{code}
- ℰ!⇔Fin↠! = reassoc
+   ℰ! A ≋⟨⟩  Σ[ xs ⦂ List A ] ((x : A) → x ∈ xs)                        ≋⟨⟩
+             Σ[ xs ⦂ List A ] ((x : A) → fiber (snd xs) x)              ≋⟨⟩
+             Σ[ xs ⦂ List A ] SplitSurjective (snd xs)                  ≋⟨⟩
+             Σ[ xs ⦂ ⟦ ℕ , Fin ⟧ A ] SplitSurjective (snd xs)           ≋⟨⟩
+             Σ[ xs ⦂ Σ[ n ⦂ ℕ ] (Fin n → A) ] SplitSurjective (snd xs)  ≋⟨ reassoc ⟩
+             Σ[ n ⦂ ℕ ] Σ[ f ⦂ (Fin n → A) ] SplitSurjective f          ≋⟨⟩
+             Σ[ n ⦂ ℕ ] (Fin n ↠! A)
 \end{code}
 %</is-split-inj>
 \begin{code}
+             ∎
  ℰ!⇒Discrete : ℰ! A → Discrete A
  ℰ!⇒Discrete = flip Discrete↠!A⇒Discrete⟨A⟩ discreteFin
              ∘ snd

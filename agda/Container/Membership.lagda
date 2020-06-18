@@ -19,5 +19,9 @@ x ∈ xs = fiber (snd xs) x
 \begin{code}
 
 _∈!_ : A → ⟦ 𝒞 ⟧ A → Type _
+\end{code}
+%<*uniq-memb-def>
+\begin{code}
 x ∈! xs = isContr (x ∈ xs)
 \end{code}
+%</uniq-memb-def>

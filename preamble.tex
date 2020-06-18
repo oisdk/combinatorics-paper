@@ -24,11 +24,10 @@
 
 \usepackage{multicol}
 \usepackage{subcaption}
-
 \usepackage{graphicx}
 \usepackage{url}
-
 \usepackage{catchfilebetweentags}
+\usepackage{setspace}
 
 \let\Bbbk\relax
 \input{agda}
@@ -63,6 +62,18 @@
   }%
   \hfill%
   \eqnum%
+  \break%
+}
+\NewEnviron{agdalisting*}[1][\dbox]{\vspace{\abovedisplayskip}%
+
+  \hfill%
+  {\begin{varwidth}{\linewidth}% Add #1 just before { on this line to make agda
+      % code boxed with dots
+      \BODY%
+    \end{varwidth}%
+    \vspace{\belowdisplayskip}%
+  }%
+  \hfill%
   \break%
 }
 

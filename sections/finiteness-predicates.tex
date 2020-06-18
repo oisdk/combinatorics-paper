@@ -204,37 +204,31 @@ another form:
     \AgdaDatatype{\ensuremath{\mathcal{E}!}}(A) \simeq \Sigma (n : \mathbb{N}) , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
   \end{equation}
 \end{lemma}
-\begin{proof}
-  \begin{align*}
-     \AgdaDatatype{\ensuremath{\mathcal{E}!}}(A) &
-    \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , x \in \mathit{xs}
-    && \text{def.~\ref{split-enum-def} }(\AgdaDatatype{\ensuremath{\mathcal{E}!}})
-    \\
-    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{fib}_{\text{snd}(\mathit{xs})}(x)
-    && \text{eqn.~\ref{container-membership} } (\in)
-    \\
-    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \text{sp-surj}(\text{snd}(\mathit{xs}))
-    && \text{eqn.~\ref{sp-surj-eqn} (sp-surj)}
-    \\
-    & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket (A)) , \text{sp-surj}(\text{snd}(\mathit{xs}))
-    && \text{def.~\ref{List} } (\mathbf{List})
-    \\
-    & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \mathbf{Fin}(n)) , A) , \text{sp-surj}(\text{snd}(\mathit{xs}))
-    && \text{eqn.~\ref{container-interp} } (\llbracket \wc \rrbracket)
-    \\
-    & \simeq \Sigma (n : \mathbb{N}) , \Sigma (f : \mathbf{Fin}(n) \rightarrow A) , \text{sp-surj}(f)
-    && \text{Reassociation of } \Sigma
-    \\
-    & \simeq \Sigma (n : \mathbb{N}) , ( \mathbf{Fin}(n) \twoheadrightarrow ! \; A )
-    && \text{eqn.~\ref{sp-surj-arrow-eqn} } (\twoheadrightarrow!) \; \qedhere
-  \end{align*}
+\begin{proof} \phantom{x}
+
+  \begin{minipage}[t]{.8\textwidth}\vspace{-\baselineskip}
+    \begin{agdalisting*}
+      \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{is-split-inj}
+    \end{agdalisting*}
+  \end{minipage}
+  \begin{minipage}[t]{.19\textwidth} \setstretch{1.08}
+
+      def.~\ref{split-enum-def} (\AgdaDatatype{\ensuremath{\mathcal{E}!}}) \\
+      eqn.~\ref{container-membership} (\AgdaDatatype{\ensuremath{\in}}) \\
+      eqn.~\ref{sp-surj-eqn}  \\
+      def.~\ref{List} (\(\AgdaDatatype{List}\)) \\
+      eqn.~\ref{container-interp}  \\
+      Reassociation \\
+      eqn.~\ref{sp-surj-arrow-eqn} \qedhere
+  \end{minipage}
 \end{proof}
+In the above proof syntax the
+\(\AgdaDatatype{\ensuremath{\equiv \langle{} \rangle{} }}\) connects lines which
+are definitionally equal, i.e. they are ``obviously'' equal from the type
+checker's perspective.
+Clearly, only one line isn't a definitional equality: 
 \begin{agdalisting}
-In our formalisation, the proof is a single line:
-\ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{is-split-inj}
-The only step which isn't definitional equality is the reassociation of
-\(\Sigma\).
-\ExecuteMetaData[agda/Data/Sigma/Properties.tex]{reassoc}
+  \ExecuteMetaData[agda/Data/Sigma/Properties.tex]{reassoc}
 \end{agdalisting}
 (The simplicity of this proof, by the way, is why we preferred the
 container-based definition of lists over the traditional one.)
@@ -356,21 +350,21 @@ To specify that a value must exist uniquely in HoTT we can use the concept of a
     \ExecuteMetaData[agda/Snippets/Introduction.tex]{hlevels}
   \end{agdalisting}
 \end{definition}
-
 \begin{definition}[Unique Membership] \label{uniq-memb-def}
   Unique list membership is defined in terms of list membership: it is a
   contraction of it.
-  \begin{equation}
-    x \inunique \mathit{xs} \coloneqq \text{isContr}(x \in \mathit{xs})
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Container/Membership.tex]{uniq-memb-def}
+  \end{agdalisting}
 \end{definition}
+
 With this we can define manifest Bishop finiteness:
 \begin{definition}[Manifest Bishop Finiteness]  \label{bish-def}
   A type is manifest Bishop finite if there exists a list which contains each
   value in the type once.
-  \begin{equation}
-    \mathcal{B}(A) \coloneqq \Sigma {(\mathit{xs} : \textbf{List}(A))} , \Pi {(x : A)} , x \inunique xs
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop/Container.tex]{bish-def}
+  \end{agdalisting}
 \end{definition}
 The only difference between manifest Bishop finiteness and split enumerability
 is the membership term: here we require unique membership (\(\inunique\)),
@@ -402,8 +396,9 @@ Both predicates imply the other.
   Any split enumerable set is manifest Bishop finite.
 \end{lemma}
 This proof takes significantly more work.
-The ``unique membership'' condition in \(\mathcal{B}\) means that we are not
-permitted duplicates in the support list.
+The ``unique membership'' condition in
+\(\AgdaDatatype{\ensuremath{\mathcal{B}}}\) means that we are not permitted
+duplicates in the support list.
 The first step in the proof, then, is to filter those duplicates out from the
 support list of the \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}\) proof: we can do this using the decidable
 equality provided by \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}\) (lemma~\ref{split-enum-discrete}).
@@ -428,23 +423,24 @@ in disguise.
 \begin{definition}[Equivalences] \label{equivalences}
   We will take contractible maps \cite[definition 4.4.1]{hottbook} as our
   ``default'' definition of equivalences.
-  \begin{alignat}{2}
-    &\text{isEquiv}(f) &&\coloneqq \Pi(y : B) , \text{isContr}(\text{fib}_f(y)) \label{is-equiv-def} \\
-    &A \simeq B        &&\coloneqq \Sigma(f : A \rightarrow B) , \text{isEquiv}(f) \label{equiv-def}
-  \end{alignat}
+  \begin{agdalisting} \label{is-equiv-def}
+    \ExecuteMetaData[agda/Snippets/Equivalence.tex]{is-equiv-def}
+  \end{agdalisting} \vspace{-.5\baselineskip}
+  \begin{agdalisting} \label{equiv-def}
+    \ExecuteMetaData[agda/Snippets/Equivalence.tex]{equiv-def}
+  \end{agdalisting}
 \end{definition}
 \begin{lemma} \label{bishop-equiv}
   Manifest bishop finiteness is equivalent to an equivalence to a finite prefix
   of the natural numbers.
   \begin{equation}
-    \mathcal{B}(A) \simeq \Sigma {(n : \mathbb{N})} , \left( \mathbf{Fin}(n) \simeq A \right)
   \end{equation}
 \end{lemma}
 \begin{proof}
   \begin{align*}
-     \mathcal{B}(A) &
+     \AgdaDatatype{\ensuremath{\mathcal{B}}}(A) &
     \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , x \inunique \mathit{xs}
-    && \text{def.~\ref{bish-def} }(\mathcal{B})
+    && \text{def.~\ref{bish-def} }(\AgdaDatatype{\ensuremath{\mathcal{B}}})
     \\
     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{isContr}(x \in \mathit{xs})
     && \text{eqn.~\ref{uniq-memb-def} } (\inunique)
@@ -619,11 +615,11 @@ To remedy the problem, we will use propositional truncation
   proof that \(A\) is manifest Bishop finite or equivalent to a finite prefix of
   the natural numbers.
   \begin{equation}
-    \mathcal{C}(A) \coloneqq \lVert \mathcal{B}(A) \rVert \simeq \lVert \Sigma(n : \mathbb{N}) , (\mathbf{Fin}(n) \simeq A) \rVert
+    \mathcal{C}(A) \coloneqq \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(A) \rVert \simeq \lVert \Sigma(n : \mathbb{N}) , (\mathbf{Fin}(n) \simeq A) \rVert
   \end{equation}
 \end{definition}
 At first glance, it might seem that we lose any useful properties we could
-derive from \(\mathcal{B}\).
+derive from \(\AgdaDatatype{\ensuremath{\mathcal{B}}}\).
 Luckily, this is not the case: by eliminator \ref{elim-prop-coh} of
 def.~\ref{prop-trunc}, we need only show that the output is uniquely determined.
 \subsection{Deriving Uniquely-Determined Quantities}
@@ -735,7 +731,7 @@ know that there can be no type which satisfies one but not the other.
 We also know that manifest Bishop finiteness implies cardinal finiteness, but we
 do \emph{not} have a function in the other direction:
 \begin{equation}
-  \mathcal{C}(A) \rightarrow \mathcal{B}(A)
+  \mathcal{C}(A) \rightarrow \AgdaDatatype{\ensuremath{\mathcal{B}}}(A)
 \end{equation}
 So the question arises naturally: is there a cardinally finite type which is
 \emph{not} manifest Bishop finite?
@@ -743,7 +739,7 @@ So the question arises naturally: is there a cardinally finite type which is
 It turns out the answer is no!
 \begin{lemma}
   \begin{equation}
-    \neg (\Sigma(A : \mathbf{Type}) , \mathcal{C}(A) \times \neg \mathcal{B}(A))
+    \neg (\Sigma(A : \mathbf{Type}) , \mathcal{C}(A) \times \neg \AgdaDatatype{\ensuremath{\mathcal{B}}}(A))
   \end{equation}
 \end{lemma}
 \begin{proof}
@@ -805,8 +801,8 @@ truncation.
 The cover proof emerges naturally from the definition of the permutation.
 \subsection{Closure}
 Since we don't have a function of type \(\mathcal{C}(A) \rightarrow
-\mathcal{B}(A)\), closure proofs on \(\mathcal{B}\) do not transfer over to
-\(\mathcal{C}\) trivially (unlike with \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}\) and \(\mathcal{B}\)).
+\AgdaDatatype{\ensuremath{\mathcal{B}}}(A)\), closure proofs on \(\AgdaDatatype{\ensuremath{\mathcal{B}}}\) do not transfer over to
+\(\mathcal{C}\) trivially (unlike with \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}\) and \(\AgdaDatatype{\ensuremath{\mathcal{B}}}\)).
 The cases for \(\bot\), \(\top\), and \(\AgdaDatatype{Bool}\) are simple to adapt: we
 can just propositionally truncate their Bishop finiteness proof.
 
@@ -826,34 +822,34 @@ same trick does not work.
 We have closure proofs like:
 \begin{equation}
   \frac{
-    \mathcal{B}(A) \; \; \; \Pi(x : A) , \mathcal{B}(U(x))
+    \AgdaDatatype{\ensuremath{\mathcal{B}}}(A) \; \; \; \Pi(x : A) , \AgdaDatatype{\ensuremath{\mathcal{B}}}(U(x))
   }{
-    \mathcal{B}(\Pi \; A \; U)
+    \AgdaDatatype{\ensuremath{\mathcal{B}}}(\Pi \; A \; U)
   }
 \end{equation}
 If we apply the monadic truncation trick we can derive closure proofs like the
 following:
 \begin{equation}
   \frac{
-    \lVert \mathcal{B}(A) \rVert \; \; \; \lVert \Pi(x : A) , \mathcal{B}(U(x)) \rVert
+    \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(A) \rVert \; \; \; \lVert \Pi(x : A) , \AgdaDatatype{\ensuremath{\mathcal{B}}}(U(x)) \rVert
   }{
-    \lVert \mathcal{B}(\Pi \; A \; U) \rVert
+    \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(\Pi \; A \; U) \rVert
   }
 \end{equation}
 However our \emph{desired} closure proof is the following:
 \begin{equation}
   \frac{
-    \lVert \mathcal{B}(A) \rVert \; \; \; \Pi(x : A) , \lVert \mathcal{B}(U(x)) \rVert
+    \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(A) \rVert \; \; \; \Pi(x : A) , \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(U(x)) \rVert
   }{
-    \lVert \mathcal{B}(\Pi \; A \; U) \rVert
+    \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(\Pi \; A \; U) \rVert
   }
 \end{equation}
 They don't match!
 
 The solution would be to find a function of the following type:
 \begin{equation}
-  (\Pi(x : A) , \lVert \mathcal{B}(U(x)) \rVert) \rightarrow
-  \lVert \Pi(x : A) , \mathcal{B}(U(x)) \rVert
+  (\Pi(x : A) , \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(U(x)) \rVert) \rightarrow
+  \lVert \Pi(x : A) , \AgdaDatatype{\ensuremath{\mathcal{B}}}(U(x)) \rVert
 \end{equation}
 However we might be disheartened at realising that this is a required goal: the
 above equation is \emph{extremely} similar to the axiom of choice!
