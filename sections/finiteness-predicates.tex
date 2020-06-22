@@ -10,13 +10,15 @@ As we make our way through each predicate, we will be interested in two aspects:
 how can we build proofs of this predicate (i.e. is the product of two finite
 types finite?) and what do we \emph{get} once we do (i.e. does this predicate
 tell us the number of elements in the finite set?).
+We will use the Countdown problem throughout as a running example of a thing to
+prove finite.
 \section{Split Enumerability} \label{split-enumerability}
 We will start with a simple notion of finiteness, called \emph{split}
 enumerability.
 
 \begin{definition}[Split Enumerable Set] \label{split-enum-def}
   To say that some type \(A\) is split enumerable is to say that there is a list
-  \(\mathit{support} : \mathbf{List}(A)\) such that any value \(x : A\) is in
+  \(\mathit{support} : \AgdaDatatype{List}(A)\) such that any value \(x : A\) is in
   \(\mathit{support}\).
   \begin{agdalisting} \label{split-enum-def-eqn}
     \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable/Container.tex]{split-enum-def}
@@ -31,7 +33,7 @@ We have used two types there which we have not yet defined:
 \(\AgdaDatatype{List}\) and \(\AgdaDatatype{\ensuremath{\in}}\).
 We will define them here.
 
-\begin{definition}[\(\mathbf{List}\)] \label{List}
+\begin{definition}[\(\AgdaDatatype{List}\)] \label{List}
   In this paper we will work with two equivalent definitions of lists.
   The first is the standard definition as an inductive type:
   \begin{agdalisting}
@@ -50,8 +52,8 @@ We will define them here.
 
 In defining lists we have introduced another concept which needs defining:
 \(\AgdaDatatype{Fin}\).
-\begin{definition}[\(\mathbf{Fin}\)] \label{Fin}
-  \(\mathbf{Fin}(n)\) is the type of natural numbers smaller than \(n\). We
+\begin{definition}[\(\AgdaDatatype{Fin}\)] \label{Fin}
+  \(\AgdaDatatype{Fin}\;n\) is the type of natural numbers smaller than \(n\). We
   define it the standard way:
   \begin{agdalisting}
     \ExecuteMetaData[agda/Data/Fin/Base.tex]{fin-def}
@@ -60,17 +62,13 @@ In defining lists we have introduced another concept which needs defining:
 Here \(\uplus\) refers to the disjoint union of two types.
 \begin{definition}[Disjoint Union]
   We define disjoint union as an inductive type.
-
   \begin{agdalisting}
     \ExecuteMetaData[agda/Snippets/Introduction.tex]{disj-union}
   \end{agdalisting}
-
   It is also expressible with only \(\Sigma\):
-
   \begin{agdalisting}
     \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-disj-union}
   \end{agdalisting}
-
   Although the inductive type definition is slightly more ergonomic.
 \end{definition}
 
@@ -84,12 +82,22 @@ After that interlude, we can get back to defining containers.
   \begin{agdalisting} \label{container-interp}
     \ExecuteMetaData[agda/Container.tex]{container-interp}
   \end{agdalisting}
-  Membership of a container can be defined like so:
-  \begin{agdalisting} \label{container-membership}
-    \ExecuteMetaData[agda/Container/Membership.tex]{membership-def}
-  \end{agdalisting}
 \end{definition}
 
+The definition of container is a little abstract: it is instructive to think of
+it more concretely for the case of lists.
+The container representing finite lists is a pair of a natural number \(n\)
+representing the length of the list, and a function \(\AgdaDatatype{Fin}\;n\to
+A\), representing the indexing function into the list.
+
+\begin{definition}[Container Membership] \label{container-membership}
+  Membership of a container can be defined like so:
+  \begin{agdalisting} 
+    \ExecuteMetaData[agda/Container/Membership.tex]{membership-def}
+  \end{agdalisting}
+  Where \(x\;\AgdaDatatype{\ensuremath{\in}}\;\mathit{xs}\) is to be read as ``\(x\)
+  is in \(\mathit{xs}\)''.
+\end{definition}
 \begin{definition}[Fibers] \label{fibers}
   A fiber \cite[definition 4.2.4]{hottbook} is defined over some function \(f :
   A \rightarrow B\).
@@ -97,6 +105,11 @@ After that interlude, we can get back to defining containers.
     \ExecuteMetaData[agda/Snippets/Introduction.tex]{fiber}
   \end{agdalisting}
 \end{definition}
+
+Membership also makes more sense when described concretely in terms of lists.
+Understood this way, \(x\;\AgdaDatatype{\ensuremath{\in}}\;\mathit{xs}\) means
+``there is an index into \(\mathit{xs}\) such that the index points at an item
+equal to \(x\)''.
 
 \subsection{Instances}
 Now that we have a suitable definition of finiteness, we will next prove that
@@ -142,7 +155,7 @@ From that we can derive a much wider array of finiteness proofs.
   \end{equation}
   This proof itself is composed of two components:
   \begin{align}
-    \mathit{support} &: \mathbf{List}(\Sigma(x : A) , U(x)) \\
+    \mathit{support} &: \AgdaDatatype{List}(\Sigma(x : A) , U(x)) \\
     \mathit{cover} &: \Pi(x : \Sigma(y : A) , U(y)) , x \in \mathit{support}
   \end{align}
   To construct the support list, we apply the function \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}_U\) to
@@ -201,7 +214,7 @@ another form:
   A proof of split enumerability is equivalent to a split surjection from a
   finite prefix of the natural numbers.
   \begin{equation}%
-    \AgdaDatatype{\ensuremath{\mathcal{E}!}}(A) \simeq \Sigma (n : \mathbb{N}) , \left( \mathbf{Fin}(n) \twoheadrightarrow ! \; A \right)
+    \AgdaDatatype{\ensuremath{\mathcal{E}!}}(A) \simeq \Sigma (n : \mathbb{N}) , \left( \AgdaDatatype{Fin}\;n \twoheadrightarrow ! \; A \right)
   \end{equation}
 \end{lemma}
 \begin{proof} \phantom{x}
@@ -297,8 +310,8 @@ formalisation:
 \begin{proof}
   Let \(A\) be a split enumerable type.
   By lemma~\ref{split-enum-is-split-surj}, there is a surjection from
-  \(\mathbf{Fin}(n)\) for some \(n\).
-  Also, we know that \(\mathbf{Fin}(n)\) is discrete (proven in our
+  \(\AgdaDatatype{Fin}\;n\) for some \(n\).
+  Also, we know that \(\AgdaDatatype{Fin}\;n\) is discrete (proven in our
   formalisation).
   Therefore, by lemma~\ref{discrete-surj}, \(A\) is discrete.
 \end{proof}
@@ -321,7 +334,7 @@ duplicate values in the support list.
 To reconcile this, we will disallow duplicates in the support list.
 
 How exactly we should do this is the next question.
-One approach might be to change the definition of \(\mathbf{List}\), or
+One approach might be to change the definition of \(\AgdaDatatype{List}\), or
 introduce a new type \(\mathbf{NoDupeList}\), and use it in the predicate
 instead.
 However, this would mean we lose access to the functions we have defined on
@@ -418,7 +431,7 @@ We have seen that split enumerability was in fact a split-surjection in
 disguise.
 We will now see that manifest Bishop finiteness is in fact an \emph{equivalence}
 in disguise.
-\emph{equivalence} with \(\mathbf{Fin}\).
+\emph{equivalence} with \(\AgdaDatatype{Fin}\)
 
 \begin{definition}[Equivalences] \label{equivalences}
   We will take contractible maps \cite[definition 4.4.1]{hottbook} as our
@@ -451,16 +464,16 @@ in disguise.
     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
     && \text{eqn.~\ref{is-equiv-def} (isEquiv)}
     \\
-    & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket (A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
-    && \text{def.~\ref{List} } (\mathbf{List})
+    & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \AgdaDatatype{Fin} \rrbracket (A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
+    && \text{def.~\ref{List} } (\AgdaDatatype{List})
     \\
-    & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \mathbf{Fin}(n)) , A) , \text{isEquiv}(\text{snd}(\mathit{xs}))
+    & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \AgdaDatatype{Fin}\;n) , A) , \text{isEquiv}(\text{snd}(\mathit{xs}))
     && \text{eqn.~\ref{container-interp} } (\llbracket \wc \rrbracket)
     \\
-    & \simeq \Sigma (n : \mathbb{N}) , \Sigma (f : \mathbf{Fin}(n) \rightarrow A) , \text{isEquiv}(f)
+    & \simeq \Sigma (n : \mathbb{N}) , \Sigma (f : \AgdaDatatype{Fin}\;n \rightarrow A) , \text{isEquiv}(f)
     && \text{Reassociation of } \Sigma
     \\
-    & \simeq \Sigma (n : \mathbb{N}) , ( \mathbf{Fin}(n) \simeq A )
+    & \simeq \Sigma (n : \mathbb{N}) , ( \AgdaDatatype{Fin}\;n \simeq A )
     && \text{eqn.~\ref{equiv-def} } (\simeq) \; \qedhere
   \end{align*}
 \end{proof}
@@ -512,19 +525,19 @@ of course we can derive the proof on manifest Bishop finiteness in a few lines.
 
   As \(A\) is split enumerable, we know that it is also manifestly Bishop finite
   (lemma~\ref{split-enum-to-manifest-bishop}), and consequently we know \(A
-  \simeq \mathbf{Fin}(n)\), for some \(n\) (lemma~\ref{bishop-equiv}).
-  We can therefore replace all occurrences of \(A\) with \(\mathbf{Fin}(n)\),
+  \simeq \AgdaDatatype{Fin}\;n\), for some \(n\) (lemma~\ref{bishop-equiv}).
+  We can therefore replace all occurrences of \(A\) with \(\AgdaDatatype{Fin}\;n\),
   changing our goal to:
   \begin{equation}
     \frac{
-      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(\mathbf{Fin}(n)) \; \; \; \Pi (x : \mathbf{Fin}(n)) , \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left( U(x) \right)
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(\AgdaDatatype{Fin}\;n) \; \; \; \Pi (x : \AgdaDatatype{Fin}\;n) , \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left( U(x) \right)
     }{
-      \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left(\Pi (x : \mathbf{Fin}(n)) , U(x)\right)
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left(\Pi (x : \AgdaDatatype{Fin}\;n) , U(x)\right)
     }
   \end{equation}
   
   We then define the type of \(n\)-tuples over some type family \(T :
-  \mathbf{Fin}(n) \rightarrow \mathbf{Type}\).
+  \AgdaDatatype{Fin}\;n \rightarrow \mathbf{Type}\).
   \begin{equation}
     \begin{alignedat}{3}
       & \mathbf{Tuple}(0, T)   &&\coloneqq \top \\
@@ -533,12 +546,12 @@ of course we can derive the proof on manifest Bishop finiteness in a few lines.
   \end{equation}
   We can show that this type is equivalent to functions (proven in our formalisation):
   \begin{equation}
-    \Pi(x : \mathbf{Fin}(n)) , U(x) \simeq \mathbf{Tuple}(n, U)
+    \Pi(x : \AgdaDatatype{Fin}\;n) , U(x) \simeq \mathbf{Tuple}(n, U)
   \end{equation}
   And therefore we can simplify again our goal to the following:
   \begin{equation}
     \frac{
-      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(\mathbf{Fin}(n)) \; \; \; \Pi (x : \mathbf{Fin}(n)) , \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left( U(x) \right)
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(\AgdaDatatype{Fin}\;n) \; \; \; \Pi (x : \AgdaDatatype{Fin}\;n) , \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left( U(x) \right)
     }{
       \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left(\mathbf{Tuple}(n, U)\right)
     }
@@ -615,7 +628,7 @@ To remedy the problem, we will use propositional truncation
   proof that \(A\) is manifest Bishop finite or equivalent to a finite prefix of
   the natural numbers.
   \begin{equation}
-    \mathcal{C}(A) \coloneqq \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(A) \rVert \simeq \lVert \Sigma(n : \mathbb{N}) , (\mathbf{Fin}(n) \simeq A) \rVert
+    \mathcal{C}(A) \coloneqq \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(A) \rVert \simeq \lVert \Sigma(n : \mathbb{N}) , (\AgdaDatatype{Fin}\;n \simeq A) \rVert
   \end{equation}
 \end{definition}
 At first glance, it might seem that we lose any useful properties we could
@@ -639,7 +652,7 @@ Our contribution for this section is simply the formalisation.
   Let \(A\) be a cardinally-finite type, with proof \(F : \mathcal{C}(A)\).
   Our task is to extract a natural number \(n : \mathbb{N}\) representing the
   cardinality of \(A\), and a propositionally-truncated proof that \(A\) is
-  equivalent to \(\mathbf{Fin}(n)\).
+  equivalent to \(\AgdaDatatype{Fin}\;n\).
 
   Extracting the second component of the pair is trivial, as it itself is
   truncated.
@@ -653,8 +666,8 @@ Our contribution for this section is simply the formalisation.
   This is precisely what eliminator \ref{elim-prop-coh} gives us.
   For our case, we need to show the following:
   \begin{equation}
-    \frac{(n : \mathbb{N}) \; \; \; (p : \mathbf{Fin}(n) \simeq A) \; \; \;
-          (m : \mathbb{N}) \; \; \; (q : \mathbf{Fin}(m) \simeq A)
+    \frac{(n : \mathbb{N}) \; \; \; (p : \AgdaDatatype{Fin}\;n \simeq A) \; \; \;
+          (m : \mathbb{N}) \; \; \; (q : \AgdaDatatype{Fin}(m) \simeq A)
         }{
           n \equiv m
         }
@@ -662,14 +675,14 @@ Our contribution for this section is simply the formalisation.
   Immediately we can construct the following term:
   \begin{equation}
     \begin{alignedat}{3}
-      \mathbf{Fin}(n) & \simeq A && (p) \\
-                      & \simeq \mathbf{Fin}(m) && (q)
+      \AgdaDatatype{Fin}\;n & \simeq A && (p) \\
+                      & \simeq \AgdaDatatype{Fin}(m) && (q)
     \end{alignedat}
   \end{equation}
-  Given univalence we have \(\mathbf{Fin}(n) \equiv \mathbf{Fin}(m)\),
+  Given univalence we have \(\AgdaDatatype{Fin}\;n \equiv \AgdaDatatype{Fin}(m)\),
   and the rest of our task is to prove:
   \begin{equation}
-    \frac{\mathbf{Fin}(n) \equiv \mathbf{Fin}(m)}{n \equiv m}
+    \frac{\AgdaDatatype{Fin}\;n \equiv \AgdaDatatype{Fin}(m)}{n \equiv m}
   \end{equation}
 
   This is a well-known chestnut in dependently-typed programming, and one that
@@ -789,7 +802,7 @@ Next, we define permutations.
 Next, we define a sort function which relies on the provided total order.
 We further prove the following fact about this sort function:
 \begin{equation}
-  \Pi(\mathit{xs}, \mathit{ys} : \mathbf{List}(A)) , \mathit{xs} \leftrightsquigarrow \mathit{ys} \rightarrow \text{sort}(\mathit{xs}) \equiv \text{sort}(\mathit{ys})
+  \Pi(\mathit{xs}, \mathit{ys} : \AgdaDatatype{List}(A)) , \mathit{xs} \leftrightsquigarrow \mathit{ys} \rightarrow \text{sort}(\mathit{xs}) \equiv \text{sort}(\mathit{ys})
 \end{equation}
 
 Next, notice that the support lists of any two proofs of manifest Bishop
@@ -903,7 +916,7 @@ In particular, this predicate ranges over non-set types.
   split enumerability with the only difference being a propositionally truncated
   membership proof.
   \begin{equation}
-    \mathcal{E}(A) \coloneqq \Sigma {(\mathit{xs} : \mathbf{List}(A))} , \Pi {(x : A)} , \lVert x \in \mathit{xs} \rVert
+    \mathcal{E}(A) \coloneqq \Sigma {(\mathit{xs} : \AgdaDatatype{List}(A))} , \Pi {(x : A)} , \lVert x \in \mathit{xs} \rVert
   \end{equation}
 \end{definition}
 As a function-based definition, this predicate represents surjections.
@@ -920,7 +933,7 @@ As a function-based definition, this predicate represents surjections.
   Manifest enumerability is equivalent to a surjection from a finite prefix of
   the natural numbers.
   \begin{equation}
-    \mathcal{E}(A) \simeq \Sigma(n : \mathbb{N}) , (\mathbf{Fin}(n) \twoheadrightarrow A)
+    \mathcal{E}(A) \simeq \Sigma(n : \mathbb{N}) , (\AgdaDatatype{Fin}\;n \twoheadrightarrow A)
   \end{equation}
 \end{lemma}
 \begin{proof}
@@ -935,16 +948,16 @@ As a function-based definition, this predicate represents surjections.
     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \text{surj}(\text{snd}(\mathit{xs}))
     && \text{eqn.~\ref{surj-eqn} (surj)}
     \\
-    & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \mathbf{Fin} \rrbracket (A)) , \text{surj}(\text{snd}(\mathit{xs}))
-    && \text{def.~\ref{List} } (\mathbf{List})
+    & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \AgdaDatatype{Fin} \rrbracket (A)) , \text{surj}(\text{snd}(\mathit{xs}))
+    && \text{def.~\ref{List} } (\AgdaDatatype{List})
     \\
-    & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \mathbf{Fin}(n)) , A) , \text{surj}(\text{snd}(\mathit{xs}))
+    & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \AgdaDatatype{Fin}\;n) , A) , \text{surj}(\text{snd}(\mathit{xs}))
     && \text{eqn.~\ref{container-interp} } (\llbracket \wc \rrbracket)
     \\
-    & \simeq \Sigma (n : \mathbb{N}) , \Sigma (f : \mathbf{Fin}(n) \rightarrow A) , \text{surj}(f)
+    & \simeq \Sigma (n : \mathbb{N}) , \Sigma (f : \AgdaDatatype{Fin}\;n \rightarrow A) , \text{surj}(f)
     && \text{Reassociation of } \Sigma
     \\
-    & \simeq \Sigma (n : \mathbb{N}) , ( \mathbf{Fin}(n) \twoheadrightarrow A )
+    & \simeq \Sigma (n : \mathbb{N}) , ( \AgdaDatatype{Fin}\;n \twoheadrightarrow A )
     && \text{eqn.~\ref{surj-arrow-eqn} } (\twoheadrightarrow) \; \qedhere
   \end{align*}
 \end{proof}
