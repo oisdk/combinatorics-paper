@@ -154,8 +154,19 @@ module _ where
  open import Data.List.Filter
  open import Cardinality.Finite.SplitEnumerable.Inductive
 
- filter-subobject : ∀ {p} {P : A → Type p} (isPropP : ∀ x → isProp (P x)) (P? : ∀ x → Dec (P x)) →
-                    ℰ! A → ℰ! (Σ[ x ⦂ A ] (P x))
- filter-subobject isPropP P? xs .fst = filter P? (xs .fst)
- filter-subobject isPropP P? xs .snd (x , v) = filter-preserves isPropP P? (xs .fst) x v (xs .snd x)
+ module _ {p} {P : A → Type p} where
+
+\end{code}
+%<*subobject>
+\begin{code}
+  filter-subobject :
+    (∀ x → isProp (P x)) →
+    (∀ x → Dec (P x)) →
+    ℰ! A →
+    ℰ! (Σ[ x ⦂ A ] P x)
+\end{code}
+%</subobject>
+\begin{code}
+  filter-subobject isPropP P? xs .fst = filter P? (xs .fst)
+  filter-subobject isPropP P? xs .snd (x , v) = filter-preserves isPropP P? (xs .fst) x v (xs .snd x)
 \end{code}
