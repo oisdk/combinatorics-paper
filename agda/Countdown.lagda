@@ -17,9 +17,14 @@ open import Agda.Builtin.Nat using (_-_; _==_; div-helper)
 open import Dyck
 open import Data.Vec.Iterated
 
+\end{code}
+%<*ops-def>
+\begin{code}
 data Op : Type₀ where
   plus times sub div : Op
-
+\end{code}
+%</ops-def>
+\begin{code}
 private
   variable
     n m k : ℕ
@@ -51,10 +56,15 @@ import Data.Unit.UniversePolymorphic as Poly
 ℰ!⟨Poly⊤⟩ .fst = _ ∷ []
 ℰ!⟨Poly⊤⟩ .snd _ = f0 , refl
 
+\end{code}
+%<*vec-fin>
+\begin{code}
 ℰ!⟨Vec⟩ : ℰ! A → ℰ! (Vec A n)
-ℰ!⟨Vec⟩ {n = zero} ℰ!⟨A⟩ = ℰ!⟨Poly⊤⟩
-ℰ!⟨Vec⟩ {n = suc n} ℰ!⟨A⟩ = ℰ!⟨A⟩ |×| ℰ!⟨Vec⟩ ℰ!⟨A⟩
-
+ℰ!⟨Vec⟩ {n = zero   } ℰ!⟨A⟩ = ℰ!⟨Poly⊤⟩
+ℰ!⟨Vec⟩ {n = suc n  } ℰ!⟨A⟩ = ℰ!⟨A⟩ |×| ℰ!⟨Vec⟩ ℰ!⟨A⟩
+\end{code}
+%</vec-fin>
+\begin{code}
 ℰ!⟨Subseq⟩ : ℰ! (Subseq n)
 ℰ!⟨Subseq⟩ = ℰ!⟨Vec⟩ ℰ!⟨2⟩
 

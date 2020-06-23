@@ -134,9 +134,9 @@ From that we can derive a much wider array of finiteness proofs.
   Split enumerability is closed under \(\Sigma\).
   \begin{equation}
     \frac{
-      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(A) \; \; \; \Pi(x : A) , \AgdaDatatype{\ensuremath{\mathcal{E}!}}(U(x))
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}\;A \; \; \; (x : A) \rightarrow \AgdaDatatype{\ensuremath{\mathcal{E}!}}(U\;x)
     }{
-      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(\Sigma(x : A) , U(x))
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(\AgdaDatatype{\ensuremath{\Sigma [}}\;x \AgdaDatatype{:} A \AgdaDatatype{]} U\;x)
     }
   \end{equation}
 \end{lemma}
@@ -172,14 +172,31 @@ From that we can derive a much wider array of finiteness proofs.
   Therefore, the pair itself must be in our constructed support list.
 \end{proof}
 
+This pattern of applying a function to each element in a list and
+concatenating the result is of course well-known in functional programming,
+and is in fact the pattern that makes lists a monad.
+While this insight isn't strictly relevant to our work here, it does mean
+the implementation of this function can use Agda's do notation, resulting
+in the following extremely clean implementation:
 \begin{agdalisting}
-  This pattern of applying a function to each element in a list and
-  concatenating the result is of course well-known in functional programming,
-  and is in fact the pattern that makes lists a monad.
-  While this insight isn't strictly relevant to our work here, it does mean
-  the implementation of this function can use Agda's do notation, resulting
-  in the following extremely clean implementation:
   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{sup-sigma}
+\end{agdalisting}
+
+We now have two components we'll need for the proof that the countdown
+transformation is finite.
+The component we'll look at is step~\ref{countdown-operators}: selection of the
+operators.
+We'll first need a type representing the operators available to us.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Countdown.tex]{ops-def}
+\end{agdalisting}
+Proving that this type is finite takes much the same form as the proof of
+finiteness for bool.
+
+Next, we will need to build a proof of finiteness for vectors of length \(n\).
+This uses the proof of finiteness for \(\Sigma\).
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Countdown.tex]{vec-fin}
 \end{agdalisting}
 
 \subsection{Derivations}
