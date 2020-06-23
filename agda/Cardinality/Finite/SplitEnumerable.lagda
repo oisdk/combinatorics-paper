@@ -33,13 +33,14 @@ module _ {a} {A : Type a} where
 \end{code}
 %<*is-split-inj>
 \begin{code}
-   ℰ! A ≋⟨⟩  Σ[ xs ⦂ List A ] ((x : A) → x ∈ xs)                        ≋⟨⟩
-             Σ[ xs ⦂ List A ] ((x : A) → fiber (snd xs) x)              ≋⟨⟩
-             Σ[ xs ⦂ List A ] SplitSurjective (snd xs)                  ≋⟨⟩
-             Σ[ xs ⦂ ⟦ ℕ , Fin ⟧ A ] SplitSurjective (snd xs)           ≋⟨⟩
-             Σ[ xs ⦂ Σ[ n ⦂ ℕ ] (Fin n → A) ] SplitSurjective (snd xs)  ≋⟨ reassoc ⟩
-             Σ[ n ⦂ ℕ ] Σ[ f ⦂ (Fin n → A) ] SplitSurjective f          ≋⟨⟩
-             Σ[ n ⦂ ℕ ] (Fin n ↠! A)
+   ℰ! A                                                       ≋⟨⟩
+   Σ[ xs ⦂ List A ] ((x : A) → x ∈ xs)                        ≋⟨⟩
+   Σ[ xs ⦂ List A ] ((x : A) → fiber (snd xs) x)              ≋⟨⟩
+   Σ[ xs ⦂ List A ] SplitSurjective (snd xs)                  ≋⟨⟩
+   Σ[ xs ⦂ ⟦ ℕ , Fin ⟧ A ] SplitSurjective (snd xs)           ≋⟨⟩
+   Σ[ xs ⦂ Σ[ n ⦂ ℕ ] (Fin n → A) ] SplitSurjective (snd xs)  ≋⟨ reassoc ⟩
+   Σ[ n ⦂ ℕ ] Σ[ f ⦂ (Fin n → A) ] SplitSurjective f          ≋⟨⟩
+   Σ[ n ⦂ ℕ ] (Fin n ↠! A)
 \end{code}
 %</is-split-inj>
 \begin{code}
@@ -99,7 +100,7 @@ module _ where
 %<*sup-sigma>
 \begin{code}
  sup-Σ :  List A →
-          Π[ x ⦂ A ] List (U x) →
+          ((x : A) → List (U x)) →
           List (Σ A U)
  sup-Σ xs ys = do  x ← xs
                    y ← ys x

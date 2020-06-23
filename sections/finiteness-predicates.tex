@@ -130,7 +130,7 @@ Both of these types can be constructed from the \emph{dependent} sum, however,
 so that is the type we will prove finite.
 From that we can derive a much wider array of finiteness proofs.
 
-\begin{lemma} \label{split-enum-sigma}
+\begin{lemma} \label{split-enum-sigma} \todo{Convert to Agda}
   Split enumerability is closed under \(\Sigma\).
   \begin{equation}
     \frac{
@@ -192,13 +192,15 @@ We'll first need a type representing the operators available to us.
 \end{agdalisting}
 Proving that this type is finite takes much the same form as the proof of
 finiteness for bool.
+\begin{agdalisting} \label{op-fin}
+  \ExecuteMetaData[agda/Countdown.tex]{op-fin}
+\end{agdalisting}
 
 Next, we will need to build a proof of finiteness for vectors of length \(n\).
 This uses the proof of finiteness for \(\Sigma\).
 \begin{agdalisting}
   \ExecuteMetaData[agda/Countdown.tex]{vec-fin}
 \end{agdalisting}
-
 \subsection{Derivations}
 We have a way to construct finiteness proofs, and a semiring-like toolbox to
 combine them.
@@ -216,7 +218,7 @@ First, we will need to define our terms: in HoTT, surjections are a little more
 complex than what you'd find in either MLTT or classical mathematics.
 \begin{definition}[Split Surjections] \label{split-surjections}
   We define \emph{split} surjections here \cite[definition
-  4.6.1]{hottbook}.
+  4.6.1]{hottbook}. \todo{To Agda}
   \begin{alignat}{3}
     &\text{sp-surj}(f)          &&\coloneqq \Pi(y : B) , \text{fib}_f(y) \label{sp-surj-eqn} \\
     &A \twoheadrightarrow! \; B &&\coloneqq \Sigma (f : A \rightarrow B) , \text{sp-surj}(f) \label{sp-surj-arrow-eqn}
@@ -229,19 +231,18 @@ We will now see that split enumerability is in fact a split surjection in
 another form:
 \begin{lemma} \label{split-enum-is-split-surj}%
   A proof of split enumerability is equivalent to a split surjection from a
-  finite prefix of the natural numbers.
-  \begin{equation}%
+  finite prefix of the natural numbers. \todo{To Agda}
+  \begin{equation}
     \AgdaDatatype{\ensuremath{\mathcal{E}!}}(A) \simeq \Sigma (n : \mathbb{N}) , \left( \AgdaDatatype{Fin}\;n \twoheadrightarrow ! \; A \right)
   \end{equation}
 \end{lemma}
-\begin{proof} \phantom{x}
-
-  \begin{minipage}[t]{.8\textwidth}\vspace{-\baselineskip}
+\begin{proof} 
+  \begin{minipage}[t]{.7\textwidth}\vspace{-\baselineskip}
     \begin{agdalisting*}
       \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{is-split-inj}
     \end{agdalisting*}
   \end{minipage}
-  \begin{minipage}[t]{.19\textwidth} \setstretch{1.08}
+  \begin{minipage}[t]{.19\textwidth} \setstretch{1.1}
 
       def.~\ref{split-enum-def} (\AgdaDatatype{\ensuremath{\mathcal{E}!}}) \\
       eqn.~\ref{container-membership} (\AgdaDatatype{\ensuremath{\in}}) \\
@@ -249,7 +250,7 @@ another form:
       def.~\ref{List} (\(\AgdaDatatype{List}\)) \\
       eqn.~\ref{container-interp}  \\
       Reassociation \\
-      eqn.~\ref{sp-surj-arrow-eqn} \qedhere
+      eqn.~\ref{sp-surj-arrow-eqn}
   \end{minipage}
 \end{proof}
 In the above proof syntax the
@@ -337,22 +338,24 @@ formalisation:
 We mentioned in the introduction that occasionally in constructive mathematics
 proofs will contain ``too much'' information.
 With split enumerability we can see an instance of this.
-Consider the following proof of the finiteness of Bool:
-\begin{agdalisting} \label{bool-slop}
-  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-slop}
+Consider the following proof of the finiteness of the operators for countdown:
+\begin{agdalisting} \label{op-slop}
+  \ExecuteMetaData[agda/Countdown.tex]{op-slop}
 \end{agdalisting}
-While it represents the ``same'' information as our previous proof, it is
-clearly not the same \emph{object}.
+While it represents the ``same'' information as the proof in
+equation~\ref{op-fin}, it clearly is not the same \emph{object}.
 
 There is ``slop'' in the type of split enumerability: there are more distinct
 values than there are \emph{usefully} distinct values.
-As we can see in the example above, for instance, split enumerability allows
-duplicate values in the support list.
+For the purposes of solving countdown this has the undesirable effect of
+duplicating search effort, but more generally this reveals that the predicate
+for finiteness we have doesn't represent in a concise way what we intend it to
+represent.
 To reconcile this, we will disallow duplicates in the support list.
 
 How exactly we should do this is the next question.
 One approach might be to change the definition of \(\AgdaDatatype{List}\), or
-introduce a new type \(\mathbf{NoDupeList}\), and use it in the predicate
+introduce a new type \(\AgdaDatatype{NoDupeList}\), and use it in the predicate
 instead.
 However, this would mean we lose access to the functions we have defined on
 lists, and we have to change the definition of \(\in\) as well.
@@ -448,7 +451,6 @@ We have seen that split enumerability was in fact a split-surjection in
 disguise.
 We will now see that manifest Bishop finiteness is in fact an \emph{equivalence}
 in disguise.
-\emph{equivalence} with \(\AgdaDatatype{Fin}\)
 
 \begin{definition}[Equivalences] \label{equivalences}
   We will take contractible maps \cite[definition 4.4.1]{hottbook} as our

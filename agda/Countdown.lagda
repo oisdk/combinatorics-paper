@@ -21,7 +21,7 @@ open import Data.Vec.Iterated
 %<*ops-def>
 \begin{code}
 data Op : Type₀ where
-  plus times sub div : Op
+  +′ ×′ -′ ÷′ : Op
 \end{code}
 %</ops-def>
 \begin{code}
@@ -47,6 +47,20 @@ open import Cardinality.Finite.SplitEnumerable.Inductive
 open import Cardinality.Finite.SplitEnumerable.Isomorphism
 open import Function.Surjective.Properties
 
+private
+  module OpSlop where
+\end{code}
+%<*op-slop>
+\begin{code}
+    ℰ!⟨Op⟩ : ℰ! Op
+    ℰ!⟨Op⟩ .fst = +′ ∷ +′ ∷ ×′ ∷ -′ ∷ ÷′ ∷ []
+    ℰ!⟨Op⟩ .snd +′  = 0 , refl
+    ℰ!⟨Op⟩ .snd ×′  = 2 , refl
+    ℰ!⟨Op⟩ .snd -′  = 3 , refl
+    ℰ!⟨Op⟩ .snd ÷′  = 4 , refl
+\end{code}
+%</op-slop>
+\begin{code}
 ℰ!⟨Fin⟩ : ℰ! (Fin n)
 ℰ!⟨Fin⟩ = 𝕃⇔ℒ⟨ℰ!⟩ .inv (ℰ!⇔Fin↠! .inv (_ , ↠!-ident))
 
@@ -75,12 +89,18 @@ import Data.Unit.UniversePolymorphic as Poly
 ℰ!⟨Comb⟩ : ℰ! (Comb n)
 ℰ!⟨Comb⟩ = ℰ!⟨Subseq⟩ |Σ| λ _ → ℰ!⟨Perm⟩
 
+\end{code}
+%<*op-fin>
+\begin{code}
 ℰ!⟨Op⟩ : ℰ! Op
-ℰ!⟨Op⟩ .fst = plus ∷ times ∷ sub ∷ div ∷ []
-ℰ!⟨Op⟩ .snd plus = 0 , refl
-ℰ!⟨Op⟩ .snd times = 1 , refl
-ℰ!⟨Op⟩ .snd sub = 2 , refl
-ℰ!⟨Op⟩ .snd div = 3 , refl
+ℰ!⟨Op⟩ .fst = +′ ∷ ×′ ∷ -′ ∷ ÷′ ∷ []
+ℰ!⟨Op⟩ .snd +′  = 0 , refl
+ℰ!⟨Op⟩ .snd ×′  = 1 , refl
+ℰ!⟨Op⟩ .snd -′  = 2 , refl
+ℰ!⟨Op⟩ .snd ÷′  = 3 , refl
+\end{code}
+%</op-fin>
+\begin{code}
 
 
 runSubseq : (xs : List A) → (ys : Subseq (length xs)) → Vec A (count ys)
@@ -97,7 +117,7 @@ runPerm {n = zero} ps _ = _
 runPerm {n = suc n} (fst₁ , snd₁) (x , xs) = insert x fst₁ (runPerm snd₁ xs)
 
 runComb : (xs : List A) → (c : Comb (length xs)) → Vec A (count (c .fst))
-runComb xs (subs , perm) = runPerm perm (runSubseq xs subs)
+runComb xs (-′s , perm) = runPerm perm (runSubseq xs -′s)
 
 ExprTree : ℕ → Type₀
 ExprTree zero    = ⊥
@@ -117,15 +137,15 @@ buildExpr : (xs : List ℕ) → Expr (length xs) → Tree Op ℕ
 buildExpr xs (comb , tree) with count (comb .fst) | runComb xs comb
 buildExpr xs (comb , (tree , ops)) | suc n | ys = fromDyck tree ops ys
 
-div′ : ℕ → ℕ → ℕ
-div′ m zero = zero
-div′ m (suc n) = div-helper 0 m n m
+÷′′ : ℕ → ℕ → ℕ
+÷′′ m zero = zero
+÷′′ m (suc n) = div-helper 0 m n m
 
 appOneOp : Op → ℕ → ℕ → ℕ
-appOneOp plus = _+_
-appOneOp times = _*_
-appOneOp sub = _-_
-appOneOp div = div′
+appOneOp +′ = _+_
+appOneOp ×′ = _*_
+appOneOp -′ = _-_
+appOneOp ÷′ = ÷′′
 
 runTree : Tree Op ℕ → ℕ
 runTree (leaf x) = x
@@ -139,10 +159,10 @@ data Disp : Type₀ where
   _⟨÷⟩_ : Disp → Disp → Disp
 
 appDispOp : Op → Disp → Disp → Disp
-appDispOp plus  = _⟨+⟩_
-appDispOp times = _⟨*⟩_
-appDispOp sub   = _⟨-⟩_
-appDispOp div   = _⟨÷⟩_
+appDispOp +′  = _⟨+⟩_
+appDispOp ×′ = _⟨*⟩_
+appDispOp -′   = _⟨-⟩_
+appDispOp ÷′   = _⟨÷⟩_
 
 open import Agda.Builtin.Strict
 
