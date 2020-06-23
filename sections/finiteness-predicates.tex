@@ -582,6 +582,16 @@ of course we can derive the proof on manifest Bishop finiteness in a few lines.
   Lemma~\ref{split-enum-sigma} shows us that the product of finitely many split
   enumerable types is itself split enumerable, proving our goal.
 \end{proof}
+
+This proof can again give us insight into how to prove finiteness of our
+countdown transformation.
+In the first step (Fig.~\ref{countdown-selection}), we need to select some
+numbers from an input list: this can be described with a function of type
+\(\AgdaDatatype{Fin}\;n \rightarrow \AgdaDatatype{Bool}\), from indices in the
+original list into whether we keep the values or not.
+We now know that we can prove functions finite without difficulty: in this case,
+we can do it even more simply by proving that an \(n\)-tuple of booleans is
+finite.
 \section{Cardinal Finiteness} \label{cardinal-finiteness}
 While we have removed some of the unnecessary information from our finiteness
 predicates, one piece still remains.

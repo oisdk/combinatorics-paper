@@ -137,8 +137,7 @@ The first part is described in Figure~\ref{countdown-transform}.
 This transformation has four steps.
 First (Fig.~\ref{countdown-selection}) we have to pick which numbers we include
 in our solution.
-The representation of this transformation should be fairly simple: to pick from
-\(n\) objects we can have a vector of \(n\) booleans.
+We will need to show there are finitely many ways to filter \(n\) numbers.
 
 Secondly (Fig.~\ref{countdown-permutation}) we have to permute the chosen
 numbers.
@@ -147,12 +146,12 @@ that it's finite is trickier still.
 We will need to rely on some of the more involved lemmas later on for this
 problem.
 
-The third step (Fig.~\ref{countdown-operators}) is quite like the first: it's
-just another vector of length \(n\) of finite objects (in this case operators
+The third step (Fig.~\ref{countdown-operators}) is a vector of length \(n\) of finite objects (in this case operators
 chosen from \(+\), \(\times\), \(-\), and \(\div\)).
 Although it is complicated slightly by the fact that the \(n\) in this
-\(n\)-tuple is dependent on the number of trues in the previously chosen tuple
-of booleans (in terms of types, that means we'll need a \(\Sigma\) rather than a
+\(n\)-tuple is dependent on the amount of numbers we let through in the filter
+in step one.
+(in terms of types, that means we'll need a \(\Sigma\) rather than a
 \(\times\), explanations of which are forthcoming).
 
 Finally (Fig.~\ref{countdown-parens}), we have to parenthesise the expression in
