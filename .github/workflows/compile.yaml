@@ -26,16 +26,6 @@ jobs:
         mkdir -p ~/.agda/
         touch ~/.agda/libraries
         echo "$GITHUB_WORKSPACE/cubical/cubical.agda-lib" > ~/.agda/libraries
-        
-    - uses: actions/cache@v2
-      name: Cache cubical compiles
-      with:
-        path: $GITHUB_WORKSPACE/cubical/_build
-        
-    - uses: actions/cache@v2
-      name: Cache main compiles
-      with:
-        path: $GITHUB_WORKSPACE/main/_build
 
     - uses: actions/cache@v2
       name: Cache ~/.cabal/packages, ~/.cabal/store and dist-newstyle
