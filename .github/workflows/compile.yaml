@@ -76,11 +76,10 @@ jobs:
         agda Cubical/HITs/Everything.agda
         agda Cubical/Relation/Everything.agda
 
-
     - uses: actions/cache@v2
       name: Cache all agda
       with:
-        path: ${{ GITHUB_WORKSPACE }}/main/agda/_build
+        path: "$GITHUB_WORKSPACE/main/agda/_build"
       key: ${{ runner.os }}-${{ matrix.cubical-commit }}-${{ hashFiles('main/agda') }}
 
     - name: Compile all agda
