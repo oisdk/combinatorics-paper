@@ -7,6 +7,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-18.04
+    
+    strategy:
+      matrix:
+        ghc-ver: ["8.10.1"]
+        cabal-ver: ["3.2"]
+        cubical-commit: ["a01973ef7264f9454a40697313a2073c51a6b77a"]
 
     steps:
     - name: Checkout main
@@ -19,7 +25,6 @@ jobs:
       with:
         repository: agda/cubical
         path: cubical
-        ref: a01973ef7264f9454a40697313a2073c51a6b77a
 
     - name: Put cubical library in Agda library list
       run: |
@@ -31,11 +36,13 @@ jobs:
       name: Cache cubical compiles
       with:
         path: $GITHUB_WORKSPACE/cubical/_build
-        
+        key: ${{ runner.os }}-${{ matrix.cubical-commit }}
+
     - uses: actions/cache@v2
       name: Cache main compiles
       with:
         path: $GITHUB_WORKSPACE/main/_build
+        key: ${{ runner.os }}
 
     - uses: actions/cache@v2
       name: Cache ~/.cabal/packages, ~/.cabal/store and dist-newstyle
@@ -51,8 +58,8 @@ jobs:
     - name: Install cabal
       uses: actions/setup-haskell@v1.1
       with:
-        ghc-version: "8.10.1"
-        cabal-version: "3.2"
+        ghc-version: matrix.ghc-ver
+        cabal-version: matrix.cabal-ver
 
     - name: Put cabal programs in PATH
       run: echo "::add-path::~/.cabal/bin"
