@@ -8,6 +8,10 @@ jobs:
   build:
     runs-on: ubuntu-18.04
 
+    strategy:
+      matrix:
+        cubical-commit: ["a01973ef7264f9454a40697313a2073c51a6b77a"]
+
     steps:
     - name: Checkout main
       uses: actions/checkout@v2
@@ -19,7 +23,13 @@ jobs:
       with:
         repository: agda/cubical
         path: cubical
-        ref: a01973ef7264f9454a40697313a2073c51a6b77a
+        ref: ${{ matrix.cubical-commit }}
+
+    - name: Cache cubical compiles
+      uses: actions/cache@v2
+      with:
+        path: $GITHUB_WORKSPACE/cubical/_build
+        key: ${{ runner.os }}-${{ matrix.cubical-commit }}
 
     - name: Put cubical library in Agda library list
       run: |
@@ -58,7 +68,7 @@ jobs:
     - name: Compile cubical library
       run: |
         cd $GITHUB_WORKSPACE/cubical
-        echo "{-# OPTIONS --cubical --safe #-}" > Everything
+        echo "{-# OPTIONS --cubical #-}" > Everything
         echo "module Everything where" >> Everything
         find . -type f -regex '.*\.l?agda' | cut -c 3- | cut -f1 -d'.' | sed 's/\//\./g' | sed 's/^/open import /' >> Everything
         mv Everything Everything.agda
