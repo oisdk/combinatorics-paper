@@ -27,6 +27,7 @@ jobs:
 
     - name: Cache cubical compiles
       uses: actions/cache@v2
+      id: cache-cubical
       with:
         path: $GITHUB_WORKSPACE/cubical/_build
         key: ${{ runner.os }}-${{ matrix.cubical-commit }}
@@ -66,8 +67,10 @@ jobs:
         cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS' Agda-2.6.1
 
     - name: Compile cubical library
+      if: steps.cache-cubical.outputs.cache-hit != 'true'
       run: |
         cd $GITHUB_WORKSPACE/cubical
+        rm -r Experiments
         echo "{-# OPTIONS --cubical #-}" > Everything
         echo "module Everything where" >> Everything
         find . -type f -regex '.*\.l?agda' | cut -c 3- | cut -f1 -d'.' | sed 's/\//\./g' | sed 's/^/open import /' >> Everything
