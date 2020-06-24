@@ -70,13 +70,11 @@ jobs:
       if: steps.cache-cubical.outputs.cache-hit != 'true'
       run: |
         cd $GITHUB_WORKSPACE/cubical
-        rm -r Cubical/Experiments
-        echo "{-# OPTIONS --cubical #-}" > Everything
-        echo "module Everything where" >> Everything
-        find . -type f -regex '.*\.l?agda' | cut -c 3- | cut -f1 -d'.' | sed 's/\//\./g' | sed 's/^/open import /' >> Everything
-        mv Everything Everything.agda
-        agda Everything.agda
-        rm Everything.agda
+        agda Cubical/Core/Everything.agda
+        agda Cubical/Data/Everything.agda
+        agda Cubical/Foundations/Everything.agda
+        agda Cubical/HITs/Everything.agda
+        agda Cubical/Relation/Everything.agda
 
     - name: Compile all literate agda
       run: |
