@@ -55,6 +55,16 @@ jobs:
         cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS' happy-1.19.12
         cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS' Agda-2.6.1
 
+    - name: Compile cubical library
+      run: |
+        cd $GITHUB_WORKSPACE/cubical
+        echo "{-# OPTIONS --cubical --safe #-}\n" > Everything
+        echo "module Everything where\n" >> Everything
+        find -E . -type f -regex '.*\.l?agda' | cut -c 3- | cut -f1 -d'.' | sed 's/\//\./g' | sed 's/^/open import /' >> Everything
+        mv Everything Everything.agda
+        agda Everything.agda
+        rm Everything.agda
+
     - name: Compile all literate agda
       run: |
         sudo apt-get install texlive-binaries
