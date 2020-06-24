@@ -80,7 +80,7 @@ jobs:
       name: Cache all agda
       with:
         path: "$GITHUB_WORKSPACE/main/agda/_build"
-      key: ${{ runner.os }}-${{ matrix.cubical-commit }}-${{ hashFiles('main/agda') }}
+        key: ${{ runner.os }}-${{ matrix.cubical-commit }}-${{ hashFiles('main/agda') }}
 
     - name: Compile all agda
       run: |
