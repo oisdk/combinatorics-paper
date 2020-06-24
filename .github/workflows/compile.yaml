@@ -78,11 +78,13 @@ jobs:
 
     - uses: actions/cache@v2
       name: Cache all agda
+      id: cache-agda
       with:
         path: "$GITHUB_WORKSPACE/main/agda/_build"
         key: ${{ runner.os }}-${{ matrix.cubical-commit }}-${{ hashFiles('main/agda') }}
 
     - name: Compile all agda
+      if: steps.cache-agda.outputs.cache-hit != 'true'
       run: |
         cd $GITHUB_WORKSPACE/main/agda
         echo "{-# OPTIONS --cubical #-}" > Everything
