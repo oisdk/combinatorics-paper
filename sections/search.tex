@@ -1,11 +1,66 @@
 \chapter{Search} \label{search}
-Finiteness proofs often play a role in proof automation in dependently-typed
-programming languages \cite{firsovDependentlyTypedProgramming2015}.
-Our work here is no exception.
-Our work goes slightly further than similar libraries which already exist,
-however: using CuTT we are able to search over functions as well as finite data
-types.
-\section{Countdown}
+A common theme in dependently-typed programming is that proofs of interesting
+theoretical things may actually correspond to useful algorithms in some way
+related to that thing.
+Finiteness is one such case: if we have a proof that a type \(A\) is finite,
+we should be able to search through all the elements of that type in a
+systematic, automated way.
+
+As it happens, this kind of search is a very common method of proof automation
+in dependently-typed languages like Agda.
+Proofs of statements like ``the following function is associative''
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Snippets/Bool.tex]{and-def}
+\end{agdalisting}
+can be tedious: the associativity proof in particular would take \(2^3 = 8\)
+cases.
+This is unacceptable!
+There are only finitely many cases to examine, after all, and we're
+\emph{already} on a computer: why not automate it?
+A proof that \(\AgdaDatatype{Bool}\) is finite can get us much of the way to a
+library to do just that.
+
+Similar automation machinery can be leveraged to provide search algorithms for
+certain ``logic programming''-esque problems.
+Using the machinery we will describe in this section, though, when the program
+says it finds a solution to some problem that solution will be accompanied by a
+formal \emph{proof} of its correctness.
+
+In this section, we will describe the theoretical underpinning and
+implementation of a library for proof search over finite domains, based on the
+finiteness predicates we have introduced already.
+The library will be able to prove statements like the proof of associativity
+above, as well as more complex statements.
+As a running example for a ``more complex statement'' we will use the countdown
+problem, which we have been using throughout: we will demonstrate how to
+construct a prover for the existence of, or absence of, a solution to a given
+countdown puzzle.
+
+The API for writing searches over finite domains comes from the language of the
+\(\Pi\)-pretopos: with it we will show how to compose QuickCheck-like generators
+for proof search, with the addition of some automation machinery that allows us
+to prove things like the associativity in a couple of lines:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Snippets/Bool.tex]{bool-assoc-auto-proof}
+\end{agdalisting}
+
+We have already, in previous sections, explored the theoretical implications of
+Cubical Type Theory on our formalisation.
+With this library for proof search, however, we will see two distinct
+\emph{practical} applications which would simply not be possible without
+computational univalence.
+First and foremost: our proofs of finiteness, constructed with the API we will
+describe, have all the power of full equalities.
+Put another way any proof over a finite type \(A\) can be lifted to any other
+type with the same cardinality.
+Secondly our proof search can range over functions: we could, for instance, have
+asked the prover to find if \emph{any} function over \(\AgdaDatatype{Bool}\) is
+associative, and if so return it to us.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Snippets/Bool.tex]{some-assoc}
+\end{agdalisting}
+The usefulness of which is dubious, but we will see a more interesting
+application soon.
 \section{Omniscience}
 \begin{definition}[Limited Principle of Omniscience]
   For any type \(A\) and predicate \(P\) on \(A\), the limited principle of
@@ -35,6 +90,8 @@ the former.
 All of the ordered finiteness predicates imply omniscience.
 For the unordered finiteness definitions, we have omniscience for prop-valued
 predicates.
+
+\section{Countdown}
 \section{Automating Proofs}
 One use for above constructions is the automation of certain proofs.
 In \cite{firsovDependentlyTypedProgramming2015}, which uses a similar approach
