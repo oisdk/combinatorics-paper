@@ -25,7 +25,6 @@ jobs:
       with:
         repository: agda/cubical
         path: cubical
-        ref: ${{ matrix.cubical-commit }}
 
     - name: Put cubical library in Agda library list
       run: |
