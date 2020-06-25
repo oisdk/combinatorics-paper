@@ -116,7 +116,7 @@ jobs:
         mkdir -p ~/main-build
         mkdir -p ~/main-build/_build
         mkdir -p $GITHUB_WORKSPACE/main/agda/_build
-        cp -f -R ~/main-build/_build/* $GITHUB_WORKSPACE/main/agda/_build
+        cp -f -R '~/main-build/_build/*' $GITHUB_WORKSPACE/main/agda/_build
         sudo apt-get install texlive-binaries
         cd main/agda
         find . -type f -name '*.lagda' | while read -r code ; do
@@ -134,23 +134,23 @@ jobs:
     - name: Remove .latexmkrc
       run: rm main/.latexmkrc
 
-    - name: Compile latex
-      uses: xu-cheng/latex-action@v2
-      with:
-        working_directory: main
-        root_file: paper.tex
+    # - name: Compile latex
+    #   uses: xu-cheng/latex-action@v2
+    #   with:
+    #     working_directory: main
+    #     root_file: paper.tex
 
-    - name: Upload generated pdf
-      uses: actions/upload-artifact@v2
-      with:
-        name: paper
-        path: main/paper.pdf
+    # - name: Upload generated pdf
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: paper
+    #     path: main/paper.pdf
 
-    - name: Move generated pdf in with html
-      run: mv main/paper.pdf main/agda/docs/paper.pdf
+    # - name: Move generated pdf in with html
+    #   run: mv main/paper.pdf main/agda/docs/paper.pdf
 
-    - name: Deploy html and pdf to github pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: main/agda/docs
+    # - name: Deploy html and pdf to github pages
+    #   uses: peaceiris/actions-gh-pages@v3
+    #   with:
+    #     github_token: ${{ secrets.GITHUB_TOKEN }}
+    #     publish_dir: main/agda/docs
