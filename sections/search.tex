@@ -40,7 +40,7 @@ The API for writing searches over finite domains comes from the language of the
 \(\Pi\)-pretopos: with it we will show how to compose QuickCheck-like generators
 for proof search, with the addition of some automation machinery that allows us
 to prove things like the associativity in a couple of lines:
-\begin{agdalisting}
+\begin{agdalisting} \label{bool-assoc-auto-proof}
   \ExecuteMetaData[agda/Snippets/Bool.tex]{bool-assoc-auto-proof}
 \end{agdalisting}
 
@@ -61,7 +61,55 @@ associative, and if so return it to us.
 \end{agdalisting}
 The usefulness of which is dubious, but we will see a more interesting
 application soon.
+\section{Proof Automation And Search Techniques}
+For this prover we will not resort to reflection or similar techniques: all of
+the automation machinery will run in standard Agda.
+To accomplish it we will leverage a common technique which we will describe
+briefly here.
+
+To understand the technique we should first notice that some proof automation
+\emph{already} happens in Agda, like the following:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Snippets/Bool.tex]{obvious}
+\end{agdalisting}
+While it's not a particularly impressive example, it does nonetheless
+demonstrate a principle we will exploit: closed terms will compute to a normal
+form.
+We do not have to manually apply each computation rule or pattern match in order
+for the equation to type-check.
+
+So our task is to rewrite proof obligations like the one in
+Equation~\ref{bool-assoc-auto-proof} into ones which can reduce completely. 
+As it turns out, we have already described the type of proofs which can ``reduce
+completely'': \emph{decidable} proofs.
+If we have a decision procedure over some proposition \(P\) we can run that
+decision during type checking, because the decision procedure itself is a proof
+that the decision will terminate.
+In code, we capture this idea with the following pair of functions:
+\begin{multicols}{2}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Bool.tex]{is-true}
+  \end{agdalisting} \columnbreak
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Bool.tex]{from-true}
+  \end{agdalisting}
+\end{multicols}
+The first is a function which derives a type from whether a decision is
+successful or not.
+This function is important because if we use the output of this type at any
+point we will effectively force the unifier to run the decision computation.
+
+
 \section{Omniscience}
+First we will explore the theoretical underpinning for search, and its relation
+to finiteness.
+The property we are looking for is effectively the ability to exhaustively
+search through some type.
+Consider the proof above in Equation~\ref{bool-assoc-auto-proof}: we know the
+proof could be automatic because we can check every configuration of the values
+of \(x\), \(y\), and \(z\).
+
+
 \begin{definition}[Limited Principle of Omniscience]
   For any type \(A\) and predicate \(P\) on \(A\), the limited principle of
   omniscience \cite{myhillErrettBishopFoundations1972} is as follows:
