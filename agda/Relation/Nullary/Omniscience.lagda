@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
 module Relation.Nullary.Omniscience where
@@ -14,13 +15,24 @@ private
     p : Level
     P : A → Type p
 
-Omniscient Exhaustible : ∀ p {a} → Type a → Type _
-Omniscient   p A = ∀ {P : A → Type p} → Decidable P → Dec (∃  P)
-Exhaustible  p A = ∀ {P : A → Type p} → Decidable P → Dec (∀′ P)
 
+Omniscient Exhaustible : ∀ p {a} → Type a → Type _
+\end{code}
+%<*omniscient>
+\begin{code}
+Omniscient p A = ∀ {P : A → Type p} → (∀ x → Dec (P x)) → Dec (∃[ x ] P x)
+\end{code}
+%</omniscient>
+%<*exhaustible>
+\begin{code}
+Exhaustible p A = ∀ {P : A → Type p} → (∀ x → Dec (P x)) → Dec (∀ x → P x)
+\end{code}
+%</exhaustible>
+\begin{code}
 Omniscient→Exhaustible : ∀ {p} → Omniscient p A → Exhaustible p A
 Omniscient→Exhaustible omn P? =
   map-dec
     (λ ¬∃P x → Dec→Stable _ (P? x) (¬∃P ∘ (x ,_)))
     (λ ¬∃P ∀P → ¬∃P λ p → p .snd (∀P (p .fst)))
     (! (omn (! ∘ P?)))
+\end{code}

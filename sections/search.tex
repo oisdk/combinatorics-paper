@@ -125,9 +125,9 @@ decidable predicate, and is described formally by the notion of ``Exhaustibility
 \begin{definition}[Exhaustibility]
   We say a type \(A\) is exhaustible if, for any decidable predicate \(P\) on
   \(A\), the universal quantification of the predicate is decidable.
-  \begin{equation}
-    \left( \Pi {(x : A)} , \mathbf{Dec}(P(x)) \right) \rightarrow \mathbf{Dec} \left( \Pi {(x : A)} , P(x) \right)
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{exhaustible}
+  \end{agdalisting}
 \end{definition}
 This property of \AgdaDatatype{Bool} would allow us to automate the proof of
 associativity, but it is in fact not strong enough to find individual
@@ -137,13 +137,12 @@ For that we need the more well-known, but related, property of
 \begin{definition}[Limited Principle of Omniscience]
   For any type \(A\) and predicate \(P\) on \(A\), the limited principle of
   omniscience \cite{myhillErrettBishopFoundations1972} is as follows:
-  \begin{equation}
-    \left( \Pi {(x : A)} , \mathbf{Dec}(P(x)) \right) \rightarrow \mathbf{Dec} \left( \Sigma {(x : A)} , P(x) \right)
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{omniscient}
+  \end{agdalisting}
   In other words, for any decidable predicate the existential quantification of
   that predicate is also decidable.
 \end{definition}
-
 Both of these properties only make sense to talk about in a constructive
 setting: classically speaking, \emph{every} type is omniscient and exhaustible.
 Finite types are omniscient (the reason should be clear, but we will prove this
