@@ -10,7 +10,8 @@ jobs:
 
     strategy:
       matrix:
-        cubical-commit: ["a01973ef7264f9454a40697313a2073c51a6b77a"]
+        cubical-ref: ["a01973ef7264f9454a40697313a2073c51a6b77a"]
+        agda-ref: ["v2.6.1"]
 
     steps:
 
@@ -24,7 +25,7 @@ jobs:
           ~/.cabal/store
           ~/.cabal/bin
           dist-newstyle
-        key: ${{ runner.os }}
+        key: ${{ runner.os }}-${{ matrix.agda-ref }}
 
     - name: Install cabal
       if: steps.cache-cabal.outputs.cache-hit != 'true'
@@ -36,13 +37,23 @@ jobs:
     - name: Put cabal programs in PATH
       run: echo "::add-path::~/.cabal/bin"
 
+    - name: Download Agda from github
+      uses: actions/checkout@v2
+      with:
+        repository: agda/agda
+        path: agda
+        ref: ${{ matrix.agda-ref }}
+      
     - name: Install Agda
       if: steps.cache-cabal.outputs.cache-hit != 'true'
       run: |
         cabal update
         cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS' alex-3.2.5
         cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS' happy-1.19.12
-        cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS' Agda-2.6.1
+        cd agda
+        mkdir -p doc
+        touch doc/user-manual.pdf
+        cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS'
 
 # Download and compile cubical library
     - name: Checkout cubical library
@@ -50,14 +61,14 @@ jobs:
       with:
         repository: agda/cubical
         path: cubical
-        ref: ${{ matrix.cubical-commit }}
+        ref: ${{ matrix.cubical-ref }}
 
     - name: Cache cubical library
       uses: actions/cache@v2
       id: cache-cubical
       with:
         path: ~/cubical-build
-        key: ${{ runner.os }}-${{ matrix.cubical-commit }}
+        key: ${{ runner.os }}-${{ matrix.agda-ver }}-${{ matrix.cubical-ref }}
 
     - name: Put cubical library in Agda library list
       run: |
@@ -93,7 +104,7 @@ jobs:
       id: cache-agda
       with:
         path: ~/main-build
-        key: ${{ runner.os }}-${{ matrix.cubical-commit }}-${{ hashFiles('main/agda/**') }}-html-and-tex
+        key: ${{ runner.os }}-${{ matrix.agda-ver }}-${{ matrix.cubical-ref }}-${{ hashFiles('main/agda/**') }}-html-and-tex
 
     - name: Compile main library
       if: steps.cache-agda.outputs.cache-hit != 'true'
