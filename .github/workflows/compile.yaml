@@ -115,7 +115,7 @@ jobs:
       run: |
         mkdir -p ~/main-build
         mkdir -p ~/main-build/_build
-        mkdir $GITHUB_WORKSPACE/main/agda/_build
+        mkdir -p $GITHUB_WORKSPACE/main/agda/_build
         cp -f -R ~/main-build/_build/* $GITHUB_WORKSPACE/main/agda/_build
         sudo apt-get install texlive-binaries
         cd main/agda
@@ -124,8 +124,7 @@ jobs:
         done
         agda --html --html-dir=docs README.agda
         cd ..
-        cp -f -r agda/ ~/main-build/
-        cp -f -r agda/_build/ ~/main-build-agdai/
+        cp -f -R agda/ ~/main-build/
 
     - name: Retrieve main library
       if: steps.cache-main.outputs.cache-hit == 'true'
