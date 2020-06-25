@@ -19,6 +19,12 @@ There are only finitely many cases to examine, after all, and we're
 \emph{already} on a computer: why not automate it?
 A proof that \(\AgdaDatatype{Bool}\) is finite can get us much of the way to a
 library to do just that.
+\todo[inline]{These examples so far are pretty focused on the bool associativity
+  example.
+  I'm not sure I can think of a good way to put countdown in instead: will we
+  try switch?
+  Or will we keep the bool for this short bit?
+  }
 
 Similar automation machinery can be leveraged to provide search algorithms for
 certain ``logic programming''-esque problems.
@@ -110,6 +116,22 @@ This technique will allow us to automatically compute any decidable predicate.
 \section{Omniscience}
 So we now know what is needed of us for proof automation: we need to take our
 proofs and make them decidable.
+In particular, our strategy will be to take a proposition which is decidable in
+the individual case (like
+\((x\;\AgdaFunction{∧}\;y)\;\AgdaFunction{∧}\;z\;\AgdaFunction{≡}\;x\;\AgdaFunction{∧}\;(y\;\AgdaFunction{∧}\;z)\)
+for a given \(x\), \(y\), and \(z\)) and make it decidable in the universal case.
+Whether this is possible or not is a property of the \emph{domain} of a
+decidable predicate, and is described formally by the notion of ``Exhaustibility''.
+\begin{definition}[Exhaustibility]
+  We say a type \(A\) is exhaustible if, for any decidable predicate \(P\) on
+  \(A\), the universal quantification of the predicate is decidable.
+  \begin{equation}
+    \left( \Pi {(x : A)} , \mathbf{Dec}(P(x)) \right) \rightarrow \mathbf{Dec} \left( \Pi {(x : A)} , P(x) \right)
+  \end{equation}
+\end{definition}
+Perhaps surprisingly, it is not only finite types which can are exhaustible.
+Certain infinite types can be
+exhaustible~\cite{escardoInfiniteSetsThat2007}.
 
 First we will explore the theoretical underpinning for search, and its relation
 to finiteness.
@@ -134,13 +156,6 @@ can themselves satisfy omniscience.
 In particular, cardinal finite types are omniscient.
 
 There is also a universal form of omniscience, which we call exhaustibility.
-\begin{definition}[Exhaustibility]
-  We say a type \(A\) is exhaustible if, for any decidable predicate \(P\) on
-  \(A\), the universal quantification of the predicate is decidable.
-  \begin{equation}
-    \left( \Pi {(x : A)} , \mathbf{Dec}(P(x)) \right) \rightarrow \mathbf{Dec} \left( \Pi {(x : A)} , P(x) \right)
-  \end{equation}
-\end{definition}
 
 All of the finiteness predicates we have seen imply exhaustibility.
 Omniscience is stronger than exhaustibility, as we can derive the latter from
