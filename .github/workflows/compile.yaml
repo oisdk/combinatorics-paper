@@ -2,7 +2,7 @@ name: Compile LaTeX and HTML
 on:
   push:
     branches:
-      - master
+      - restore-keys
 
 jobs:
   build:
@@ -102,14 +102,27 @@ jobs:
 
     - uses: actions/cache@v2
       name: Cache main library
-      id: cache-agda
+      id: cache-main
       with:
         path: ~/main-build
         key: ${{ runner.os }}-${{ matrix.agda-ver }}-${{ matrix.cubical-ref }}-${{ hashFiles('main/agda/**') }}-html-and-tex
 
+    - uses: actions/cache@v2
+      name: Cache main library agdai
+      id: cache-main-build
+      with:
+        path: ~/main-build-agdai
+        key: agdai-${{ runner.os }}-${{ matrix.agda-ver }}-${{ matrix.cubical-ref }}-${{ hashFiles('main/agda/**') }}
+        restore-keys: |
+          agdai-${{ runner.os }}-${{ matrix.agda-ver }}-${{ matrix.cubical-ref }}-
+          agdai-${{ runner.os }}-${{ matrix.agda-ver }}-
+
     - name: Compile main library
-      if: steps.cache-agda.outputs.cache-hit != 'true'
+      if: steps.cache-main.outputs.cache-hit != 'true'
       run: |
+        mkdir -p ~/main-build-agdai
+        mkdir $GITHUB_WORKSPACE/main/agda/_build
+        cp -f -R ~/main-build-agdai/* $GITHUB_WORKSPACE/main/agda/_build
         sudo apt-get install texlive-binaries
         cd main/agda
         find . -type f -name '*.lagda' | while read -r code ; do
@@ -118,9 +131,10 @@ jobs:
         agda --html --html-dir=docs README.agda
         cd ..
         cp -f -r agda/ ~/main-build/
+        cp -f -r agda/_build/ ~/main-build-agdai/
 
     - name: Retrieve main library
-      if: steps.cache-agda.outputs.cache-hit == 'true'
+      if: steps.cache-main.outputs.cache-hit == 'true'
       run: cp -f -R ~/main-build/* $GITHUB_WORKSPACE/main/agda
 
 # Compile pdf
