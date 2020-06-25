@@ -2,7 +2,7 @@ name: Compile LaTeX and HTML
 on:
   push:
     branches:
-      - restore-keys
+      - master
 
 jobs:
   build:
@@ -120,7 +120,6 @@ jobs:
         mkdir -p ~/main-build/_build
         cp -f -R ~/main-build/_build $GITHUB_WORKSPACE/main/agda/_build
         rm -r ~/main-build
-        ls -R $GITHUB_WORKSPACE/main/agda
         sudo apt-get install texlive-binaries
         cd main/agda
         find . -type f -name '*.lagda' | while read -r code ; do
@@ -129,7 +128,6 @@ jobs:
         agda --html --html-dir=docs README.agda
         cd ..
         cp -f -R agda/ ~/main-build/
-        ls -R ~/main-build
 
 # Compile pdf
     - name: Remove .latexmkrc
