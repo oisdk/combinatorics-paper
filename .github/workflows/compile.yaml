@@ -28,6 +28,7 @@ jobs:
         key: ${{ runner.os }}-${{ matrix.agda-ref }}
 
     - name: Install cabal
+      if: steps.cache-cabal.outputs.cache-hit != 'true'
       uses: actions/setup-haskell@v1.1
       with:
         ghc-version: "8.10.1"
