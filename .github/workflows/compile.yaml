@@ -2,7 +2,7 @@ name: Compile LaTeX and HTML
 on:
   push:
     branches:
-      - matrix-build
+      - master
 
 jobs:
   build:
