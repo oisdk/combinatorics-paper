@@ -116,7 +116,7 @@ jobs:
         mkdir -p ~/main-build
         mkdir -p ~/main-build/_build
         mkdir -p $GITHUB_WORKSPACE/main/agda/_build
-        cp -f -R '~/main-build/_build/*' $GITHUB_WORKSPACE/main/agda/_build
+        cp -f -R "~/main-build/_build/*" $GITHUB_WORKSPACE/main/agda/_build
         sudo apt-get install texlive-binaries
         cd main/agda
         find . -type f -name '*.lagda' | while read -r code ; do
