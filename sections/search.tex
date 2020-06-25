@@ -62,21 +62,22 @@ associative, and if so return it to us.
 The usefulness of which is dubious, but we will see a more interesting
 application soon.
 \section{Proof Automation And Search Techniques}
-For this prover we will not resort to reflection or similar techniques: all of
-the automation machinery will run in standard Agda.
-To accomplish it we will leverage a common technique which we will describe
-briefly here.
+For this prover we will not resort to reflection or similar techniques: instead,
+we will trick the type checker to do our automation for us.
+This is a relatively common technique, although not so much outside of Agda, so
+we will briefly explain it here.
 
 To understand the technique we should first notice that some proof automation
 \emph{already} happens in Agda, like the following:
 \begin{agdalisting}
   \ExecuteMetaData[agda/Snippets/Bool.tex]{obvious}
 \end{agdalisting}
-While it's not a particularly impressive example, it does nonetheless
+The type checker does not require us to manually explain each step of evaluation
+of:
+\(\AgdaInductiveConstructor{true}\;\AgdaFunction{∧}\;\AgdaInductiveConstructor{false}\).
+While it's not a particularly impressive example of automation, it does nonetheless
 demonstrate a principle we will exploit: closed terms will compute to a normal
-form.
-We do not have to manually apply each computation rule or pattern match in order
-for the equation to type-check.
+form if they're needed to type check.
 
 So our task is to rewrite proof obligations like the one in
 Equation~\ref{bool-assoc-auto-proof} into ones which can reduce completely. 
@@ -98,9 +99,18 @@ The first is a function which derives a type from whether a decision is
 successful or not.
 This function is important because if we use the output of this type at any
 point we will effectively force the unifier to run the decision computation.
-
-
+The second takes---as an implicit argument---an inhabitant of the type generated
+from the first, and uses it to prove that the decision can only be true, and the
+extracts the resulting proof from that decision.
+All in all, we can use it like this:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Snippets/Bool.tex]{extremely-obvious}
+\end{agdalisting}
+This technique will allow us to automatically compute any decidable predicate.
 \section{Omniscience}
+So we now know what is needed of us for proof automation: we need to take our
+proofs and make them decidable.
+
 First we will explore the theoretical underpinning for search, and its relation
 to finiteness.
 The property we are looking for is effectively the ability to exhaustively

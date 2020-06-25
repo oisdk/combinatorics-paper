@@ -48,35 +48,35 @@ obvious = refl
 \end{code}
 %</obvious>
 \begin{code}
-Dec : Type a → Type a
-Dec A = A ⊎ (¬ A)
-
-data _≠_ : Bool → Bool → Type₀ where
-  f≠t : false ≠ true
-  t≠f : true ≠ false
-
-_?≠_ : ∀ x y → Dec (x ≠ y)
-false  ?≠ false  = inr (λ ())
-false  ?≠ true   = inl f≠t
-true   ?≠ false  = inl t≠f
-true   ?≠ true   = inr (λ ())
+private
+ module SumDec where
+  Dec : Type a → Type a
+  Dec A = A ⊎ (¬ A)
 \end{code}
-
 %<*is-true>
 \begin{code}
-Is-True : Dec A → Type₀
-Is-True (inl  _) = ⊤
-Is-True (inr  _) = ⊥
+  Is-True : Dec A → Type₀
+  Is-True (inl  _) = ⊤
+  Is-True (inr  _) = ⊥
 \end{code}
 %</is-true>
 %<*from-true>
 \begin{code}
-from-true :  (decision : Dec A) →
-             { _ : Is-True decision } → A
-from-true (inl x) = x
+  from-true :  (decision : Dec A) →
+               { _ : Is-True decision } → A
+  from-true (inl x) = x
 \end{code}
 %</from-true>
 \begin{code}
-example : true ≠ false
-example = from-true (true ?≠ false)
+open import Relation.Nullary.Decidable.Logic
+open import Relation.Nullary.Decidable
+
+from-true : (dec : Dec A) → { _ : T (does dec) } → A
+from-true (yes p) = p
 \end{code}
+%<*extremely-obvious>
+\begin{code}
+extremely-obvious : true ≢ false
+extremely-obvious = from-true (! (true ≟ false))
+\end{code}
+%</extremely-obvious>
