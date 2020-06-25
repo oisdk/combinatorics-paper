@@ -116,12 +116,15 @@ This technique will allow us to automatically compute any decidable predicate.
 \section{Omniscience}
 So we now know what is needed of us for proof automation: we need to take our
 proofs and make them decidable.
-In particular, our strategy will be to take a proposition which is decidable in
-the individual case (like
-\((x\;\AgdaFunction{∧}\;y)\;\AgdaFunction{∧}\;z\;\AgdaFunction{≡}\;x\;\AgdaFunction{∧}\;(y\;\AgdaFunction{∧}\;z)\)
-for a given \(x\), \(y\), and \(z\)) and make it decidable in the universal case.
-Whether this is possible or not is a property of the \emph{domain} of a
-decidable predicate, and is described formally by the notion of ``Exhaustibility''.
+In particular, we need to be able to ``lift'' decidability back over a
+function arrow.
+For instance, given \(x\), \(y\), and \(z\) we already have
+\(\AgdaDatatype{Dec}\;((x\;\AgdaFunction{∧}\;y)\;\AgdaFunction{∧}\;z\;\AgdaFunction{≡}\;x\;\AgdaFunction{∧}\;(y\;\AgdaFunction{∧}\;z))\)
+(because equality over booleans is decidable).
+In order to turn this into a proof that \AgdaFunction{∧} is associative we need
+\(\AgdaDatatype{Dec}\;(\forall \; x \; y \; z \rightarrow (x\;\AgdaFunction{∧}\;y)\;\AgdaFunction{∧}\;z\;\AgdaFunction{≡}\;x\;\AgdaFunction{∧}\;(y\;\AgdaFunction{∧}\;z))\).
+The ability to do this is described formally by the notion of
+``Exhaustibility''.
 \begin{definition}[Exhaustibility]
   We say a type \(A\) is exhaustible if, for any decidable predicate \(P\) on
   \(A\), the universal quantification of the predicate is decidable.
@@ -186,7 +189,6 @@ omniscience.
 \begin{lemma}
   Omniscience and exhaustibility coincide for prop-valued predicates.
 \end{lemma}
-
 
 \section{Countdown}
 \section{Automating Proofs}

@@ -20,12 +20,12 @@ Omniscient Exhaustible : ∀ p {a} → Type a → Type _
 \end{code}
 %<*omniscient>
 \begin{code}
-Omniscient p A = ∀ {P : A → Type p} → (∀ x → Dec (P x)) → Dec (∃[ x ] P x)
+Omniscient p A = ∀ {P : A → Type p} → ((x : A) → Dec (P x)) → Dec (Σ[ x ⦂ A ] P x)
 \end{code}
 %</omniscient>
 %<*exhaustible>
 \begin{code}
-Exhaustible p A = ∀ {P : A → Type p} → (∀ x → Dec (P x)) → Dec (∀ x → P x)
+Exhaustible p A = ∀ {P : A → Type p} → ((x : A) → Dec (P x)) → Dec ((x : A) → P x)
 \end{code}
 %</exhaustible>
 \begin{code}
