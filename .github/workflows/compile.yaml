@@ -114,7 +114,6 @@ jobs:
       if: steps.cache-main.outputs.cache-hit != 'true'
       run: |
         mkdir -p ~/main-build/_build
-        mkdir -p $GITHUB_WORKSPACE/main/agda/_build
         cp -f -R ~/main-build/_build $GITHUB_WORKSPACE/main/agda/_build
         ls -R $GITHUB_WORKSPACE/main/agda
         sudo apt-get install texlive-binaries
