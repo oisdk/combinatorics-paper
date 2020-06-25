@@ -105,24 +105,18 @@ jobs:
       id: cache-main
       with:
         path: ~/main-build
-        key: ${{ runner.os }}-${{ matrix.agda-ver }}-${{ matrix.cubical-ref }}-${{ hashFiles('main/agda/**') }}-html-and-tex
-
-    - uses: actions/cache@v2
-      name: Cache main library agdai
-      id: cache-main-build
-      with:
-        path: ~/main-build-agdai
-        key: agdai-${{ runner.os }}-${{ matrix.agda-ver }}-${{ matrix.cubical-ref }}-${{ hashFiles('main/agda/**') }}
+        key: html-and-tex-${{ runner.os }}-${{ matrix.agda-ver }}-${{ matrix.cubical-ref }}-${{ hashFiles('main/agda/**') }}
         restore-keys: |
-          agdai-${{ runner.os }}-${{ matrix.agda-ver }}-${{ matrix.cubical-ref }}-
-          agdai-${{ runner.os }}-${{ matrix.agda-ver }}-
+          html-and-tex-${{ runner.os }}-${{ matrix.agda-ver }}-${{ matrix.cubical-ref }}-
+          html-and-tex-${{ runner.os }}-${{ matrix.agda-ver }}-
 
     - name: Compile main library
       if: steps.cache-main.outputs.cache-hit != 'true'
       run: |
-        mkdir -p ~/main-build-agdai
+        mkdir -p ~/main-build
+        mkdir -p ~/main-build/_build
         mkdir $GITHUB_WORKSPACE/main/agda/_build
-        cp -f -R ~/main-build-agdai/* $GITHUB_WORKSPACE/main/agda/_build
+        cp -f -R ~/main-build/_build/* $GITHUB_WORKSPACE/main/agda/_build
         sudo apt-get install texlive-binaries
         cd main/agda
         find . -type f -name '*.lagda' | while read -r code ; do
