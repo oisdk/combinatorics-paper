@@ -53,7 +53,7 @@ to prove things like the associativity in a couple of lines:
 We have already, in previous sections, explored the theoretical implications of
 Cubical Type Theory on our formalisation.
 With this library for proof search, however, we will see two distinct
-\emph{practical} applications which would simply not be possible without
+practical applications which would simply not be possible without
 computational univalence.
 First and foremost: our proofs of finiteness, constructed with the API we will
 describe, have all the power of full equalities.
@@ -146,25 +146,32 @@ For that we need the more well-known, but related, property of
   In other words, for any decidable predicate the existential quantification of
   that predicate is also decidable.
 \end{definition}
-Both of these properties only make sense to talk about in a constructive
-setting: classically speaking, \emph{every} type is omniscient and exhaustible.
-Finite types are omniscient (the reason should be clear, but we will prove this
-fact presently), but perhaps surprisingly, it is not \emph{only} finite types
+
+These properties are closely related to the axiom of choice: in particular, the
+statement that ``every type is omniscient'' implies the AOC. \todo{Reference for
+this, and possible proof? Also it might not be entirely correct: I think you
+need a truncation somewhere for omniscience to be equivalent to the AOC}
+Because we're constructive, only a select few types are omniscient: finite
+types, for instance (why finite types are omniscient is not too difficult to
+see, but we will explain it soon).
+Perhaps surprisingly, it is not \emph{only} finite types
 which are exhaustible.
 Certain infinite types can be
 exhaustible~\cite{escardoInfiniteSetsThat2007}, but an exploration of that is
 beyond the scope of this work.
 
-Omniscience and exhaustibility are not interchangeable: conceptually,
-omniscience needs some kind of ordering on the underlying type.
-If we had a property, say like the associativity property above, that is
-satisfied by more than one element of the type, we would have to have some way
-to pick a candidate element from the type to return in the case of the property
-being satisfied.
-This requirement of order mirrors the Ord difference in
-Fig.~\ref{finite-classification}.
-
-Omniscience implies exhaustibility, then, but the converse is not true.
+Omniscience and exhaustibility are not interchangeable: every omniscient type is
+exhaustible, but the converse is not true.
+Conceptually, omniscience needs some kind of ordering on the underlying type.
+This is because omniscience returns a candidate satisfying the given predicate:
+there is no requirement, though, that only one element in the underlying type
+satisfies the decidable predicate.
+As a result, omniscience needs some way to choose among all possible candidates:
+this is the ``order'' we are referring to.
+This is also the same ``order'' that we referred to when talking about the
+finiteness predicates: all ordered predicates (in
+Figure~\ref{finite-classification}) imply omniscience, whereas the unordered
+predicates only imply exhaustibility.
 \begin{lemma}
   Omniscience implies exhaustibility
 \end{lemma}
