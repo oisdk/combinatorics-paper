@@ -38,6 +38,7 @@ jobs:
       run: echo "::add-path::~/.cabal/bin"
 
     - name: Download Agda from github
+      if: steps.cache-cabal.outputs.cache-hit != 'true'
       uses: actions/checkout@v2
       with:
         repository: agda/agda
