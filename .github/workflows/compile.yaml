@@ -27,21 +27,19 @@ jobs:
         key: ${{ runner.os }}
 
     - name: Install cabal
+      if: steps.cache-cabal.outputs.cache-hit != 'true'
       uses: actions/setup-haskell@v1.1
       with:
         ghc-version: "8.10.1"
         cabal-version: "3.2"
-
-    - name: Put cabal programs in PATH
-      run: echo "::add-path::~/.cabal/bin"
-
-    - name: Install Agda
-      if: steps.cache-cabal.outputs.cache-hit != 'true'
       run: |
         cabal update
         cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS' alex-3.2.5
         cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS' happy-1.19.12
         cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS' Agda-2.6.1
+
+    - name: Put cabal programs in PATH
+      run: echo "::add-path::~/.cabal/bin"
 
 # Download and compile cubical library
     - name: Checkout cubical library
