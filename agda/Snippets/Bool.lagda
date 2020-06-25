@@ -37,7 +37,7 @@ _≟_ = discreteBool
 %</bool-assoc-auto-proof>
 %<*some-assoc>
 \begin{code}
-some-assoc : Σ[ f ⦂ (Bool → Bool → Bool) ] ∀ x y z → f (f x y) z ≡ f x (f y z)
+some-assoc : Σ[ f ⦂ (Bool → Bool → Bool) ] ∀ xx y z → f (f xx y) z ≡ f xx (f y z)
 some-assoc = ∃↯ⁿ 1 λ f → ∀?ⁿ 3 λ x y z → f (f x y) z ≟ f x (f y z)
 \end{code}
 %</some-assoc>
