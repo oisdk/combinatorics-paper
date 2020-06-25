@@ -50,6 +50,8 @@ jobs:
         cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS' alex-3.2.5
         cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS' happy-1.19.12
         cd agda
+        mkdir -p doc
+        touch doc/user-manual.pdf
         cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS'
 
 # Download and compile cubical library
