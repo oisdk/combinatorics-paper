@@ -147,15 +147,10 @@ For that we need the more well-known, but related, property of
   that predicate is also decidable.
 \end{definition}
 
-These properties are closely related to the axiom of choice: in particular, the
-statement that ``every type is omniscient'' implies the AOC. \todo{Reference for
-this, and possible proof? Also it might not be entirely correct: I think you
-need a truncation somewhere for omniscience to be equivalent to the AOC}
 Because we're constructive, only a select few types are omniscient: finite
-types, for instance (why finite types are omniscient is not too difficult to
-see, but we will explain it soon).
-Perhaps surprisingly, it is not \emph{only} finite types
-which are exhaustible.
+types, for instance (the law of the excluded middle implies that all types are
+omniscient, meaning that all types are omniscient classically).
+Perhaps surprisingly, it is not \emph{only} finite types which are exhaustible.
 Certain infinite types can be
 exhaustible~\cite{escardoInfiniteSetsThat2007}, but an exploration of that is
 beyond the scope of this work.
@@ -179,6 +174,13 @@ predicates only imply exhaustibility.
   \todo{proof here}
 \end{proof}
 
+\begin{lemma}
+  If exhaustibility implies omniscience, then the axiom of choice holds
+\end{lemma}
+\begin{proof}
+  \todo{proof here}
+\end{proof}
+
 And the relation to the finiteness predicates is straightforward: all of the
 finiteness predicates we have seen imply exhaustibility, and all of the ordered
 finiteness predicates imply omniscience.
@@ -196,8 +198,14 @@ omniscience.
 \begin{lemma}
   Omniscience and exhaustibility coincide for prop-valued predicates.
 \end{lemma}
-
 \section{Countdown}
+We have already introduced and described countdown: in this section, we will
+fill in the remaining parts of the solver, glue the pieces together, and show
+how the finiteness proofs can assist us to write the solver.
+\subsection{Finite Permutations}
+\subsection{Parenthesising}
+\subsection{Filtering}
+\subsection{Putting It All Together}
 \section{Automating Proofs}
 One use for above constructions is the automation of certain proofs.
 In \cite{firsovDependentlyTypedProgramming2015}, which uses a similar approach
