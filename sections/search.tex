@@ -129,19 +129,11 @@ decidable predicate, and is described formally by the notion of ``Exhaustibility
     \left( \Pi {(x : A)} , \mathbf{Dec}(P(x)) \right) \rightarrow \mathbf{Dec} \left( \Pi {(x : A)} , P(x) \right)
   \end{equation}
 \end{definition}
-Perhaps surprisingly, it is not only finite types which can are exhaustible.
-Certain infinite types can be
-exhaustible~\cite{escardoInfiniteSetsThat2007}.
-
-First we will explore the theoretical underpinning for search, and its relation
-to finiteness.
-The property we are looking for is effectively the ability to exhaustively
-search through some type.
-Consider the proof above in Equation~\ref{bool-assoc-auto-proof}: we know the
-proof could be automatic because we can check every configuration of the values
-of \(x\), \(y\), and \(z\).
-
-
+This property of \AgdaDatatype{Bool} would allow us to automate the proof of
+associativity, but it is in fact not strong enough to find individual
+representatives of a type which support some property.
+For that we need the more well-known, but related, property of
+\emph{omniscience}.
 \begin{definition}[Limited Principle of Omniscience]
   For any type \(A\) and predicate \(P\) on \(A\), the limited principle of
   omniscience \cite{myhillErrettBishopFoundations1972} is as follows:
@@ -151,18 +143,51 @@ of \(x\), \(y\), and \(z\).
   In other words, for any decidable predicate the existential quantification of
   that predicate is also decidable.
 \end{definition}
-The limited principle of omniscience is non-constructive, but individual types
-can themselves satisfy omniscience.
-In particular, cardinal finite types are omniscient.
 
-There is also a universal form of omniscience, which we call exhaustibility.
+Both of these properties only make sense to talk about in a constructive
+setting: classically speaking, \emph{every} type is omniscient and exhaustible.
+Finite types are omniscient (the reason should be clear, but we will prove this
+fact presently), but perhaps surprisingly, it is not \emph{only} finite types
+which are exhaustible.
+Certain infinite types can be
+exhaustible~\cite{escardoInfiniteSetsThat2007}, but an exploration of that is
+beyond the scope of this work.
 
-All of the finiteness predicates we have seen imply exhaustibility.
-Omniscience is stronger than exhaustibility, as we can derive the latter from
-the former.
-All of the ordered finiteness predicates imply omniscience.
-For the unordered finiteness definitions, we have omniscience for prop-valued
-predicates.
+Omniscience and exhaustibility are not interchangeable: conceptually, for
+omniscience you need some kind of ordering on the underlying type.
+If we had a property, say like the associativity property above, that is
+satisfied by more than one element of the type, we would have to have some way
+to pick a candidate element from the type to return in the case of the property
+being satisfied.
+This requirement of order mirrors the Ord difference in
+Fig.~\ref{finite-classification}.
+
+Omniscience implies exhaustibility, then, but the converse is not true.
+\begin{lemma}
+  Omniscience implies exhaustibility
+\end{lemma}
+\begin{proof}
+  \todo{proof here}
+\end{proof}
+
+And the relation to the finiteness predicates is straightforward: all of the
+finiteness predicates we have seen imply exhaustibility, and all of the ordered
+finiteness predicates imply omniscience.
+We can prove this by showing exhaustibility and omniscience for the weakest
+candidate of finiteness predicates.
+\begin{lemma}
+  Kuratowski finiteness implies exhaustibility
+\end{lemma}
+\begin{lemma}
+  Manifest enumerability implies omniscience
+\end{lemma}
+
+Finally, we can get around the order requirement for prop-valued predicates for
+omniscience.
+\begin{lemma}
+  Omniscience and exhaustibility coincide for prop-valued predicates.
+\end{lemma}
+
 
 \section{Countdown}
 \section{Automating Proofs}
