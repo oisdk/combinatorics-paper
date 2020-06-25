@@ -102,14 +102,24 @@ jobs:
 
     - uses: actions/cache@v2
       name: Cache main library
-      id: cache-agda
+      id: cache-main
       with:
         path: ~/main-build
-        key: ${{ runner.os }}-${{ matrix.agda-ver }}-${{ matrix.cubical-ref }}-${{ hashFiles('main/agda/**') }}-html-and-tex
+        key: html-and-tex-${{ runner.os }}-${{ matrix.agda-ver }}-${{ matrix.cubical-ref }}-${{ hashFiles('main/agda/**') }}
+        restore-keys: |
+          html-and-tex-${{ runner.os }}-${{ matrix.agda-ver }}-${{ matrix.cubical-ref }}-
+          html-and-tex-${{ runner.os }}-${{ matrix.agda-ver }}-
+
+    - name: Retrieve main library
+      if: steps.cache-main.outputs.cache-hit == 'true'
+      run: cp -f -R ~/main-build/* $GITHUB_WORKSPACE/main/agda
 
     - name: Compile main library
-      if: steps.cache-agda.outputs.cache-hit != 'true'
+      if: steps.cache-main.outputs.cache-hit != 'true'
       run: |
+        mkdir -p ~/main-build/_build
+        cp -f -R ~/main-build/_build $GITHUB_WORKSPACE/main/agda/_build
+        rm -r ~/main-build
         sudo apt-get install texlive-binaries
         cd main/agda
         find . -type f -name '*.lagda' | while read -r code ; do
@@ -117,11 +127,7 @@ jobs:
         done
         agda --html --html-dir=docs README.agda
         cd ..
-        cp -f -r agda/ ~/main-build/
-
-    - name: Retrieve main library
-      if: steps.cache-agda.outputs.cache-hit == 'true'
-      run: cp -f -R ~/main-build/* $GITHUB_WORKSPACE/main/agda
+        cp -f -R agda/ ~/main-build/
 
 # Compile pdf
     - name: Remove .latexmkrc
