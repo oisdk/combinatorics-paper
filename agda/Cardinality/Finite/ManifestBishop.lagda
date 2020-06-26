@@ -41,6 +41,9 @@ module _ where
   ℬ⇒ℰ! xs .fst = xs .fst
   ℬ⇒ℰ! xs .snd x = xs .snd x .fst
 
+  ℬ⇒Discrete : ℬ A → Discrete A
+  ℬ⇒Discrete = ℰ!⇒Discrete ∘ fun 𝕃⇔ℒ⟨ℰ!⟩ ∘ ℬ⇒ℰ!
+
   ℰ!⇒ℬ : ℰ! A → ℬ A
   ℰ!⇒ℬ xs = λ where
       .fst → uniques disc (xs .fst)
@@ -91,3 +94,63 @@ module _ where
 \begin{code}
     xs |×| ys = ℰ!⇒ℬ (ℬ⇒ℰ! xs SplitEnumerable.|×| ℬ⇒ℰ! ys)
 \end{code}
+\begin{code}
+
+    open import Cubical.Foundations.HLevels
+    open import Relation.Nullary.Decidable.Logic
+
+    _|→|_ : ℬ A → ℬ B → ℬ (A → B)
+    xs |→| ys = ℰ!⇒ℬ (ℬ⇒ℰ! xs |Π| λ _ → ℬ⇒ℰ! ys)
+
+    filter : ∀ {p} {P : A → Type p} → (∀ x → isProp (P x)) → (∀ x → Dec (P x)) → ℬ A → ℬ (Σ[ x ⦂ A ] P x)
+    filter isPropP P? = ℰ!⇒ℬ ∘ filter-subobject isPropP P? ∘ ℬ⇒ℰ!
+
+    module _ {a} {b} {A : Type a} {B : Type b} where
+\end{code}
+%<*iso-finite>
+\begin{code}
+      iso-finite :  ℬ A →
+                    ℬ B →
+                    ℬ (Σ[ f,g ⦂ (A → B) × (B → A) ]
+                        (  (f,g .fst ∘ f,g .snd ≡ id) ×
+                           (f,g .snd ∘ f,g .fst ≡ id)))
+      iso-finite ℬ⟨A⟩ ℬ⟨B⟩ =
+        filter
+          (λ _ → isPropEqs)
+          (λ { (f , g) → (f ∘ g) ≟ᴮ id && (g ∘ f) ≟ᴬ id})
+          ((ℬ⟨A⟩ |→| ℬ⟨B⟩) |×| (ℬ⟨B⟩ |→| ℬ⟨A⟩))
+\end{code}
+%</iso-finite>
+\begin{code}
+        where
+        ℬ⟨f⟩ : ℬ (A → B)
+        ℬ⟨f⟩ = (ℬ⟨A⟩ |→| ℬ⟨B⟩)
+
+        ℬ⟨g⟩ : ℬ (B → A)
+        ℬ⟨g⟩ = (ℬ⟨B⟩ |→| ℬ⟨A⟩)
+
+        _≟ᴮ_ = ℬ⇒Discrete (ℬ⟨B⟩ |→| ℬ⟨B⟩)
+        _≟ᴬ_ = ℬ⇒Discrete (ℬ⟨A⟩ |→| ℬ⟨A⟩)
+
+        isPropEqs : {g : A → A} {f : B → B} → isProp ((f ≡ id) × (g ≡ id))
+        isPropEqs = isOfHLevelΣ 1 (Discrete→isSet _≟ᴮ_ _ _) λ _ → (Discrete→isSet _≟ᴬ_ _ _)
+
+      _|⇔|_ : ℬ A → ℬ B → ℬ (A ⇔ B)
+      xs |⇔| ys = subst ℬ (isoToPath form) (iso-finite xs ys)
+        where
+        form : (Σ[ fg ⦂ ((A → B) × (B → A)) ] (((fg .fst ∘ fg .snd) ≡ id) × ((fg .snd ∘ fg .fst) ≡ id))) ⇔ (A ⇔ B)
+        form .fun ((f , g) , (leftInv , rightInv)) = iso f g (λ x i → leftInv i x) (λ x i → rightInv i x)
+        form .inv (iso f g leftInv rightInv) = ((f , g) , ((λ i x → leftInv x i) , (λ i x → rightInv x i)))
+        form .rightInv _ = refl
+        form .leftInv  _ = refl
+
+    private
+      module DecTerm (f : A → B) (g : B → A) where
+        decTerm : Type _
+        decTerm =
+\end{code}
+%<*dec-type>
+\begin{code}
+          Dec (f ∘ g ≡ id)
+\end{code}
+%</dec-type>

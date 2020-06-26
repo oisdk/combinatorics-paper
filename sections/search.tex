@@ -203,8 +203,60 @@ We have already introduced and described countdown: in this section, we will
 fill in the remaining parts of the solver, glue the pieces together, and show
 how the finiteness proofs can assist us to write the solver.
 \subsection{Finite Permutations}
+The first step of the transformation we will represent as a finite object is a
+\emph{permutation}: once we choose the numbers we're going to use for the
+candidate for the solution, we have to order them in some way.
+
+Our first attempt at representing permutations might look something like this:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Countdown.tex]{wrong-perm}
+\end{agdalisting}
+the idea is that \(\AgdaDatatype{Perm}\;n\) represents a permutation of \(n\)
+things, as a function from positions to positions.
+Unfortunately such a simple answer won't work: there are no restrictions on the
+operation of the function, so it could (for instance), send more than one input
+position into the same output.
+
+What we actually need is not just a function between positions, but an
+\emph{isomorphism} between them.
+In types:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Countdown.tex]{iso-perm}
+\end{agdalisting}
+Where an isomorphism is defined as follows:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Countdown.tex]{isomorphism}
+\end{agdalisting}
+\todo{Should this isomorphism definition be put earlier in the intro with the
+  equivalences etc?}
+While it may look complex, this term is actually composed of individual
+components we've already proven finite.
+First we have \(\AgdaDatatype{Fin}\;n\rightarrow\AgdaDatatype{Fin}\;n\):
+functions between finite types are, as we know, finite
+(Theorem~\ref{split-enum-pi}).
+We take a pair of them: pairs of finite things are \emph{also} finite
+(Lemma~\ref{split-enum-sigma}).
+To get the next two components we can filter to the subobject: this requires
+these predicates to be decidable.
+We will construct a term of the following type:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{dec-type}
+\end{agdalisting}
+So can we construct such a term? Yes!
+
+We basically need to construct decidable equality for functions between
+\(\AgdaDatatype{Fin}\;n\)s: of course, this decidable equality is provided by
+the fact that such functions are themselves finite.
+
+All in all we can now prove that the isomorphism, and by extension the
+permutation, is finite:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{iso-finite}
+\end{agdalisting}
+
+
+
 \subsection{Parenthesising}
-\subsection{Filtering}
 \subsection{Putting It All Together}
 \section{Automating Proofs}
 One use for above constructions is the automation of certain proofs.

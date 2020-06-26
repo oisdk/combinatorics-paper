@@ -32,6 +32,32 @@ private
 Subseq : ℕ → Type₀
 Subseq = Vec Bool
 
+private
+  module WrongPerm where
+\end{code}
+%<*wrong-perm>
+\begin{code}
+    Perm : ℕ → Type₀
+    Perm n = Fin n → Fin n
+\end{code}
+%</wrong-perm>
+\begin{code}
+private
+  module IsoPerm where
+\end{code}
+%<*isomorphism>
+\begin{code}
+    Isomorphism : Type a → Type b → Type (a ℓ⊔ b)
+    Isomorphism A B = Σ[ f ⦂ (A → B) ] Σ[ g ⦂ (B → A) ] (f ∘ g ≡ id) × (g ∘ f ≡ id)
+\end{code}
+%</isomorphism>
+%<*iso-perm>
+\begin{code}
+    Perm : ℕ → Type₀
+    Perm n = Isomorphism (Fin n) (Fin n)
+\end{code}
+%</iso-perm>
+\begin{code}
 Perm : ℕ → Type₀
 Perm zero    = ⊤
 Perm (suc n) = Fin (suc n) × Perm n
