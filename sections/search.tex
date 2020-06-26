@@ -237,7 +237,7 @@ functions between finite types are, as we know, finite
 We take a pair of them: pairs of finite things are \emph{also} finite
 (Lemma~\ref{split-enum-sigma}).
 To get the next two components we can filter to the subobject: this requires
-these predicates to be decidable.
+these predicates to be decidable. \todo{Need to do filter subobject in topos section}
 We will construct a term of the following type:
 \begin{agdalisting}
   \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{dec-type}
@@ -254,9 +254,29 @@ permutation, is finite:
   \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{iso-finite}
 \end{agdalisting}
 
-
-
+Unfortunately this implementation is too slow to be useful.
+As nice and declarative as it is, fundamentally it builds a list of all possible
+pairs of functions between \(\AgdaDatatype{Fin}\;n\) and itself (an operation
+which takes in the neighbourhood of \(\mathcal{O}(n^n)\) time), and then tests
+each for equality (which is likely worse than \(\mathcal{O}(n^2)\) time).
+We will instead use a factoriadic encoding: this is a relatively simple encoding
+of permutations which will reduce our time to a blazing fast
+\(\mathcal{O}(n!)\).
+It is expressed in Agda as follows:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Countdown.tex]{perm-def}
+\end{agdalisting}
+It is a vector of positions, each represented with a \(\AgdaDatatype{Fin}\).
+Each position can only refer to the length of the tail of the list at that
+point: this prevents two input positions mapping to the same output point, which
+was the problem with the naive encoding we had previously.
+And it also has a relatively simple proof of finiteness:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Countdown.tex]{perm-fin}
+\end{agdalisting}
 \subsection{Parenthesising}
+Our next step is figuring out a way to encode the parenthesisation
+\subsection{Filtering}
 \subsection{Putting It All Together}
 \section{Automating Proofs}
 One use for above constructions is the automation of certain proofs.

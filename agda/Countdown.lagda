@@ -57,11 +57,14 @@ private
     Perm n = Isomorphism (Fin n) (Fin n)
 \end{code}
 %</iso-perm>
+%<*perm-def>
 \begin{code}
 Perm : ℕ → Type₀
-Perm zero    = ⊤
-Perm (suc n) = Fin (suc n) × Perm n
-
+Perm zero     = ⊤
+Perm (suc n)  = Fin (suc n) × Perm n
+\end{code}
+%</perm-def>
+\begin{code}
 count : Subseq n → ℕ
 count = foldr′ (λ x xs → bool 0 1 x + xs) 0
 
@@ -107,10 +110,15 @@ import Data.Unit.UniversePolymorphic as Poly
 \begin{code}
 ℰ!⟨Subseq⟩ : ℰ! (Subseq n)
 ℰ!⟨Subseq⟩ = ℰ!⟨Vec⟩ ℰ!⟨2⟩
-
+\end{code}
+%<*perm-fin>
+\begin{code}
 ℰ!⟨Perm⟩ : ℰ! (Perm n)
-ℰ!⟨Perm⟩ {n = zero} = ℰ!⟨⊤⟩
-ℰ!⟨Perm⟩ {n = suc n} = ℰ!⟨Fin⟩ |×| ℰ!⟨Perm⟩
+ℰ!⟨Perm⟩ {n = zero   } = ℰ!⟨⊤⟩
+ℰ!⟨Perm⟩ {n = suc n  } = ℰ!⟨Fin⟩ |×| ℰ!⟨Perm⟩
+\end{code}
+%</perm-fin>
+\begin{code}
 
 ℰ!⟨Comb⟩ : ℰ! (Comb n)
 ℰ!⟨Comb⟩ = ℰ!⟨Subseq⟩ |Σ| λ _ → ℰ!⟨Perm⟩
