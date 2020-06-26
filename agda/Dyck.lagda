@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Dyck where
@@ -16,13 +17,39 @@ open import Data.Vec.Iterated
 private
   variable
     n m k : ℕ
-
 infixr 6 ⟨_ ⟩_
+\end{code}
+%<*dyck-def>
+\begin{code}
 data Dyck : ℕ → ℕ → Type₀ where
-  done : Dyck 0 0
+  done : Dyck zero zero
   ⟨_ : Dyck (suc n) m → Dyck n (suc m)
   ⟩_ : Dyck n m → Dyck (suc n) m
-
+\end{code}
+%</dyck-def>
+\begin{code}
+private
+  module DyckExamples where
+\end{code}
+%<*dyck-0-2>
+\begin{code}
+    _ : Dyck 0 2
+    _ = ⟨ ⟩ ⟨ ⟩ done
+\end{code}
+%</dyck-0-2>
+%<*dyck-0-3>
+\begin{code}
+    _ : Dyck 0 3
+    _ = ⟨ ⟩ ⟨ ⟨ ⟩ ⟩ done
+\end{code}
+%</dyck-0-3>
+%<*dyck-1-2>
+\begin{code}
+    _ : Dyck 1 2
+    _ = ⟩ ⟨ ⟩ ⟨ ⟩ done
+\end{code}
+%</dyck-1-2>
+\begin{code}
 -- module _ {p} (P : ℕ → ℕ → Type p)
 --              (lbrack : ∀ {n m} → P (suc n) m → P n (suc m))
 --              (rbrack : ∀ {n m} → P n m → P (suc n) m)
@@ -93,6 +120,28 @@ cover-dyck x = go _ _ x id []
 ℰ!⟨Dyck⟩ .fst = support-dyck _ _
 ℰ!⟨Dyck⟩ .snd = cover-dyck
 
+private
+  module NonParamTree where
+\end{code}
+%<*tree-simpl-def>
+\begin{code}
+    data Tree : Type₀ where
+      leaf : Tree
+      _*_ : Tree → Tree → Tree
+\end{code}
+%</tree-simpl-def>
+%<*from-dyck>
+\begin{code}
+    dyck→tree : Dyck zero n → Tree
+    dyck→tree d = go d (leaf , _)
+      where
+      go : Dyck n m → Vec Tree (suc n) → Tree
+      go (⟨ d)  ts              = go d (leaf , ts)
+      go (⟩ d)  (t₁ , t₂ , ts)  = go d (t₂ * t₁ , ts)
+      go done   (t , _)         = t
+\end{code}
+%</from-dyck>
+\begin{code}
 data Tree (A : Type a) (B : Type b) : Type (a ℓ⊔ b) where
   leaf : B → Tree A B
   node : A → Tree A B → Tree A B → Tree A B
@@ -142,3 +191,4 @@ fromDyck xs ops (val , vals) = fromDyck′ xs (leaf val) _ vals ops _
 
 -- toDyck-sized : Sized n → Dyck 0 n
 -- toDyck-sized (xs , p) = subst (Dyck 0) p (toDyck xs)
+\end{code}

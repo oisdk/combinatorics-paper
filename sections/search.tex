@@ -275,8 +275,74 @@ And it also has a relatively simple proof of finiteness:
   \ExecuteMetaData[agda/Countdown.tex]{perm-fin}
 \end{agdalisting}
 \subsection{Parenthesising}
-Our next step is figuring out a way to encode the parenthesisation
-\subsection{Filtering}
+Our next step is figuring out a way to encode the parenthesisation of the
+expression (Fig.~\ref{countdown-parens}). \todo{There's no way
+  ``parenthesisation'' is a real word}
+At this point of the transformation, we already have our numbers picked out, we
+have ordered them a certain way, and we have also selected the operators we're
+interested in.
+We have, in other words, the following:
+\begin{equation}
+  3 \times 7 \times 50 - 10 - 25
+\end{equation}
+Without parentheses, however, (or a religious adherence to BOMDAS) this
+expression is still ambiguous.
+\begin{align}
+  3 \times ((7 \times (50 - 10)) - 25) &= 765 \\
+  (((3 \times 7) \times 50) - 10) - 25 &= 1015
+\end{align}
+The different ways to parenthesise the expression result in different outputs
+of evaluation.
+
+So what data type encapsulates the ``different ways to parenthesise'' a given
+expression?
+That's what we will figure out in this section, and what we will prove finite.
+
+One way to approach the problem is with a binary tree.
+A binary tree with \(n\) leaves corresponds in a straightforward way to a
+parenthesisation of \(n\) numbers (Fig.~\ref{countdown-parens}).
+\todo{Tree diagram? Or link to previous tree?}
+This doesn't get us much closer to a finiteness proof, however: for that we will
+need to rely on \emph{Dyck} words.
+\begin{definition}[Dyck words]
+  A Dyck word is a string of balanced parentheses.
+  In Agda, we can express it as the following:
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Dyck.tex]{dyck-def}
+  \end{agdalisting}
+  A fully balanced string of \(n\) parentheses has the type
+  \(\AgdaDatatype{Dyck}\;\AgdaInductiveConstructor{zero}\;n\).
+  Here are some example strings:
+  \begin{multicols}{2}
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Dyck.tex]{dyck-0-2}
+    \end{agdalisting}
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Dyck.tex]{dyck-0-3}
+    \end{agdalisting}
+  \end{multicols}
+  The first parameter on the type represents the amount of unbalanced closing
+  parens, for instance:
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Dyck.tex]{dyck-1-2}
+  \end{agdalisting}
+\end{definition}
+
+Already Dyck words look easier to prove finite than straight binary trees, but
+for that proof to be useful we'll have to relate Dyck words and binary trees
+somehow.
+As it happens, Dyck words of length \(2n\) are isomorphic to binary trees with
+\(n-1\) leaves, but we only need to show this relation in one direction: from
+Dyck to binary tree.
+To demonstrate the algorithm we'll use a simple tree definition:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Dyck.tex]{tree-simpl-def}
+\end{agdalisting}
+The algorithm itself is quite similar to stack-based parsing algorithms.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Dyck.tex]{from-dyck}
+\end{agdalisting}
+\subsection{Filtering to Correct Expressions}
 \subsection{Putting It All Together}
 \section{Automating Proofs}
 One use for above constructions is the automation of certain proofs.
