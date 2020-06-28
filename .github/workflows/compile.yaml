@@ -12,6 +12,8 @@ jobs:
       matrix:
         cubical-ref: ["a01973ef7264f9454a40697313a2073c51a6b77a"]
         agda-ref: ["v2.6.1"]
+        ghc-ver: ["8.10.1"]
+        cabal-ver: ["3.2"]
 
     steps:
 
@@ -25,14 +27,14 @@ jobs:
           ~/.cabal/store
           ~/.cabal/bin
           dist-newstyle
-        key: ${{ runner.os }}-${{ matrix.agda-ref }}
+        key: ${{ runner.os }}-${{ matrix.ghc-ver }}-${{ matrix.cabal-ver }}-${{ matrix.agda-ref }}
 
     - name: Install cabal
       if: steps.cache-cabal.outputs.cache-hit != 'true'
       uses: actions/setup-haskell@v1.1
       with:
-        ghc-version: "8.10.1"
-        cabal-version: "3.2"
+        ghc-version: ${{ matrix.ghc-ver }}
+        cabal-version: ${{ matrix.cabal-ver }}
 
     - name: Put cabal programs in PATH
       run: echo "::add-path::~/.cabal/bin"
@@ -49,12 +51,12 @@ jobs:
       if: steps.cache-cabal.outputs.cache-hit != 'true'
       run: |
         cabal update
-        cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS' alex-3.2.5
-        cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS' happy-1.19.12
+        cabal install --overwrite-policy=always --ghc-options='-O2 +RTS -M6G -RTS' alex-3.2.5
+        cabal install --overwrite-policy=always --ghc-options='-O2 +RTS -M6G -RTS' happy-1.19.12
         cd agda
         mkdir -p doc
         touch doc/user-manual.pdf
-        cabal install --overwrite-policy=always --ghc-options='-O0 +RTS -M6G -RTS'
+        cabal install --overwrite-policy=always --ghc-options='-O1 +RTS -M6G -RTS'
 
 # Download and compile cubical library
     - name: Checkout cubical library
