@@ -16,16 +16,6 @@ of generality.
 \subsection{Split Enumerability Closure}
 Now that we have a suitable definition of finiteness, we will next prove that
 some things are finite.
-\begin{lemma}
-  \(\bot\), \(\top\), and \(\AgdaDatatype{Bool}\) are split enumerable.
-\end{lemma}
-\begin{proof}
-  These three types are quite obviously finite: we will show only the proof of
-  finiteness for \(\AgdaDatatype{Bool}\) here for brevity's sake.
-  \begin{agdalisting}
-    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
-  \end{agdalisting}
-\end{proof}
 With the most basic simple types out of the way, the obvious next choice is the
 (non-dependent) sums and products: \(\uplus\) and \(\times\).
 Both of these types can be constructed from the \emph{dependent} sum, however,

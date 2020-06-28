@@ -12,7 +12,10 @@ will be built out of all of the others.
 \section{Split Enumerability} \label{split-enumerability}
 We will start with a simple notion of finiteness, called \emph{split}
 enumerability.
-
+This predicate is perhaps the first definition of ``finite'' that someone might
+come up with (it's certainly the most common in dependently-typed programming):
+put simply, a split enumerable type is a type for which all of its elements can
+be listed.
 \begin{definition}[Split Enumerable Set] \label{split-enum-def}
   To say that some type \(A\) is split enumerable is to say that there is a list
   \(\mathit{support} : \AgdaDatatype{List}(A)\) such that any value \(x : A\) is in
@@ -26,6 +29,12 @@ enumerability.
   \cite{firsovDependentlyTypedProgramming2015}.
 \end{definition}
 
+Simple as it is, this predicate is arguably the most useful of the finiteness
+predicates.
+We will see presently why it doesn't entirely capture what we mean by the term
+``finite'', but we will nonetheless use it throughout the paper.
+Before we dive in to exploring the predicate itself, though, we will need to
+explain some of the terms we used in its definition.
 \subsection{Terms used in the Definition of Split Enumerability}
 We have used two types there which we have not yet defined:
 \(\AgdaDatatype{List}\) and \(\AgdaDatatype{\ensuremath{\in}}\).
@@ -108,17 +117,10 @@ Membership also makes more sense when described concretely in terms of lists.
 Understood this way, \(x\;\AgdaDatatype{\ensuremath{\in}}\;\mathit{xs}\) means
 ``there is an index into \(\mathit{xs}\) such that the index points at an item
 equal to \(x\)''.
-\todo{Probably should put back in some instances here, i.e. bool and top.
-  Obviously not the full closure stuff, but one or two instances would be
-  instructive.}
-\subsection{Derivations}
-We have a way to construct finiteness proofs, and a semiring-like toolbox to
-combine them.
-What we're now interested in is what we can \emph{derive} from them.
-
-First, we will look at how this predicate relates to more traditional, classical
+\subsection{Split Surjections}
+We will now look at how this predicate relates to more traditional, classical
 notions of finiteness.
-in a classical setting we likely wouldn't mention ``lists'' or the like, and
+In a classical setting we likely wouldn't mention ``lists'' or the like, and
 would instead define finiteness based on the existence of some injection or
 surjection.
 As it turns out, our definition of finiteness here is precisely the same as the
@@ -128,11 +130,13 @@ First, we will need to define our terms: in HoTT, surjections are a little more
 complex than what you'd find in either MLTT or classical mathematics.
 \begin{definition}[Split Surjections] \label{split-surjections}
   We define \emph{split} surjections here \cite[definition
-  4.6.1]{hottbook}. \todo{To Agda}
-  \begin{alignat}{3}
-    &\text{sp-surj}(f)          &&\coloneqq \Pi(y : B) , \text{fib}_f(y) \label{sp-surj-eqn} \\
-    &A \twoheadrightarrow! \; B &&\coloneqq \Sigma (f : A \rightarrow B) , \text{sp-surj}(f) \label{sp-surj-arrow-eqn}
-  \end{alignat}
+  4.6.1]{hottbook}.
+  \begin{agdalisting} \label{sp-surj-eqn}
+    \ExecuteMetaData[agda/Function/Surjective/Base.tex]{split-surjective}
+  \end{agdalisting} \vspace{-1.5\baselineskip}
+  \begin{agdalisting} \label{sp-surj-arrow-eqn}
+    \ExecuteMetaData[agda/Function/Surjective/Base.tex]{split-surjection}
+  \end{agdalisting}
 \end{definition}
 Over sets, the surjections and split surjections are the same thing, but there
 is a difference one we involve non-set types like the circle.
@@ -173,8 +177,23 @@ Clearly, only one line isn't a definitional equality:
 \end{agdalisting}
 (The simplicity of this proof, by the way, is why we preferred the
 container-based definition of lists over the traditional one.)
-
-
+\subsection{Instances}
+We have now characterised the informativeness of split enumerability (it's the
+same as a split surjection), so we should also look at its
+\emph{restrictiveness}.
+For this we'll first look at some simple types which are clearly finite, and
+we'll see how to prove that's the fact using split enumerability.
+\begin{lemma}
+  \(\bot\), \(\top\), and \(\AgdaDatatype{Bool}\) are split enumerable.
+\end{lemma}
+\begin{proof}
+  These three types are quite obviously finite: we will show only the proof of
+  finiteness for \(\AgdaDatatype{Bool}\) here for brevity's sake.
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
+  \end{agdalisting}
+\end{proof}
+\subsection{Decidable Equality}
 Split enumerability implies decidable equality on the underlying type.
 To prove this, we will make use of the following lemma, proven in the
 formalisation:
