@@ -236,19 +236,24 @@ To do so we will first remember Hedberg's theorem
 \begin{theorem}[Hedberg's Theorem]
   Every discrete type is a set.
 \end{theorem}
-With this theorem in mind, then, if we prove that every split enumerable type is
-discrete we will have proven that the circle is not split enumerable, because if
-it were it would be discrete and therefore a set, which we know already it is
-not.
+We will in a moment explain what ``discrete'' means, but first we should notice
+that his theorem gives us a possible avenue to prove that the circle is not
+split enumerable.
+We know, for instance, that the circle is \emph{not} a set\todo{proof/reference
+  for this?}.
+If we can show, then, that every split enumerable type is discrete, we will
+have excluded the circle (and indeed any other non-set type).
 
-At this point we will define what we mean by \emph{discrete}.
+Of course this doesn't make much sense without defining discrete: it turns out
+it's just HoTT-specific language for a concept more usually known as ``decidable
+equality''.
 \begin{definition}[Discrete Types]
   A discrete type is one with decidable equality.
   \begin{agdalisting}
     \ExecuteMetaData[agda/Relation/Nullary/Discrete/Base.tex]{discrete-def}
   \end{agdalisting}
 \end{definition}
-We also use here a data type called \AgdaDatatype{Dec}.
+Of course we also will need to explain what we mean by ``decidable''.
 \begin{definition}[Decidable Types]
   If some proposition is decidable it means that it is proven true or false.
   We can encapsulate this with a data type\footnotemark:
@@ -264,6 +269,10 @@ The version of the type that exists there is a good deal more complicated (for
 computational reasons),
 although its interface behaves}
 
+So now we have our task in focus: we need to prove that split enumerability
+implies decidable equality.
+We will do that by first describing split enumerability in terms of injections.
+\todo{This proof could be presented a lot better, I think}
 \begin{definition}[Injections]
   Injective functions are more straightforward to define constructively than
   surjective ones:
@@ -320,7 +329,6 @@ although its interface behaves}
   formalisation).
   Therefore, by lemma~\ref{discrete-surj}, \(A\) is discrete.
 \end{proof}
-
 \section{Manifest Bishop Finiteness} \label{manifest-bishop-finiteness}
 We mentioned in the introduction that occasionally in constructive mathematics
 proofs will contain ``too much'' information.
