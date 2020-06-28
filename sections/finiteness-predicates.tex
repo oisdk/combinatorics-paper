@@ -10,8 +10,7 @@ These diversions won't be dead-ends, however: the final predicate we will land
 on as the ``correct'' (or, more accurately, most useful) notion of finiteness
 will be built out of all of the others.
 \section{Split Enumerability} \label{split-enumerability}
-We will start with a simple notion of finiteness, called \emph{split}
-enumerability.
+We will start with a simple notion of finiteness, called split enumerability.
 This predicate is perhaps the first definition of ``finite'' that someone might
 come up with (it's certainly the most common in dependently-typed programming):
 put simply, a split enumerable type is a type for which all of its elements can
@@ -211,6 +210,18 @@ We'll prove the following slightly more general statement:
   \end{agdalisting}
 \end{proof}
 \subsection{Decidable Equality}
+Since we're working in HoTT, it's quite natural to ask how these predicates
+relate to non-set types, like the circle.
+\begin{definition}[\(S^1\)] \label{circle-def}
+  The circle, \(S^1\), can be represented in HoTT as a higher inductive type.
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Circle.tex]{circle-def}
+  \end{agdalisting}
+  We will use it here as an example of a non-set type, i.e. a type for which not
+  all paths are equal.
+  This also means that it does not have decidable equality.
+\end{definition}
+
 Split enumerability implies decidable equality on the underlying type.
 To prove this, we will make use of the following lemma, proven in the
 formalisation:
@@ -771,18 +782,6 @@ all conforming types had homotopy levels of at most 2. \todo{Are we doing the
   homotopy levels starting from -2 thing or from 0?}
 This suggests that non-set types like the circle could conform to this
 finiteness predicate.
-\begin{definition}[\(S^1\)] \label{circle-def}
-  The circle, \(S^1\), can be represented in HoTT as a higher inductive type.
-  \begin{equation}
-    \begin{alignedat}{3}
-      S^1 \coloneqq & \; \text{base} &&: S^1 ; \\
-      | & \; \text{loop} &&: \text{base} \equiv \text{base} ; 
-    \end{alignedat}
-  \end{equation}
-  We will use it here as an example of a non-set type, i.e. a type for which not
-  all paths are equal.
-  This also means that it does not have decidable equality.
-\end{definition}
 \begin{lemma}
   The circle \(S^1\) is manifestly enumerable.
 \end{lemma}
