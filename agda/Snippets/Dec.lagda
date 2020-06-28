@@ -8,7 +8,7 @@ open import Data.Empty
 %<*dec-def>
 \begin{code}
 data Dec (A : Type a) : Type a where
-  yes  : A → Dec A
-  no   : ¬ A → Dec A
+  yes  :    A → Dec A
+  no   : ¬  A → Dec A
 \end{code}
 %</dec-def>

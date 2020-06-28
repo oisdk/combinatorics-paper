@@ -210,10 +210,11 @@ We'll prove the following slightly more general statement:
   \end{agdalisting}
 \end{proof}
 \subsection{Decidable Equality}
-We have now seen some examples of types which \emph{are} split enumerable: but
-what types are excluded?
-Clearly infinite types like \(\AgdaDatatype{\ensuremath{\mathbb{N}}}\) aren't
-allowed, but we haven't yet answered the question of non-set types.
+We have seen now some examples of types which \emph{are} split enumerable, but
+we haven't yet explored the space of types which \emph{aren't}.
+Clearly this includes obviously infinite types like
+\(\AgdaDatatype{\ensuremath{\mathbb{N}}}\), but it's the non-set types we're
+interested in for now.
 Certainly these can be finite in some sense, but can they be split enumerable?
 
 As our running example of a non-set type we will use the circle:
@@ -222,14 +223,15 @@ As our running example of a non-set type we will use the circle:
   \begin{agdalisting}
     \ExecuteMetaData[agda/Snippets/Circle.tex]{circle-def}
   \end{agdalisting}
-  We will use it here as an example of a non-set type, i.e. a type for which not
-  all paths are equal.
-  This also means that it does not have decidable equality.
 \end{definition}
+The presence of the \AgdaInductiveConstructor{loop} constructor is what
+precludes this type from being a set.
+In sets, all paths are equal: in this type, \AgdaInductiveConstructor{loop} is a
+path which is not equal to the usual identity path.
 
 Any attempt to prove that this type is split enumerable will run into trouble:
 our task here, then, is to show that such a proof is impossible.
-To do will remember Hedberg's theorem
+To do so we will first remember Hedberg's theorem
 \cite{hedbergCoherenceTheoremMartinLof1998}:
 \begin{theorem}[Hedberg's Theorem]
   Every discrete type is a set.
@@ -262,45 +264,45 @@ The version of the type that exists there is a good deal more complicated (for
 computational reasons),
 although its interface behaves}
 
-Split enumerability implies decidable equality on the underlying type.
-To prove this, we will make use of the following lemma, proven in the
-formalisation:
 \begin{definition}[Injections]
   Injective functions are more straightforward to define constructively than
   surjective ones:
-  \begin{alignat}{3}
-    & \text{injective}(f) &&\coloneqq \Pi (x, y : A) , f \; x \equiv f \; y \rightarrow x \equiv y \\
-    & A \rightarrowtail B &&\coloneqq \Sigma(f : A \rightarrow B) , \text{injective}(f)
-  \end{alignat}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Function/Injective/Base.tex]{injective}
+  \end{agdalisting} \vspace{-1.5\baselineskip}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Function/Injective/Base.tex]{injection}
+  \end{agdalisting}
 \end{definition}
 \begin{lemma} \label{split-surj-to-inj}
   A split-surjection from \(A\) to \(B\) implies an injection from \(B\) to
   \(A\).
-  \begin{equation}
-    (A \twoheadrightarrow! \; B) \rightarrow (B \rightarrowtail A)
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Function/Surjective/Properties.tex]{surj-to-inj}
+  \end{agdalisting}
 \end{lemma}
+\begin{proof} \let\qed\relax
+
+  \begin{minipage}[t]{.9\textwidth}\vspace{-\baselineskip}
+    \begin{agdalisting*}
+      \ExecuteMetaData[agda/Function/Surjective/Properties.tex]{surj-to-inj-proof}
+    \end{agdalisting*}
+  \end{minipage}
+\end{proof}
 \begin{lemma} \label{inj-discrete}
   For any type \(A\) which injects into a discrete type \(B\), \(A\) is
   discrete.
-  \begin{equation}
-    \frac{
-      A \rightarrowtail B \; \; \; \text{Discrete}(B)
-    }{
-      \text{Discrete}(A)
-    }
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Function/Injective/Properties.tex]{inj-discrete}
+  \end{agdalisting}
 \end{lemma}
 
-
 \begin{lemma} \label{discrete-surj}
-  \begin{equation}
-    \frac{
-      A \twoheadrightarrow! \; B \; \; \; \text{Discrete}(A)
-    }{
-      \text{Discrete}(B) 
-    }
-  \end{equation}
+  If a discrete type \(A\) has a split surjection into some type \(B\), \(B\) is
+  discrete.
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Function/Surjective/Properties.tex]{discrete-surj}
+  \end{agdalisting}
 \end{lemma}
 \begin{proof}
   This proof is can be straightforwardly derived from lemmas
