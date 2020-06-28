@@ -193,6 +193,23 @@ we'll see how to prove that's the fact using split enumerability.
     \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{bool-inst}
   \end{agdalisting}
 \end{proof}
+
+As a slightly more complex example, consider the \(\AgdaDatatype{Fin}\) type
+we've been using.
+Remember that split enumerability is in fact the same as a split surjection from
+\(\AgdaDatatype{Fin}\) (Lemma~\ref{split-enum-is-split-surj}): to show that
+\(\AgdaDatatype{Fin}\) is split enumerable, then, we need only show that it has
+a split surjection from itself.
+We'll prove the following slightly more general statement:
+\begin{lemma}
+  Every type has a split surjection into itself: the identity function.
+\end{lemma}
+\begin{proof}
+  We provide the simple proof here in Agda:
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Function/Surjective/Properties.tex]{split-surj-ident}
+  \end{agdalisting}
+\end{proof}
 \subsection{Decidable Equality}
 Split enumerability implies decidable equality on the underlying type.
 To prove this, we will make use of the following lemma, proven in the
