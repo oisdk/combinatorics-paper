@@ -8,7 +8,7 @@ open import Prelude
 %<*circle-def>
 \begin{code}
 data S¹ : Type₀ where
-  base : S¹
-  loop : base ≡ base
+  base  : S¹
+  loop  : base ≡ base
 \end{code}
 %</circle-def>

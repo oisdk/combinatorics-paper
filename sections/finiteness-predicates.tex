@@ -210,8 +210,13 @@ We'll prove the following slightly more general statement:
   \end{agdalisting}
 \end{proof}
 \subsection{Decidable Equality}
-Since we're working in HoTT, it's quite natural to ask how these predicates
-relate to non-set types, like the circle.
+We have now seen some examples of types which \emph{are} split enumerable: but
+what types are excluded?
+Clearly infinite types like \(\AgdaDatatype{\ensuremath{\mathbb{N}}}\) aren't
+allowed, but we haven't yet answered the question of non-set types.
+Certainly these can be finite in some sense, but can they be split enumerable?
+
+As our running example of a non-set type we will use the circle:
 \begin{definition}[\(S^1\)] \label{circle-def}
   The circle, \(S^1\), can be represented in HoTT as a higher inductive type.
   \begin{agdalisting}
@@ -221,6 +226,41 @@ relate to non-set types, like the circle.
   all paths are equal.
   This also means that it does not have decidable equality.
 \end{definition}
+
+Any attempt to prove that this type is split enumerable will run into trouble:
+our task here, then, is to show that such a proof is impossible.
+To do will remember Hedberg's theorem
+\cite{hedbergCoherenceTheoremMartinLof1998}:
+\begin{theorem}[Hedberg's Theorem]
+  Every discrete type is a set.
+\end{theorem}
+With this theorem in mind, then, if we prove that every split enumerable type is
+discrete we will have proven that the circle is not split enumerable, because if
+it were it would be discrete and therefore a set, which we know already it is
+not.
+
+At this point we will define what we mean by \emph{discrete}.
+\begin{definition}[Discrete Types]
+  A discrete type is one with decidable equality.
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Relation/Nullary/Discrete/Base.tex]{discrete-def}
+  \end{agdalisting}
+\end{definition}
+We also use here a data type called \AgdaDatatype{Dec}.
+\begin{definition}[Decidable Types]
+  If some proposition is decidable it means that it is proven true or false.
+  We can encapsulate this with a data type\footnotemark:
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Dec.tex]{dec-def}
+  \end{agdalisting}
+  A proof of type \(\AgdaDatatype{Dec}\;A\) is a proof that \(A\) is either true
+  or false.
+\end{definition}
+\footnotetext{This is not, as it happens, the definition of
+  \(\AgdaDatatype{Dec}\) you will find in Agda's standard library.
+The version of the type that exists there is a good deal more complicated (for
+computational reasons),
+although its interface behaves}
 
 Split enumerability implies decidable equality on the underlying type.
 To prove this, we will make use of the following lemma, proven in the
@@ -252,19 +292,6 @@ formalisation:
   \end{equation}
 \end{lemma}
 
-\begin{definition}[Decidable Types]
-  \begin{equation}
-    \mathbf{Dec}(A) \coloneqq A \uplus \neg A
-  \end{equation}
-\end{definition}
-\begin{definition}[Discrete Types]
-  A discrete type is one with decidable equality.
-  \begin{equation}
-    \text{Discrete}(A) \coloneqq \Pi(x, y : A) , \mathbf{Dec}(x \equiv y)
-  \end{equation}
-  By Hedberg's theorem \cite{hedbergCoherenceTheoremMartinLof1998} any discrete
-  type is a set.
-\end{definition}
 
 \begin{lemma} \label{discrete-surj}
   \begin{equation}
