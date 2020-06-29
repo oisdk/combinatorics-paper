@@ -755,41 +755,34 @@ circle.
   \begin{agdalisting}
     \ExecuteMetaData[agda/Snippets/Circle.tex]{circle-def}
   \end{agdalisting}
+  The presence of the \AgdaInductiveConstructor{loop} constructor is what
+  precludes this type from being a set.
+  In sets, all paths are equal: in this type, \AgdaInductiveConstructor{loop} is a
+  path which is not equal to the usual identity path.
 \end{definition}
-The presence of the \AgdaInductiveConstructor{loop} constructor is what
-precludes this type from being a set.
-In sets, all paths are equal: in this type, \AgdaInductiveConstructor{loop} is a
-path which is not equal to the usual identity path.
 
-
-Any attempt to prove that this type is split enumerable will run into trouble:
-our task here, then, is to show that such a proof is impossible.
-To do so we will first remember Hedberg's theorem
+We suggest that this type cannot be proven to conform to any of the finiteness
+predicates we have seen so far (split enumerability, manifest Bishop finiteness,
+or Cardinal finiteness).
+To provide some better evidence for this fact (other than ``we tried quite hard
+and couldn't manage it'') remember Hedberg's theorem
 \cite{hedbergCoherenceTheoremMartinLof1998}:
 \begin{theorem}[Hedberg's Theorem]
   Every discrete type is a set.
 \end{theorem}
-We will in a moment explain what ``discrete'' means, but first we should notice
-that his theorem gives us a possible avenue to prove that the circle is not
-split enumerable.
-We know, for instance, that the circle is \emph{not} a set\todo{proof/reference
-  for this?}.
-If we can show, then, that every split enumerable type is discrete, we will
-have excluded the circle (and indeed any other non-set type).
+Since each finiteness predicate we have seen so far \emph{does} imply decidable
+equality, we know that the cardinal finite types can \emph{only} be sets, ruling
+out the circle.
 
-We have now explored quite far in the ``less informative'' direction.
-However, all three predicates we have examined are equally \emph{restrictive}:
-in this section we will see a predicate which is much less restrictive.
-In particular, this predicate ranges over non-set types.
-
-
+So our tour through the finiteness predicates takes us next to one which allows
+the circle to be called finite: manifest enumerability.
 \begin{definition}[Manifest Enumerability]
   Manifest enumerability is an enumeration predicate like Bishop finiteness or
   split enumerability with the only difference being a propositionally truncated
   membership proof.
-  \begin{equation}
-    \mathcal{E}(A) \coloneqq \Sigma {(\mathit{xs} : \AgdaDatatype{List}(A))} , \Pi {(x : A)} , \lVert x \in \mathit{xs} \rVert
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/ManifestEnumerable/Container.tex]{manifest-enum-def}
+  \end{agdalisting}
 \end{definition}
 As a function-based definition, this predicate represents surjections.
 

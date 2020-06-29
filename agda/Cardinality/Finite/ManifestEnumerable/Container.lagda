@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Cardinality.Finite.ManifestEnumerable.Container where
@@ -9,4 +10,9 @@ open import Container.List public
 open import Container.Membership (ℕ , Fin) public
 
 ℰ : Type a → Type a
-ℰ A = Σ[ xs ⦂ List A ] Π[ x ⦂ A ] ∥ x ∈ xs ∥
+\end{code}
+%<*manifest-enum-def>
+\begin{code}
+ℰ A = Σ[ support ⦂ List A ] ((x : A) → ∥ x ∈ support ∥)
+\end{code}
+%</manifest-enum-def>
