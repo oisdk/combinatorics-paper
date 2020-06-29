@@ -70,16 +70,16 @@ Its definition relies on a type for disjoint union,
   \end{agdalisting} \columnbreak
   \begin{agdalisting}
     \ExecuteMetaData[agda/Snippets/Introduction.tex]{disj-union}
-  \end{agdalisting}
-\end{multicols}
-
-% It is also expressible with only \(\Sigma\):
-% \begin{agdalisting}
-%   \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-disj-union}
-% \end{agdalisting}
-% Although the inductive type definition is slightly more ergonomic.
-
-After that interlude, we can get back to defining containers.
+  \end{agdalisting}%
+  % It is also expressible with only \(\Sigma\):
+  % \begin{agdalisting}
+  %   \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-disj-union}
+  % \end{agdalisting}
+  % Although the inductive type definition is slightly more ergonomic.
+\end{multicols} \noindent
+And containers themselves, of course.
+Containers are a well-studied topic in dependent type theory, with a rich
+theory: we won't dive in to that here.
 \begin{definition}[Containers] \label{container-def}
   A container \cite{abbottContainersConstructingStrictly2005} is a pair
   \(S , P\) where \(S\) is a type, the elements of which are called
@@ -94,29 +94,26 @@ After that interlude, we can get back to defining containers.
 The definition of container is a little abstract: it is instructive to think of
 it more concretely for the case of lists.
 The container representing finite lists is a pair of a natural number \(n\)
-representing the length of the list, and a function \(\AgdaDatatype{Fin}\;n\to
-A\), representing the indexing function into the list.
+representing the length (or ``shape'') of the list, and a function
+\(\AgdaDatatype{Fin}\;n\to A\), representing the indexing function into the
+list.
 
-\begin{definition}[Container Membership] \label{container-membership}
-  Membership of a container can be defined like so:
+One of the nice things about containers is it gives us a generic way to define
+``membership'':
+\begin{multicols}{2}
   \begin{agdalisting} 
     \ExecuteMetaData[agda/Container/Membership.tex]{membership-def}
-  \end{agdalisting}
-  Where \(x\;\AgdaDatatype{\ensuremath{\in}}\;\mathit{xs}\) is to be read as ``\(x\)
-  is in \(\mathit{xs}\)''.
-\end{definition}
-\begin{definition}[Fibers] \label{fibers}
-  A fiber \cite[definition 4.2.4]{hottbook} is defined over some function \(f :
-  A \rightarrow B\).
+  \end{agdalisting} \columnbreak
   \begin{agdalisting}
     \ExecuteMetaData[agda/Snippets/Introduction.tex]{fiber}
   \end{agdalisting}
-\end{definition}
-
-Membership also makes more sense when described concretely in terms of lists.
-Understood this way, \(x\;\AgdaDatatype{\ensuremath{\in}}\;\mathit{xs}\) means
-``there is an index into \(\mathit{xs}\) such that the index points at an item
-equal to \(x\)''.
+\end{multicols} \noindent 
+Here we're using the homotopy-theory notion of a \AgdaDatatype{fiber} to define
+membership: a fiber for some function \(f\) and some point \(y\) in its codomain
+is a value \(x\) and a proof that \(f \; x \;\AgdaDatatype{≡}\;y\).
+Membership also makes more sense when described concretely in terms of lists:
+\(x\;\AgdaDatatype{\ensuremath{\in}}\;\mathit{xs}\) means ``there is an index
+into \(\mathit{xs}\) such that the index points at an item equal to \(x\)''.
 \subsection{Split Surjections}
 We will now look at how this predicate relates to more traditional, classical
 notions of finiteness.
