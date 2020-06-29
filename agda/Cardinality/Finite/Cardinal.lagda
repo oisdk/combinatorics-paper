@@ -20,7 +20,13 @@ open import Relation.Nullary.Decidable.Logic
 open import Data.Fin
 
 𝒞 : Type a → Type a
+\end{code}
+%<*cardinal-def>
+\begin{code}
 𝒞 A = ∥ ℬ A ∥
+\end{code}
+%</cardinal-def>
+\begin{code}
 
 ¬⟨𝒞⋂ℬᶜ⟩ : ¬ (Σ[ A ⦂ Type a ] (𝒞 A × (¬ ℬ A)))
 ¬⟨𝒞⋂ℬᶜ⟩ (_ , c , ¬b) = recPropTrunc (λ ()) ¬b c

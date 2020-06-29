@@ -176,12 +176,8 @@ Clearly, only one line isn't a definitional equality:
 \end{agdalisting}
 (The simplicity of this proof, by the way, is why we preferred the
 container-based definition of lists over the traditional one.)
-\subsection{Instances}
-We have now characterised the informativeness of split enumerability (it's the
-same as a split surjection), so we should also look at its
-\emph{restrictiveness}.
-For this we'll first look at some simple types which are clearly finite, and
-we'll see how to prove that's the fact using split enumerability.
+\subsection{Instances} \todo{More intro to this}
+We will now provide some example proofs of types which are split enumerable.
 \begin{lemma}
   \(\bot\), \(\top\), and \(\AgdaDatatype{Bool}\) are split enumerable.
 \end{lemma}
@@ -210,44 +206,11 @@ We'll prove the following slightly more general statement:
   \end{agdalisting}
 \end{proof}
 \subsection{Decidable Equality}
-We have seen now some examples of types which \emph{are} split enumerable, but
-we haven't yet explored the space of types which \emph{aren't}.
-Clearly this includes obviously infinite types like
-\(\AgdaDatatype{\ensuremath{\mathbb{N}}}\), but it's the non-set types we're
-interested in for now.
-Certainly these can be finite in some sense, but can they be split enumerable?
-
-As our running example of a non-set type we will use the circle: \todo{HITs are
-  introduced later on. The definition should be moved to here}
-\begin{definition}[\(S^1\)] \label{circle-def}
-  The circle, \(S^1\), can be represented in HoTT as a higher inductive type.
-  \begin{agdalisting}
-    \ExecuteMetaData[agda/Snippets/Circle.tex]{circle-def}
-  \end{agdalisting}
-\end{definition}
-The presence of the \AgdaInductiveConstructor{loop} constructor is what
-precludes this type from being a set.
-In sets, all paths are equal: in this type, \AgdaInductiveConstructor{loop} is a
-path which is not equal to the usual identity path.
-
-Any attempt to prove that this type is split enumerable will run into trouble:
-our task here, then, is to show that such a proof is impossible.
-To do so we will first remember Hedberg's theorem
-\cite{hedbergCoherenceTheoremMartinLof1998}:
-\begin{theorem}[Hedberg's Theorem]
-  Every discrete type is a set.
-\end{theorem}
-We will in a moment explain what ``discrete'' means, but first we should notice
-that his theorem gives us a possible avenue to prove that the circle is not
-split enumerable.
-We know, for instance, that the circle is \emph{not} a set\todo{proof/reference
-  for this?}.
-If we can show, then, that every split enumerable type is discrete, we will
-have excluded the circle (and indeed any other non-set type).
-
-Of course this doesn't make much sense without defining discrete: it turns out
-it's just HoTT-specific language for a concept more usually known as ``decidable
-equality''.
+One thing that characterises all split enumerable types is that they are all
+\emph{discrete}.
+We will see later that this has implications for the space of types we're
+dealing with, but for now it simply provides a useful function on split
+enumerable types.
 \begin{definition}[Discrete Types]
   A discrete type is one with decidable equality.
   \begin{agdalisting}
@@ -374,7 +337,7 @@ just adding a condition to the returned membership proof in the cover proof.
 To specify that a value must exist uniquely in HoTT we can use the concept of a
 \emph{contraction}.
 
-\begin{definition}[Homotopy Levels] \label{homotopy-types}
+\begin{definition}[Contractions, Propositions and Sets] \label{homotopy-types}
   Types in HoTT and CuTT are not necessarily sets, as they are in MLTT.
   Some have higher homotopies (paths which aren't unique).
   We actually have a hierarchy of complexity of structure of path spaces in
@@ -384,6 +347,17 @@ To specify that a value must exist uniquely in HoTT we can use the concept of a
   \begin{agdalisting}
     \ExecuteMetaData[agda/Snippets/Introduction.tex]{hlevels}
   \end{agdalisting}
+  First we have the contractions: those types equivalent to
+  \AgdaDatatype{\ensuremath{\top}}.
+  Then the propositions: those types for which every value is equal to every
+  other.
+  Finally the sets: those types for which every \emph{equality} is equal to
+  every other.
+
+  Often these types are defined inductively: going from contractions upwards,
+  every new level has paths in the level before (i.e. the paths of a proposition
+  are all contractions).
+  We can also proceed further upwards, into non-set types.
 \end{definition}
 \begin{definition}[Unique Membership] \label{uniq-memb-def}
   Unique list membership is defined in terms of list membership: it is a
@@ -576,9 +550,9 @@ To remedy the problem, we will use propositional truncation
   A type \(A\) is cardinally finite if there exists a propositionally truncated
   proof that \(A\) is manifest Bishop finite or equivalent to a finite prefix of
   the natural numbers.
-  \begin{equation}
-    \mathcal{C}(A) \coloneqq \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(A) \rVert \simeq \lVert \Sigma(n : \mathbb{N}) , (\AgdaDatatype{Fin}\;n \simeq A) \rVert
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{cardinal-def}
+  \end{agdalisting}
 \end{definition}
 At first glance, it might seem that we lose any useful properties we could
 derive from \(\AgdaDatatype{\ensuremath{\mathcal{B}}}\).
@@ -719,6 +693,7 @@ It turns out the answer is no!
   Luckily, this is permissible, as \(\bot\) is a mere proposition.
 \end{proof}
 
+
 \subsection{Going from Cardinal Finiteness to Manifest Bishop Finiteness}
 \begin{lemma} \label{manifest-bishop-to-cardinal}
   Any manifest Bishop finite type is cardinal finite.
@@ -762,6 +737,46 @@ eliminator~\ref{elim-prop-coh}) way, pulling the support list out from the
 truncation.
 The cover proof emerges naturally from the definition of the permutation.
 \section{Manifest Enumerability} \label{manifest-enumerability}
+We have now explored quite far in the direction of restricting information:
+indeed, cardinal finiteness, a mere proposition, has the minimal amount of
+information a predicate can have.
+What we haven't seen, however, is a predicate with a different domain to the
+others.
+Since manifest Bishop finiteness and split enumerability have equal strength
+\todo{ref here}, and since we've shown that there is no type which is cardinal
+finite but not manifest Bishop finite, we haven't explored any of the
+``restrictiveness'' axis from Figure~\ref{finite-classification}.
+
+As an example type which may be considered finite in some circumstances, but
+doesn't conform to any of the definitions we have seen so far, consider the
+circle.
+\begin{definition}[\(S^1\)] \label{circle-def}
+  The circle, \(S^1\), can be represented in HoTT as a higher inductive type.
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Circle.tex]{circle-def}
+  \end{agdalisting}
+\end{definition}
+The presence of the \AgdaInductiveConstructor{loop} constructor is what
+precludes this type from being a set.
+In sets, all paths are equal: in this type, \AgdaInductiveConstructor{loop} is a
+path which is not equal to the usual identity path.
+
+
+Any attempt to prove that this type is split enumerable will run into trouble:
+our task here, then, is to show that such a proof is impossible.
+To do so we will first remember Hedberg's theorem
+\cite{hedbergCoherenceTheoremMartinLof1998}:
+\begin{theorem}[Hedberg's Theorem]
+  Every discrete type is a set.
+\end{theorem}
+We will in a moment explain what ``discrete'' means, but first we should notice
+that his theorem gives us a possible avenue to prove that the circle is not
+split enumerable.
+We know, for instance, that the circle is \emph{not} a set\todo{proof/reference
+  for this?}.
+If we can show, then, that every split enumerable type is discrete, we will
+have excluded the circle (and indeed any other non-set type).
+
 We have now explored quite far in the ``less informative'' direction.
 However, all three predicates we have examined are equally \emph{restrictive}:
 in this section we will see a predicate which is much less restrictive.

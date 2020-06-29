@@ -16,6 +16,6 @@ open import Data.Fin.Properties
 \end{code}
 %<*split-enum-def>
 \begin{code}
-ℰ! A = Σ[ xs ⦂ List A ] ((x : A) → x ∈ xs)
+ℰ! A = Σ[ support ⦂ List A ] ((x : A) → x ∈ support)
 \end{code}
 %</split-enum-def>

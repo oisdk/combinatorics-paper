@@ -13,6 +13,6 @@ open import Container.Membership (ℕ , Fin) public
 \end{code}
 %<*bish-def>
 \begin{code}
-ℬ A = Σ[ xs ⦂ List A ] ((x : A) → x ∈! xs)
+ℬ A = Σ[ support ⦂ List A ] ((x : A) → x ∈! support)
 \end{code}
 %</bish-def>
