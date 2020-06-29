@@ -784,8 +784,29 @@ the circle to be called finite: manifest enumerability.
     \ExecuteMetaData[agda/Cardinality/Finite/ManifestEnumerable/Container.tex]{manifest-enum-def}
   \end{agdalisting}
 \end{definition}
-As a function-based definition, this predicate represents surjections.
 
+It might not be immediately clear why this definition of enumerability allows
+the circle to conform while the others do not.
+The crux of the issue was that the cover proofs of the previous definitions
+didn't just tell us that some element was in the support list, they told us
+\emph{where} it was in the support list.
+From the position we were able to derive decidable equality: that position is
+precisely what's hidden in manifest enumerability.
+
+And indeed this means that the circle is manifestly enumerable:
+\begin{lemma}
+  The circle \(S^1\) is manifestly enumerable.
+\end{lemma}
+\begin{proof}
+  The support list firstly is a list containing the point constructor for the
+  circle.
+  Since the cover proof is truncated, we need only consider the point
+  constructors of the circle: as such, the cover proof is essentially the same
+  as the one for \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}(\top)\).
+\end{proof}
+\subsection{Surjections}
+We already say that split enumerability was the listed form of a split
+surjection: manifest enumerability is the listed form of a proper surjection.
 \begin{definition}[Surjections] \label{surjections}
   We define proper surjections (not split surjections) here \cite[definition
   4.6.1]{hottbook}.
@@ -825,25 +846,6 @@ As a function-based definition, this predicate represents surjections.
     & \simeq \Sigma (n : \mathbb{N}) , ( \AgdaDatatype{Fin}\;n \twoheadrightarrow A )
     && \text{eqn.~\ref{surj-arrow-eqn} } (\twoheadrightarrow) \; \qedhere
   \end{align*}
-\end{proof}
-\subsection{Instances for Non-Set Types}
-The truncation has another very important implication: it means that the
-predicate doesn't provide decidable equality on the underlying type.
-Remember, this is how we knew that our previous predicates wouldn't allow for
-non-set types: because they implied decidable equality, they also implied that
-all conforming types had homotopy levels of at most 2. \todo{Are we doing the
-  homotopy levels starting from -2 thing or from 0?}
-This suggests that non-set types like the circle could conform to this
-finiteness predicate.
-\begin{lemma}
-  The circle \(S^1\) is manifestly enumerable.
-\end{lemma}
-\begin{proof}
-  The support list firstly is a list containing the point constructor for the
-  circle.
-  Since the cover proof is truncated, we need only consider the point
-  constructors of the circle: as such, the cover proof is essentially the same
-  as the one for \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}(\top)\).
 \end{proof}
 \subsection{Relation To Split Enumerability}
 It is trivially easy to construct a proof that any split enumerable type is
@@ -888,7 +890,7 @@ This proof relies on the following lemma:
   Otherwise, we know that \(x\) cannot be in \(\mathit{xs}\) (since we've tested
   every value), so we return that the goal has been disproven.
 \end{proof}
-\section{Kuratowski Finiteness} \label{kuratowski}
+\section{Kuratowski Finiteness} \label{kuratowski} \todo{better intro}
 The one big missing definition of finiteness to cover is \emph{Kuratowski}
 finiteness.
 While it's quite important, it's also quite different from the definitions we've
@@ -897,13 +899,10 @@ It starts with an encoding of the free join semilattice.
 \begin{definition}[Free Join Semilattice]
   \(\mathcal{K}(A)\) is the free join semilattice, or, alternatively, the type
   of Kuratowski-finite subsets of \(A\).
-  \begin{inductivetype}{\mathcal{K}(A)}
-    \inductivetypeclause{\left[ \right]}{\mathcal{K}(A)}
-    \inductivetypeclause{\wc \dblcolon \wc}{A \rightarrow \mathcal{K}(A) \rightarrow \mathcal{K}(A)}
-    \inductivetypeclause{\text{com}}{\Pi (x, y: A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon y \dblcolon \mathit{xs} \equiv y \dblcolon x \dblcolon \mathit{xs}}
-    \inductivetypeclause{\text{dup}}{\Pi (x : A) , \Pi (\mathit{xs} : \mathcal{K}(A)) , x \dblcolon x \dblcolon \mathit{xs} \equiv x \dblcolon \mathit{xs}}
-    \inductivetypeclause{\text{trunc}}{\Pi (\mathit{xs}, \mathit{ys}: \mathcal{K}(A)) , \Pi (p, q : \mathit{xs} \equiv \mathit{ys}) , p \equiv q}
-  \end{inductivetype}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Algebra/Construct/Free/Semilattice/Definition.tex]{kuratowski-def}
+  \end{agdalisting}
+
   We define it as a HIT (definition~\ref{HITs}).
   The first two constructors are point constructors, giving ways to create
   values of type \(\mathcal{K}(A)\).
@@ -935,7 +934,7 @@ Next, we need a way to say that an entire type is Kuratowski finite.
 For that, we will need to define membership of \(\mathcal{K}\).
 \begin{definition}[Membership of \(\mathcal{K}\)]
   Membership is defined by pattern-matching on \(\mathcal{K}\).
-  The two point constructors are handled like so:
+  The two point constructors are handled like so: \todo{to agda}
   \begin{equation}
     \begin{alignedat}{2}
       x \in&& \; []                      &\coloneqq \bot ; \\
@@ -948,10 +947,10 @@ For that, we will need to define membership of \(\mathcal{K}\).
   constructor.
 \end{definition}
 Finally, we have enough background to define Kuratowski finiteness.
-\begin{definition}[Kuratowski Finiteness]
-  \begin{equation}
-    \mathcal{K}^{f}(A) = \Sigma {(\mathit{xs} : \mathcal{K}(A))} , \Pi (x : A) , x \in \mathit{xs}
-  \end{equation}
+\begin{definition}[Kuratowski Finiteness] \phantom{break}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/Kuratowski.tex]{kuratowski-finite-def}
+  \end{agdalisting}
 \end{definition}
 
 We also have the following two lemmas, proven in both

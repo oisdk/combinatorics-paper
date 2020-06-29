@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
 module Cardinality.Finite.Kuratowski where
@@ -14,7 +15,13 @@ open import HITs.PropositionalTruncation.Sugar
 open import Data.Fin
 
 𝒦ᶠ : Type a → Type a
-𝒦ᶠ A = Σ[ xs ⦂ 𝒦 A ] Π[ x ⦂ A ] x ∈ xs
+\end{code}
+%<*kuratowski-finite-def>
+\begin{code}
+𝒦ᶠ A = Σ[ xs ⦂ 𝒦 A ] ((x : A) → x ∈ xs)
+\end{code}
+%</kuratowski-finite-def>
+\begin{code}
 
 𝒦ᶠ⇒∥ℰ∥ : 𝒦ᶠ A → ∥ ℰ A ∥
 𝒦ᶠ⇒∥ℰ∥ K = map₂ (λ p x → p x (K .snd x)) ∥$∥ ∥ enum ∥⇓ (K .fst)
@@ -84,3 +91,4 @@ private variable p : Level
     (isPropDec squash)
     (map-dec ∣_∣ refute-trunc ∘ λ xs → ℰ⇒Omniscient xs P?)
     (𝒦ᶠ⇒∥ℰ∥ K)
+\end{code}

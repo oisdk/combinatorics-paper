@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Algebra.Construct.Free.Semilattice.Relation.Unary.Membership where
@@ -19,3 +20,4 @@ private
 infixr 5 _∈_
 _∈_ : {A : Type a} → A → 𝒦 A → Type a
 x ∈ xs = ◇ (_≡ x) xs
+\end{code}
