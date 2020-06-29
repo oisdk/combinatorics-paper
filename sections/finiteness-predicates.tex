@@ -28,55 +28,56 @@ be listed.
   \cite{firsovDependentlyTypedProgramming2015}.
 \end{definition}
 
-Simple as it is, this predicate is arguably the most useful of the finiteness
-predicates.
-We will see presently why it doesn't entirely capture what we mean by the term
-``finite'', but we will nonetheless use it throughout the paper.
+This predicate is simple and useful, but we will see later on how it is perhaps
+a little imprecise.
 Before we dive in to exploring the predicate itself, though, we will need to
 explain some of the terms we used in its definition.
-\subsection{Terms used in the Definition of Split Enumerability}
-We have used two types there which we have not yet defined:
-\(\AgdaDatatype{List}\) and \(\AgdaDatatype{\ensuremath{\in}}\).
-We will define them here.
+\subsection{What is a List?}
+We have referred to \(\AgdaDatatype{List}\) in the definition of split
+enumerability.
+In this paper, the type of lists is defined like so:
+\begin{agdalisting} \label{list-def}
+  \ExecuteMetaData[agda/Container/List.tex]{list-def}
+\end{agdalisting}
+This is the definition for a \emph{container} (Definition~\ref{container-def}):
+effectively, the above definition says that ``Lists are a datatype whose shape
+is given by the natural numbers, and which can be indexed by numbers smaller
+than its shape''.
 
-\begin{definition}[\(\AgdaDatatype{List}\)] \label{List}
-  In this paper we will work with two equivalent definitions of lists.
-  The first is the standard definition as an inductive type:
-  \begin{agdalisting}
-    \ExecuteMetaData[agda/Data/List/Base.tex]{list-def}
-  \end{agdalisting}
+If that seems needlessly complex, don't worry: this definition is precisely
+equivalent to the usual inductive one. \todo{This reads a little too informal I think}
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Data/List/Base.tex]{list-def}
+\end{agdalisting}
+And this isn't some kind of hand-waving equivalence, either: since we working in
+HoTT, we can (and do) prove that the two types are equal, allowing us to use one
+or the other depending on whichever is more convenient, and
+\(\AgdaFunction{subst}\) in the other representation without loss of generality.
+That said, defining lists as containers will reveal several interesting
+connections and proofs about split enumerability and the other predicates, 
+so for the remainder of the paper whenever we say \AgdaDatatype{List} we will
+mean Equation~\ref{list-def}.
 
-  The second way to define lists is to define them as a \emph{container}:
-  \begin{agdalisting}
-    \ExecuteMetaData[agda/Container/List.tex]{list-def}
-  \end{agdalisting}
-  The reason we use this second strange definition is that it turns out to be
-  quite useful in some later proofs.
-  We have proven the two types equivalent in our formalisation, however, so we
-  can switch between them freely without loss of generality.
-\end{definition}
-
-In defining lists we have introduced another concept which needs defining:
-\(\AgdaDatatype{Fin}\).
-\begin{definition}[\(\AgdaDatatype{Fin}\)] \label{Fin}
-  \(\AgdaDatatype{Fin}\;n\) is the type of natural numbers smaller than \(n\). We
-  define it the standard way:
+Before we get to those interesting proofs, though, there are some other things
+that need defining.
+\AgdaDatatype{Fin}, for instance: \(\AgdaDatatype{Fin}\;n\) is the type of
+natural numbers smaller than \(n\).
+Its definition relies on a type for disjoint union,
+\(\AgdaDatatype{\ensuremath{\uplus}}\).
+\begin{multicols}{2}
   \begin{agdalisting}
     \ExecuteMetaData[agda/Data/Fin/Base.tex]{fin-def}
-  \end{agdalisting}
-\end{definition}
-Here \(\uplus\) refers to the disjoint union of two types.
-\begin{definition}[Disjoint Union]
-  We define disjoint union as an inductive type.
+  \end{agdalisting} \columnbreak
   \begin{agdalisting}
     \ExecuteMetaData[agda/Snippets/Introduction.tex]{disj-union}
   \end{agdalisting}
-  It is also expressible with only \(\Sigma\):
-  \begin{agdalisting}
-    \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-disj-union}
-  \end{agdalisting}
-  Although the inductive type definition is slightly more ergonomic.
-\end{definition}
+\end{multicols}
+
+% It is also expressible with only \(\Sigma\):
+% \begin{agdalisting}
+%   \ExecuteMetaData[agda/Snippets/Introduction.tex]{sigma-disj-union}
+% \end{agdalisting}
+% Although the inductive type definition is slightly more ergonomic.
 
 After that interlude, we can get back to defining containers.
 \begin{definition}[Containers] \label{container-def}
