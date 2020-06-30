@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
 module Data.List.Relation.Binary.Permutation where
@@ -21,7 +22,13 @@ xs ↝ ys = ∀ x → x ∈ xs → x ∈ ys
 
 infix 4 _↭_
 _↭_ : {A : Type a} (xs ys : List A) → Type a
+\end{code}
+%<*perm-def>
+\begin{code}
 xs ↭ ys = ∀ x → (x ∈ xs) ⇔ (x ∈ ys)
+\end{code}
+%</perm-def>
+\begin{code}
 
 reflₚ : ∀ {xs : List A} → xs ↭ xs
 reflₚ _ = Isomorphism.refl-⇔
@@ -198,3 +205,4 @@ tailₚ x xs ys x∷xs↭x∷ys k .fun = tailₚ-to x xs ys x∷xs↭x∷ys k
 tailₚ x xs ys x∷xs↭x∷ys k .inv = tailₚ-to x ys xs (sym-⇔ ∘ x∷xs↭x∷ys) k
 tailₚ x xs ys x∷xs↭x∷ys k .rightInv = tailₚ-inv x xs ys x∷xs↭x∷ys k
 tailₚ x xs ys x∷xs↭x∷ys k .leftInv  = tailₚ-inv x ys xs (sym-⇔ ∘ x∷xs↭x∷ys) k
+\end{code}

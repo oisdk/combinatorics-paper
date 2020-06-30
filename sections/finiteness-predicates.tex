@@ -657,75 +657,92 @@ know that there can be no type which satisfies one but not the other.
 We also know that manifest Bishop finiteness implies cardinal finiteness, but we
 do \emph{not} have a function in the other direction:
 \begin{equation}
-  \mathcal{C}(A) \rightarrow \AgdaDatatype{\ensuremath{\mathcal{B}}}(A)
+  \agdacal{C}\;A\rightarrow\agdacal{B}\;A
 \end{equation}
 So the question arises naturally: is there a cardinally finite type which is
 \emph{not} manifest Bishop finite?
 
 It turns out the answer is no!
-\begin{lemma}
-  \begin{equation}
-    \neg (\Sigma(A : \mathbf{Type}) , \mathcal{C}(A) \times \neg \AgdaDatatype{\ensuremath{\mathcal{B}}}(A))
-  \end{equation}
-\end{lemma}
-\begin{proof}
-  We will actually prove a slightly more general statement.
-  For any type \(A\), the following holds:
-  \begin{equation}
-    \neg (\lVert A \rVert \times \neg A)
-  \end{equation}
-  The solution becomes more clear if we write out the definition of \(\neg\):
-  \begin{equation}
-    \frac{\lVert A \rVert \;\;\; A \rightarrow \bot }{\bot}
-  \end{equation}
-  We clearly need to apply a function of type \(A \rightarrow \bot\) to a value
-  of type \(\lVert A \rVert\).
-  Luckily, this is permissible, as \(\bot\) is a mere proposition.
-\end{proof}
+We can prove the following statement:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{no-gap-card-bishop}
+\end{agdalisting}
+We use the fact that \agdabot\; is itself a proposition to eliminate from under
+the truncation.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{no-gap-card-bishop-proof}
+\end{agdalisting}
 
-
+This tells us that manifest bishop finiteness, cardinal finiteness, and split
+enumerability all refer to the same class of types.
 \subsection{Going from Cardinal Finiteness to Manifest Bishop Finiteness}
-\begin{lemma} \label{manifest-bishop-to-cardinal}
-  Any manifest Bishop finite type is cardinal finite.
-\end{lemma}
+We know of course that we can convert any proof of manifest Bishop finiteness to
+a proof of Cardinal finiteness: it's just the truncation function
+\AgdaInductiveConstructor{\(\lvert \_ \rvert\)}.
+It's the other direction which presents a difficulty:
 \begin{theorem} \label{cardinal-to-manifest-bishop}
   Any cardinal finite type with a total order is Bishop finite.
 \end{theorem}
 The proof for this particular theorem is quite involved in the formalisation, so
 we only give its sketch here.
-First, note that we actually convert to manifest enumerability first: this can
-be converted to split enumerability with decidable equality, which is provided
-by cardinal finiteness.
 
-Next, we define permutations.
-\begin{definition}[List Permutations]
-  Two lists are permutations of each other if their membership proofs are all
-  equivalent\footnotemark \cite{danielssonBagEquivalenceProofRelevant2012}.
-  \begin{equation}
-    \mathit{xs} \leftrightsquigarrow \mathit{ys} = \Pi {(x : A)} , x \in \mathit{xs} \simeq x \in \mathit{ys}
-  \end{equation}
-\end{definition}
+Our strategy will be to \emph{sort} the support list of the proof for Bishop
+finiteness, and then prove that the sorting function is coherently constant,
+thereby satisfying the eliminator in Equation~\ref{elim-prop-coh}.
+We need to show, in other words, that sorting two support lists from proofs of
+manifest Bishop finiteness on the same type with the same order always returns
+the same result.
+The sort we use is a standard insertion sort:
+\begin{multicols}{2}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Data/List/Sort.tex]{insert}
+  \end{agdalisting} \columnbreak \null \vfill \null \vfill
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Data/List/Sort.tex]{insertion-sort}
+  \end{agdalisting} \vfill \null
+\end{multicols} \vspace{-\baselineskip} \noindent
+And we prove that \AgdaFunction{sort} produces a list which is sorted, and a
+permutation of its input.
+\begin{multicols}{2}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Data/List/Sort.tex]{sort-sorts}
+  \end{agdalisting} \columnbreak
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Data/List/Sort.tex]{sort-perm}
+  \end{agdalisting}
+\end{multicols} \vspace{-\baselineskip}
+We've introduced permutations here: we take their definition from
+\cite{danielssonBagEquivalenceProofRelevant2012}.
+Two lists are permutations of each other if their membership proofs are all
+equivalent.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Data/List/Relation/Binary/Permutation.tex]{perm-def}
+\end{agdalisting}
+This definition fits particularly well for two reasons: first, it is defined on
+containers generically, which fits well with our finiteness predicates.
+Secondly, it is extremely straightforward to show that the support lists of any
+two proofs of manifest Bishop finiteness must be permutations of each other:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{perm-bish}
+\end{agdalisting}
 
-\footnotetext{
-  The definition in \cite{danielssonBagEquivalenceProofRelevant2012} and our
-  formalisation is slightly different: we say permutations are lists with
-  \emph{isomorphic} membership proofs.
-  The distinction, as it happens, does not affect our work here.
-}
-
-Next, we define a sort function which relies on the provided total order.
-We further prove the following fact about this sort function:
-\begin{equation}
-  \Pi(\mathit{xs}, \mathit{ys} : \AgdaDatatype{List}(A)) , \mathit{xs} \leftrightsquigarrow \mathit{ys} \rightarrow \text{sort}(\mathit{xs}) \equiv \text{sort}(\mathit{ys})
-\end{equation}
-
-Next, notice that the support lists of any two proofs of manifest Bishop
-finiteness must be permutations of each other.
-This will allow us to sort the support list of a proof of cardinal finiteness in
-a coherently constant (definition~\ref{prop-trunc},
-eliminator~\ref{elim-prop-coh}) way, pulling the support list out from the
-truncation.
-The cover proof emerges naturally from the definition of the permutation.
+Almost all of the pieces are in place now: we know that the support lists of all
+proofs of \(\agdacal{B}\;A\) are permutations of each other, and we know that
+\AgdaFunction{sort} returns a sorted permutation of its input.
+The final piece of the puzzle is the following:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Data/List/Sort.tex]{sorted-perm-eq}
+\end{agdalisting}
+If two sorted lists are both permutations of each other they must be equal.
+Connecting up all the pieces we get the following:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Data/List/Sort.tex]{perm-invar}
+\end{agdalisting}
+Because we know that all support lists of \(\agdacal{B}\;A\) are permutations of
+each other this is enough to prove that \AgdaFunction{sort} is coherently
+constant, and therefore can eliminate from within a truncation.
+The second component of the output pair (the cover proof) follows quite
+naturally from the definition of permutations.
 \section{Manifest Enumerability} \label{manifest-enumerability}
 We have now explored quite far in the direction of restricting information:
 indeed, cardinal finiteness, a mere proposition, has the minimal amount of

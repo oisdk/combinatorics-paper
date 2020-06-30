@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
 open import Relation.Binary
@@ -16,15 +17,23 @@ open import Data.List.Relation.Binary.Permutation
 open import Function.Isomorphism
 open import Data.Fin
 open import Data.List.Membership
-
+\end{code}
+%<*insert>
+\begin{code}
 insert : E → List E → List E
 insert x [] = x ∷ []
 insert x (y ∷ xs) with x ≤? y
 ... | inl  x≤y  = x  ∷ y ∷ xs
 ... | inr  y≤x  = y  ∷ insert x xs
-
+\end{code}
+%</insert>
+%<*insertion-sort>
+\begin{code}
 sort : List E → List E
 sort = foldr insert []
+\end{code}
+%</insertion-sort>
+\begin{code}
 
 private variable lb : ⌊∙⌋
 
@@ -42,8 +51,13 @@ insert-sorts x [] lb≤x Pxs = lb≤x , tt
 insert-sorts x (y ∷ xs) lb≤x (lb≤y , Sxs) with x ≤? y
 ... | inl x≤y = lb≤x , x≤y , Sxs
 ... | inr y≤x = lb≤y , insert-sorts x xs y≤x Sxs
-
+\end{code}
+%<*sort-sorts>
+\begin{code}
 sort-sorts : ∀ xs → Sorted (sort xs)
+\end{code}
+%</sort-sorts>
+\begin{code}
 sort-sorts [] = tt
 sort-sorts (x ∷ xs) = insert-sorts x (sort xs) tt (sort-sorts xs)
 
@@ -53,7 +67,13 @@ insert-perm x (y ∷ xs) with x ≤? y
 ... | inl x≤y = consₚ x reflₚ
 ... | inr y≤x = consₚ y (insert-perm x xs) ⟨ transₚ ⟩ swapₚ y x xs
 
+\end{code}
+%<*sort-perm>
+\begin{code}
 sort-perm : ∀ xs → sort xs ↭ xs
+\end{code}
+%</sort-perm>
+\begin{code}
 sort-perm [] = reflₚ {xs = []}
 sort-perm (x ∷ xs) = insert-perm x (sort xs) ⟨ transₚ {xs = insert x (sort xs)} ⟩ consₚ x (sort-perm xs)
 
@@ -76,8 +96,21 @@ perm-same {lbˣ} {lbʸ} (x ∷ xs) (y ∷ ys) Sxs Sys xs⇔ys =
   let h = perm-head {lbˣ} {lbʸ} x xs y ys Sxs Sys xs⇔ys
   in cong₂ _∷_ h
       (perm-same xs ys (Sxs .snd) (Sys .snd) (tailₚ x xs ys (subst (λ y′ → x ∷ xs ↭ y′ ∷ ys) (sym h) xs⇔ys)))
-
+\end{code}
+%<*sorted-perm-eq>
+\begin{code}
+sorted-perm-eq : ∀ xs ys → Sorted xs → Sorted ys → xs ↭ ys → xs ≡ ys
+\end{code}
+%</sorted-perm-eq>
+\begin{code}
+sorted-perm-eq = perm-same
+\end{code}
+%<*perm-invar>
+\begin{code}
 perm-invar : ∀ xs ys → xs ↭ ys → sort xs ≡ sort ys
+\end{code}
+%</perm-invar>
+\begin{code}
 perm-invar xs ys xs⇔ys =
   perm-same
     (sort xs)
@@ -85,3 +118,4 @@ perm-invar xs ys xs⇔ys =
     (sort-sorts xs)
     (sort-sorts ys)
     (λ k → sort-perm xs k ⟨ trans-⇔ ⟩ xs⇔ys k ⟨ trans-⇔ ⟩ sym-⇔ (sort-perm ys k))
+\end{code}

@@ -26,10 +26,23 @@ open import Data.Fin
 𝒞 A = ∥ ℬ A ∥
 \end{code}
 %</cardinal-def>
+%<*no-gap-card-bishop>
 \begin{code}
-
-¬⟨𝒞⋂ℬᶜ⟩ : ¬ (Σ[ A ⦂ Type a ] (𝒞 A × (¬ ℬ A)))
-¬⟨𝒞⋂ℬᶜ⟩ (_ , c , ¬b) = rec (λ ()) ¬b c
+¬⟨𝒞⋂ℬᶜ⟩ : ¬ Σ[ A ⦂ Type a ] 𝒞 A × ¬ ℬ A
+\end{code}
+%</no-gap-card-bishop>
+%<*no-gap-card-bishop-proof>
+\begin{code}
+¬⟨𝒞⋂ℬᶜ⟩ (_ , c , ¬b) = rec isProp⊥ ¬b c
+\end{code}
+%</no-gap-card-bishop-proof>
+%<*refute-trunc-pair>
+\begin{code}
+¬⟨∥A∥×¬A⟩ : ¬ ∥ A ∥ × ¬ A
+¬⟨∥A∥×¬A⟩ (∣A∣ , ¬A) = rec isProp⊥ ¬A ∣A∣
+\end{code}
+%</refute-trunc-pair>
+\begin{code}
 
 𝒞≃Fin≃ : 𝒞 A ⇔ ∥ Σ[ n ⦂ ℕ ] (Fin n ≃ A) ∥
 𝒞≃Fin≃ = iso (ℬ⇔Fin≃ .fun ∘ 𝕃⇔ℒ⟨ℬ⟩ .fun ∥$∥_) (𝕃⇔ℒ⟨ℬ⟩ .inv ∘ ℬ⇔Fin≃ .inv ∥$∥_) (λ _ → squash _ _) λ _ → squash _ _
@@ -190,12 +203,17 @@ module _ {a b} {A : Type a} {B : Type b} where
 
 open import Relation.Binary
 open import Data.List.Relation.Binary.Permutation
-
+\end{code}
+%<*perm-bish>
+\begin{code}
 perm-ℬ : (xs ys : ℬ A) → xs .fst ↭ ys .fst
 perm-ℬ xs ys  x .fun  _    = ys  .snd x .fst
 perm-ℬ xs ys  x .inv  _    = xs  .snd x .fst
 perm-ℬ xs ys  x .rightInv  = ys  .snd x .snd
 perm-ℬ xs ys  x .leftInv   = xs  .snd x .snd
+\end{code}
+%</perm-bish>
+\begin{code}
 
 module _ {e r} {E : Type e} (totalOrder : TotalOrder E r) where
   open import Data.List.Sort totalOrder
