@@ -68,7 +68,7 @@ import Function.Surjective using (_↠!_; _↠_)
 import Cardinality.Finite.SplitEnumerable using (ℰ!⇔Fin↠!)
 
 -- Lemma 2
-import Function.Surjective.Properties using (Discrete↠!A⇒Discrete⟨A⟩)
+import Function.Surjective.Properties using (Discrete-distrib-surj)
 
 -- Lemma 3
 import Cardinality.Finite.SplitEnumerable using (ℰ!⇒Discrete)

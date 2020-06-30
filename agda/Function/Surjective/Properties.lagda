@@ -14,34 +14,27 @@ open import Function.Injective.Properties
 open import Path.Reasoning
 open import Relation.Nullary.Discrete
 open import Function
-A↠!B⇒B↣A :
 \end{code}
 %<*surj-to-inj>
 \begin{code}
- A ↠! B → B ↣ A
-\end{code}
-%</surj-to-inj>
-%<*surj-to-inj-proof>
-\begin{code}
-A↠!B⇒B↣A (f , surj) .fst x = surj x .fst
-A↠!B⇒B↣A (f , surj) .snd x y f⁻¹⟨x⟩≡f⁻¹⟨y⟩ =
+surj-to-inj : (A ↠! B) → (B ↣ A)
+surj-to-inj (f , surj) .fst x = surj x .fst
+surj-to-inj (f , surj) .snd x y f⁻¹⟨x⟩≡f⁻¹⟨y⟩ =
   x                ≡˘⟨ surj x .snd ⟩
   f (surj x .fst)  ≡⟨ cong f f⁻¹⟨x⟩≡f⁻¹⟨y⟩ ⟩
   f (surj y .fst)  ≡⟨ surj y .snd ⟩
   y ∎
 \end{code}
-%</surj-to-inj-proof>
+%</surj-to-inj>
 \begin{code}
-Discrete↠!A⇒Discrete⟨A⟩ :
 \end{code}
 %<*discrete-surj>
 \begin{code}
- A ↠! B → Discrete A → Discrete B
+Discrete-distrib-surj : (A ↠! B) → Discrete A → Discrete B
+Discrete-distrib-surj = Discrete-pull-inj ∘ surj-to-inj
 \end{code}
 %</discrete-surj>
 \begin{code}
-Discrete↠!A⇒Discrete⟨A⟩ A↠!B =
-  A↣Discrete⇒Discrete⟨A⟩ (A↠!B⇒B↣A A↠!B)
 
 SplitSurjective⟨id⟩ : SplitSurjective (id {A = A})
 SplitSurjective⟨id⟩ x .fst = x

@@ -9,13 +9,17 @@ open import Data.Sigma
 open import Function.Injective.Base
 open import Relation.Nullary.Decidable
 open import Relation.Nullary.Discrete
-A↣Discrete⇒Discrete⟨A⟩ :
+open import Function
+
 \end{code}
 %<*inj-discrete>
 \begin{code}
- A ↣ B → Discrete B → Discrete A
+Discrete-pull-inj : A ↣ B → Discrete B → Discrete A
+Discrete-pull-inj (f , inj) _≟_ x y =
+  case (f x ≟ f y) of
+    λ  { (no ¬p) → no (¬p ∘ cong f)
+       ; (yes p) → yes (inj x y p) }
 \end{code}
 %</inj-discrete>
 \begin{code}
-A↣Discrete⇒Discrete⟨A⟩ (f , inj) _≟_ x y = ⟦yes inj x y ,no cong f ⟧ (f x ≟ f y)
 \end{code}

@@ -150,7 +150,7 @@ open import HITs.PropositionalTruncation
 open import Relation.Nullary.Discrete.Properties
 
 ℰ!⇒Discrete : ℰ! A → Discrete A
-ℰ!⇒Discrete xs = Discrete↠!A⇒Discrete⟨A⟩ xs discreteℕ
+ℰ!⇒Discrete xs = Discrete-distrib-surj xs discreteℕ
 
 ℰ⇒Discrete : ℰ A → Discrete A
 ℰ⇒Discrete = recPropTrunc isPropDiscrete ℰ!⇒Discrete

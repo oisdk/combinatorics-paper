@@ -21,7 +21,7 @@ _↣_ : Type a → Type b → Type (a ℓ⊔ b)
 \end{code}
 %<*injection>
 \begin{code}
-A ↣ B = Σ[ f ⦂ (A → B) ] (Injective f)
+A ↣ B = Σ[ f ⦂ (A → B) ] Injective f
 \end{code}
 %</injection>
 \begin{code}
