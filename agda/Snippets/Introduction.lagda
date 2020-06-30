@@ -162,13 +162,21 @@ isContr : Type a → Type a
 isProp : Type a → Type a
 isSet : Type a → Type a
 \end{code}
-%<*hlevels>
+%<*isContr>
 \begin{code}
-isContr  A = Σ[ x ⦂ A ] ∀ y → x ≡ y
-isProp   A = (x y : A) → x ≡ y
-isSet    A = (x y : A) → isProp (x ≡ y)
+isContr A = Σ[ x ⦂ A ] ∀ y → x ≡ y
 \end{code}
-%</hlevels>
+%</isContr>
+%<*isProp>
+\begin{code}
+isProp A = (x y : A) → x ≡ y
+\end{code}
+%</isProp>
+%<*isSet>
+\begin{code}
+isSet A = (x y : A) → isProp (x ≡ y)
+\end{code}
+%</isSet>
 %<*fiber>
 \begin{code}
 fiber : (A → B) → B → Type _

@@ -9,11 +9,11 @@ open import HLevels
 open import Cubical.Foundations.Equiv using (fiber)
 
 module _ {A : Type a} {B : Type b} where
+  isEquiv : (A → B) → Type _
 \end{code}
 %<*is-equiv-def>
 \begin{code}
-  isEquiv : (f : A → B) → Type _
-  isEquiv f = (y : B) → isContr (fiber f y)
+  isEquiv f = ∀ y → isContr (fiber f y)
 \end{code}
 %</is-equiv-def>
 \begin{code}

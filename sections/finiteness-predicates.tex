@@ -46,16 +46,16 @@ than its shape''.
   inlined definitions, but I worry it's a little too informal and (possibly) too
 verbose}
 
-\begin{wrapfigure}[5]{r}{.4\linewidth} \vspace{-1.6\baselineskip}
-  \ExecuteMetaData[agda/Data/List/Base.tex]{list-def} \vspace{-\baselineskip}
-  \caption{The Usual Inductive Definition}
-\end{wrapfigure}
+% \begin{wrapfigure}[5]{r}{.4\linewidth} \vspace{-1.6\baselineskip}
+%   \ExecuteMetaData[agda/Data/List/Base.tex]{list-def} \vspace{-\baselineskip}
+%   \caption{The Usual Inductive Definition}
+% \end{wrapfigure}
 
 If that seems needlessly complex, don't worry: this definition is precisely
-equivalent to the usual inductive one. %
-% \begin{agdalisting}
-%   \ExecuteMetaData[agda/Data/List/Base.tex]{list-def}
-% \end{agdalisting}
+equivalent to the usual inductive one.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Data/List/Base.tex]{list-def}
+\end{agdalisting}
 And this isn't some kind of hand-waving equivalence, either: since we are
 working in HoTT, we can (and do) prove that the two types are equal, allowing us
 to use one or the other depending on whichever is more convenient, and
@@ -284,37 +284,46 @@ It also allows us to keep most of the split enumerability definition unchanged,
 just adding a condition to the returned membership proof in the cover proof.
 
 To specify that a value must exist uniquely in HoTT we can use the concept of a
-\emph{contraction}.
+\emph{contraction} \cite[definition 3.11.1]{hottbook}.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Snippets/Introduction.tex]{isContr}
+\end{agdalisting}
+A contraction is a type with the least possible amount of information: it
+represents the tautologies.
+All contractions are isomorphic to \AgdaDatatype{\ensuremath{\top}}. \todo{We'll
+now need to define propositions and sets later on}
 
-\begin{definition}[Contractions, Propositions and Sets] \label{homotopy-types}
-  Types in HoTT and CuTT are not necessarily sets, as they are in MLTT.
-  Some have higher homotopies (paths which aren't unique).
-  We actually have a hierarchy of complexity of structure of path spaces in
-  types, starting with the contractions \cite[definition 3.11.1]{hottbook}, then
-  the mere propositions \cite[definition 3.3.1]{hottbook}, and the sets
-  \cite[definition 3.1.1]{hottbook}.
-  \begin{agdalisting}
-    \ExecuteMetaData[agda/Snippets/Introduction.tex]{hlevels}
-  \end{agdalisting}
-  First we have the contractions: those types equivalent to
-  \AgdaDatatype{\ensuremath{\top}}.
-  Then the propositions: those types for which every value is equal to every
-  other.
-  Finally the sets: those types for which every \emph{equality} is equal to
-  every other.
+By saying that a proof of membership is a contraction, we are saying that it
+must be \emph{unique}.
+\begin{agdalisting} \label{uniq-memb-def}
+  \ExecuteMetaData[agda/Container/Membership.tex]{uniq-memb-def}
+\end{agdalisting}
+Now a proof of \(x\;\AgdaFunction{\ensuremath{\in}!}\;\mathit{xs}\) means that
+\(x\) is not just in \(\mathit{xs}\), but it appears there \emph{only once}.
 
-  Often these types are defined inductively: going from contractions upwards,
-  every new level has paths in the level before (i.e. the paths of a proposition
-  are all contractions).
-  We can also proceed further upwards, into non-set types.
-\end{definition}
-\begin{definition}[Unique Membership] \label{uniq-memb-def}
-  Unique list membership is defined in terms of list membership: it is a
-  contraction of it.
-  \begin{agdalisting}
-    \ExecuteMetaData[agda/Container/Membership.tex]{uniq-memb-def}
-  \end{agdalisting}
-\end{definition}
+% \begin{definition}[Contractions, Propositions and Sets] \label{homotopy-types}
+%   Types in HoTT and CuTT are not necessarily sets, as they are in MLTT.
+%   Some have higher homotopies (paths which aren't unique).
+%   We actually have a hierarchy of complexity of structure of path spaces in
+%   types, starting with the contractions , then
+%   the mere propositions \cite[definition 3.3.1]{hottbook}, and the sets
+%   \cite[definition 3.1.1]{hottbook}.
+%   First we have the contractions: those types equivalent to
+%   \AgdaDatatype{\ensuremath{\top}}.
+%   Then the propositions: those types for which every value is equal to every
+%   other.
+%   Finally the sets: those types for which every \emph{equality} is equal to
+%   every other.
+
+%   Often these types are defined inductively: going from contractions upwards,
+%   every new level has paths in the level before (i.e. the paths of a proposition
+%   are all contractions).
+%   We can also proceed further upwards, into non-set types.
+% \end{definition}
+% \begin{definition}[Unique Membership] \label{uniq-memb-def}
+%   Unique list membership is defined in terms of list membership: it is a
+%   contraction of it.
+% \end{definition}
 
 With this we can define manifest Bishop finiteness:
 \begin{definition}[Manifest Bishop Finiteness]  \label{bish-def}
@@ -323,38 +332,36 @@ With this we can define manifest Bishop finiteness:
   \begin{agdalisting}
     \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop/Container.tex]{bish-def}
   \end{agdalisting}
+  The only difference between manifest Bishop finiteness and split enumerability
+  is the membership term: here we require unique membership
+  (\AgdaFunction{\ensuremath{\in!}}), rather than simple membership
+  (\AgdaFunction{\(\in\)}).
 \end{definition}
-The only difference between manifest Bishop finiteness and split enumerability
-is the membership term: here we require unique membership (\(\inunique\)),
-rather than simple membership (\(\in\)).
 
 We use the word ``manifest'' here to distinguish from another common
 interpretation of Bishop finiteness, which we have called cardinal finiteness in
-this paper.
-The ``manifest'' refers to the fact that we have a concrete, non-truncated list
-of the elements in the proof.
+this paper: this version of the proof is ``manifest'' because we have a
+concrete, non-truncated list of the elements in the proof.
 
 \subsection{The Relationship Between Manifest Bishop Finiteness and Split
   Enumerability}
 While manifest Bishop finiteness might seem stronger than split enumerability,
 it turns out this is not the case.
 Both predicates imply the other.
-\begin{lemma} \label{manifest-bishop-to-split-enum}
-  Any manifest Bishop finite type is split enumerable.
-\end{lemma}
-\begin{proof}
-  To construct a proof of split enumerability from one of manifest Bishop
-  finiteness, it suffices to convert a proof of \(x \inunique \mathit{xs}\) to
-  one of \(x \in \mathit{xs}\), for all \(x\) and \(\mathit{xs}\).
-  Since \(\inunique\) is defined as a contraction of \(\in\), such a conversion
-  is simply the \(\text{fst}\) function.
-\end{proof}
 
+Going from manifest Bishop finiteness is relatively straightforward:
+to construct a proof of split enumerability from one of manifest Bishop
+finiteness, it suffices to convert a proof of \(x \inunique \mathit{xs}\) to
+one of \(x \in \mathit{xs}\), for all \(x\) and \(\mathit{xs}\).
+Since \(\inunique\) is defined as a contraction of \(\in\), such a conversion
+is simply the \(\text{fst}\) function.
+
+Going the other direction takes significantly more work.
 \begin{lemma} \label{split-enum-to-manifest-bishop}
   Any split enumerable set is manifest Bishop finite.
 \end{lemma}
-This proof takes significantly more work.
-The ``unique membership'' condition in
+We will only sketch the proof here:
+the ``unique membership'' condition in
 \(\AgdaDatatype{\ensuremath{\mathcal{B}}}\) means that we are not permitted
 duplicates in the support list.
 The first step in the proof, then, is to filter those duplicates out from the
@@ -369,55 +376,79 @@ and vice versa.
 While the types are not \emph{equivalent} (there are more split enumerable
 proofs than there are manifest Bishop finite proofs), they are of equal power.
 \subsection{From Manifest Bishop Finiteness to Equivalence}
+
 We have seen that split enumerability was in fact a split-surjection in
 disguise.
 We will now see that manifest Bishop finiteness is in fact an \emph{equivalence}
 in disguise.
+\begin{multicols}{2}
+  \begin{agdalisting} \label{is-equiv-def}
+    \ExecuteMetaData[agda/Snippets/Equivalence.tex]{is-equiv-def}
+  \end{agdalisting} \columnbreak
+  \begin{agdalisting} \label{equiv-def}
+    \ExecuteMetaData[agda/Snippets/Equivalence.tex]{equiv-def}
+  \end{agdalisting}
+\end{multicols}
 
 \begin{definition}[Equivalences] \label{equivalences}
   We will take contractible maps \cite[definition 4.4.1]{hottbook} as our
   ``default'' definition of equivalences.
-  \begin{agdalisting} \label{is-equiv-def}
-    \ExecuteMetaData[agda/Snippets/Equivalence.tex]{is-equiv-def}
-  \end{agdalisting} \vspace{-.5\baselineskip}
-  \begin{agdalisting} \label{equiv-def}
-    \ExecuteMetaData[agda/Snippets/Equivalence.tex]{equiv-def}
-  \end{agdalisting}
 \end{definition}
 \begin{lemma} \label{bishop-equiv}
   Manifest bishop finiteness is equivalent to an equivalence to a finite prefix
   of the natural numbers.
-  \begin{equation}
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{bishop-is-equiv-type}
+  \end{agdalisting}
 \end{lemma}
-\begin{proof} \todo{Convert to Agda}
-  \begin{align*}
-     \AgdaDatatype{\ensuremath{\mathcal{B}}}(A) &
-    \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , x \inunique \mathit{xs}
-    && \text{def.~\ref{bish-def} }(\AgdaDatatype{\ensuremath{\mathcal{B}}})
-    \\
-    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{isContr}(x \in \mathit{xs})
-    && \text{eqn.~\ref{uniq-memb-def} } (\inunique)
-    \\
-    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{isContr}(\text{fib}_{\text{snd}(\mathit{xs})}(x))
-    && \text{eqn.~\ref{container-membership} } (\in)
-    \\
-    & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
-    && \text{eqn.~\ref{is-equiv-def} (isEquiv)}
-    \\
-    & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \AgdaDatatype{Fin} \rrbracket (A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
-    && \text{def.~\ref{list-def} } (\AgdaDatatype{List})
-    \\
-    & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \AgdaDatatype{Fin}\;n) , A) , \text{isEquiv}(\text{snd}(\mathit{xs}))
-    && \text{eqn.~\ref{container-interp} } (\llbracket \wc \rrbracket)
-    \\
-    & \simeq \Sigma (n : \mathbb{N}) , \Sigma (f : \AgdaDatatype{Fin}\;n \rightarrow A) , \text{isEquiv}(f)
-    && \text{Reassociation of } \Sigma
-    \\
-    & \simeq \Sigma (n : \mathbb{N}) , ( \AgdaDatatype{Fin}\;n \simeq A )
-    && \text{eqn.~\ref{equiv-def} } (\simeq) \; \qedhere
-  \end{align*}
+
+\begin{proof} \let\qed\relax \vspace{-1\baselineskip}
+  \begin{minipage}[t]{.7\textwidth}\vspace{-\baselineskip}
+    \begin{agdalisting*}
+      \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{bishop-is-equiv}
+    \end{agdalisting*}
+  \end{minipage}
+  \begin{minipage}[t]{.19\textwidth} \setstretch{1.1}
+
+    Def.~\ref{bish-def} (\AgdaDatatype{\ensuremath{\mathcal{B}}}) \\
+    Eqn.~\ref{uniq-memb-def} (\AgdaDatatype{\ensuremath{\in!}}) \\
+    Eqn.~\ref{container-membership} (\AgdaDatatype{\ensuremath{\in}}) \\
+    Eqn.~\ref{is-equiv-def}  \\
+    Eqn.~\ref{list-def} (\(\AgdaDatatype{List}\)) \\
+    Eqn.~\ref{container-interp}  \\
+    Reassociation \\
+    Eqn.~\ref{equiv-def}
+  \end{minipage}
 \end{proof}
+
+% \begin{proof} \todo{Convert to Agda}
+%   \begin{align*}
+%      \AgdaDatatype{\ensuremath{\mathcal{B}}}(A) &
+%     \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , x \inunique \mathit{xs}
+%     && \text{def.~\ref{bish-def} }(\AgdaDatatype{\ensuremath{\mathcal{B}}})
+%     \\
+%     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{isContr}(x \in \mathit{xs})
+%     && \text{eqn.~\ref{uniq-memb-def} } (\inunique)
+%     \\
+%     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{isContr}(\text{fib}_{\text{snd}(\mathit{xs})}(x))
+%     && \text{eqn.~\ref{container-membership} } (\in)
+%     \\
+%     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
+%     && \text{eqn.~\ref{is-equiv-def} (isEquiv)}
+%     \\
+%     & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \AgdaDatatype{Fin} \rrbracket (A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
+%     && \text{def.~\ref{list-def} } (\AgdaDatatype{List})
+%     \\
+%     & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \AgdaDatatype{Fin}\;n) , A) , \text{isEquiv}(\text{snd}(\mathit{xs}))
+%     && \text{eqn.~\ref{container-interp} } (\llbracket \wc \rrbracket)
+%     \\
+%     & \simeq \Sigma (n : \mathbb{N}) , \Sigma (f : \AgdaDatatype{Fin}\;n \rightarrow A) , \text{isEquiv}(f)
+%     && \text{Reassociation of } \Sigma
+%     \\
+%     & \simeq \Sigma (n : \mathbb{N}) , ( \AgdaDatatype{Fin}\;n \simeq A )
+%     && \text{eqn.~\ref{equiv-def} } (\simeq) \; \qedhere
+%   \end{align*}
+% \end{proof}
 This proof is almost identical\footnotemark to the proof for
 lemma~\ref{split-enum-is-split-surj}: it reveals that
 enumeration-based finiteness predicates are simply another perspective on

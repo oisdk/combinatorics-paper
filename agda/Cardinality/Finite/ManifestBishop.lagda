@@ -3,7 +3,7 @@
 
 module Cardinality.Finite.ManifestBishop where
 
-open import Prelude
+open import Prelude hiding (_≃_; isEquiv)
 
 import Cardinality.Finite.ManifestBishop.Inductive as 𝕃
 import Cardinality.Finite.ManifestBishop.Container as ℒ
@@ -16,6 +16,43 @@ private
   variable
     u : Level
     U : A → Type u
+
+private
+ module DisplayBishEquiv {a} {A : Type a} where
+  open ℒ
+  open import Snippets.Equivalence
+  open import Container
+  open import Container.List
+  open import Data.Sigma.Properties
+
+  open import Relation.Binary.Equivalence.Reasoning (⇔-equiv {a}) public
+  ℬ⇔Fin≃ :
+\end{code}
+%<*bishop-is-equiv-type>
+\begin{code}
+   ℬ A ⇔ ∃[ n ] (Fin n ≃ A)
+\end{code}
+%</bishop-is-equiv-type>
+\begin{code}
+  ℬ⇔Fin≃ =
+\end{code}
+%<*bishop-is-equiv>
+\begin{code}
+    ℬ A                                                      ≋⟨⟩
+    Σ[ xs ⦂ List A ] ((x : A) → x ∈! xs)                     ≋⟨⟩
+    Σ[ xs ⦂ List A ] ((x : A) → isContr (x ∈ xs))            ≋⟨⟩
+    Σ[ xs ⦂ List A ] ((x : A) → isContr (fiber (snd xs) x))  ≋⟨⟩
+    Σ[ xs ⦂ List A ] isEquiv (snd xs)                        ≋⟨⟩
+    Σ[ xs ⦂ ⟦ ℕ , Fin ⟧ A ] isEquiv (snd xs)                 ≋⟨⟩
+    Σ[ xs ⦂ Σ[ n ⦂ ℕ ] (Fin n → A) ] isEquiv (snd xs)        ≋⟨ reassoc ⟩
+    Σ[ n ⦂ ℕ ] Σ[ f ⦂ (Fin n → A) ] isEquiv f                ≋⟨⟩
+    ∃[ n ] (Fin n ≃ A) ∎
+\end{code}
+%</bishop-is-equiv>
+\begin{code}
+
+
+open import Prelude using (_≃_; isEquiv)
 
 module _ where
   open ℒ
