@@ -415,15 +415,10 @@ We define equivalences as contractible maps \cite[definition 4.4.1]{hottbook}:
   \end{minipage}
 \end{proof}
 
-This proof is almost identical\footnotemark to the proof for
+This proof is almost identical to the proof for
 lemma~\ref{split-enum-is-split-surj}: it reveals that
 enumeration-based finiteness predicates are simply another perspective on
 relation-based ones.
-\footnotetext{
-  Unfortunately in our formalisation this proof cannot be a single line: for
-  performance reasons \(\simeq\) is defined as a record type with eta-equality
-  disabled, instead of the definition here which uses \(\Sigma\).
-}
 
 As we are working in CuTT, a proof of equivalence between two types gives us the
 ability to \emph{transport} proofs from one type to the other.
@@ -460,38 +455,46 @@ the type\footnotemark.
   We do not explore this particular construction in any detail.
 }
 
-To remedy the problem, we will use propositional truncation
-(def.~\ref{prop-trunc}).
+To remedy the problem, we will use the following type:
+\begin{agdalisting} \label{prop-trunc}
+  \ExecuteMetaData[agda/Snippets/PropTrunc.tex]{prop-trunc-def}
+\end{agdalisting}
+This is a \emph{higher inductive type}.
+Normal inductive types have \emph{point} constructors: constructors which
+construct values of the type.
+The first constructor here (\AgdaInductiveConstructor{\ensuremath{\lvert \_
+    \rvert}}), or the constructor \AgdaInductiveConstructor{true} for
+\AgdaDatatype{Bool}, are both ``point'' constructors.
 
-\begin{definition}[Higher Inductive Types] \label{HITs}
-  Normal inductive types have \emph{point} constructors: constructors which
-  construct values of the type.
-  Higher Inductive Types (HITs) also have \emph{path} constructors: ways to
-  construct paths in the type.
-\end{definition}
-\begin{definition}[Propositional Truncation] \label{prop-trunc}
-  The type \(\lVert A \rVert\) on some type \(A\) is a propositionally truncated
-  proof of \(A\) \cite[3.7]{hottbook}.
-  In other words, it is a proof that some \(A\) exists, but it does not tell you
-  \emph{which} \(A\).
+What makes this type higher inductive is that it also has \emph{path}
+constructors: constructors which add new equalities to the type. 
+The \AgdaInductiveConstructor{squash} constructor here says that all elements of
+\proptrunc{A}
+are equal, regardless of what \(A\) is.
+In this way it allows us to propositionally truncate types, turning
+information-containing proofs into mere propositions.
+Put another way, a proof of type \proptrunc{A}
+is a proof that some \(A\) exists, without revealing \emph{which} \(A\).
 
-  It is defined as a Higher Inductive Type:
+To actually use values of this type we have the following two eliminators:
+\begin{multicols}{2} \null \vfill
   \begin{agdalisting}
-    \ExecuteMetaData[agda/Snippets/PropTrunc.tex]{prop-trunc-def}
-  \end{agdalisting}
-  We will use two eliminators from \(\lVert A \rVert\) in this paper.
-  \begin{enumerate}
-  \item \label{elim-prop-prop} For any function \(A \rightarrow B\), where
-    \(\text{isProp}(B)\), we have a function \(\lVert A \rVert \rightarrow B\).
-  \item \label{elim-prop-coh} We can eliminate from \(\lVert A \rVert\) with a
-    function \(f : A \rightarrow B\) iff \(f\) ``doesn't care'' about the
-    choice of \(A\):
-    \[\Pi {(x , y : A)} , f(x) \equiv f(y) \]
-    Formally speaking, \(f\) needs to be ``coherently constant''
-    \cite{krausGeneralUniversalProperty2015}, and \(B\) needs to be an
-    \(n\)-type for some finite \(n\).
-  \end{enumerate}
-\end{definition}
+    \ExecuteMetaData[agda/HITs/PropositionalTruncation/Display.tex]{rec-prop-trunc}
+  \end{agdalisting} \vfill \null \columnbreak \null \vfill
+  \begin{agdalisting} \label{elim-prop-coh}
+    \ExecuteMetaData[agda/HITs/PropositionalTruncation/Display.tex]{rec-prop-trunc-set}
+  \end{agdalisting} \vfill \null
+\end{multicols} \noindent
+While these are not the only eliminators available for \proptrunc{A}, they are
+the only ones we will use in this paper.
+The first says we can eliminate into any proposition: interestingly, this allows
+us to define a monad instance for \AgdaDatatype{\(\lVert \_ \rVert\)}, meaning
+we can use things like do-notation.
+The second says we can eliminate into a set as long as the function we use
+doesn't care about which value it's given: formally, \(f\) in this example has
+to be ``coherently constant'' \cite{krausGeneralUniversalProperty2015}.
+
+With this, we can define cardinal finiteness:
 \begin{definition}[Cardinal Finiteness]
   A type \(A\) is cardinally finite if there exists a propositionally truncated
   proof that \(A\) is manifest Bishop finite or equivalent to a finite prefix of
@@ -849,7 +852,7 @@ It starts with an encoding of the free join semilattice.
     \ExecuteMetaData[agda/Algebra/Construct/Free/Semilattice/Definition.tex]{kuratowski-def}
   \end{agdalisting}
 
-  We define it as a HIT (definition~\ref{HITs}).
+  We define it as a HIT.
   The first two constructors are point constructors, giving ways to create
   values of type \(\mathcal{K}(A)\).
   They are also recognisable as the two constructors for finite lists, a type

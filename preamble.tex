@@ -172,40 +172,7 @@
 
 \PrerenderUnicode{í}
 
-% \usepackage{hyperref}
-
-% Nice typesetting for the definition of an inductive type.
-% For the following Agda-like thing:
-%
-% data List a where
-%   []   : List a
-%   (::) : a -> List a -> List a    
-%
-% write:
-% \begin{inductivetype}{\mathbf{List}(A)}
-%   \inductivetypeclause{\left[ \right]}{\mathbf{List}(A)}
-%   \inductivetypeclause{\wc \dblcolon \wc}{A \rightarrow \mathbf{List}(A) \rightarrow \mathbf{List}(A)}
-% \end{inductivetype}
-
-\newif\iffirstclauseofinductivetype%
-\newenvironment{inductivetype}[1]{%
-  \firstclauseofinductivetypetrue%
-  \begin{equation}
-    \begin{alignedat}{3}
-      #1
-    }{%
-    \end{alignedat}
-  \end{equation}%
-}
-\newcommand{\inductivetypeclause}[2]{%
-  \iffirstclauseofinductivetype%
-    \coloneqq%
-  \else%
-    \\ \vert%
-  \fi
-  & \; #1 &:&& \; #2;
-  \firstclauseofinductivetypefalse%
-}
+\newcommand{\proptrunc}[1]{\ensuremath{\AgdaDatatype{\ensuremath{\lVert}}\;#1\;\AgdaDatatype{\ensuremath{\rVert}}}}
 
 %%% Local Variables:
 %%% mode: latex
