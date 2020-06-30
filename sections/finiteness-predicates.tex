@@ -196,7 +196,7 @@ We'll prove the following slightly more general statement:
 \begin{agdalisting}
   \ExecuteMetaData[agda/Function/Surjective/Properties.tex]{split-surj-ident}
 \end{agdalisting}
-\subsection{Decidable Equality}
+\subsection{Decidable Equality} \todo{Should this be a lemma rather than a subsection?}
 One thing that characterises all split enumerable types is that they are all
 \emph{discrete}, i.e. they have decidable equality.  \todo{All multicol agda code should probably be vertically centred like this}
 \begin{multicols}{2}  \null \vfill
@@ -521,7 +521,22 @@ Our contribution for this section is simply the formalisation.
     \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{cardinality-is-unique}
   \end{agdalisting}
 \end{lemma}
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{cardinality-is-unique-impl}
+\end{agdalisting}
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{card-isSet}
+\end{agdalisting}
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{alg}
+\end{agdalisting}
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{const-alg}
+\end{agdalisting}
+
+
 \begin{proof}
+  
   Let \(A\) be a cardinally-finite type, with proof \(F : \mathcal{C}(A)\).
   Our task is to extract a natural number \(n : \mathbb{N}\) representing the
   cardinality of \(A\), and a propositionally-truncated proof that \(A\) is

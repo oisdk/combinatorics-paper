@@ -88,6 +88,9 @@ module _ where
     where
     disc = ℰ!⇒Discrete (𝕃⇔ℒ⟨ℰ!⟩ .fun xs)
 
+  ℬ⇒Fin≃ : ℬ A → ∃[ n ] (Fin n ≃ A)
+  ℬ⇒Fin≃ = ℬ⇔Fin≃ .fun ∘ 𝕃⇔ℒ⟨ℬ⟩ .fun
+
   isoLift : Lift b A ⇔ A
   isoLift = iso lower lift (λ _ → refl) λ _ → refl
 

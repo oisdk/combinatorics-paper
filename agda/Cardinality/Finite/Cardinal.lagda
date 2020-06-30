@@ -101,8 +101,11 @@ open import Cubical.Foundations.HLevels
 
 
 cardinality : ∥ ∃[ n ] (Fin n ≃ A) ∥ → ∃[ n ] ∥ Fin n ≃ A ∥
-cardinality {A = A} = rec→set (isOfHLevelΣ 2 isSetℕ λ _ → isProp→isSet squash) alg const-alg
+cardinality {A = A} = rec→set card-isSet alg const-alg
   where
+  card-isSet : isSet (∃[ n ] ∥ Fin n ≃ A ∥)
+  card-isSet = isOfHLevelΣ 2 isSetℕ λ _ → isProp→isSet squash
+
   alg : Σ[ n ⦂ ℕ ] (Fin n ≃ A) → Σ[ n ⦂ ℕ ] ∥ Fin n ≃ A ∥
   alg (n , f≃A) = n , ∣ f≃A ∣
 
@@ -115,14 +118,52 @@ cardinality {A = A} = rec→set (isOfHLevelΣ 2 isSetℕ λ _ → isProp→isSet
 
 # : 𝒞 A → ℕ
 # = fst ∘ cardinality ∘ _∥$∥_ (ℬ⇔Fin≃ .fun ∘ 𝕃⇔ℒ⟨ℬ⟩ .fun)
+
+∥map∥ : (A → B) → ∥ A ∥ → ∥ B ∥
+∥map∥ f = rec squash (∣_∣ ∘ f)
+
+module _ {a} {A : Type a} where
 \end{code}
 %<*cardinality-is-unique>
 \begin{code}
-cardinality-is-unique : 𝒞 A → ∃[ n ] ∥ Fin n ≃ A ∥
+  cardinality-is-unique : 𝒞 A → ∃[ n ] ∥ Fin n ≃ A ∥
 \end{code}
 %</cardinality-is-unique>
+%<*cardinality-is-unique-impl>
 \begin{code}
-cardinality-is-unique = cardinality ∘ 𝒞≃Fin≃ .fun
+  cardinality-is-unique = rec→set card-isSet alg const-alg ∘ ∥map∥ ℬ⇒Fin≃
+\end{code}
+%</cardinality-is-unique-impl>
+\begin{code}
+    where
+\end{code}
+%<*card-isSet>
+\begin{code}
+    card-isSet : isSet (∃[ n ] ∥ Fin n ≃ A ∥)
+\end{code}
+%</card-isSet>
+\begin{code}
+    card-isSet = isOfHLevelΣ 2 isSetℕ λ _ → isProp→isSet squash
+
+\end{code}
+%<*alg>
+\begin{code}
+    alg : Σ[ n ⦂ ℕ ] (Fin n ≃ A) → Σ[ n ⦂ ℕ ] ∥ Fin n ≃ A ∥
+    alg (n , f≃A) = n , ∣ f≃A ∣
+\end{code}
+%</alg>
+%<*const-alg>
+\begin{code}
+    const-alg : (x y : ∃[ n ] (Fin n ≃ A)) → alg x ≡ alg y
+\end{code}
+%</const-alg>
+\begin{code}
+
+    const-alg (n , x) (m , y) =
+      ΣProp≡
+        (λ _ → squash)
+        {n , ∣ x ∣} {m , ∣ y ∣}
+        (Fin-inj n m (ua (x ⟨ trans-≃ ⟩ (sym-≃ y))))
 
 
 module _ {a b} {A : Type a} {B : Type b} where
