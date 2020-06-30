@@ -521,56 +521,47 @@ Our contribution for this section is simply the formalisation.
     \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{cardinality-is-unique}
   \end{agdalisting}
 \end{lemma}
-\begin{agdalisting}
-  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{cardinality-is-unique-impl}
-\end{agdalisting}
-\begin{agdalisting}
-  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{card-isSet}
-\end{agdalisting}
-\begin{agdalisting}
-  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{alg}
-\end{agdalisting}
-\begin{agdalisting}
-  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{const-alg}
-\end{agdalisting}
-
-
 \begin{proof}
-  
-  Let \(A\) be a cardinally-finite type, with proof \(F : \mathcal{C}(A)\).
-  Our task is to extract a natural number \(n : \mathbb{N}\) representing the
-  cardinality of \(A\), and a propositionally-truncated proof that \(A\) is
-  equivalent to \(\AgdaDatatype{Fin}\;n\).
+  The high-level overview of our proof is as follows:
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{cardinality-is-unique-impl}
+  \end{agdalisting}
+  It is the composition of two operations: first, with
+  \AgdaFunction{\ensuremath{\lVert \text{map} \rVert}}, we change the truncated
+  proof of manifest bishop finiteness to a proof of equivalence with fin.
 
-  Extracting the second component of the pair is trivial, as it itself is
-  truncated.
-  We will now focus on extracting the cardinality.
+  Then we use the eliminator from Equation~\ref{elim-prop-coh} with three
+  parameters.
+  The first simply proves that that the output is a set:
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{card-isSet}
+  \end{agdalisting}
+  The second is the function we apply to the truncated value:
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{alg}
+  \end{agdalisting}
+  And the third is a proof that that function is itself coherently constant:
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{const-alg}
+  \end{agdalisting}
 
-  Without the propositional truncation, \(\text{fst}\) would suffice for this
-  task.
-  Given that the pair is hidden under the truncation, then, we need a way to
-  convert a function \(f : A \rightarrow B\) to \(g : \lVert A \rVert
-  \rightarrow B\).
-  This is precisely what eliminator \ref{elim-prop-coh} gives us.
-  For our case, we need to show the following:
+  The tricky part of the proof is \AgdaFunction{const-alg}: here we need to show
+  that \AgdaFunction{alg} returns the same value no matter its input.
+  That output is a pair, the first component of which is the cardinality, and
+  the second the truncated equivalence proof.
+  The truncated proofs in the output are trivially equal by the truncation, so
+  our obligation now has been reduced to:
   \begin{equation}
-    \frac{(n : \mathbb{N}) \; \; \; (p : \AgdaDatatype{Fin}\;n \simeq A) \; \; \;
-          (m : \mathbb{N}) \; \; \; (q : \AgdaDatatype{Fin}(m) \simeq A)
-        }{
-          n \equiv m
-        }
+    \frac{(n :\;\AgdaDatatype{\ensuremath{\mathbb{N}}}) \; \; \; (p : \AgdaDatatype{Fin}\;n\;\AgdaFunction{\ensuremath{\simeq}}\;A) \; \; \;
+      (m :\;\AgdaDatatype{\ensuremath{\mathbb{N}}}) \; \; \; (q : \AgdaDatatype{Fin}\;m\;\AgdaFunction{\ensuremath{\simeq}}\;A)
+    }{
+      n\;\AgdaFunction{\ensuremath{\equiv}}\;m
+    }
   \end{equation}
-  Immediately we can construct the following term:
-  \begin{equation}
-    \begin{alignedat}{3}
-      \AgdaDatatype{Fin}\;n & \simeq A && (p) \\
-                      & \simeq \AgdaDatatype{Fin}(m) && (q)
-    \end{alignedat}
-  \end{equation}
-  Given univalence we have \(\AgdaDatatype{Fin}\;n \equiv \AgdaDatatype{Fin}(m)\),
+  Given univalence we have \(\AgdaDatatype{Fin}\;n \;\AgdaFunction{\ensuremath{\equiv}}\; \AgdaDatatype{Fin}\;m\),
   and the rest of our task is to prove:
   \begin{equation}
-    \frac{\AgdaDatatype{Fin}\;n \equiv \AgdaDatatype{Fin}(m)}{n \equiv m}
+    \frac{\AgdaDatatype{Fin}\;n\;\AgdaDatatype{\ensuremath{\equiv}}\;\AgdaDatatype{Fin}\;m}{n \equiv m}
   \end{equation}
 
   This is a well-known chestnut in dependently-typed programming, and one that
