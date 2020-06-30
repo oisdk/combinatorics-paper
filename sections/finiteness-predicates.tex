@@ -196,7 +196,7 @@ We'll prove the following slightly more general statement:
 \begin{agdalisting}
   \ExecuteMetaData[agda/Function/Surjective/Properties.tex]{split-surj-ident}
 \end{agdalisting}
-\subsection{Decidable Equality} \todo{Should this be a lemma rather than a subsection?}
+\subsection{Decidable Equality}
 One thing that characterises all split enumerable types is that they are all
 \emph{discrete}, i.e. they have decidable equality.  \todo{All multicol agda code should probably be vertically centred like this}
 \begin{multicols}{2}  \null \vfill
@@ -210,7 +210,10 @@ One thing that characterises all split enumerable types is that they are all
 We will see later that this has implications for the space of types we're
 dealing with, but for now it simply provides a useful function on split
 enumerable types.
-
+\begin{lemma} \todo{Don't know if this should be a lemma or just prose}
+  Split enumerability implies decidable equality.
+\end{lemma}
+\begin{proof}
 To prove that split enumerability implies decidable equality we'll take a quick
 detour through injections.
 \begin{multicols}{2}
@@ -242,6 +245,7 @@ overall proof resolves quite simply:
 \begin{agdalisting} \label{split-enum-discrete}
   \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{split-is-discrete}
 \end{agdalisting}
+\end{proof}
 \section{Manifest Bishop Finiteness} \label{manifest-bishop-finiteness}
 We mentioned in the introduction that occasionally in constructive mathematics
 proofs will contain ``too much'' information.
@@ -285,7 +289,7 @@ just adding a condition to the returned membership proof in the cover proof.
 
 To specify that a value must exist uniquely in HoTT we can use the concept of a
 \emph{contraction} \cite[definition 3.11.1]{hottbook}.
-\begin{agdalisting}
+\begin{agdalisting} \label{isContr}
   \ExecuteMetaData[agda/Snippets/Introduction.tex]{isContr}
 \end{agdalisting}
 A contraction is a type with the least possible amount of information: it
@@ -455,6 +459,21 @@ the type\footnotemark.
   We do not explore this particular construction in any detail.
 }
 
+What we want is a proof of finiteness that is a proposition.
+\begin{agdalisting} \label{isProp}
+  \ExecuteMetaData[agda/Snippets/Introduction.tex]{isProp}
+\end{agdalisting}
+The mere propositions are one homotopy level higher than the contractions
+(Equation~\ref{isContr}), the types for which all values are equal to some value.
+They represent the types for which all values are equal, or, the types
+isomorphic to \agdabot\;or \agdatop.
+You can also define propositions in terms of the contractions: propositions are
+the types whose paths are contractions.
+Soon (Equation~\ref{isSet}) we will see the next homotopy level, which are
+defined in terms of the propositions.
+
+Despite now knowing the precise property we want our finiteness predicate to
+have, we're not much closer to achieving it.
 To remedy the problem, we will use the following type:
 \begin{agdalisting} \label{prop-trunc}
   \ExecuteMetaData[agda/Snippets/PropTrunc.tex]{prop-trunc-def}
@@ -478,7 +497,7 @@ is a proof that some \(A\) exists, without revealing \emph{which} \(A\).
 
 To actually use values of this type we have the following two eliminators:
 \begin{multicols}{2} \null \vfill
-  \begin{agdalisting}
+  \begin{agdalisting} \label{elim-prop}
     \ExecuteMetaData[agda/HITs/PropositionalTruncation/Display.tex]{rec-prop-trunc}
   \end{agdalisting} \vfill \null \columnbreak \null \vfill
   \begin{agdalisting} \label{elim-prop-coh}
@@ -506,8 +525,10 @@ With this, we can define cardinal finiteness:
 \subsection{Deriving Uniquely-Determined Quantities}
 At first glance, it might seem that we lose any useful properties we could
 derive from \(\AgdaDatatype{\ensuremath{\mathcal{B}}}\).
-Luckily, this is not the case: by eliminator \ref{elim-prop-coh} of
-def.~\ref{prop-trunc}, we need only show that the output is uniquely determined.
+Luckily, this is not the case: we will show here how to use the eliminators from
+propositional truncation (Equations \ref{elim-prop} and \ref{elim-prop-coh}) to
+use to of our already-proven derivations from \AgdaFunction{\ensuremath{\mathcal{B}}}
+on \AgdaFunction{\ensuremath{\mathcal{C}}}. \todo{rephrase?}
 
 The following two lemmas are proven in
 \cite{yorgeyCombinatorialSpeciesLabelled2014} (Proposition 2.4.9 and 2.4.10,
@@ -570,49 +591,62 @@ Our contribution for this section is simply the formalisation.
   it is present in our formalisation.
 \end{proof}
 
-In order to prove that cardinal finiteness implies decidable equality, we will
-need to show that decidable equality itself is a proposition.
-In doing that we will use the following lemma:
-\begin{lemma} \label{prop-refute}
-  We can ``refute'' a propositionally-truncated proof of some proposition with a
-  proof that the non-truncated proposition is false.
-  \begin{equation}
-    \frac{\neg A \; \; \; \lVert A \rVert}{\bot}
-  \end{equation}
-\end{lemma}
-\begin{proof}
-  We know we can eliminate from any value of type \(\lVert A \rVert\) into some
-  \(B\) with a function \(A \to B\) if \(B\) is a proposition.
-  That's precisely what we do in this case: \(\neg A\) is a function of type \(A
-  \to \bot\), and we know that \(\bot\) is a proposition.
-\end{proof}
+Another proof that carries over from manifest Bishop finiteness is decidable
+equality.
+This demonstrates an interesting aspect of propositional truncation: it can
+contain computational information.
+That is in contrast to other ways to ``truncate'' types: \(\neg \neg P\), for
+instance, is a way to provide a ``proof'' of \(P\) without revealing anything
+about \(P\) in MLTT.
+No matter how much we prove that a function from \(P\) doesn't care about which
+\(P\) it got, though, we can never extract any kind of algorithm or computation
+from \(\neg \neg P\). \todo{Is this true? It certainly seems true...}
 
+Here we'll briefly show how to extract ``computation'' from under a
+propositional truncation.
 \begin{lemma} \label{cardinal-finite-discrete}
   Any cardinal-finite set has decidable equality.
 \end{lemma}
 \begin{proof}
-  Since we can already derive decidable equality from a proof of manifest Bishop
-  finiteness, it suffices to show that decidable equality is itself a
-  proposition.
-  \begin{equation}
-    \text{isProp}(\Pi(x, y : A) , \mathbf{Dec}(x \equiv y))
-  \end{equation}
-  First, it is clear that \(x \equiv y\) is a proposition: since the type \(A\)
-  has decidable equality, by Hedburg's theorem it is a set,
-  meaning precisely that \(x \equiv y\) is a proposition.
+We can extract plenty of computation from under propositional truncation as long
+as we prove the thing we're extracting is a proposition (Equation~\ref{elim-prop}). 
+Our task, in other words, is to prove the following:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Relation/Nullary/Discrete/Properties.tex]{is-prop-discrete}
+\end{agdalisting}
 
-  Secondly, we know that any decision over a proposition is itself a
-  proposition.
-  For any two terms \(x, y: \mathbf{Dec}(A)\) we cannot have the case that one
-  is a yes decision and the other is no: from that we could derive \(\bot\).
-  If both are no then they are both equal since \(A \rightarrow \bot\) is a
-  proposition through function extensionality.
-  And finally if both are yes then we know they must be equal because the type
-  decided over is itself a proposition.
+To show that this type is a proposition we must show that any two given members
+of the type are equal, i.e. we are given two proofs of decidable equality on
+\(A\) and we must show that they are equal.
+Remember that \(\AgdaFunction{Discrete}\;A\) is a function of two arguments
+returning a \AgdaDatatype{Dec} of whether those two arguments are equal or not.
+\todo{ref for wherever this definition was}
+By function extensionality, to prove that that is a proposition we have to prove
+that \(\AgdaDatatype{Dec}\;(\agdaequiv{x}{y})\) is a proposition.
+This proof requires that we show that the payload of each of the constructors
+(\AgdaInductiveConstructor{yes} and \AgdaInductiveConstructor{no}) are
+propositions.
+\AgdaInductiveConstructor{no}'s payload is
+\(\agdaequiv{x}{y}\rightarrow\agdabot\), which is a
+proposition because \agdabot\; is a proposition.
 
-  Finally, since we know that \(\mathbf{Dec}(x \equiv y)\) is a proposition, we
-  can derive that \(\Pi(x, y : A) , \mathbf{Dec}(x \equiv y)\) is a proposition
-  (through function extensionality), proving our goal.
+\AgdaInductiveConstructor{yes} is a little more interesting: its payload is
+\agdaequiv{x}{y}.
+How can we prove that the path between \(x\) and \(y\) is a proposition?
+It turns out that there is a class of types for which all paths are
+propositions: the \emph{sets}.
+\begin{agdalisting} \label{isSet}
+  \ExecuteMetaData[agda/Snippets/Introduction.tex]{isSet}
+\end{agdalisting}
+This is the next homotopy level up from the propositions (Equation~\ref{isProp}).
+More importantly, there is an important theorem relating to sets which
+\emph{also} relates to decidable equality: Hedberg's theorem
+\cite{hedbergCoherenceTheoremMartinLof1998}.
+\begin{theorem}[Hedberg's Theorem]
+  Any type with decidable equality is a set.
+\end{theorem} \noindent
+And of course we know that \(A\) here has decidable equality: we were just given
+two proofs of that fact at the beginning of this proof!
 \end{proof}
 \subsection{Restrictiveness}
 So far our explorations into finiteness predicates have pushed us in the
