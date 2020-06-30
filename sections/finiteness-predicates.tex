@@ -351,10 +351,10 @@ Both predicates imply the other.
 
 Going from manifest Bishop finiteness is relatively straightforward:
 to construct a proof of split enumerability from one of manifest Bishop
-finiteness, it suffices to convert a proof of \(x \inunique \mathit{xs}\) to
-one of \(x \in \mathit{xs}\), for all \(x\) and \(\mathit{xs}\).
-Since \(\inunique\) is defined as a contraction of \(\in\), such a conversion
-is simply the \(\text{fst}\) function.
+finiteness, it suffices to convert a proof of \(x\;\AgdaFunction{\ensuremath{\in!}}\;\mathit{xs}\) to
+one of \(x\;\AgdaFunction{\ensuremath{\in}}\;\mathit{xs}\), for all \(x\) and \(\mathit{xs}\).
+Since \AgdaFunction{\(\in!\)} is defined as a contraction of \AgdaFunction{\(\in\)}, such a conversion
+is simply the \AgdaField{fst} function.
 
 Going the other direction takes significantly more work.
 \begin{lemma} \label{split-enum-to-manifest-bishop}
@@ -376,11 +376,11 @@ and vice versa.
 While the types are not \emph{equivalent} (there are more split enumerable
 proofs than there are manifest Bishop finite proofs), they are of equal power.
 \subsection{From Manifest Bishop Finiteness to Equivalence}
-
 We have seen that split enumerability was in fact a split-surjection in
 disguise.
 We will now see that manifest Bishop finiteness is in fact an \emph{equivalence}
 in disguise.
+We define equivalences as contractible maps \cite[definition 4.4.1]{hottbook}:
 \begin{multicols}{2}
   \begin{agdalisting} \label{is-equiv-def}
     \ExecuteMetaData[agda/Snippets/Equivalence.tex]{is-equiv-def}
@@ -389,11 +389,6 @@ in disguise.
     \ExecuteMetaData[agda/Snippets/Equivalence.tex]{equiv-def}
   \end{agdalisting}
 \end{multicols}
-
-\begin{definition}[Equivalences] \label{equivalences}
-  We will take contractible maps \cite[definition 4.4.1]{hottbook} as our
-  ``default'' definition of equivalences.
-\end{definition}
 \begin{lemma} \label{bishop-equiv}
   Manifest bishop finiteness is equivalent to an equivalence to a finite prefix
   of the natural numbers.
@@ -401,7 +396,6 @@ in disguise.
     \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{bishop-is-equiv-type}
   \end{agdalisting}
 \end{lemma}
-
 \begin{proof} \let\qed\relax \vspace{-1\baselineskip}
   \begin{minipage}[t]{.7\textwidth}\vspace{-\baselineskip}
     \begin{agdalisting*}
@@ -421,34 +415,6 @@ in disguise.
   \end{minipage}
 \end{proof}
 
-% \begin{proof} \todo{Convert to Agda}
-%   \begin{align*}
-%      \AgdaDatatype{\ensuremath{\mathcal{B}}}(A) &
-%     \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , x \inunique \mathit{xs}
-%     && \text{def.~\ref{bish-def} }(\AgdaDatatype{\ensuremath{\mathcal{B}}})
-%     \\
-%     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{isContr}(x \in \mathit{xs})
-%     && \text{eqn.~\ref{uniq-memb-def} } (\inunique)
-%     \\
-%     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \Pi {(x : A)} , \text{isContr}(\text{fib}_{\text{snd}(\mathit{xs})}(x))
-%     && \text{eqn.~\ref{container-membership} } (\in)
-%     \\
-%     & \simeq \Sigma (\mathit{xs} : \textbf{List}(A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
-%     && \text{eqn.~\ref{is-equiv-def} (isEquiv)}
-%     \\
-%     & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \AgdaDatatype{Fin} \rrbracket (A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
-%     && \text{def.~\ref{list-def} } (\AgdaDatatype{List})
-%     \\
-%     & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \AgdaDatatype{Fin}\;n) , A) , \text{isEquiv}(\text{snd}(\mathit{xs}))
-%     && \text{eqn.~\ref{container-interp} } (\llbracket \wc \rrbracket)
-%     \\
-%     & \simeq \Sigma (n : \mathbb{N}) , \Sigma (f : \AgdaDatatype{Fin}\;n \rightarrow A) , \text{isEquiv}(f)
-%     && \text{Reassociation of } \Sigma
-%     \\
-%     & \simeq \Sigma (n : \mathbb{N}) , ( \AgdaDatatype{Fin}\;n \simeq A )
-%     && \text{eqn.~\ref{equiv-def} } (\simeq) \; \qedhere
-%   \end{align*}
-% \end{proof}
 This proof is almost identical\footnotemark to the proof for
 lemma~\ref{split-enum-is-split-surj}: it reveals that
 enumeration-based finiteness predicates are simply another perspective on
