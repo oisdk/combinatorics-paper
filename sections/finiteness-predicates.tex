@@ -46,14 +46,19 @@ than its shape''.
   inlined definitions, but I worry it's a little too informal and (possibly) too
 verbose}
 
+\begin{wrapfigure}[5]{r}{.4\linewidth} \vspace{-1.6\baselineskip}
+  \ExecuteMetaData[agda/Data/List/Base.tex]{list-def} \vspace{-\baselineskip}
+  \caption{The Usual Inductive Definition}
+\end{wrapfigure}
+
 If that seems needlessly complex, don't worry: this definition is precisely
-equivalent to the usual inductive one.
-\begin{agdalisting}
-  \ExecuteMetaData[agda/Data/List/Base.tex]{list-def}
-\end{agdalisting}
-And this isn't some kind of hand-waving equivalence, either: since we working in
-HoTT, we can (and do) prove that the two types are equal, allowing us to use one
-or the other depending on whichever is more convenient, and
+equivalent to the usual inductive one. %
+% \begin{agdalisting}
+%   \ExecuteMetaData[agda/Data/List/Base.tex]{list-def}
+% \end{agdalisting}
+And this isn't some kind of hand-waving equivalence, either: since we are
+working in HoTT, we can (and do) prove that the two types are equal, allowing us
+to use one or the other depending on whichever is more convenient, and
 \(\AgdaFunction{subst}\) in the other representation without loss of generality.
 That said, defining lists as containers will reveal several interesting
 connections and proofs about split enumerability and the other predicates, 
@@ -66,10 +71,10 @@ that need defining.
 natural numbers smaller than \(n\).
 Its definition relies on a type for disjoint union,
 \(\AgdaDatatype{\ensuremath{\uplus}}\).
-\begin{multicols}{2}
+\begin{multicols}{2} \null \vfill
   \begin{agdalisting}
     \ExecuteMetaData[agda/Data/Fin/Base.tex]{fin-def}
-  \end{agdalisting} \columnbreak
+  \end{agdalisting} \vfill \null \columnbreak
   \begin{agdalisting}
     \ExecuteMetaData[agda/Snippets/Introduction.tex]{disj-union}
   \end{agdalisting}%
@@ -187,6 +192,7 @@ Remember that split enumerability is in fact the same as a split surjection from
 \(\AgdaDatatype{Fin}\) is split enumerable, then, we need only show that it has
 a split surjection from itself.
 We'll prove the following slightly more general statement:
+
 \begin{agdalisting}
   \ExecuteMetaData[agda/Function/Surjective/Properties.tex]{split-surj-ident}
 \end{agdalisting}
