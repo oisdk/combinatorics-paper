@@ -84,6 +84,7 @@ of:
 While it's not a particularly impressive example of automation, it does nonetheless
 demonstrate a principle we will exploit: closed terms will compute to a normal
 form if they're needed to type check.
+The type checker will perform \(\beta\)-reduction as much as it can.
 
 So our task is to rewrite proof obligations like the one in
 Equation~\ref{bool-assoc-auto-proof} into ones which can reduce completely. 

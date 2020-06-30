@@ -33,9 +33,7 @@ a little imprecise.
 Before we dive in to exploring the predicate itself, though, we will need to
 explain some of the terms we used in its definition.
 \subsection{What is a List?}
-We have referred to \(\AgdaDatatype{List}\) in the definition of split
-enumerability.
-In this paper, the type of lists is defined like so:
+In this paper we prefer a slightly unusual definition for the type of lists:
 \begin{agdalisting} \label{list-def}
   \ExecuteMetaData[agda/Container/List.tex]{list-def}
 \end{agdalisting}
@@ -44,8 +42,12 @@ effectively, the above definition says that ``Lists are a datatype whose shape
 is given by the natural numbers, and which can be indexed by numbers smaller
 than its shape''.
 
+\todo{The rest of this section certainly reads a lot better because of the
+  inlined definitions, but I worry it's a little too informal and (possibly) too
+verbose}
+
 If that seems needlessly complex, don't worry: this definition is precisely
-equivalent to the usual inductive one. \todo{This reads a little too informal I think}
+equivalent to the usual inductive one.
 \begin{agdalisting}
   \ExecuteMetaData[agda/Data/List/Base.tex]{list-def}
 \end{agdalisting}
@@ -88,7 +90,7 @@ theory: we won't dive in to that here.
   We ``interpret'' a container into a functor defined like so:
   \begin{agdalisting} \label{container-interp}
     \ExecuteMetaData[agda/Container.tex]{container-interp}
-  \end{agdalisting}
+  \end{agdalisting} \vspace{-\baselineskip}
 \end{definition}
 
 The definition of container is a little abstract: it is instructive to think of
@@ -101,7 +103,7 @@ list.
 One of the nice things about containers is it gives us a generic way to define
 ``membership'':
 \begin{multicols}{2}
-  \begin{agdalisting} 
+  \begin{agdalisting} \label{container-membership}
     \ExecuteMetaData[agda/Container/Membership.tex]{membership-def}
   \end{agdalisting} \columnbreak
   \begin{agdalisting}
@@ -115,31 +117,23 @@ Membership also makes more sense when described concretely in terms of lists:
 \(x\;\AgdaDatatype{\ensuremath{\in}}\;\mathit{xs}\) means ``there is an index
 into \(\mathit{xs}\) such that the index points at an item equal to \(x\)''.
 \subsection{Split Surjections}
-We will now look at how this predicate relates to more traditional, classical
-notions of finiteness.
+Now that we have our terms defined, let's look a little at how split
+enumerability relates to more traditional, classical notions of finiteness.
 In a classical setting we likely wouldn't mention ``lists'' or the like, and
 would instead define finiteness based on the existence of some injection or
-surjection.
-As it turns out, our definition of finiteness here is precisely the same as the
-surjection-based one, in quite a deep way!
-
-First, we will need to define our terms: in HoTT, surjections are a little more
-complex than what you'd find in either MLTT or classical mathematics.
-\begin{definition}[Split Surjections] \label{split-surjections}
-  We define \emph{split} surjections here \cite[definition
-  4.6.1]{hottbook}.
+surjection, say a surjection from a finite prefix of the natural numbers.
+In HoTT, surjections (or, more precisely, \emph{split} surjections
+\cite[definition 4.6.1]{hottbook}), are defined like so:
+\begin{multicols}{2}
   \begin{agdalisting} \label{sp-surj-eqn}
     \ExecuteMetaData[agda/Function/Surjective/Base.tex]{split-surjective}
-  \end{agdalisting} \vspace{-1.5\baselineskip}
+  \end{agdalisting} \columnbreak
   \begin{agdalisting} \label{sp-surj-arrow-eqn}
     \ExecuteMetaData[agda/Function/Surjective/Base.tex]{split-surjection}
   \end{agdalisting}
-\end{definition}
-Over sets, the surjections and split surjections are the same thing, but there
-is a difference one we involve non-set types like the circle.
-
-We will now see that split enumerability is in fact a split surjection in
-another form:
+\end{multicols}
+As it turns out, our definition of finiteness here is precisely the same as a
+surjection-based one, in quite a deep way!
 \begin{lemma} \label{split-enum-is-split-surj}%
   A proof of split enumerability is equivalent to a split surjection from a
   finite prefix of the natural numbers.
@@ -158,7 +152,7 @@ another form:
       Def.~\ref{split-enum-def} (\AgdaDatatype{\ensuremath{\mathcal{E}!}}) \\
       Eqn.~\ref{container-membership} (\AgdaDatatype{\ensuremath{\in}}) \\
       Eqn.~\ref{sp-surj-eqn}  \\
-      Def.~\ref{List} (\(\AgdaDatatype{List}\)) \\
+      Eqn.~\ref{list-def} (\(\AgdaDatatype{List}\)) \\
       Eqn.~\ref{container-interp}  \\
       Reassociation \\
       Eqn.~\ref{sp-surj-arrow-eqn}
@@ -172,8 +166,12 @@ Clearly, only one line isn't a definitional equality:
 \begin{agdalisting}
   \ExecuteMetaData[agda/Data/Sigma/Properties.tex]{reassoc}
 \end{agdalisting}
-(The simplicity of this proof, by the way, is why we preferred the
-container-based definition of lists over the traditional one.)
+This means that we could have in fact written the whole proof as follows:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{split-enum-is-split-surj-short}
+\end{agdalisting}
+The simplicity of this proof, by the way, is why we preferred the
+container-based definition of lists over the traditional one.
 \subsection{Instances} \todo{More intro to this}
 We will now provide some example proofs of types which are split enumerable.
 \begin{lemma}
@@ -455,7 +453,7 @@ in disguise.
     && \text{eqn.~\ref{is-equiv-def} (isEquiv)}
     \\
     & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \AgdaDatatype{Fin} \rrbracket (A)) , \text{isEquiv}(\text{snd}(\mathit{xs}))
-    && \text{def.~\ref{List} } (\AgdaDatatype{List})
+    && \text{def.~\ref{list-def} } (\AgdaDatatype{List})
     \\
     & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \AgdaDatatype{Fin}\;n) , A) , \text{isEquiv}(\text{snd}(\mathit{xs}))
     && \text{eqn.~\ref{container-interp} } (\llbracket \wc \rrbracket)
@@ -833,7 +831,7 @@ surjection: manifest enumerability is the listed form of a proper surjection.
     && \text{eqn.~\ref{surj-eqn} (surj)}
     \\
     & \simeq \Sigma (\mathit{xs} : \llbracket \mathbb{N} , \AgdaDatatype{Fin} \rrbracket (A)) , \text{surj}(\text{snd}(\mathit{xs}))
-    && \text{def.~\ref{List} } (\AgdaDatatype{List})
+    && \text{def.~\ref{list-def} } (\AgdaDatatype{List})
     \\
     & \simeq \Sigma (\mathit{xs} : \Sigma (n : \mathbb{N}) , \Pi (i : \AgdaDatatype{Fin}\;n) , A) , \text{surj}(\text{snd}(\mathit{xs}))
     && \text{eqn.~\ref{container-interp} } (\llbracket \wc \rrbracket)
