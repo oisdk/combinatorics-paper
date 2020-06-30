@@ -503,22 +503,23 @@ With this, we can define cardinal finiteness:
     \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{cardinal-def}
   \end{agdalisting}
 \end{definition}
+\subsection{Deriving Uniquely-Determined Quantities}
 At first glance, it might seem that we lose any useful properties we could
 derive from \(\AgdaDatatype{\ensuremath{\mathcal{B}}}\).
 Luckily, this is not the case: by eliminator \ref{elim-prop-coh} of
 def.~\ref{prop-trunc}, we need only show that the output is uniquely determined.
-\subsection{Deriving Uniquely-Determined Quantities}
+
 The following two lemmas are proven in
 \cite{yorgeyCombinatorialSpeciesLabelled2014} (Proposition 2.4.9 and 2.4.10,
 respectively), in much the same way as we have done here.
 Our contribution for this section is simply the formalisation.
 \begin{lemma}
   Given a cardinally finite type, we can derive the type's cardinality, as well
-  as a propositionally truncated proof of equivalence with \(\textbf{Fin}\)s of
+  as a propositionally truncated proof of equivalence with \AgdaDatatype{Fin}s of
   the same cardinality.
-  \begin{equation}
-    \mathcal{C}(A) \rightarrow \Sigma {(n : \mathbb{N})} , \lVert \textbf{Fin}(n) \simeq A \rVert
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{cardinality-is-unique}
+  \end{agdalisting}
 \end{lemma}
 \begin{proof}
   Let \(A\) be a cardinally-finite type, with proof \(F : \mathcal{C}(A)\).

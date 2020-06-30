@@ -6,11 +6,11 @@ open import HITs.PropositionalTruncation
 open import Prelude
 
 refute-trunc : ¬ A → ¬ ∥ A ∥
-refute-trunc = recPropTrunc isProp⊥
+refute-trunc = rec isProp⊥
 
 recompute : Dec A → ∥ A ∥ → A
 recompute (yes p) _ = p
-recompute (no ¬p) p = ⊥-elim (recPropTrunc isProp⊥ ¬p p)
+recompute (no ¬p) p = ⊥-elim (rec isProp⊥ ¬p p)
 
 open import HITs.PropositionalTruncation.Sugar
 

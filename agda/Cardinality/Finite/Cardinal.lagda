@@ -29,10 +29,10 @@ open import Data.Fin
 \begin{code}
 
 ¬⟨𝒞⋂ℬᶜ⟩ : ¬ (Σ[ A ⦂ Type a ] (𝒞 A × (¬ ℬ A)))
-¬⟨𝒞⋂ℬᶜ⟩ (_ , c , ¬b) = recPropTrunc (λ ()) ¬b c
+¬⟨𝒞⋂ℬᶜ⟩ (_ , c , ¬b) = rec (λ ()) ¬b c
 
-𝒞≃Fin≃ : 𝒞 A ≃ ∥ Σ[ n ⦂ ℕ ] (Fin n ≃ A) ∥
-𝒞≃Fin≃ = isoToEquiv (iso (ℬ⇔Fin≃ .fun ∘ 𝕃⇔ℒ⟨ℬ⟩ .fun ∥$∥_) (𝕃⇔ℒ⟨ℬ⟩ .inv ∘ ℬ⇔Fin≃ .inv ∥$∥_) (λ _ → squash _ _) λ _ → squash _ _)
+𝒞≃Fin≃ : 𝒞 A ⇔ ∥ Σ[ n ⦂ ℕ ] (Fin n ≃ A) ∥
+𝒞≃Fin≃ = iso (ℬ⇔Fin≃ .fun ∘ 𝕃⇔ℒ⟨ℬ⟩ .fun ∥$∥_) (𝕃⇔ℒ⟨ℬ⟩ .inv ∘ ℬ⇔Fin≃ .inv ∥$∥_) (λ _ → squash _ _) λ _ → squash _ _
 
 ℬ⇒𝒞 : ℬ A → 𝒞 A
 ℬ⇒𝒞 = ∣_∣
@@ -92,15 +92,16 @@ xs ∥×∥ ys = do
 %</times-clos-impl>
 \begin{code}
 𝒞⇒Discrete : 𝒞 A → Discrete A
-𝒞⇒Discrete = recPropTrunc isPropDiscrete (ℰ!⇒Discrete ∘ 𝕃⇔ℒ⟨ℰ!⟩ .fun ∘ ℬ⇒ℰ!)
+𝒞⇒Discrete = rec isPropDiscrete (ℰ!⇒Discrete ∘ 𝕃⇔ℒ⟨ℰ!⟩ .fun ∘ ℬ⇒ℰ!)
 
 open import Data.Sigma.Properties
 open import Data.Fin.Properties using (Fin-inj)
 open import Data.Nat.Properties using (isSetℕ)
 open import Cubical.Foundations.HLevels
 
+
 cardinality : ∥ ∃[ n ] (Fin n ≃ A) ∥ → ∃[ n ] ∥ Fin n ≃ A ∥
-cardinality {A = A} = recPropTrunc→Set (isOfHLevelΣ 2 isSetℕ λ _ → isProp→isSet squash) alg const-alg
+cardinality {A = A} = rec→set (isOfHLevelΣ 2 isSetℕ λ _ → isProp→isSet squash) alg const-alg
   where
   alg : Σ[ n ⦂ ℕ ] (Fin n ≃ A) → Σ[ n ⦂ ℕ ] ∥ Fin n ≃ A ∥
   alg (n , f≃A) = n , ∣ f≃A ∣
@@ -114,6 +115,14 @@ cardinality {A = A} = recPropTrunc→Set (isOfHLevelΣ 2 isSetℕ λ _ → isPro
 
 # : 𝒞 A → ℕ
 # = fst ∘ cardinality ∘ _∥$∥_ (ℬ⇔Fin≃ .fun ∘ 𝕃⇔ℒ⟨ℬ⟩ .fun)
+\end{code}
+%<*cardinality-is-unique>
+\begin{code}
+cardinality-is-unique : 𝒞 A → ∃[ n ] ∥ Fin n ≃ A ∥
+\end{code}
+%</cardinality-is-unique>
+\begin{code}
+cardinality-is-unique = cardinality ∘ 𝒞≃Fin≃ .fun
 
 
 module _ {a b} {A : Type a} {B : Type b} where
@@ -149,14 +158,14 @@ perm-ℬ xs ys  x .leftInv   = xs  .snd x .snd
 
 module _ {e r} {E : Type e} (totalOrder : TotalOrder E r) where
   open import Data.List.Sort totalOrder
-  open import Cubical.HITs.PropositionalTruncation using (recPropTrunc→Set)
+  open import HITs.PropositionalTruncation using (rec→set)
   open import Data.Sigma.Properties
   open import Cardinality.Finite.ManifestBishop using (ℰ!⇒ℬ)
   open import Cardinality.Finite.ManifestEnumerable.Inductive
   open import Cardinality.Finite.ManifestEnumerable
 
   𝒞⇒ℬ : 𝒞 E → ℬ E
-  𝒞⇒ℬ xs = (ℰ!⇒ℬ ∘ ℰ⇒ℰ! discreteE ∘ recPropTrunc→Set (isSet⟨ℰ⟩ (Discrete→isSet discreteE)) alg const-alg) xs
+  𝒞⇒ℬ xs = (ℰ!⇒ℬ ∘ ℰ⇒ℰ! discreteE ∘ rec→set (isSet⟨ℰ⟩ (Discrete→isSet discreteE)) alg const-alg) xs
     where
     discreteE = 𝒞⇒Discrete xs
 

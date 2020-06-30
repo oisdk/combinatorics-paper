@@ -11,6 +11,7 @@ open import Cardinality.Finite.ManifestEnumerable
 open import Cardinality.Finite.ManifestEnumerable.Inductive renaming (_∈_ to _L∈_)
 
 open import HITs.PropositionalTruncation
+import HITs.PropositionalTruncation as PropTrunc
 open import HITs.PropositionalTruncation.Sugar
 open import Data.Fin
 
@@ -56,7 +57,7 @@ open import Cubical.HITs.S1 using (S¹)
 𝒦ᶠ⟨S¹⟩ = ℰ⇒𝒦 ℰ⟨S¹⟩
 
 ∥ℰ∥⇔𝒦 : ∥ ℰ A ∥ ⇔ 𝒦ᶠ A
-∥ℰ∥⇔𝒦 .fun = recPropTrunc isProp𝒦ᶠ ℰ⇒𝒦
+∥ℰ∥⇔𝒦 .fun = PropTrunc.rec isProp𝒦ᶠ ℰ⇒𝒦
 ∥ℰ∥⇔𝒦 .inv = 𝒦ᶠ⇒∥ℰ∥
 ∥ℰ∥⇔𝒦 .leftInv x = squash _ x
 ∥ℰ∥⇔𝒦 .rightInv x = isProp𝒦ᶠ _ x
@@ -87,7 +88,7 @@ private variable p : Level
 
 𝒦ᶠ⇒∣Omniscient∣ : {P : A → Type p} → 𝒦ᶠ A → Decidable P → Dec ∥ ∃ P ∥
 𝒦ᶠ⇒∣Omniscient∣ K P? =
-  recPropTrunc
+  PropTrunc.rec
     (isPropDec squash)
     (map-dec ∣_∣ refute-trunc ∘ λ xs → ℰ⇒Omniscient xs P?)
     (𝒦ᶠ⇒∥ℰ∥ K)

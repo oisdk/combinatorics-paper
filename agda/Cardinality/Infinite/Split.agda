@@ -153,4 +153,4 @@ open import Relation.Nullary.Discrete.Properties
 ℰ!⇒Discrete xs = Discrete-distrib-surj xs discreteℕ
 
 ℰ⇒Discrete : ℰ A → Discrete A
-ℰ⇒Discrete = recPropTrunc isPropDiscrete ℰ!⇒Discrete
+ℰ⇒Discrete = rec isPropDiscrete ℰ!⇒Discrete

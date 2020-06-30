@@ -40,7 +40,7 @@ import Relation.Nullary.Discrete.Properties using (Discrete→isSet)
 
 -- Definition 8: Propositional Truncation
 import HITs.PropositionalTruncation using (∥_∥)
-import HITs.PropositionalTruncation using (recPropTrunc; recPropTrunc→Set)
+import HITs.PropositionalTruncation using (rec; rec→set)
 
 --------------------------------------------------------------------------------
 -- Section 2: Finiteness Predicates

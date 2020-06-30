@@ -90,7 +90,7 @@ open import Categories.Coequalizer
 ∃!′ A P = ∥ Σ A P ∥ Prelude.× AtMostOne P
 
 lemma23 : ∀ {p} {P : A → hProp p} → ∃!′ A (fst ∘ P) → Σ A (fst ∘ P)
-lemma23 {P = P} (x , y) = recPropTrunc (λ xs ys → ΣProp≡ (snd ∘ P) (y (xs .fst) (ys .fst) (xs .snd) (ys .snd))) id x
+lemma23 {P = P} (x , y) = rec (λ xs ys → ΣProp≡ (snd ∘ P) (y (xs .fst) (ys .fst) (xs .snd) (ys .snd))) id x
 
 module _ {A : Type a} {P : A → Type b} (R : ∀ x → P x → hProp c) where
   uniqueChoice : (Π[ x ⦂ A ] (∃!′ (P x) (λ u → R x u .fst))) →
@@ -123,10 +123,10 @@ module CoeqProofs {X Y : Ob} (f : X ⟶ Y) where
 
     prf : Π[ x ⦂ Im .fst ] ∃!′ (H .fst) (λ u → ∀ y → im y ≡ x → h y ≡ u)
     prf (xy , p) .fst = (λ { (z , r) → h z , λ y imy≡xyp → cong (_$ ((y , z) , cong fst imy≡xyp ; sym r)) eq }) ∥$∥ p
-    prf (xy , p) .snd x₁ x₂ Px₁ Px₂ = recPropTrunc (H .snd x₁ x₂) (λ { (z , zs) → sym (Px₁ z (ΣProp≡ (λ _ → squash) zs)) ; Px₂ z (ΣProp≡ (λ _ → squash) zs) } ) p
+    prf (xy , p) .snd x₁ x₂ Px₁ Px₂ = rec (H .snd x₁ x₂) (λ { (z , zs) → sym (Px₁ z (ΣProp≡ (λ _ → squash) zs)) ; Px₂ z (ΣProp≡ (λ _ → squash) zs) } ) p
 
   lem₂ : ∀ (H : Ob) (h : X ⟶ H) (i : Im ⟶ H) (x : Im .fst) (hi : h ≡ i ∘ im) (eq : h ∘ p₁ ≡ h ∘ p₂) → i x ≡ lem {H = H} h eq .fst x
-  lem₂ H h i x hi eq = recPropTrunc (H .snd _ _) (λ { (y , ys) → (cong i (ΣProp≡ (λ _ → squash) (sym ys)) ; sym (cong (_$ y) hi)) ; lem {H = H} h eq .snd x y (ΣProp≡ (λ _ → squash) ys) }) (x .snd)
+  lem₂ H h i x hi eq = rec (H .snd _ _) (λ { (y , ys) → (cong i (ΣProp≡ (λ _ → squash) (sym ys)) ; sym (cong (_$ y) hi)) ; lem {H = H} h eq .snd x y (ΣProp≡ (λ _ → squash) ys) }) (x .snd)
 
   hSetCoeq : Coequalizer hSetCategory {X = P} {Y = X} p₁ p₂
   hSetCoeq .Coequalizer.obj = Im

@@ -4,7 +4,7 @@
 module HITs.PropositionalTruncation.Display where
 
 open import Prelude
-open import HITs.PropositionalTruncation
+open import Cubical.HITs.PropositionalTruncation
 \end{code}
 %<*rec-prop-trunc>
 \begin{code}

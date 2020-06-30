@@ -10,7 +10,7 @@ open import Algebra.Construct.Free.Semilattice.Relation.Unary
 open import Algebra.Construct.Free.Semilattice.Union
 
 open import HITs.PropositionalTruncation.Sugar
-open import HITs.PropositionalTruncation
+import HITs.PropositionalTruncation as PropTrunc
 open import HITs.PropositionalTruncation.Properties
 
 open import Path.Reasoning
@@ -25,7 +25,7 @@ in-cons = λ x → ∥ in-cons′ x ∥⇓
   in-cons′ : ∀ x → xs ∈𝒦 A ⇒∥ (x ∈ xs → xs ≡ x ∷ xs) ∥
   ∥ in-cons′ y ∥-prop {xs} p q i y∈xs = trunc xs (y ∷ xs) (p y∈xs) (q y∈xs) i
   ∥ in-cons′ y ∥[] ()
-  ∥ in-cons′ y ∥ x ∷ xs ⟨ Pxs ⟩ = recPropTrunc (trunc _ _)
+  ∥ in-cons′ y ∥ x ∷ xs ⟨ Pxs ⟩ = PropTrunc.rec (trunc _ _)
     λ { (inl x≡y) → sym (dup x xs) ; cong (_∷ x ∷ xs) x≡y
       ; (inr y∈xs) → cong (x ∷_) (Pxs y∈xs) ; com x y xs
       }
