@@ -67,7 +67,14 @@ open import Cardinality.Finite.ManifestBishop using (ℬ⇒ℰ!; ℰ!⇒ℬ)
 open import Cardinality.Finite.ManifestEnumerable using (ℰ!⇒ℰ; ℰ⇒ℰ!)
 open import Relation.Nullary.Discrete.Properties
 
-𝒞⇔𝒦×Discrete : 𝒞 A ⇔ 𝒦ᶠ A × Discrete A
+𝒞⇔𝒦×Discrete :
+\end{code}
+%<*card-iso-kuratowski>
+\begin{code}
+  𝒞 A ⇔ 𝒦ᶠ A × Discrete A
+\end{code}
+%</card-iso-kuratowski>
+\begin{code}
 𝒞⇔𝒦×Discrete .fun ca .fst = ∥ℰ∥⇔𝒦 .fun (ℰ!⇒ℰ ∘ ℬ⇒ℰ! ∥$∥ ca)
 𝒞⇔𝒦×Discrete .fun ca .snd = 𝒞⇒Discrete ca
 𝒞⇔𝒦×Discrete .inv (ka , d) = ℰ!⇒ℬ ∘ ℰ⇒ℰ! d ∥$∥ ∥ℰ∥⇔𝒦 .inv ka

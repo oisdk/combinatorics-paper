@@ -925,93 +925,84 @@ of that type, we can construct an element of the type.
 In the case of \(x\;\AgdaFunction{\(\in\)}\;\mathit{xs}\) we can construct a
 decision procedure for membership of a list, since we already have decidable
 equality on the elements of the list, proving our obligation.
-\section{Kuratowski Finiteness} \label{kuratowski} \todo{better intro}
-The one big missing definition of finiteness to cover is \emph{Kuratowski}
+\section{Kuratowski Finiteness} \label{kuratowski}
+We now finally arrive at the most important definition of finiteness: Kuratowski
 finiteness.
-While it's quite important, it's also quite different from the definitions we've
-seen so far.
-It starts with an encoding of the free join semilattice.
-\begin{definition}[Free Join Semilattice]
-  \(\mathcal{K}(A)\) is the free join semilattice, or, alternatively, the type
-  of Kuratowski-finite subsets of \(A\).
-  \begin{agdalisting}
-    \ExecuteMetaData[agda/Algebra/Construct/Free/Semilattice/Definition.tex]{kuratowski-def}
-  \end{agdalisting}
+As a definition, it is quite different from the predicates we've seen (it
+doesn't involve lists, for instance), but it plays a much larger role in the
+literature on finiteness predicates than, say, manifest enumerability.
 
-  We define it as a HIT.
-  The first two constructors are point constructors, giving ways to create
-  values of type \(\mathcal{K}(A)\).
-  They are also recognisable as the two constructors for finite lists, a type
-  which represents the free monoid.
+We start with the definition of Kuratowski-finite subsets.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Algebra/Construct/Free/Semilattice/Definition.tex]{kuratowski-def}
+\end{agdalisting}
+The first two constructors are point constructors, giving ways to create
+values of type \(\agdacal{K}\;A\).
+They are also recognisable as the two constructors for finite lists, a type
+which represents the free monoid.
+The next two constructors add extra paths to the type: equations that usage of
+the type must obey.
+These extra paths turn the free monoid into the free \emph{commutative}
+(\AgdaInductiveConstructor{com}) \emph{idempotent}
+(\AgdaInductiveConstructor{dup}) monoid.
+The final constructor truncates the type \(\agdacal{K}\;A\) to a set.
 
-  The next two constructors add extra paths to the type: equations that usage of
-  the type must obey.
-  These extra paths turn the free monoid into the free \emph{commutative} (com)
-  \emph{idempotent} (dup) monoid.
-
-  The final constructor enforces that the type \(\mathcal{K}(A)\) must be a set.
-\end{definition}
 The Kuratowski finite subset is a free join semilattice (or, equivalently, a
 free commutative idempotent monoid).
-More prosaically, \(\mathcal{K}\) is the abstract data type for finite sets, as
+More prosaically, \(\agdacal{K}\) is the abstract data type for finite sets, as
 defined in the Boom hierarchy \cite{boomFurtherThoughtsAbstracto1981,
   bunkenburgBoomHierarchy1994}.
-However, rather than just being a specification, \(\mathcal{K}\) is fully usable
+However, rather than just being a specification, \(\agdacal{K}\) is fully usable
 as a data type in its own right, thanks to HITs.
 
-Other definitions of \(\mathcal{K}\) exist (such as the one in
-\cite{fruminFiniteSetsHomotopy2018}) which make the fact that \(\mathcal{K}\) is
+Other definitions of \(\agdacal{K}\) exist (such as the one in
+\cite{fruminFiniteSetsHomotopy2018}) which make the fact that \(\agdacal{K}\) is
 the free join semilattice more obvious.
 We have included such a definition in our formalisation, and proven it
 equivalent to the one above.
 
 Next, we need a way to say that an entire type is Kuratowski finite.
-For that, we will need to define membership of \(\mathcal{K}\).
-\begin{definition}[Membership of \(\mathcal{K}\)]
-  Membership is defined by pattern-matching on \(\mathcal{K}\).
-  The two point constructors are handled like so: \todo{to agda}
-  \begin{equation}
-    \begin{alignedat}{2}
-      x \in&& \; []                      &\coloneqq \bot ; \\
-      x \in&& \; y \dblcolon \mathit{ys} &\coloneqq \lVert x \equiv y \uplus x \in \mathit{ys} \rVert ;
-    \end{alignedat}
-  \end{equation}
-  The \(\text{com}\) and \(\text{dup}\) constructors are handled by proving that
-  the truncated form of \(\uplus\) is itself commutative and idempotent.
-  The type of propositions is itself a set, satisfying the \(\text{trunc}\)
-  constructor.
-\end{definition}
-Finally, we have enough background to define Kuratowski finiteness.
-\begin{definition}[Kuratowski Finiteness] \phantom{break}
+For that, we will need to define membership of \(\agdacal{K}\).
+\begin{equation}
+  \begin{alignedat}{2}
+    x\;\AgdaFunction{\ensuremath{\in}}& \; \AgdaInductiveConstructor{[]}                      &&= \agdabot \\
+    x\;\AgdaFunction{\ensuremath{\in}}& \; y \;\AgdaInductiveConstructor{\ensuremath{\dblcolon}}\; \mathit{ys} &&= \AgdaDatatype{\ensuremath{\lVert}}\;\agdaequiv{x}{y}\;\AgdaDatatype{\ensuremath{\uplus}}\;x\;\AgdaFunction{\ensuremath{\in}}\;\mathit{ys}\;\AgdaDatatype{\ensuremath{\rVert}}
+  \end{alignedat}
+\end{equation}
+The \AgdaInductiveConstructor{com} and \AgdaInductiveConstructor{dup}
+constructors are handled by proving that the truncated form of \AgdaDatatype{\ensuremath{\uplus}}
+itself commutative and idempotent.
+The type of propositions is itself a set, satisfying the \AgdaInductiveConstructor{trunc}
+constructor.
+This gives us enough to define Kuratowski finiteness.
+\begin{definition}[Kuratowski Finiteness]
+  A type is Kuratowski finite if there exists a Kuratowski-finite subset of that
+  type which contains every element of the type.
   \begin{agdalisting}
     \ExecuteMetaData[agda/Cardinality/Finite/Kuratowski.tex]{kuratowski-finite-def}
   \end{agdalisting}
 \end{definition}
 
-We also have the following two lemmas, proven in both
-\cite{fruminFiniteSetsHomotopy2018} and our formalisation.
-\begin{lemma}
-  \(\mathcal{K}^f\) is a mere proposition.
-\end{lemma}
-\begin{lemma}
-  This circle \(S^1\) is Kuratowski finite.
-\end{lemma}
-\subsection{Relation to Cardinal Finiteness}
+In our formalisation, we have proven a number of other lemmas regarding
+Kuratowski finiteness, including the fact that
+\AgdaFunction{\ensuremath{\mathcal{K}^f}} is a mere proposition, and that the
+circle is Kuratowski finite.
+These are also provided in \citet{fruminFiniteSetsHomotopy2018}, however, and
+aren't directly relevant to what we're doing here so we won't provide the
+details of the proof.
+The key proof we will rely on for the rest of the paper is the following:
 \begin{lemma} \label{cardinal-kuratowski}
   Cardinal finiteness is equivalent to Kuratowski finiteness over a discrete
   set.
-  \begin{equation}
-    \mathcal{C}(A) \simeq \mathcal{K}^f(A) \times \text{Discrete}(A)
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/Kuratowski.tex]{card-iso-kuratowski}
+  \end{agdalisting}
 \end{lemma}
 This proof is constructed by providing a pair of functions: one from
-\(\mathcal{C}(A)\) to \(\mathcal{K}^f(A) \times \text{Discrete}(A)\), and one the
+\(\mathcal{C}(A)\) to \(\agdacal{K}^f(A) \times \text{Discrete}(A)\), and one the
 other way.
 This pair implies an equivalence, because both source and target are
-propositions.
-The actual functions themselves are proven in our formalisation, as well as in
-\cite{fruminFiniteSetsHomotopy2018}.
-
+propositions. \todo{is it clear that this lemma is also in frumin et al?}
 
 %%% Local Variables:
 %%% mode: latex
