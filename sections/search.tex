@@ -1,6 +1,6 @@
 \chapter{Search} \label{search}
 A common theme in dependently-typed programming is that proofs of interesting
-theoretical things may actually correspond to useful algorithms in some way
+theoretical things often correspond to useful algorithms in some way
 related to that thing.
 Finiteness is one such case: if we have a proof that a type \(A\) is finite,
 we should be able to search through all the elements of that type in a
@@ -79,7 +79,7 @@ To understand the technique we should first notice that some proof automation
   \ExecuteMetaData[agda/Snippets/Bool.tex]{obvious}
 \end{agdalisting}
 The type checker does not require us to manually explain each step of evaluation
-of:
+of
 \(\AgdaInductiveConstructor{true}\;\AgdaFunction{∧}\;\AgdaInductiveConstructor{false}\).
 While it's not a particularly impressive example of automation, it does nonetheless
 demonstrate a principle we will exploit: closed terms will compute to a normal
@@ -126,80 +126,137 @@ In order to turn this into a proof that \AgdaFunction{∧} is associative we nee
 \(\AgdaDatatype{Dec}\;(\forall \; x \; y \; z \rightarrow (x\;\AgdaFunction{∧}\;y)\;\AgdaFunction{∧}\;z\;\AgdaFunction{≡}\;x\;\AgdaFunction{∧}\;(y\;\AgdaFunction{∧}\;z))\).
 The ability to do this is described formally by the notion of
 ``Exhaustibility''.
-\begin{definition}[Exhaustibility]
-  We say a type \(A\) is exhaustible if, for any decidable predicate \(P\) on
-  \(A\), the universal quantification of the predicate is decidable.
-  \begin{agdalisting}
-    \ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{exhaustible}
-  \end{agdalisting}
-\end{definition}
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{exhaustible}
+\end{agdalisting}
+We say a type \(A\) is exhaustible if, for any decidable predicate \(P\) on
+\(A\), the universal quantification of the predicate is decidable.
+
 This property of \AgdaDatatype{Bool} would allow us to automate the proof of
 associativity, but it is in fact not strong enough to find individual
 representatives of a type which support some property.
-For that we need the more well-known, but related, property of
+For that we need the more well-known related property of
 \emph{omniscience}.
-\begin{definition}[Limited Principle of Omniscience]
-  For any type \(A\) and predicate \(P\) on \(A\), the limited principle of
-  omniscience \cite{myhillErrettBishopFoundations1972} is as follows:
-  \begin{agdalisting}
-    \ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{omniscient}
-  \end{agdalisting}
-  In other words, for any decidable predicate the existential quantification of
-  that predicate is also decidable.
-\end{definition}
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{omniscient}
+\end{agdalisting}
+The ``limited principle of omniscience''
+\cite{bishopFoundationsConstructiveAnalysis1967} is a classical principle which
+says that omniscience holds for all sets.
+It doesn't hold constructively, of course: it lies a little bit below LEM in
+terms of its non-constructiveness, given that it can be derived from LEM but LEM
+cannot be derived from it.
 
-Because we're constructive, only a select few types are omniscient: finite
-types, for instance (the law of the excluded middle implies that all types are
-omniscient, meaning that all types are omniscient classically).
+Omniscience implies exhaustibility: we can use the usual rule of \todo{what is
+  this called/from again?}
+\begin{equation}
+  \neg \exists x. P(x) \iff \forall x. \neg P(x)
+\end{equation}
+to turn omniscience for some predicate \(P\) into exhaustibility for some
+predicate \(\neg \neg P\).
+Usually we don't have double negation elimination constructively, but since
+\(P\) is decidable it's actually present in this case:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Relation/Nullary/Decidable/Properties.tex]{dec-double-neg-elim}
+\end{agdalisting}
+All together, this gives us the following proof:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{omniscient-to-exhaustible}
+\end{agdalisting}
+
+Our focus here is on those types for which omniscience \emph{does} hold,
+which includes the (ordered) finite types.
 Perhaps surprisingly, it is not \emph{only} finite types which are exhaustible.
 Certain infinite types can be
 exhaustible~\cite{escardoInfiniteSetsThat2007}, but an exploration of that is
 beyond the scope of this work.
 
-Omniscience and exhaustibility are not interchangeable: every omniscient type is
-exhaustible, but the converse is not true.
-Conceptually, omniscience needs some kind of ordering on the underlying type.
-This is because omniscience returns a candidate satisfying the given predicate:
-there is no requirement, though, that only one element in the underlying type
-satisfies the decidable predicate.
-As a result, omniscience needs some way to choose among all possible candidates:
-this is the ``order'' we are referring to.
-This is also the same ``order'' that we referred to when talking about the
-finiteness predicates: all ordered predicates (in
-Figure~\ref{finite-classification}) imply omniscience, whereas the unordered
-predicates only imply exhaustibility.
+All of the finiteness predicates imply exhaustibility.
+To prove that fact we'll just show that the Kuratowski finite types are
+exhaustible: since it's the weakest predicate, and can be derived from all the
+others.
 \begin{lemma}
-  Omniscience implies exhaustibility
-\end{lemma}
-\begin{proof}
-  \todo{proof here}
-\end{proof}
+  Kuratowski finiteness implies exhaustibility.
+\end{lemma} \todo{Proof?}
+Manifest enumerability is similarly the weakest of the ordered predicates, so we
+will prove here that it implies omniscience.
+\begin{lemma}
+  Manifest enumerability implies omniscience.
+\end{lemma} \todo{proof?}
 
-\begin{lemma}
-  If exhaustibility implies omniscience, then the axiom of choice holds
-\end{lemma}
-\begin{proof}
-  \todo{proof here}
-\end{proof}
-
-And the relation to the finiteness predicates is straightforward: all of the
-finiteness predicates we have seen imply exhaustibility, and all of the ordered
-finiteness predicates imply omniscience.
-We can prove this by showing exhaustibility and omniscience for the weakest
-candidate of finiteness predicates.
-\begin{lemma}
-  Kuratowski finiteness implies exhaustibility
-\end{lemma}
-\begin{lemma}
-  Manifest enumerability implies omniscience
-\end{lemma}
-
-Finally, we can get around the order requirement for prop-valued predicates for
-omniscience.
-\begin{lemma}
-  Omniscience and exhaustibility coincide for prop-valued predicates.
-\end{lemma}
+Finally, there is a form of omniscience which works with Kuratowski finiteness:
+propositional omniscience.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{prop-omniscient}
+\end{agdalisting}
+By truncating the returned \AgdaDatatype{\ensuremath{\Sigma}} we obviate the
+need for 
 \section{Countdown}
+The Countdown problem~\cite{huttonCountdownProblem2002} is a well-known puzzle
+in functional programming (which was apparently turned into a TV show).
+As a running example in this paper, we will produce a verified program which
+lists all solutions to a given countdown puzzle: here we will briefly explain
+the game and our strategy for solving it.
+
+The idea behind countdown is simple: given a list of numbers, contestants must
+construct an arithmetic expression (using a small set of functions) using some
+or all of the numbers, to reach some target.
+Here's an example puzzle:
+\begin{gather*}
+  \boxed{1} \boxed{3} \boxed{7} \boxed{10} \boxed{25} \boxed{50} \\
+  \boxed{765} \tag{Target}
+\end{gather*}
+We'll allow the use of \(+\), \(-\), \(\times\), and \(\div\).
+The answer is at the bottom of this page\footnotemark.
+
+\footnotetext{\rotatebox[origin=c]{180}{Answer: \(3 \times (7 \times (50 - 10) - 25)\)}}
+
+Our strategy for finding solutions to a given puzzle is to describe precisely
+the type of solutions to a puzzle, and then show that that type is finite.
+So what is a ``solution'' to a countdown puzzle?
+Broadly, it has two parts:
+\begin{description}
+  \item[A Transformation] from a list of numbers to an expression.
+  \item[A Predicate] showing that the expression is valid and evaluates to the
+    target.
+\end{description}
+The first part is described in Figure~\ref{countdown-transform}.
+
+\input{figures/countdown-transformation}
+
+This transformation has four steps.
+First (Fig.~\ref{countdown-selection}) we have to pick which numbers we include
+in our solution.
+We will need to show there are finitely many ways to filter \(n\) numbers.
+
+Secondly (Fig.~\ref{countdown-permutation}) we have to permute the chosen
+numbers.
+The representation for a permutation is a little trickier to envision: proving
+that it's finite is trickier still.
+We will need to rely on some of the more involved lemmas later on for this
+problem.
+
+The third step (Fig.~\ref{countdown-operators}) is a vector of length \(n\) of finite objects (in this case operators
+chosen from \(+\), \(\times\), \(-\), and \(\div\)).
+Although it is complicated slightly by the fact that the \(n\) in this
+\(n\)-tuple is dependent on the amount of numbers we let through in the filter
+in step one.
+(in terms of types, that means we'll need a \(\Sigma\) rather than a
+\(\times\), explanations of which are forthcoming).
+
+Finally (Fig.~\ref{countdown-parens}), we have to parenthesise the expression in
+a certain way.
+This can be encapsulated by a binary tree with a certain number of leaves:
+proving that that is finite is tricky again.
+
+Once we have proven that there are finitely many transformations for a list of
+numbers, we will then have to filter them down to those transformations which
+are valid, and evaluate to the target.
+This amounts to proving that the decidable subset of a finite set is also
+finite.
+
+Finally, we will also want to optimise our solutions and solver: for this we
+will remove equivalent expressions, which can be accomplished with quotients.
 We have already introduced and described countdown: in this section, we will
 fill in the remaining parts of the solver, glue the pieces together, and show
 how the finiteness proofs can assist us to write the solver.

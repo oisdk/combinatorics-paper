@@ -55,8 +55,14 @@ open import Cubical.HITs.S1 using (S¹)
 
 𝒦ᶠ⟨S¹⟩ : 𝒦ᶠ S¹
 𝒦ᶠ⟨S¹⟩ = ℰ⇒𝒦 ℰ⟨S¹⟩
-
-∥ℰ∥⇔𝒦 : ∥ ℰ A ∥ ⇔ 𝒦ᶠ A
+∥ℰ∥⇔𝒦 :
+\end{code}
+%<*manifest-enum-kuratowski>
+\begin{code}
+ ∥ ℰ A ∥ ⇔ 𝒦ᶠ A
+\end{code}
+%</manifest-enum-kuratowski>
+\begin{code}
 ∥ℰ∥⇔𝒦 .fun = PropTrunc.rec isProp𝒦ᶠ ℰ⇒𝒦
 ∥ℰ∥⇔𝒦 .inv = 𝒦ᶠ⇒∥ℰ∥
 ∥ℰ∥⇔𝒦 .leftInv x = squash _ x
@@ -85,16 +91,17 @@ open import Relation.Nullary.Decidable.Properties
 open import Relation.Nullary.Omniscience
 open import HITs.PropositionalTruncation.Properties
 
-𝒦ᶠ⇒Exhaustible : ∀ {p} → 𝒦ᶠ A → Exhaustible p A
+private variable p : Level
+
+𝒦ᶠ⇒Exhaustible : 𝒦ᶠ A → Exhaustible p A
 𝒦ᶠ⇒Exhaustible K P? =
   ∣ ◻? P? (K .fst)
     ∣yes⇒ (λ ◻Pxs x → recompute (P? x) (P∈◇ x (K .fst) (K .snd x) ◻Pxs))
     ∣no⇒ λ ¬◻Pxs ∀P → ¬◻Pxs (map-◻ ∀P (K .fst))
 
-private variable p : Level
 
-𝒦ᶠ⇒∣Omniscient∣ : {P : A → Type p} → 𝒦ᶠ A → Decidable P → Dec ∥ ∃ P ∥
-𝒦ᶠ⇒∣Omniscient∣ K P? =
+𝒦ᶠ⇒Prop-Omniscient : 𝒦ᶠ A → Prop-Omniscient p A
+𝒦ᶠ⇒Prop-Omniscient K P? =
   PropTrunc.rec
     (isPropDec squash)
     (map-dec ∣_∣ refute-trunc ∘ λ xs → ℰ⇒Omniscient xs P?)

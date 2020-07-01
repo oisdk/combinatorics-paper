@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Relation.Nullary.Decidable.Properties where
@@ -10,6 +11,17 @@ open import HLevels
 open import Data.Empty.Properties using (isProp¬)
 open import Data.Unit
 open import Data.Empty
+
+\end{code}
+%<*dec-double-neg-elim>
+\begin{code}
+Dec→DoubleNegElim : (A : Type a) → Dec A → ¬ ¬ A → A
+Dec→DoubleNegElim A (yes p)  _       = p
+Dec→DoubleNegElim A (no ¬p)  contra  = ⊥-elim (contra ¬p)
+\end{code}
+%</dec-double-neg-elim>
+\begin{code}
+
 
 Dec→Stable : ∀ {ℓ} (A : Type ℓ) → Dec A → Stable A
 Dec→Stable A (yes x) = λ _ → x
@@ -27,3 +39,4 @@ True (no  _) = ⊥
 
 toWitness : {x : Dec A} → True x → A
 toWitness {x = yes p} _ = p
+\end{code}

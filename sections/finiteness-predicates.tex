@@ -960,6 +960,9 @@ Other definitions of \(\agdacal{K}\) exist (such as the one in
 the free join semilattice more obvious.
 We have included such a definition in our formalisation, and proven it
 equivalent to the one above.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Algebra/Construct/Free/Semilattice/Direct.tex]{direct-def}
+\end{agdalisting}
 
 Next, we need a way to say that an entire type is Kuratowski finite.
 For that, we will need to define membership of \(\agdacal{K}\).
@@ -983,26 +986,41 @@ This gives us enough to define Kuratowski finiteness.
   \end{agdalisting}
 \end{definition}
 
-In our formalisation, we have proven a number of other lemmas regarding
-Kuratowski finiteness, including the fact that
-\AgdaFunction{\ensuremath{\mathcal{K}^f}} is a mere proposition, and that the
-circle is Kuratowski finite.
-These are also provided in \citet{fruminFiniteSetsHomotopy2018}, however, and
-aren't directly relevant to what we're doing here so we won't provide the
-details of the proof.
-The key proof we will rely on for the rest of the paper is the following:
-\begin{lemma} \label{cardinal-kuratowski}
-  Cardinal finiteness is equivalent to Kuratowski finiteness over a discrete
-  set.
+While Kuratowski finiteness is something of the standard formal definition of
+finiteness, it is quite separated from the enumeration-based definitions we have
+presented so far.
+It's difficult to relate to surjections and equivalences, and requires a
+different style of proof to reason about.
+As such, we want to get \emph{away} from Kuratowski finiteness as quickly as
+possible.
+To do so we use the following lemma:
+\begin{lemma}  \label{manifest-enum-kuratowski}
+  Kuratowski finiteness is equivalent to truncated manifest enumerability.
   \begin{agdalisting}
-    \ExecuteMetaData[agda/Cardinality/Finite/Kuratowski.tex]{card-iso-kuratowski}
+    \ExecuteMetaData[agda/Cardinality/Finite/Kuratowski.tex]{manifest-enum-kuratowski}
   \end{agdalisting}
 \end{lemma}
-This proof is constructed by providing a pair of functions: one from
-\(\mathcal{C}(A)\) to \(\agdacal{K}^f(A) \times \text{Discrete}(A)\), and one the
-other way.
-This pair implies an equivalence, because both source and target are
-propositions. \todo{is it clear that this lemma is also in frumin et al?}
+\begin{proof} \todo{Does this need to be fleshed out?}
+  This proof is constructed by providing a pair of functions, to and from each
+  side of the equivalence.
+  This pair implies an equivalence, because both source and target are
+  propositions.
+  This proof, as well as its auxiliary lemmas, are also provided in
+  \citet{fruminFiniteSetsHomotopy2018}, although there the setting is HoTT
+  rather than CuTT. \todo{Make the relationship here more clear}
+\end{proof}
+By relating Kuratowski finiteness---with a full equivalence, no less---to an
+enumerated predicate, we have made it possible to talk about Kuratowski
+finiteness without interacting with the type at all.
+
+In the next section, we will explore the category of discrete Kuratowski finite
+sets.
+Under the hood, however, we will really be working with cardinal finite sets.
+We can do this in a fully rigorous way because
+Lemma~\ref{manifest-enum-kuratowski} allows us to prove the following:
+\begin{agdalisting} \label{cardinal-kuratowski}
+  \ExecuteMetaData[agda/Cardinality/Finite/Kuratowski.tex]{card-iso-kuratowski}
+\end{agdalisting}
 
 %%% Local Variables:
 %%% mode: latex

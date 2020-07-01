@@ -16,23 +16,30 @@ private
     P : A → Type p
 
 
-Omniscient Exhaustible : ∀ p {a} → Type a → Type _
+Omniscient Exhaustible Prop-Omniscient : ∀ p {a} → Type a → Type _
 \end{code}
 %<*omniscient>
 \begin{code}
-Omniscient p A = ∀ {P : A → Type p} → ((x : A) → Dec (P x)) → Dec (Σ[ x ⦂ A ] P x)
+Omniscient p A = ∀ {P : A → Type p} → (∀ x → Dec (P x)) → Dec (∃[ x ] P x)
 \end{code}
 %</omniscient>
 %<*exhaustible>
 \begin{code}
-Exhaustible p A = ∀ {P : A → Type p} → ((x : A) → Dec (P x)) → Dec ((x : A) → P x)
+Exhaustible p A = ∀ {P : A → Type p} → (∀ x → Dec (P x)) → Dec (∀ x → P x)
 \end{code}
 %</exhaustible>
+%<*omniscient-to-exhaustible>
 \begin{code}
-Omniscient→Exhaustible : ∀ {p} → Omniscient p A → Exhaustible p A
+Omniscient→Exhaustible : Omniscient p A → Exhaustible p A
 Omniscient→Exhaustible omn P? =
   map-dec
-    (λ ¬∃P x → Dec→Stable _ (P? x) (¬∃P ∘ (x ,_)))
+    (λ ¬∃P x → Dec→DoubleNegElim _ (P? x) (¬∃P ∘ (x ,_)))
     (λ ¬∃P ∀P → ¬∃P λ p → p .snd (∀P (p .fst)))
     (! (omn (! ∘ P?)))
 \end{code}
+%</omniscient-to-exhaustible>
+%<*prop-omniscient>
+\begin{code}
+Prop-Omniscient p A = ∀ {P : A → Type p} → (∀ x → Dec (P x)) → Dec ∥ ∃[ x ] P x ∥
+\end{code}
+%</prop-omniscient>
