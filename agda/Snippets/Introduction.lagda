@@ -161,6 +161,7 @@ data _⊎_ (A : Type a) (B : Type b)
 isContr : Type a → Type a
 isProp : Type a → Type a
 isSet : Type a → Type a
+isGroupoid : Type a → Type a
 \end{code}
 %<*isContr>
 \begin{code}
@@ -177,6 +178,11 @@ isProp A = (x y : A) → x ≡ y
 isSet A = (x y : A) → isProp (x ≡ y)
 \end{code}
 %</isSet>
+%<*isGroupoid>
+\begin{code}
+isGroupoid A = (x y : A) → isSet (x ≡ y)
+\end{code}
+%</isGroupoid>
 %<*fiber>
 \begin{code}
 fiber : (A → B) → B → Type _
