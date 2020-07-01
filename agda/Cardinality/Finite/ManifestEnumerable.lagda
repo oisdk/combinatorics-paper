@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
 module Cardinality.Finite.ManifestEnumerable where
@@ -22,14 +23,22 @@ module _ where
 
 module _ where
   open 𝕃
+  open import Literals.Number
+  open import Data.Nat.Literals
+  open import Data.Fin.Literals
+  open import Data.List.Syntax
 
   open import Cubical.HITs.S1 hiding (inv)
-
+\end{code}
+%<*circle-is-manifest-enum>
+\begin{code}
   ℰ⟨S¹⟩ : ℰ S¹
-  ℰ⟨S¹⟩ .fst           = base ∷ []
-  ℰ⟨S¹⟩ .snd base      = ∣ f0 , loop ∣
-  ℰ⟨S¹⟩ .snd (loop i)  =
-    isPropFamS¹ (λ x → ∥ x ∈ base ∷ [] ∥) (λ _ → squash) ∣ f0 , loop ∣ i
+  ℰ⟨S¹⟩ .fst           = [ base ]
+  ℰ⟨S¹⟩ .snd base      = ∣ 0 , refl ∣
+  ℰ⟨S¹⟩ .snd (loop i)  = squash ∣ 0 , (λ j → loop (i ∧ j)) ∣ ∣ 0 , (λ j → loop (i ∨ ~ j)) ∣ i
+\end{code}
+%</circle-is-manifest-enum>
+\begin{code}
 
   open import HITs.PropositionalTruncation.Properties
   open import Cardinality.Finite.SplitEnumerable.Inductive
@@ -67,3 +76,4 @@ module _ where
     ∣ Exists.◇? _ P? (xs .fst)
       ∣yes⇒ (λ { (n , p) → (xs .fst ! n , p)})
       ∣no⇒ (λ { ¬P∈xs (x , p) → refute-trunc ¬P∈xs (map₂ (flip (subst _) p ∘ sym) ∥$∥ xs .snd x)  })
+\end{code}

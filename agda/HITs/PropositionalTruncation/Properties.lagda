@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
 module HITs.PropositionalTruncation.Properties where
@@ -7,10 +8,15 @@ open import Prelude
 
 refute-trunc : ¬ A → ¬ ∥ A ∥
 refute-trunc = rec isProp⊥
-
+\end{code}
+%<*recompute>
+\begin{code}
 recompute : Dec A → ∥ A ∥ → A
-recompute (yes p) _ = p
-recompute (no ¬p) p = ⊥-elim (rec isProp⊥ ¬p p)
+recompute (yes p)  _  = p
+recompute (no ¬p)  p  = ⊥-elim (rec isProp⊥ ¬p p)
+\end{code}
+%</recompute>
+\begin{code}
 
 open import HITs.PropositionalTruncation.Sugar
 
@@ -22,3 +28,4 @@ bij-iso A↔B .leftInv  x = squash _ x
 
 bij-eq : A ↔ B → ∥ A ∥ ≡ ∥ B ∥
 bij-eq = isoToPath ∘ bij-iso
+\end{code}

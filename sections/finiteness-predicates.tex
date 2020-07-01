@@ -807,29 +807,33 @@ didn't just tell us that some element was in the support list, they told us
 From the position we were able to derive decidable equality: that position is
 precisely what's hidden in manifest enumerability.
 
-And indeed this means that the circle is manifestly enumerable:
-\begin{lemma}
-  The circle \(S^1\) is manifestly enumerable.
-\end{lemma}
-\begin{proof}
-  The support list firstly is a list containing the point constructor for the
-  circle.
-  Since the cover proof is truncated, we need only consider the point
-  constructors of the circle: as such, the cover proof is essentially the same
-  as the one for \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}(\top)\).
-\end{proof}
+And indeed this means that the circle is manifestly enumerable. \todo{This uses
+  a bunch of cubical primitives!}
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Cardinality/Finite/ManifestEnumerable.tex]{circle-is-manifest-enum}
+\end{agdalisting}
 \subsection{Surjections}
-We already say that split enumerability was the listed form of a split
-surjection: manifest enumerability is the listed form of a proper surjection.
-\begin{definition}[Surjections] \label{surjections}
-  We define proper surjections (not split surjections) here \cite[definition
-  4.6.1]{hottbook}.
-  \begin{alignat}{3}
-    &\text{surj}(f)             &&\coloneqq \Pi(y : B) , \lVert \text{fib}_f(y) \rVert \label{surj-eqn} \\
-    &A \twoheadrightarrow B     &&\coloneqq \Sigma (f : A \rightarrow B) , \text{surj}(f) \label{surj-arrow-eqn}
-  \end{alignat}
-\end{definition}
-\begin{lemma}
+We already saw that split enumerability was the listed form of a split
+surjection: what we didn't explain was why the word ``split'' was placed before
+surjection.
+In the presence of higher homotopies than sets, split surjections are actually
+\emph{not} a satisfactory definition of surjection.
+And we are most certainly in the presence of higher homotopies: just moments ago
+we were introduced to the circle.
+In these cases, the following definition of surjections is
+preferred~\cite[definition 4.6.1]{hottbook}:
+\begin{multicols}{2}
+  \begin{agdalisting} \label{surj-eqn}
+    \ExecuteMetaData[agda/Function/Surjective/Base.tex]{surjective}
+  \end{agdalisting} \columnbreak
+  \begin{agdalisting} \label{surj-arrow-eqn}
+    \ExecuteMetaData[agda/Function/Surjective/Base.tex]{surjection}
+  \end{agdalisting}
+\end{multicols}
+
+Much in the same way that split enumerability were split surjections, our new
+predicate of manifest enumerability corresponds to the proper surjections.
+\begin{lemma} \todo{to agda}
   Manifest enumerability is equivalent to a surjection from a finite prefix of
   the natural numbers.
   \begin{equation}
@@ -864,47 +868,34 @@ surjection: manifest enumerability is the listed form of a proper surjection.
 \subsection{Relation To Split Enumerability}
 It is trivially easy to construct a proof that any split enumerable type is
 manifest enumerable: we simply truncate the membership proof.
-Going the other was requires us to extract a non-truncated proof from a
-truncated one.
-This proof relies on the following lemma:
-\begin{lemma}
-  We can ``recompute'' a truncated proof given a decision over a proof of the
-  same type.
-  \begin{equation}
-    \frac{\lVert A \rVert \; \; \; \mathbf{Dec}(A)}{A}
-  \end{equation}
-\end{lemma}
-\todo{proof}
-% \begin{proof} \
-%   We proceed by case-analysis over the decision over \(A\).
-%   In the case where \(A\) is proven, we are done.
-%   In the case where \(A\) is disproven, we use lemma~\ref{prop-refute} to
-%   derive impossibility.
-% \end{proof}
-
+Going the other way is more difficult, as we need to extract the membership
+proof from under a truncation.
+We do know what we need, however: the key difference between manifest
+enumerability and split enumerability is that the latter implied decidable
+equality.
+So that's the missing piece we should require in order to go from one to the
+other:
 \begin{lemma} \label{manifest-enum-to-split-enum}
   A manifestly enumerable type with decidable equality is split enumerable.
 \end{lemma}
-\begin{proof}
-  The only difference between manifest enumerability and split enumerability is
-  the membership proof: therefor our goal for this proof is to construct a
-  function of the following type:
-  \begin{equation}
-    \lVert x \in \mathit{xs} \rVert \rightarrow x \in \mathit{xs}
-  \end{equation}
-  Given decidable equality over the type of \(x\).
 
-  We do this using the previous recompute lemma: that tells us that all we need
-  to construct is a decision for \(x \in \mathit{xs}\), and it will be able to
-  derive the proof itself.
-  Such a decision procedure is not difficult to construct: for any value \(x\)
-  and list \(\mathit{xs}\), we proceed through the list \(\mathit{xs}\), testing
-  if \(x\) is equal to any of its contents.
-  If it is, we return that we have proven the goal, and that \(x\) is indeed
-  present in \(\mathit{xs}\).
-  Otherwise, we know that \(x\) cannot be in \(\mathit{xs}\) (since we've tested
-  every value), so we return that the goal has been disproven.
-\end{proof}
+Now that we know what extra bit of information we are allowed use in this proof,
+the path forward becomes a little more clear.
+In terms of the actual conversion function, the support list will stay the same,
+and only the return type of the cover proof needs to change: from
+\(\AgdaDatatype{\(\lVert\)}\;x\;\AgdaFunction{\(\in\)}\;\mathit{xs}\;\AgdaDatatype{\(\rVert\)}\)
+to \(x\;\AgdaFunction{\(\in\)}\;\mathit{xs}\).
+
+That can be accomplished with the help of the following function:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/HITs/PropositionalTruncation/Properties.tex]{recompute}
+\end{agdalisting}
+Given a decision procedure for some type, and a propositionally truncated value
+of that type, we can construct an element of the type.
+
+In the case of \(x\;\AgdaFunction{\(\in\)}\;\mathit{xs}\) we can construct a
+decision procedure for membership of a list, since we already have decidable
+equality on the elements of the list, proving our obligation.
 \section{Kuratowski Finiteness} \label{kuratowski} \todo{better intro}
 The one big missing definition of finiteness to cover is \emph{Kuratowski}
 finiteness.
