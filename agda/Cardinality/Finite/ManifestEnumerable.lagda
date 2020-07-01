@@ -28,18 +28,21 @@ module _ where
   open import Data.Fin.Literals
   open import Data.List.Syntax
 
-  open import Cubical.HITs.S1 hiding (inv)
-  open import Cubical.HITs.S1.Properties
+  open import Cubical.HITs.S1 hiding (inv; isConnectedS¹)
 
-  s1-connected-display :
+  private
+    module S1ConnectedDisplay where
+      import Cubical.HITs.S1.Properties as S1Properties
 \end{code}
 %<*s1-connected>
 \begin{code}
-   (s : S¹) → ∥ base ≡ s ∥
+      isConnectedS¹ : (s : S¹) → ∥ base ≡ s ∥
 \end{code}
 %</s1-connected>
 \begin{code}
-  s1-connected-display = isConnectedS¹
+      isConnectedS¹ = S1Properties.isConnectedS¹
+
+  open import Cubical.HITs.S1.Properties
   ∥map∥ = _∥$∥_
 \end{code}
 %<*circle-is-manifest-enum>
