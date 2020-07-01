@@ -11,7 +11,14 @@ open import HLevels
 open import Level
 open import Path
 
-Discrete→isSet : Discrete A → isSet A
+Discrete→isSet :
+\end{code}
+%<*discrete-isset>
+\begin{code}
+  Discrete A → isSet A
+\end{code}
+%</discrete-isset>
+\begin{code}
 Discrete→isSet d = Stable≡→isSet (λ x y → Dec→Stable (x ≡ y) (d x y))
 
 isPropDiscrete :

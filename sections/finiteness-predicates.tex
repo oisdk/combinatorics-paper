@@ -495,23 +495,13 @@ information-containing proofs into mere propositions.
 Put another way, a proof of type \proptrunc{A}
 is a proof that some \(A\) exists, without revealing \emph{which} \(A\).
 
-To actually use values of this type we have the following two eliminators:
-\begin{multicols}{2} \null \vfill
-  \begin{agdalisting} \label{elim-prop}
-    \ExecuteMetaData[agda/HITs/PropositionalTruncation/Display.tex]{rec-prop-trunc}
-  \end{agdalisting} \vfill \null \columnbreak \null \vfill
-  \begin{agdalisting} \label{elim-prop-coh}
-    \ExecuteMetaData[agda/HITs/PropositionalTruncation/Display.tex]{rec-prop-trunc-set}
-  \end{agdalisting} \vfill \null
-\end{multicols} \noindent
-While these are not the only eliminators available for \proptrunc{A}, they are
-the only ones we will use in this paper.
-The first says we can eliminate into any proposition: interestingly, this allows
+To actually use values of this type we have the following eliminator:
+\begin{agdalisting} \label{elim-prop}
+  \ExecuteMetaData[agda/HITs/PropositionalTruncation/Display.tex]{rec-prop-trunc}
+\end{agdalisting}
+This says that we can eliminate into any proposition: interestingly, this allows
 us to define a monad instance for \AgdaDatatype{\(\lVert \_ \rVert\)}, meaning
-we can use things like do-notation.
-The second says we can eliminate into a set as long as the function we use
-doesn't care about which value it's given: formally, \(f\) in this example has
-to be ``coherently constant'' \cite{krausGeneralUniversalProperty2015}.
+we can use things like do-notation. \todo{Bit more on do-notation etc?}
 
 With this, we can define cardinal finiteness:
 \begin{definition}[Cardinal Finiteness]
@@ -525,16 +515,94 @@ With this, we can define cardinal finiteness:
 \subsection{Deriving Uniquely-Determined Quantities}
 At first glance, it might seem that we lose any useful properties we could
 derive from \(\AgdaDatatype{\ensuremath{\mathcal{B}}}\).
-Luckily, this is not the case: we will show here how to use the eliminators from
-propositional truncation (Equations \ref{elim-prop} and \ref{elim-prop-coh}) to
-use to of our already-proven derivations from \AgdaFunction{\ensuremath{\mathcal{B}}}
-on \AgdaFunction{\ensuremath{\mathcal{C}}}. \todo{rephrase?}
-
-The following two lemmas are proven in
+Luckily, this is not the case: we will show here how to derive decidable
+equality (Lemma~\ref{cardinal-finite-discrete}) and cardinality
+(Lemma~\ref{card-finite-cardinality}) out from under the
+truncation.\todo{Rephrase?}
+Those two lemmas are proven in
 \cite{yorgeyCombinatorialSpeciesLabelled2014} (Proposition 2.4.9 and 2.4.10,
 respectively), in much the same way as we have done here.
 Our contribution for this section is simply the formalisation.
-\begin{lemma}
+
+First we'll show that decidable equality carries over from manifest Bishop
+finiteness.
+Before we do, note that the fact that we can do this says something interesting
+about propositional truncation: it has computational, or algorithmic, content.
+That is in contrast to other ways to ``truncate'' types: \(\neg \neg P\), for
+instance, is a way to provide a ``proof'' of \(P\) without revealing anything
+about \(P\) in MLTT.
+No matter how much we prove that a function from \(P\) doesn't care about which
+\(P\) it got, though, we can never extract any kind of algorithm or computation
+from \(\neg \neg P\). \todo{Is this true? It certainly seems true...}
+\begin{lemma} \label{cardinal-finite-discrete}
+  Any cardinal-finite set has decidable equality.
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{card-discrete}
+  \end{agdalisting}
+\end{lemma}
+\begin{proof}
+We already know that manifest Bishop finiteness implies decidable equality
+\todo{ref here}; to apply that proof to cardinal finiteness we'll use the
+eliminator in Equation~\ref{elim-prop}.
+Our task, in other words, is to prove the following:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Relation/Nullary/Discrete/Properties.tex]{is-prop-discrete}
+\end{agdalisting}
+
+To show that this type is a proposition we must show that any two given members
+of the type are equal, i.e. we are given two proofs of decidable equality on
+\(A\) and we must show that they are equal.
+Remember that \(\AgdaFunction{Discrete}\;A\) is a function of two arguments
+returning a \AgdaDatatype{Dec} of whether those two arguments are equal or not.
+\todo{ref for wherever this definition was}
+By function extensionality, to prove that that is a proposition we have to prove
+that \(\AgdaDatatype{Dec}\;(\agdaequiv{x}{y})\) is a proposition.
+This proof requires that we show that the payload of each of the constructors
+(\AgdaInductiveConstructor{yes} and \AgdaInductiveConstructor{no}) are
+propositions.
+\AgdaInductiveConstructor{no}'s payload is
+\(\agdaequiv{x}{y}\rightarrow\agdabot\), which is a
+proposition because \agdabot\; is a proposition.
+
+\AgdaInductiveConstructor{yes} is a little more interesting: its payload is
+\agdaequiv{x}{y}.
+How can we prove that the path between \(x\) and \(y\) is a proposition?
+It turns out that there is a class of types for which all paths are
+propositions: the \emph{sets}.
+\begin{agdalisting} \label{isSet}
+  \ExecuteMetaData[agda/Snippets/Introduction.tex]{isSet}
+\end{agdalisting}
+This is the next homotopy level up from the propositions (Equation~\ref{isProp}).
+More importantly, there is an important theorem relating to sets which
+\emph{also} relates to decidable equality: Hedberg's theorem
+\cite{hedbergCoherenceTheoremMartinLof1998}.
+This tells us that any type with decidable equality is a set.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Relation/Nullary/Discrete/Properties.tex]{discrete-isset}
+\end{agdalisting}
+And of course we know that \(A\) here has decidable equality: we were just given
+two proofs of that fact at the beginning of this proof!
+
+This suffices to prove that decidable equality is itself a proposition, and
+therefore that we can apply Equation~\ref{elim-prop} and the proof that bishop
+finiteness implies decidable equality to cardinal finiteness, proving our goal.
+\end{proof}
+
+The next thing we can derive from underneath the truncation in cardinal
+finiteness is a natural number representing the actual cardinality of the finite
+type.
+Of course \agdambb{N} isn't a proposition, so the eliminator in
+equation~\ref{elim-prop} won't work for us here.
+Instead we will use the following:
+\begin{agdalisting} \label{elim-prop-coh}
+  \ExecuteMetaData[agda/HITs/PropositionalTruncation/Display.tex]{rec-prop-trunc-set}
+\end{agdalisting}
+This says that we can eliminate into a set as long as the function we use
+doesn't care about which value it's given: formally, \(f\) in this example has
+to be ``coherently constant'' \cite{krausGeneralUniversalProperty2015}.
+
+With that, we can move on to the proof:
+\begin{lemma} \label{card-finite-cardinality}
   Given a cardinally finite type, we can derive the type's cardinality, as well
   as a propositionally truncated proof of equivalence with \AgdaDatatype{Fin}s of
   the same cardinality.
@@ -576,115 +644,33 @@ Our contribution for this section is simply the formalisation.
     \frac{(n :\;\AgdaDatatype{\ensuremath{\mathbb{N}}}) \; \; \; (p : \AgdaDatatype{Fin}\;n\;\AgdaFunction{\ensuremath{\simeq}}\;A) \; \; \;
       (m :\;\AgdaDatatype{\ensuremath{\mathbb{N}}}) \; \; \; (q : \AgdaDatatype{Fin}\;m\;\AgdaFunction{\ensuremath{\simeq}}\;A)
     }{
-      n\;\AgdaFunction{\ensuremath{\equiv}}\;m
+      \agdaequiv{n}{m}
     }
   \end{equation}
   Given univalence we have \(\AgdaDatatype{Fin}\;n \;\AgdaFunction{\ensuremath{\equiv}}\; \AgdaDatatype{Fin}\;m\),
   and the rest of our task is to prove:
   \begin{equation}
-    \frac{\AgdaDatatype{Fin}\;n\;\AgdaDatatype{\ensuremath{\equiv}}\;\AgdaDatatype{Fin}\;m}{n \equiv m}
+    \frac{\agdaequiv{\AgdaDatatype{Fin}\;n}{\AgdaDatatype{Fin}\;m}}{\agdaequiv{n}{m}}
   \end{equation}
 
-  This is a well-known chestnut in dependently-typed programming, and one that
+  This is a well-known puzzle in dependently-typed programming, and one that
   has a surprisingly tricky and complex proof.
   We do not include it here, since it has already been explored elsewhere, but
   it is present in our formalisation.
 \end{proof}
 
-Another proof that carries over from manifest Bishop finiteness is decidable
-equality.
-This demonstrates an interesting aspect of propositional truncation: it can
-contain computational information.
-That is in contrast to other ways to ``truncate'' types: \(\neg \neg P\), for
-instance, is a way to provide a ``proof'' of \(P\) without revealing anything
-about \(P\) in MLTT.
-No matter how much we prove that a function from \(P\) doesn't care about which
-\(P\) it got, though, we can never extract any kind of algorithm or computation
-from \(\neg \neg P\). \todo{Is this true? It certainly seems true...}
-
-Here we'll briefly show how to extract ``computation'' from under a
-propositional truncation.
-\begin{lemma} \label{cardinal-finite-discrete}
-  Any cardinal-finite set has decidable equality.
-\end{lemma}
-\begin{proof}
-We can extract plenty of computation from under propositional truncation as long
-as we prove the thing we're extracting is a proposition (Equation~\ref{elim-prop}). 
-Our task, in other words, is to prove the following:
-\begin{agdalisting}
-  \ExecuteMetaData[agda/Relation/Nullary/Discrete/Properties.tex]{is-prop-discrete}
-\end{agdalisting}
-
-To show that this type is a proposition we must show that any two given members
-of the type are equal, i.e. we are given two proofs of decidable equality on
-\(A\) and we must show that they are equal.
-Remember that \(\AgdaFunction{Discrete}\;A\) is a function of two arguments
-returning a \AgdaDatatype{Dec} of whether those two arguments are equal or not.
-\todo{ref for wherever this definition was}
-By function extensionality, to prove that that is a proposition we have to prove
-that \(\AgdaDatatype{Dec}\;(\agdaequiv{x}{y})\) is a proposition.
-This proof requires that we show that the payload of each of the constructors
-(\AgdaInductiveConstructor{yes} and \AgdaInductiveConstructor{no}) are
-propositions.
-\AgdaInductiveConstructor{no}'s payload is
-\(\agdaequiv{x}{y}\rightarrow\agdabot\), which is a
-proposition because \agdabot\; is a proposition.
-
-\AgdaInductiveConstructor{yes} is a little more interesting: its payload is
-\agdaequiv{x}{y}.
-How can we prove that the path between \(x\) and \(y\) is a proposition?
-It turns out that there is a class of types for which all paths are
-propositions: the \emph{sets}.
-\begin{agdalisting} \label{isSet}
-  \ExecuteMetaData[agda/Snippets/Introduction.tex]{isSet}
-\end{agdalisting}
-This is the next homotopy level up from the propositions (Equation~\ref{isProp}).
-More importantly, there is an important theorem relating to sets which
-\emph{also} relates to decidable equality: Hedberg's theorem
-\cite{hedbergCoherenceTheoremMartinLof1998}.
-\begin{theorem}[Hedberg's Theorem]
-  Any type with decidable equality is a set.
-\end{theorem} \noindent
-And of course we know that \(A\) here has decidable equality: we were just given
-two proofs of that fact at the beginning of this proof!
-\end{proof}
-\subsection{Restrictiveness}
-So far our explorations into finiteness predicates have pushed us in the
-direction of ``less informative'': however, as mentioned in the introduction, we
-can \emph{also} ask how \emph{restrictive} certain predicates are.
-Since split enumerability and manifest Bishop finiteness imply each other we
-know that there can be no type which satisfies one but not the other.
-We also know that manifest Bishop finiteness implies cardinal finiteness, but we
-do \emph{not} have a function in the other direction:
-\begin{equation}
-  \agdacal{C}\;A\rightarrow\agdacal{B}\;A
-\end{equation}
-So the question arises naturally: is there a cardinally finite type which is
-\emph{not} manifest Bishop finite?
-
-It turns out the answer is no!
-We can prove the following statement:
-\begin{agdalisting}
-  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{no-gap-card-bishop}
-\end{agdalisting}
-We use the fact that \agdabot\; is itself a proposition to eliminate from under
-the truncation.
-\begin{agdalisting}
-  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{no-gap-card-bishop-proof}
-\end{agdalisting}
-
-This tells us that manifest bishop finiteness, cardinal finiteness, and split
-enumerability all refer to the same class of types.
 \subsection{Going from Cardinal Finiteness to Manifest Bishop Finiteness}
 We know of course that we can convert any proof of manifest Bishop finiteness to
 a proof of Cardinal finiteness: it's just the truncation function
 \AgdaInductiveConstructor{\(\lvert \_ \rvert\)}.
 It's the other direction which presents a difficulty:
 \begin{theorem} \label{cardinal-to-manifest-bishop}
-  Any cardinal finite type with a total order is Bishop finite.
+  Any cardinal finite type with a total order is Bishop finite. \todo{Figure out
+    how to put a type here}
 \end{theorem}
+\begin{proof}
 The proof for this particular theorem is quite involved in the formalisation, so
-we only give its sketch here.
+we only give its sketch here \todo{ref to formalisation}.
 
 Our strategy will be to \emph{sort} the support list of the proof for Bishop
 finiteness, and then prove that the sorting function is coherently constant,
@@ -692,15 +678,18 @@ thereby satisfying the eliminator in Equation~\ref{elim-prop-coh}.
 We need to show, in other words, that sorting two support lists from proofs of
 manifest Bishop finiteness on the same type with the same order always returns
 the same result.
-The sort we use is a standard insertion sort:
+For simplicity's sake we will use insertion sort:
+
+\begin{minipage}{\linewidth}
 \begin{multicols}{2}
   \begin{agdalisting}
     \ExecuteMetaData[agda/Data/List/Sort.tex]{insert}
-  \end{agdalisting} \columnbreak \null \vfill \null \vfill
+  \end{agdalisting} \columnbreak \vfill \null \vfill
   \begin{agdalisting}
     \ExecuteMetaData[agda/Data/List/Sort.tex]{insertion-sort}
   \end{agdalisting} \vfill \null
-\end{multicols} \vspace{-\baselineskip} \noindent
+\end{multicols}
+\end{minipage} \noindent
 And we prove that \AgdaFunction{sort} produces a list which is sorted, and a
 permutation of its input.
 \begin{multicols}{2}
@@ -711,10 +700,13 @@ permutation of its input.
     \ExecuteMetaData[agda/Data/List/Sort.tex]{sort-perm}
   \end{agdalisting}
 \end{multicols} \vspace{-\baselineskip}
-We've introduced permutations here: we take their definition from
-\cite{danielssonBagEquivalenceProofRelevant2012}.
-Two lists are permutations of each other if their membership proofs are all
-equivalent.
+We've introduced two new types here: \AgdaFunction{Sorted} is a predicate
+enforcing that the given list is sorted, and
+\AgdaFunction{\(\leftrightsquigarrow\)} is a permutation relation between two
+lists.
+We take the definition of permutations from
+\cite{danielssonBagEquivalenceProofRelevant2012}: two lists are permutations of
+each other if their membership proofs are all equivalent.
 \begin{agdalisting}
   \ExecuteMetaData[agda/Data/List/Relation/Binary/Permutation.tex]{perm-def}
 \end{agdalisting}
@@ -743,18 +735,50 @@ each other this is enough to prove that \AgdaFunction{sort} is coherently
 constant, and therefore can eliminate from within a truncation.
 The second component of the output pair (the cover proof) follows quite
 naturally from the definition of permutations.
-\section{Manifest Enumerability} \label{manifest-enumerability}
-We have now explored quite far in the direction of restricting information:
-indeed, cardinal finiteness, a mere proposition, has the minimal amount of
-information a predicate can have.
-What we haven't seen, however, is a predicate with a different domain to the
-others.
-Since manifest Bishop finiteness and split enumerability have equal strength
-\todo{ref here}, and since we've shown that there is no type which is cardinal
-finite but not manifest Bishop finite, we haven't explored any of the
-``restrictiveness'' axis from Figure~\ref{finite-classification}.
+\end{proof}
+\subsection{Restrictiveness}
+So far our explorations into finiteness predicates have pushed us in the
+direction of ``less informative'': however, as mentioned in the introduction, we
+can \emph{also} ask how \emph{restrictive} certain predicates are.
+Since split enumerability and manifest Bishop finiteness imply each other we
+know that there can be no type which satisfies one but not the other.
+We also know that manifest Bishop finiteness implies cardinal finiteness, but we
+do \emph{not} have a function in the other direction:
+\begin{equation} \label{c-to-b}
+  \agdacal{C}\;A\rightarrow\agdacal{B}\;A
+\end{equation} \todo{Solve the mystery of the mathcal difference for C and B}
+So the question arises naturally: is there a cardinally finite type which is
+\emph{not} manifest Bishop finite?
 
-What we're looking for is a type which is in some sense finite, but doesn't
+It turns out the answer is no!
+The proof of this fact is relatively short:
+\begin{agdalisting} \label{no-gap-card-bishop}
+  \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{no-gap-card-bishop}
+\end{agdalisting}
+We can apply the function of type \(\agdacal{B}\;A\rightarrow\agdabot\)
+(i.e. \(\AgdaFunction{\(\neg\)}\;\agdacal{B}\;A\)) to the value of type
+\(\AgdaDatatype{\(\lVert\)}\;\agdacal{B}\;A\;\AgdaDatatype{\(\rVert\)}\) (i.e.
+\(\agdacal{C}\;A\)) using Equation~\ref{elim-prop}, since \agdabot\;is itself a
+proposition.
+This tells us that manifest bishop finiteness, cardinal finiteness, and split
+enumerability all refer to the same class of types.
+
+Interestingly, while we cannot construct a function with the type in
+Equation~\ref{c-to-b}, it does exist \emph{classically}.
+In fact we can derive it from Equation~\ref{no-gap-card-bishop} using
+straightforward applications of De Morgan's laws:
+\begin{align*}
+   &\; \neg (\agdacal{C}\;A \times \neg\; \agdacal{B}\;A) \\
+  =&\; \neg\; \agdacal{C}\;A + \neg \neg\; \agdacal{B}\;A \\
+  =&\; \neg\; \agdacal{C}\;A + \agdacal{B}\;A \\
+  =&\; \agdacal{C}\;A \rightarrow \agdacal{B}\;A
+\end{align*}
+\section{Manifest Enumerability} \label{manifest-enumerability}
+Given that we have just proven that all of our finiteness predicates apply to
+the same types, the natural next step is to try find a predicate which applies
+to a different class of types.
+Let's first talk about what this new class of types might look like:
+what we're looking for is a type which is in some sense finite, but doesn't
 conform to any of the predicates we've seen so far.
 The \emph{circle} is such a type:
 \begin{agdalisting}\label{circle-def}
@@ -786,6 +810,7 @@ From this it's clear that all of the previous predicates are restricted to sets,
 and can't include types like the circle.
 
 But the type certainly \emph{seems} finite!
+It has finitely many points, for instance.
 In order to explore the ``restrictiveness'' axis in
 Figure~\ref{finite-classification}, then, we'll need to construct a predicate
 which admits the circle.
@@ -807,10 +832,14 @@ didn't just tell us that some element was in the support list, they told us
 From the position we were able to derive decidable equality: that position is
 precisely what's hidden in manifest enumerability.
 
-And indeed this means that the circle is manifestly enumerable. \todo{This uses
-  a bunch of cubical primitives!}
+And indeed this means that the circle is manifestly enumerable.
 \begin{agdalisting}
   \ExecuteMetaData[agda/Cardinality/Finite/ManifestEnumerable.tex]{circle-is-manifest-enum}
+\end{agdalisting}
+We use a lemma here, proven in the Cubical Agda library, that
+\AgdaDatatype{S\(^1\)} is \emph{connected}:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Cardinality/Finite/ManifestEnumerable.tex]{s1-connected}
 \end{agdalisting}
 \subsection{Surjections}
 We already saw that split enumerability was the listed form of a split

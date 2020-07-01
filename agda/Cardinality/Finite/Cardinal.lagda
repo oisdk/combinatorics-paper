@@ -29,13 +29,9 @@ open import Data.Fin
 %<*no-gap-card-bishop>
 \begin{code}
 ¬⟨𝒞⋂ℬᶜ⟩ : ¬ Σ[ A ⦂ Type a ] 𝒞 A × ¬ ℬ A
-\end{code}
-%</no-gap-card-bishop>
-%<*no-gap-card-bishop-proof>
-\begin{code}
 ¬⟨𝒞⋂ℬᶜ⟩ (_ , c , ¬b) = rec isProp⊥ ¬b c
 \end{code}
-%</no-gap-card-bishop-proof>
+%</no-gap-card-bishop>
 %<*refute-trunc-pair>
 \begin{code}
 ¬⟨∥A∥×¬A⟩ : ¬ ∥ A ∥ × ¬ A
@@ -101,10 +97,16 @@ xs ∥×∥ ys = do
   x ← xs
   y ← ys
   ∣ x |×| y ∣
+
+𝒞⇒Discrete :
 \end{code}
 %</times-clos-impl>
+%<*card-discrete>
 \begin{code}
-𝒞⇒Discrete : 𝒞 A → Discrete A
+ 𝒞 A → Discrete A
+\end{code}
+%</card-discrete>
+\begin{code}
 𝒞⇒Discrete = rec isPropDiscrete (ℰ!⇒Discrete ∘ 𝕃⇔ℒ⟨ℰ!⟩ .fun ∘ ℬ⇒ℰ!)
 
 open import Data.Sigma.Properties
@@ -203,17 +205,18 @@ module _ {a b} {A : Type a} {B : Type b} where
 
 open import Relation.Binary
 open import Data.List.Relation.Binary.Permutation
+perm-ℬ :
 \end{code}
 %<*perm-bish>
 \begin{code}
-perm-ℬ : (xs ys : ℬ A) → xs .fst ↭ ys .fst
+ (xs ys : ℬ A) → xs .fst ↭ ys .fst
+\end{code}
+%</perm-bish>
+\begin{code}
 perm-ℬ xs ys  x .fun  _    = ys  .snd x .fst
 perm-ℬ xs ys  x .inv  _    = xs  .snd x .fst
 perm-ℬ xs ys  x .rightInv  = ys  .snd x .snd
 perm-ℬ xs ys  x .leftInv   = xs  .snd x .snd
-\end{code}
-%</perm-bish>
-\begin{code}
 
 module _ {e r} {E : Type e} (totalOrder : TotalOrder E r) where
   open import Data.List.Sort totalOrder

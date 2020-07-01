@@ -29,13 +29,24 @@ module _ where
   open import Data.List.Syntax
 
   open import Cubical.HITs.S1 hiding (inv)
+  open import Cubical.HITs.S1.Properties
+
+  s1-connected-display :
+\end{code}
+%<*s1-connected>
+\begin{code}
+   (s : S¹) → ∥ base ≡ s ∥
+\end{code}
+%</s1-connected>
+\begin{code}
+  s1-connected-display = isConnectedS¹
+  ∥map∥ = _∥$∥_
 \end{code}
 %<*circle-is-manifest-enum>
 \begin{code}
   ℰ⟨S¹⟩ : ℰ S¹
-  ℰ⟨S¹⟩ .fst           = [ base ]
-  ℰ⟨S¹⟩ .snd base      = ∣ 0 , refl ∣
-  ℰ⟨S¹⟩ .snd (loop i)  = squash ∣ 0 , (λ j → loop (i ∧ j)) ∣ ∣ 0 , (λ j → loop (i ∨ ~ j)) ∣ i
+  ℰ⟨S¹⟩ .fst  = [ base ]
+  ℰ⟨S¹⟩ .snd  = ∥map∥ (0 ,_) ∘ isConnectedS¹
 \end{code}
 %</circle-is-manifest-enum>
 \begin{code}
