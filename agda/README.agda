@@ -235,7 +235,7 @@ import Relation.Nullary.Omniscience using (Exhaustible)
 import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒Exhaustible)
 import Relation.Nullary.Omniscience using (Omniscient→Exhaustible)
 import Cardinality.Finite.ManifestEnumerable using (ℰ⇒Omniscient)
-import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒∣Omniscient∣)
+import Cardinality.Finite.Kuratowski using (𝒦ᶠ⇒Prop-Omniscient)
 
 import Data.Pauli using (Pauli)
 import Data.Pauli using (assoc-·)

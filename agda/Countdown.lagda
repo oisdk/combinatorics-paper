@@ -1,5 +1,5 @@
 \begin{code}
-{-# OPTIONS --cubical --postfix-projections #-}
+{-# OPTIONS --cubical --postfix-projections --safe #-}
 
 module Countdown where
 
