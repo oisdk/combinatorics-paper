@@ -202,14 +202,16 @@ As a running example in this paper, we will produce a verified program which
 lists all solutions to a given countdown puzzle: here we will briefly explain
 the game and our strategy for solving it.
 
+\input{figures/countdown-transformation}
+
 The idea behind countdown is simple: given a list of numbers, contestants must
 construct an arithmetic expression (using a small set of functions) using some
 or all of the numbers, to reach some target.
 Here's an example puzzle:
-\begin{gather*}
-  \boxed{1} \boxed{3} \boxed{7} \boxed{10} \boxed{25} \boxed{50} \\
-  \boxed{765} \tag{Target}
-\end{gather*}
+\begin{displayquote}
+  Using some or all of the numbers 1, 3, 7, 10, 25, and 50 (using each at most
+  once), construct an expression which equals 765.
+\end{displayquote}
 We'll allow the use of \(+\), \(-\), \(\times\), and \(\div\).
 The answer is at the bottom of this page\footnotemark.
 
@@ -226,7 +228,6 @@ Broadly, it has two parts:
 \end{description}
 The first part is described in Figure~\ref{countdown-transform}.
 
-\input{figures/countdown-transformation}
 
 This transformation has four steps.
 First (Fig.~\ref{countdown-selection}) we have to pick which numbers we include
@@ -264,10 +265,24 @@ will remove equivalent expressions, which can be accomplished with quotients.
 We have already introduced and described countdown: in this section, we will
 fill in the remaining parts of the solver, glue the pieces together, and show
 how the finiteness proofs can assist us to write the solver.
+\subsection{Finite Vectors}
+We'll start with a simple example: for both the selection
+(Fig.~\ref{countdown-selection}) and operators (Fig.~\ref{countdown-operators})
+section, all we need to show is that a vector of some finite type is itself
+finite.
+To describe which elements to keep from an \(n\)-element list, so instance, we
+only need a vector of Booleans of length \(n\).
+Similarly, to pick \(n\) operators requires us only to provide a vector of \(n\)
+operators.
+And we can prove in a straightforward way that a vector of finite things is
+itself finite.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Countdown.tex]{vec-fin}
+\end{agdalisting}
 \subsection{Finite Permutations}
-The first step of the transformation we will represent as a finite object is a
-\emph{permutation}: once we choose the numbers we're going to use for the
-candidate for the solution, we have to order them in some way.
+A more complex, and interesting, step of the transformation is the first step
+(Fig.~\ref{countdown-permutation}), where we need to specify the permutation to
+apply to the chosen numbers.
 
 Our first attempt at representing permutations might look something like this:
 \begin{agdalisting}
@@ -404,33 +419,10 @@ The algorithm itself is quite similar to stack-based parsing algorithms.
 \begin{agdalisting}
   \ExecuteMetaData[agda/Dyck.tex]{from-dyck}
 \end{agdalisting}
-\subsection{Filtering to Correct Expressions}
 \subsection{Putting It All Together}
+At this point we have each of the four components of the transformation defined.
+\subsection{Filtering to Correct Expressions}
 \section{Automating Proofs}
-One use for above constructions is the automation of certain proofs.
-In \cite{firsovDependentlyTypedProgramming2015}, which uses a similar approach
-to ours, the \(\AgdaDatatype{Pauli}\) group is used as an example.
-\ExecuteMetaData[agda/Data/Pauli.tex]{def}
-As \(\AgdaDatatype{Pauli}\) has 4 constructors, \(n\)-ary functions on
-\(\AgdaDatatype{Pauli}\) may require up to \(4^n\) cases, making even simple
-proofs prohibitively verbose.
-
-The alternative is to derive the things we need from omniscience, itself derived
-from a finiteness predicate.
-For proof search, the procedure is a well-known one in Agda
-\cite{devrieseBrightSideType2011}: we ask for the result of a decision procedure
-as an \emph{instance argument}, which will demand computation during
-typechecking.
-Our addition to this technique is a way to handle multiple arguments based on
-fully level-polymorphic dependent currying and uncurrying, building on 
-\cite{allaisGenericLevelPolymorphic2019}.
-\ExecuteMetaData[agda/Data/Pauli.tex]{assoc-prf}
-
-Finally, we can derive decidable equality on functions over finite types.
-We can also use functions in our proof search.
-Here, for instance, is an automated procedure which finds the
-\(\AgdaFunction{not}\) function on \(\mathbf{Bool}\), given a specification.
-\ExecuteMetaData[agda/Data/Pauli.tex]{not-spec}
 
 %%% Local Variables:
 %%% mode: latex

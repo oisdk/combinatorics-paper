@@ -23,7 +23,7 @@
 %                   \  /
 %                    \/
 %                   765
-\begin{wrapfigure}{R}[\marginparwidth]{8.3cm}
+\begin{wrapfigure}[23]{r}[1.1\marginparwidth]{7.8cm}\vspace{-1.5\baselineskip}
   \tikzset{>=Triangle[open]}
   \begin{tikzpicture}
     \node (o1)  at (-1, 1.5) { 1} ;
@@ -95,10 +95,10 @@
     \draw[->] (r280) to[out=-90, in=90] (r255) ;
     \draw[->] (r40)  to[out=-90, in=90] (r280) ;
 
-    \node at (6, 0.7) {\parbox{2.2cm}{\subcaption{Selection  \hfill \; \label{countdown-selection}}}} ;
-    \node at (6,-0.8) {\parbox{2.2cm}{\subcaption{Permutation\hfill \; \label{countdown-permutation}}}} ;
-    \node at (6,-2.3) {\parbox{2.2cm}{\subcaption{Operators  \hfill \; \label{countdown-operators}}}} ;
-    \node at (6,-5.3) {\parbox{2.2cm}{\subcaption{Parentheses\hfill \; \label{countdown-parens}}}} ;
+    \node at (5.6, 0.9) {\parbox{2.2cm}{\subcaption{Selection  \hfill \; \label{countdown-selection}}}} ;
+    \node at (5.6,-0.7) {\parbox{2.2cm}{\subcaption{Permutation\hfill \; \label{countdown-permutation}}}} ;
+    \node at (5.6,-2.2) {\parbox{2.2cm}{\subcaption{Operators  \hfill \; \label{countdown-operators}}}} ;
+    \node at (5.6,-5) {\parbox{2.2cm}{\subcaption{Parentheses\hfill \; \label{countdown-parens}}}} ;
   \end{tikzpicture}
   \caption{The components of a transformation which makes up a Countdown
     candidate solution}
