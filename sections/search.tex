@@ -279,6 +279,11 @@ itself finite.
 \begin{agdalisting}
   \ExecuteMetaData[agda/Countdown.tex]{vec-fin}
 \end{agdalisting}
+We've already shown that there are finitely many booleans, the fact that there
+are finitely many operators is similarly simple to prove:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Countdown.tex]{op-fin}
+\end{agdalisting}
 \subsection{Finite Permutations}
 A more complex, and interesting, step of the transformation is the first step
 (Fig.~\ref{countdown-permutation}), where we need to specify the permutation to
@@ -421,6 +426,16 @@ The algorithm itself is quite similar to stack-based parsing algorithms.
 \end{agdalisting}
 \subsection{Putting It All Together}
 At this point we have each of the four components of the transformation defined.
+From this we can define what an expression is:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Countdown.tex]{expr-def}
+\end{agdalisting}
+Notice that we don't allow expressions with no numbers.
+
+The proof that this type is finite mirrors its definition closely:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Countdown.tex]{expr-finite}
+\end{agdalisting}
 \subsection{Filtering to Correct Expressions}
 \section{Automating Proofs}
 

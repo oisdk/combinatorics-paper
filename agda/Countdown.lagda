@@ -65,11 +65,31 @@ Perm (suc n)  = Fin (suc n) × Perm n
 \end{code}
 %</perm-def>
 \begin{code}
+
+private
+  variable ns : List ℕ
+
 count : Subseq n → ℕ
 count = foldr′ (λ x xs → bool 0 1 x + xs) 0
 
 Comb : ℕ → Type₀
 Comb n = Σ[ s ⦂ Subseq n ] Perm (count s)
+
+\end{code}
+%<*expr-def>
+\begin{code}
+ExprTree : ℕ → Type₀
+ExprTree zero     = ⊥
+ExprTree (suc n)  = Dyck 0 n × Vec Op n
+
+Expr : List ℕ → Type₀
+Expr ns = Σ[ s ⦂ Subseq (length ns) ] let m = count s in Perm m × ExprTree m
+\end{code}
+%</expr-def>
+\begin{code}
+
+-- Σ[ c ⦂ Comb (length ns) ] (ExprTree (count (fst c)))
+
 
 open import Cardinality.Finite.SplitEnumerable
 open import Cardinality.Finite.SplitEnumerable.Inductive
@@ -118,12 +138,6 @@ import Data.Unit.UniversePolymorphic as Poly
 ℰ!⟨Perm⟩ {n = suc n  } = ℰ!⟨Fin⟩ |×| ℰ!⟨Perm⟩
 \end{code}
 %</perm-fin>
-\begin{code}
-
-ℰ!⟨Comb⟩ : ℰ! (Comb n)
-ℰ!⟨Comb⟩ = ℰ!⟨Subseq⟩ |Σ| λ _ → ℰ!⟨Perm⟩
-
-\end{code}
 %<*op-fin>
 \begin{code}
 ℰ!⟨Op⟩ : ℰ! Op
@@ -153,23 +167,23 @@ runPerm {n = suc n} (fst₁ , snd₁) (x , xs) = insert x fst₁ (runPerm snd₁
 runComb : (xs : List A) → (c : Comb (length xs)) → Vec A (count (c .fst))
 runComb xs (-′s , perm) = runPerm perm (runSubseq xs -′s)
 
-ExprTree : ℕ → Type₀
-ExprTree zero    = ⊥
-ExprTree (suc n) = Dyck 0 n × Vec Op n
-
+\end{code}
+%<*expr-finite>
+\begin{code}
 ℰ!⟨ExprTree⟩ : ℰ! (ExprTree n)
-ℰ!⟨ExprTree⟩ {n = zero} = ℰ!⟨⊥⟩
+ℰ!⟨ExprTree⟩ {n = zero } = ℰ!⟨⊥⟩
 ℰ!⟨ExprTree⟩ {n = suc n} = ℰ!⟨Dyck⟩ |×| ℰ!⟨Vec⟩ ℰ!⟨Op⟩
 
-Expr : ℕ → Type₀
-Expr n = Σ[ c ⦂ Comb n ] (ExprTree (count (fst c)))
+ℰ!⟨Expr⟩ : ℰ! (Expr ns)
+ℰ!⟨Expr⟩ = ℰ!⟨Subseq⟩ |Σ| λ _ → ℰ!⟨Perm⟩ |×| ℰ!⟨ExprTree⟩
+\end{code}
+%</expr-finite>
+\begin{code}
 
-ℰ!⟨Expr⟩ : ℰ! (Expr n)
-ℰ!⟨Expr⟩ = ℰ!⟨Comb⟩ |Σ| λ _ → ℰ!⟨ExprTree⟩
+buildExpr : (xs : List ℕ) → Expr xs → Tree Op ℕ
+buildExpr xs (subseq , rest) with count subseq | runSubseq xs subseq
+buildExpr xs (subseq , (perm , tree , ops)) | suc n | ys = fromDyck tree ops (runPerm perm ys)
 
-buildExpr : (xs : List ℕ) → Expr (length xs) → Tree Op ℕ
-buildExpr xs (comb , tree) with count (comb .fst) | runComb xs comb
-buildExpr xs (comb , (tree , ops)) | suc n | ys = fromDyck tree ops ys
 
 ÷′′ : ℕ → ℕ → ℕ
 ÷′′ m zero = zero
@@ -218,7 +232,7 @@ filter p [] = []
 filter p (x ∷ xs) = if p x then x ∷ filter p xs else filter p xs
 
 example : List Disp
-example = map dispTree (take 1 (filter (λ e → runTree e == 765) (map (buildExpr nums) (ℰ!⟨Expr⟩ .fst))))
+example = map dispTree (take 1 (filter (λ e → runTree e == 765) (map (buildExpr nums) (ℰ!⟨Expr⟩ {ns = nums} .fst))))
   where
   nums = (1 ∷ 3 ∷ 7 ∷ 10 ∷ 25 ∷ 50 ∷ [])
 
