@@ -189,8 +189,12 @@ propositional omniscience.
 \begin{agdalisting}
   \ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{prop-omniscient}
 \end{agdalisting}
-By truncating the returned \AgdaDatatype{\ensuremath{\Sigma}} we obviate the
-need for 
+By truncating the returned \AgdaDatatype{\ensuremath{\Sigma}} we don't reveal
+which \(A\) we've chosen which satisfies the predicate: this means that it can
+be pulled out of the Kuratowski finite subset without issue.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Cardinality/Finite/Kuratowski.tex]{kuratowski-prop-omniscient}
+\end{agdalisting}
 \section{Countdown}
 The Countdown problem~\cite{huttonCountdownProblem2002} is a well-known puzzle
 in functional programming (which was apparently turned into a TV show).

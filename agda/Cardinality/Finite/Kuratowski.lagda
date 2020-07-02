@@ -99,7 +99,9 @@ private variable p : Level
     ∣yes⇒ (λ ◻Pxs x → recompute (P? x) (P∈◇ x (K .fst) (K .snd x) ◻Pxs))
     ∣no⇒ λ ¬◻Pxs ∀P → ¬◻Pxs (map-◻ ∀P (K .fst))
 
-
+\end{code}
+%<*kuratowski-prop-omniscient>
+\begin{code}
 𝒦ᶠ⇒Prop-Omniscient : 𝒦ᶠ A → Prop-Omniscient p A
 𝒦ᶠ⇒Prop-Omniscient K P? =
   PropTrunc.rec
@@ -107,3 +109,4 @@ private variable p : Level
     (map-dec ∣_∣ refute-trunc ∘ λ xs → ℰ⇒Omniscient xs P?)
     (𝒦ᶠ⇒∥ℰ∥ K)
 \end{code}
+%</kuratowski-prop-omniscient>
