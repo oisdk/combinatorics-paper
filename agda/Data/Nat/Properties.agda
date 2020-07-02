@@ -3,7 +3,7 @@
 module Data.Nat.Properties where
 
 open import Data.Nat.Base
-import Agda.Builtin.Nat as Nat
+open import Agda.Builtin.Nat using () renaming (_<_ to _<ᴮ_; _==_ to _≡ᴮ_) public
 open import Prelude
 open import Cubical.Data.Nat using (caseNat; znots; snotz; injSuc) public
 
@@ -11,7 +11,7 @@ pred : ℕ → ℕ
 pred (suc n) = n
 pred zero = zero
 
-correct-== : ∀ n m → Reflects (n ≡ m) (n Nat.== m)
+correct-== : ∀ n m → Reflects (n ≡ m) (n ≡ᴮ m)
 correct-== zero zero = ofʸ refl
 correct-== zero (suc m) = ofⁿ znots
 correct-== (suc n) zero = ofⁿ snotz
@@ -19,7 +19,7 @@ correct-== (suc n) (suc m) =
   map-reflects (cong suc) (λ contra prf  → contra (cong pred prf)) (correct-== n m)
 
 discreteℕ : Discrete ℕ
-discreteℕ n m .does = n Nat.== m
+discreteℕ n m .does = n ≡ᴮ m
 discreteℕ n m .why  = correct-== n m
 
 isSetℕ : isSet ℕ
@@ -37,8 +37,13 @@ isSetℕ = Discrete→isSet discreteℕ
 +-comm x zero = +-idʳ x
 +-comm x (suc y) = +-suc x y ; cong suc (+-comm x y)
 
+infix 4 _<_
 _<_ : ℕ → ℕ → Type₀
-n < m = T (n Nat.< m)
+n < m = T (n <ᴮ m)
+
+_≤ᴮ_ : ℕ → ℕ → Bool
+zero  ≤ᴮ m = true
+suc n ≤ᴮ m = n <ᴮ m
 
 +-assoc : ∀ x y z → (x + y) + z ≡ x + (y + z)
 +-assoc zero y z = refl

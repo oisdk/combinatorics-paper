@@ -437,6 +437,23 @@ The proof that this type is finite mirrors its definition closely:
   \ExecuteMetaData[agda/Countdown.tex]{expr-finite}
 \end{agdalisting}
 \subsection{Filtering to Correct Expressions}
+We now have a way to construct, formally, every expression we can generate from
+a given list of numbers.
+This is incomplete in two ways, however.
+Firstly, some expressions are invalid: we should not, for instance, be able to
+divide two numbers which do not divide evenly.
+Secondly, we are only interested in those expressions which actually represent
+solutions: those which evaluate to the target, in other words.
+We can write a function which tells us if both of these things hold for a given
+expression like so:
+\begin{multicols}{2}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Countdown.tex]{eval}
+  \end{agdalisting} \columnbreak
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Countdown.tex]{app-op}
+  \end{agdalisting}
+\end{multicols}
 \section{Automating Proofs}
 
 %%% Local Variables:

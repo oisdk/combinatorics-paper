@@ -7,4 +7,4 @@ open import Data.List.Membership
 open import Prelude
 
 ℰ! : Type a → Type a
-ℰ! A = Σ[ xs ⦂ List A ] Π[ x ⦂ A ] x ∈ xs
+ℰ! A = Σ[ xs ⦂ List A ] ((x : A) → x ∈ xs)

@@ -1,5 +1,5 @@
 \begin{code}
-{-# OPTIONS --cubical --postfix-projections --safe #-}
+{-# OPTIONS --cubical --postfix-projections #-}
 
 module Countdown where
 
@@ -10,10 +10,9 @@ open import Data.Fin
 open import Literals.Number
 open import Data.Nat.Literals
 open import Data.Fin.Literals
-open import Data.Nat using (_+_; _*_)
-open import Data.Nat.Properties using (pred; _<_)
+open import Data.Nat using (_+_; _*_; _∸_; _÷_; rem)
+open import Data.Nat.Properties using (pred; _≡ᴮ_; _<ᴮ_)
 open import Data.Fin.Properties using (FinToℕ)
-open import Agda.Builtin.Nat using (_-_; _==_; div-helper)
 open import Dyck
 open import Data.Vec.Iterated
 
@@ -65,16 +64,11 @@ Perm (suc n)  = Fin (suc n) × Perm n
 \end{code}
 %</perm-def>
 \begin{code}
-
 private
   variable ns : List ℕ
 
 count : Subseq n → ℕ
 count = foldr′ (λ x xs → bool 0 1 x + xs) 0
-
-Comb : ℕ → Type₀
-Comb n = Σ[ s ⦂ Subseq n ] Perm (count s)
-
 \end{code}
 %<*expr-def>
 \begin{code}
@@ -87,10 +81,6 @@ Expr ns = Σ[ s ⦂ Subseq (length ns) ] let m = count s in Perm m × ExprTree m
 \end{code}
 %</expr-def>
 \begin{code}
-
--- Σ[ c ⦂ Comb (length ns) ] (ExprTree (count (fst c)))
-
-
 open import Cardinality.Finite.SplitEnumerable
 open import Cardinality.Finite.SplitEnumerable.Inductive
 open import Cardinality.Finite.SplitEnumerable.Isomorphism
@@ -110,15 +100,18 @@ private
 \end{code}
 %</op-slop>
 \begin{code}
+open import Data.List using (tabulate)
+open import Data.List.Membership using (fin∈tabulate)
+
 ℰ!⟨Fin⟩ : ℰ! (Fin n)
-ℰ!⟨Fin⟩ = 𝕃⇔ℒ⟨ℰ!⟩ .inv (ℰ!⇔Fin↠! .inv (_ , ↠!-ident))
+ℰ!⟨Fin⟩ .fst = tabulate _ id
+ℰ!⟨Fin⟩ .snd = fin∈tabulate id
 
 import Data.Unit.UniversePolymorphic as Poly
 
 ℰ!⟨Poly⊤⟩ : ∀ {ℓ} → ℰ! (Poly.⊤ {ℓ})
 ℰ!⟨Poly⊤⟩ .fst = _ ∷ []
 ℰ!⟨Poly⊤⟩ .snd _ = f0 , refl
-
 \end{code}
 %<*vec-fin>
 \begin{code}
@@ -149,8 +142,18 @@ import Data.Unit.UniversePolymorphic as Poly
 \end{code}
 %</op-fin>
 \begin{code}
+\end{code}
+%<*expr-finite>
+\begin{code}
+ℰ!⟨ExprTree⟩ : ℰ! (ExprTree n)
+ℰ!⟨ExprTree⟩ {n = zero } = ℰ!⟨⊥⟩
+ℰ!⟨ExprTree⟩ {n = suc n} = ℰ!⟨Dyck⟩ |×| ℰ!⟨Vec⟩ ℰ!⟨Op⟩
 
-
+ℰ!⟨Expr⟩ : ℰ! (Expr ns)
+ℰ!⟨Expr⟩ = ℰ!⟨Subseq⟩ |Σ| λ _ → ℰ!⟨Perm⟩ |×| ℰ!⟨ExprTree⟩
+\end{code}
+%</expr-finite>
+\begin{code}
 runSubseq : (xs : List A) → (ys : Subseq (length xs)) → Vec A (count ys)
 runSubseq []       ys = _
 runSubseq (x ∷ xs) (false , snd₁) = runSubseq xs snd₁
@@ -164,40 +167,38 @@ runPerm : Perm n → Vec A n → Vec A n
 runPerm {n = zero} ps _ = _
 runPerm {n = suc n} (fst₁ , snd₁) (x , xs) = insert x fst₁ (runPerm snd₁ xs)
 
-runComb : (xs : List A) → (c : Comb (length xs)) → Vec A (count (c .fst))
-runComb xs (-′s , perm) = runPerm perm (runSubseq xs -′s)
-
-\end{code}
-%<*expr-finite>
-\begin{code}
-ℰ!⟨ExprTree⟩ : ℰ! (ExprTree n)
-ℰ!⟨ExprTree⟩ {n = zero } = ℰ!⟨⊥⟩
-ℰ!⟨ExprTree⟩ {n = suc n} = ℰ!⟨Dyck⟩ |×| ℰ!⟨Vec⟩ ℰ!⟨Op⟩
-
-ℰ!⟨Expr⟩ : ℰ! (Expr ns)
-ℰ!⟨Expr⟩ = ℰ!⟨Subseq⟩ |Σ| λ _ → ℰ!⟨Perm⟩ |×| ℰ!⟨ExprTree⟩
-\end{code}
-%</expr-finite>
-\begin{code}
-
 buildExpr : (xs : List ℕ) → Expr xs → Tree Op ℕ
 buildExpr xs (subseq , rest) with count subseq | runSubseq xs subseq
 buildExpr xs (subseq , (perm , tree , ops)) | suc n | ys = fromDyck tree ops (runPerm perm ys)
-
-
-÷′′ : ℕ → ℕ → ℕ
-÷′′ m zero = zero
-÷′′ m (suc n) = div-helper 0 m n m
-
-appOneOp : Op → ℕ → ℕ → ℕ
-appOneOp +′ = _+_
-appOneOp ×′ = _*_
-appOneOp -′ = _-_
-appOneOp ÷′ = ÷′′
-
-runTree : Tree Op ℕ → ℕ
-runTree (leaf x) = x
-runTree (node o xs ys) = appOneOp o (runTree xs) (runTree ys)
+\end{code}
+%<*app-op>
+\begin{code}
+_!⟨_⟩!_ : ℕ → Op → ℕ → Maybe ℕ
+x !⟨ +′ ⟩! y = just (x + y)
+x !⟨ ×′ ⟩! y = just (x * y)
+x !⟨ -′ ⟩! y =
+  if x <ᴮ y
+    then nothing
+    else just (x ∸ y)
+x !⟨ ÷′ ⟩! zero = nothing
+x !⟨ ÷′ ⟩! suc y =
+  if rem x (suc y) ≡ᴮ 0
+    then just (x ÷ suc y)
+    else nothing
+\end{code}
+%</app-op>
+%<*eval>
+\begin{code}
+eval : Tree Op ℕ → Maybe ℕ
+eval (leaf x) = just x
+eval (xs ⟨ op ⟩ ys) = do
+    x ← eval xs
+    y ← eval ys
+    x !⟨ op ⟩! y
+\end{code}
+%</eval>
+\begin{code}
+  where open import Data.Maybe.Sugar
 
 data Disp : Type₀ where
   lit : ℕ → Disp
@@ -220,7 +221,7 @@ f $! x = primForce x f
 
 dispTree : Tree Op ℕ → Disp
 dispTree (leaf x) = lit x
-dispTree (node o xs ys) = (appDispOp o $! dispTree xs) $! dispTree ys
+dispTree (xs ⟨ o ⟩ ys) = (appDispOp o $! dispTree xs) $! dispTree ys
 
 take : ℕ → List A → List A
 take zero _ = []
@@ -231,12 +232,11 @@ filter : (A → Bool) → List A → List A
 filter p [] = []
 filter p (x ∷ xs) = if p x then x ∷ filter p xs else filter p xs
 
+open import Data.Maybe using (maybe)
+
 example : List Disp
-example = map dispTree (take 1 (filter (λ e → runTree e == 765) (map (buildExpr nums) (ℰ!⟨Expr⟩ {ns = nums} .fst))))
+example = map dispTree (take 1 (filter (λ e → maybe 0 id (eval e) ≡ᴮ 765) (map (buildExpr nums) (ℰ!⟨Expr⟩ {ns = nums} .fst))))
   where
   nums = (1 ∷ 3 ∷ 7 ∷ 10 ∷ 25 ∷ 50 ∷ [])
 
--- Uncomment for a type error which contains the answer
--- prf : example ≡ (lit 0 ∷ [])
--- prf = refl
 \end{code}
