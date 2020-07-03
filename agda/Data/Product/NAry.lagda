@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --safe --cubical #-}
 
 module Data.Product.NAry where
@@ -185,3 +186,4 @@ rightInvCurryΠ (suc n) fr f = rightInvCurryΠ⁺ n fr f
 Π[ n ^ fr $] .inv = ↓Π[ n ^ fr $]
 Π[ n ^ fr $] .leftInv  = leftInvCurryΠ n fr
 Π[ n ^ fr $] .rightInv = rightInvCurryΠ n fr
+\end{code}

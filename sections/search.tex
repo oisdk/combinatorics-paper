@@ -67,53 +67,6 @@ associative, and if so return it to us.
 \end{agdalisting}
 The usefulness of which is dubious, but we will see a more interesting
 application soon.
-\section{Proof Automation And Search Techniques}
-For this prover we will not resort to reflection or similar techniques: instead,
-we will trick the type checker to do our automation for us.
-This is a relatively common technique, although not so much outside of Agda, so
-we will briefly explain it here.
-
-To understand the technique we should first notice that some proof automation
-\emph{already} happens in Agda, like the following:
-\begin{agdalisting}
-  \ExecuteMetaData[agda/Snippets/Bool.tex]{obvious}
-\end{agdalisting}
-The type checker does not require us to manually explain each step of evaluation
-of
-\(\AgdaInductiveConstructor{true}\;\AgdaFunction{∧}\;\AgdaInductiveConstructor{false}\).
-While it's not a particularly impressive example of automation, it does nonetheless
-demonstrate a principle we will exploit: closed terms will compute to a normal
-form if they're needed to type check.
-The type checker will perform \(\beta\)-reduction as much as it can.
-
-So our task is to rewrite proof obligations like the one in
-Equation~\ref{bool-assoc-auto-proof} into ones which can reduce completely. 
-As it turns out, we have already described the type of proofs which can ``reduce
-completely'': \emph{decidable} proofs.
-If we have a decision procedure over some proposition \(P\) we can run that
-decision during type checking, because the decision procedure itself is a proof
-that the decision will terminate.
-In code, we capture this idea with the following pair of functions:
-\begin{multicols}{2}
-  \begin{agdalisting}
-    \ExecuteMetaData[agda/Snippets/Bool.tex]{is-true}
-  \end{agdalisting} \columnbreak
-  \begin{agdalisting}
-    \ExecuteMetaData[agda/Snippets/Bool.tex]{from-true}
-  \end{agdalisting}
-\end{multicols}
-The first is a function which derives a type from whether a decision is
-successful or not.
-This function is important because if we use the output of this type at any
-point we will effectively force the unifier to run the decision computation.
-The second takes---as an implicit argument---an inhabitant of the type generated
-from the first, and uses it to prove that the decision can only be true, and the
-extracts the resulting proof from that decision.
-All in all, we can use it like this:
-\begin{agdalisting}
-  \ExecuteMetaData[agda/Snippets/Bool.tex]{extremely-obvious}
-\end{agdalisting}
-This technique will allow us to automatically compute any decidable predicate.
 \section{Omniscience}
 So we now know what is needed of us for proof automation: we need to take our
 proofs and make them decidable.
@@ -446,14 +399,17 @@ Secondly, we are only interested in those expressions which actually represent
 solutions: those which evaluate to the target, in other words.
 We can write a function which tells us if both of these things hold for a given
 expression like so:
-\begin{multicols}{2}
-  \begin{agdalisting}
-    \ExecuteMetaData[agda/Countdown.tex]{eval}
-  \end{agdalisting} \columnbreak
-  \begin{agdalisting}
-    \ExecuteMetaData[agda/Countdown.tex]{app-op}
-  \end{agdalisting}
-\end{multicols}
+
+\begin{minipage}{\linewidth}
+  \begin{multicols}{2}
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Countdown.tex]{eval}
+    \end{agdalisting} \columnbreak
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Countdown.tex]{app-op}
+    \end{agdalisting}
+  \end{multicols}
+\end{minipage}
 
 With this all together, we can finally write down the type of all solutions to a
 given countdown problem.
@@ -469,8 +425,189 @@ And we can apply this to a particular problem like so:
 \begin{agdalisting}
   \ExecuteMetaData[agda/Countdown.tex]{example-solution}
 \end{agdalisting}
+\section{Proof Automation}
+So we have shown now how powerful the library is for proof search: it can
+search for functions, subsets of types, products, and so on, completely
+verifiable.
+In this section we will present the more user-friendly interface to the library,
+designed to be used to automate away tedious proofs in an easy way.
+\subsection{How to make the Typechecker do Automation}
+For this prover we will not resort to reflection or similar techniques: instead,
+we will trick the type checker to do our automation for us.
+This is a relatively common technique, although not so much outside of Agda, so
+we will briefly explain it here.
 
-\section{Automating Proofs}
+To understand the technique we should first notice that some proof automation
+\emph{already} happens in Agda, like the following:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Snippets/Bool.tex]{obvious}
+\end{agdalisting}
+The type checker does not require us to manually explain each step of evaluation
+of
+\(\AgdaInductiveConstructor{true}\;\AgdaFunction{∧}\;\AgdaInductiveConstructor{false}\).
+While it's not a particularly impressive example of automation, it does nonetheless
+demonstrate a principle we will exploit: closed terms will compute to a normal
+form if they're needed to type check.
+The type checker will perform \(\beta\)-reduction as much as it can.
+
+So our task is to rewrite proof obligations like the one in
+Equation~\ref{bool-assoc-auto-proof} into ones which can reduce completely. 
+As it turns out, we have already described the type of proofs which can ``reduce
+completely'': \emph{decidable} proofs.
+If we have a decision procedure over some proposition \(P\) we can run that
+decision during type checking, because the decision procedure itself is a proof
+that the decision will terminate.
+In code, we capture this idea with the following pair of functions:
+\begin{multicols}{2}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Bool.tex]{is-true}
+  \end{agdalisting} \columnbreak
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Snippets/Bool.tex]{from-true}
+  \end{agdalisting}
+\end{multicols}
+The first is a function which derives a type from whether a decision is
+successful or not.
+This function is important because if we use the output of this type at any
+point we will effectively force the unifier to run the decision computation.
+The second takes---as an implicit argument---an inhabitant of the type generated
+from the first, and uses it to prove that the decision can only be true, and the
+extracts the resulting proof from that decision.
+All in all, we can use it like this:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Snippets/Bool.tex]{extremely-obvious}
+\end{agdalisting}
+This technique will allow us to automatically compute any decidable predicate.
+\subsection{Building an Interface}
+We will next look at a syntax and interface to this proof technique.
+It starts with the following two functions:
+
+\begin{minipage}{\linewidth}
+  \begin{multicols}{2}
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable/Search.tex]{forall-ask}
+    \end{agdalisting} \columnbreak
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable/Search.tex]{exists-ask}
+    \end{agdalisting}
+  \end{multicols}
+\end{minipage}
+Clearly they're just restatements of exhaustibility and omniscience.
+However, we can combine these functions with what we've constructed above to
+create an automation procedure for each:
+
+\begin{minipage}{\linewidth}
+  \begin{multicols}{2}
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable/Search.tex]{forall-zap}
+    \end{agdalisting} \columnbreak
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable/Search.tex]{exists-zap}
+    \end{agdalisting}
+  \end{multicols}
+\end{minipage}
+
+This automation procedure allows us to state the property succinctly, and have
+the type checker go and run the decision procedure to solve it for us.
+Here's an example of its use:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Snippets/Bool.tex]{pre-inst-proof}
+\end{agdalisting} \todo{Include counterexample stuff?}
+
+% As a quick aside, when the property is \emph{not} true, for instance:
+% \ExecuteMetaData[agda/Data/Pauli.tex]{contra}
+% Agda will fail by not finding an instance of \(\bot\).
+% The error message specifically is:
+% \begin{displayquote}
+%   \verb+No instance of type ⊥ was found in scope.+
+% \end{displayquote}
+% We can actually display a counterexample, by defining a custom empty type
+% parameterised by the counterexample itself.
+% % \ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{counterexample-def}
+% Combined with some other changes to the combinators, this will give the
+% following more helpful error message:
+% \begin{displayquote}
+%   \verb+No instance of type Counterexample X was found in scope.+
+% \end{displayquote}
+\subsection{Instances}
+One bit of cruft in the above proof is the need to specify the particular
+finiteness proof for bools.
+While this isn't any great burden in this case, it of course becomes more
+difficult in more complex circumstances.
+
+In Agda, as in Haskell, the problem of overlapping instances often presents
+itself when more complex typeclass-based machinery is used.
+While there are ways to deal with overlapping instances, it is usually better to
+avoid them altogether, which is precisely what we do in our approach.
+We provide instances for the semiring-based combinators we defined in
+\todo[noline]{reference here}
+, and require the user to provide an instance for their own type.
+We don't, for example, provide an instance that itself searches for surjections
+from other instances: this instance is not uniquely determined.
+
+After all of that, the change to our \(\AgdaFunction{∀↯}\) is simple: we just
+change the first parameter from explicit to an instance.
+% \ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{auto-inst}
+
+The change to the \(\AgdaDatatype{Pauli}\) proof of cancellation isn't
+groundbreaking at first:
+\ExecuteMetaData[agda/Data/Pauli.tex]{cancel-auto}
+But the real benefit is now we can automate proofs over \emph{tuples}, allowing
+us to prove, for instance, commutativity.
+\ExecuteMetaData[agda/Data/Pauli.tex]{comm-uncurried}
+\subsection{Generic Currying and Uncurrying}
+While we have arguably removed the bulk of the boilerplate from the automated
+proofs, there is still the case of the ugly noise of currying and uncurrying.
+In this section, we take inspiration from
+\cite{allaisGenericLevelPolymorphic2019} to develop a small interface to generic
+\(n\)-ary functions and properties.
+What we provide here differs from that work in the following ways:
+\begin{itemize}
+  \item Our generic representation can handle dependent \(\sum\) and \(\prod\)
+    types (rather than their non-dependent counterparts, \(\times\) and
+    \(\rightarrow\)).
+    This extension was necessary for our use case: it is mentioned in the paper
+    as the obvious next step. 
+  \item We implement the curry-uncurry combinators as (verified) isomorphisms.
+    Since we are in a cubical setting, this gives us equivalences between the
+    types, a feature not available in standard Agda.
+  \item We deal with implicit and instance arguments generically.
+\end{itemize}
+A full explanation of our implementation is beyond the scope of this work, but
+we will mention the key parts here.
+First, we define a function arrow generic over the application method:
+% \ExecuteMetaData[agda/Data/Product/N-ary.tex]{fun-arr}
+Then, we prove that it is isomorphic to the normal function arrow:
+% \ExecuteMetaData[agda/Data/Product/N-ary.tex]{fun-iso}
+This step will allow us to write the curry-uncurry proofs once, and then extend
+them to the three different argument forms without difficulty.
+
+We do the same with dependent function types:
+% \ExecuteMetaData[agda/Data/Product/N-ary.tex]{pi-iso}
+
+Next, we need to make our machinery for multiple arguments.
+Here we will define a generic tuple, indexed by some \(\Nat\).
+As observed in \cite{allaisGenericLevelPolymorphic2019}, it's important to
+\emph{not} implement this as an inductively defined vector, e.g.
+% \ExecuteMetaData[agda/Data/Vec.tex]{def}
+As this will not give us the correct \(\eta\)-equality we need for unification.
+\todo[noline]{Stick reference to iterated Vec definition}
+Once we have a unification-friendly vector type, we can use it to implement our
+generic (and level-polymorphic) tuples.
+% \ExecuteMetaData[agda/Data/Product/N-ary.tex]{tuple}
+We decided against \(\top\)-terminated tuples, as the actual contents of the
+tuple type are exposed in the interface.
+
+Finally, we can prove isomorphisms between the curried and uncurried versions of
+functions:
+% \ExecuteMetaData[agda/Data/Product/N-ary.tex]{curry-n-iso}
+And dependent functions:
+% \ExecuteMetaData[agda/Data/Product/N-ary.tex]{curry-n-pi-iso}
+With these combinators, we can implement the search functions in an
+arity-generic way:
+% \ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{all-nary}
+And automate away our proofs:
+\ExecuteMetaData[agda/Data/Pauli.tex]{prf-curried}
 
 %%% Local Variables:
 %%% mode: latex

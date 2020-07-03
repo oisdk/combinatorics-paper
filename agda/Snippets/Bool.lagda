@@ -4,7 +4,7 @@
 module Snippets.Bool where
 
 open import Data.Bool
-open import Prelude hiding (_∧_; Dec)
+open import Prelude hiding (_∧_)
 
 infixl 6 _∧_
 \end{code}
@@ -50,21 +50,19 @@ obvious = refl
 \begin{code}
 private
  module SumDec where
-  Dec : Type a → Type a
-  Dec A = A ⊎ (¬ A)
 \end{code}
 %<*is-true>
 \begin{code}
-  Is-True : Dec A → Type₀
-  Is-True (inl  _) = ⊤
-  Is-True (inr  _) = ⊥
+  True : Dec A → Type₀
+  True (yes  _) = ⊤
+  True (no   _) = ⊥
 \end{code}
 %</is-true>
 %<*from-true>
 \begin{code}
-  from-true :  (decision : Dec A) →
-               { _ : Is-True decision } → A
-  from-true (inl x) = x
+  toWitness :  (decision : Dec A) →
+               { _ : True decision } → A
+  toWitness (yes x) = x
 \end{code}
 %</from-true>
 \begin{code}
@@ -80,3 +78,13 @@ extremely-obvious : true ≢ false
 extremely-obvious = from-true (! (true ≟ false))
 \end{code}
 %</extremely-obvious>
+\begin{code}
+module PreInst′ where
+  open PreInst
+\end{code}
+%<*pre-inst-proof>
+\begin{code}
+  ∧-idem : ∀ x → x ∧ x ≡ x
+  ∧-idem = ∀↯ ℰ!⟨2⟩ λ x → x ∧ x ≟ x
+\end{code}
+%</pre-inst-proof>

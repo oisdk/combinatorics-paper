@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe #-}
 
 module Cardinality.Finite.SplitEnumerable.Search where
@@ -38,6 +39,46 @@ tup-inst (suc n) xs = tup-inst′ n xs
 Dec⇔ : (B ⇔ A) → Dec A → Dec B
 Dec⇔ A⇔B = ⟦yes A⇔B .inv ,no A⇔B .fun ⟧
 
+module _ {a p} {A : Type a} {P : A → Type p} where
+\end{code}
+%<*forall-ask>
+\begin{code}
+  ∀? :  ℰ! A →
+        (∀ x → Dec (P x)) →
+        Dec (∀ x → P x)
+  ∀? ℰ!⟨A⟩ = ℰ!⇒Exhaustible ℰ!⟨A⟩
+\end{code}
+%</forall-ask>
+%<*exists-ask>
+\begin{code}
+  ∃? :  ℰ! A →
+        (∀ x → Dec (P x)) →
+        Dec (∃[ x ] P x)
+  ∃? ℰ!⟨A⟩ = ℰ!⇒Omniscient ℰ!⟨A⟩
+\end{code}
+%</exists-ask>
+\begin{code}
+module PreInst {a p} {A : Type a} {P : A → Type p} where
+\end{code}
+%<*forall-zap>
+\begin{code}
+  ∀↯ :  (ℰ!⟨A⟩ : ℰ! A) →
+        (P? : ∀ x → Dec (P x)) →
+        ⦃ _ : True (∀? ℰ!⟨A⟩ P?) ⦄ →
+        ∀ x → P x
+  ∀↯ _ _ ⦃ t ⦄ = toWitness t
+\end{code}
+%</forall-zap>
+%<*exists-zap>
+\begin{code}
+  ∃↯ :  (ℰ!⟨A⟩ : ℰ! A) →
+        (P? : ∀ x → Dec (P x)) →
+        ⦃ _ : True (∃? ℰ!⟨A⟩ P?) ⦄ →
+        ∃[ x ] P x
+  ∃↯ _ _ ⦃ t ⦄ = toWitness t
+\end{code}
+%</exists-zap>
+\begin{code}
 module _ (n : ℕ)
          {ls ℓ}
          {Xs : Types n ls}
@@ -71,3 +112,4 @@ module _ (n : ℕ)
       → ⦃ _ : True (ℰ!⇒Omniscient (tup-inst n insts) (Π[ n ^ expl $] .fun P?) ) ⦄
       → Σ ⦅ Xs ⦆ P)
   ∃↯ⁿ = Π[ n ^ inst $] .inv (λ fs P? ⦃ p ⦄ → toWitness p)
+\end{code}
