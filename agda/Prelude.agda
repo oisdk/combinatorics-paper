@@ -30,3 +30,4 @@ open import Equiv public
 open import Data.Lift public
 open import Function.Biconditional public
 open import Relation.Unary public
+open import Strict public

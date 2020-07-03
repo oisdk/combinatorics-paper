@@ -3,15 +3,12 @@
 
 module Countdown where
 
-open import Prelude hiding (C)
+open import Prelude
 open import Data.List
 open import Data.Fin
 
-open import Literals.Number
-open import Data.Nat.Literals
-open import Data.Fin.Literals
 open import Data.Nat using (_+_; _*_; _∸_; _÷_; rem)
-open import Data.Nat.Properties using (pred; _≡ᴮ_; _<ᴮ_)
+open import Data.Nat.Properties using (pred; _≡ᴮ_; _<ᴮ_; discreteℕ)
 open import Data.Fin.Properties using (FinToℕ)
 open import Dyck
 open import Data.Vec.Iterated
@@ -76,8 +73,8 @@ ExprTree : ℕ → Type₀
 ExprTree zero     = ⊥
 ExprTree (suc n)  = Dyck 0 n × Vec Op n
 
-Expr : List ℕ → Type₀
-Expr ns = Σ[ s ⦂ Subseq (length ns) ] let m = count s in Perm m × ExprTree m
+Transformation : List ℕ → Type₀
+Transformation ns = Σ[ s ⦂ Subseq (length ns) ] let n = count s in Perm n × ExprTree n
 \end{code}
 %</expr-def>
 \begin{code}
@@ -88,6 +85,9 @@ open import Function.Surjective.Properties
 
 private
   module OpSlop where
+    open import Literals.Number
+    open import Data.Nat.Literals
+    open import Data.Fin.Literals
 \end{code}
 %<*op-slop>
 \begin{code}
@@ -135,10 +135,10 @@ import Data.Unit.UniversePolymorphic as Poly
 \begin{code}
 ℰ!⟨Op⟩ : ℰ! Op
 ℰ!⟨Op⟩ .fst = +′ ∷ ×′ ∷ -′ ∷ ÷′ ∷ []
-ℰ!⟨Op⟩ .snd +′  = 0 , refl
-ℰ!⟨Op⟩ .snd ×′  = 1 , refl
-ℰ!⟨Op⟩ .snd -′  = 2 , refl
-ℰ!⟨Op⟩ .snd ÷′  = 3 , refl
+ℰ!⟨Op⟩ .snd +′  = nothing , refl
+ℰ!⟨Op⟩ .snd ×′  = just nothing , refl
+ℰ!⟨Op⟩ .snd -′  = just (just nothing) , refl
+ℰ!⟨Op⟩ .snd ÷′  = just (just (just nothing)) , refl
 \end{code}
 %</op-fin>
 \begin{code}
@@ -149,8 +149,8 @@ import Data.Unit.UniversePolymorphic as Poly
 ℰ!⟨ExprTree⟩ {n = zero } = ℰ!⟨⊥⟩
 ℰ!⟨ExprTree⟩ {n = suc n} = ℰ!⟨Dyck⟩ |×| ℰ!⟨Vec⟩ ℰ!⟨Op⟩
 
-ℰ!⟨Expr⟩ : ℰ! (Expr ns)
-ℰ!⟨Expr⟩ = ℰ!⟨Subseq⟩ |Σ| λ _ → ℰ!⟨Perm⟩ |×| ℰ!⟨ExprTree⟩
+ℰ!⟨Transformation⟩ : ℰ! (Transformation ns)
+ℰ!⟨Transformation⟩ = ℰ!⟨Subseq⟩ |Σ| λ _ → ℰ!⟨Perm⟩ |×| ℰ!⟨ExprTree⟩
 \end{code}
 %</expr-finite>
 \begin{code}
@@ -167,28 +167,29 @@ runPerm : Perm n → Vec A n → Vec A n
 runPerm {n = zero} ps _ = _
 runPerm {n = suc n} (fst₁ , snd₁) (x , xs) = insert x fst₁ (runPerm snd₁ xs)
 
-buildExpr : (xs : List ℕ) → Expr xs → Tree Op ℕ
-buildExpr xs (subseq , rest) with count subseq | runSubseq xs subseq
-buildExpr xs (subseq , (perm , tree , ops)) | suc n | ys = fromDyck tree ops (runPerm perm ys)
+transform : (xs : List ℕ) → Transformation xs → Tree Op ℕ
+transform xs (subseq , rest) with count subseq | runSubseq xs subseq
+transform xs (subseq , (perm , tree , ops)) | suc n | ys = fromDyck tree ops (runPerm perm ys)
 \end{code}
 %<*app-op>
 \begin{code}
 _!⟨_⟩!_ : ℕ → Op → ℕ → Maybe ℕ
-x !⟨ +′ ⟩! y = just (x + y)
-x !⟨ ×′ ⟩! y = just (x * y)
+x !⟨ +′ ⟩! y = just $! (x + y)
+x !⟨ ×′ ⟩! y = just $! (x * y)
 x !⟨ -′ ⟩! y =
   if x <ᴮ y
     then nothing
-    else just (x ∸ y)
+    else just $! (x ∸ y)
 x !⟨ ÷′ ⟩! zero = nothing
 x !⟨ ÷′ ⟩! suc y =
   if rem x (suc y) ≡ᴮ 0
-    then just (x ÷ suc y)
+    then just $! (x ÷ suc y)
     else nothing
 \end{code}
 %</app-op>
 %<*eval>
 \begin{code}
+
 eval : Tree Op ℕ → Maybe ℕ
 eval (leaf x) = just x
 eval (xs ⟨ op ⟩ ys) = do
@@ -198,7 +199,35 @@ eval (xs ⟨ op ⟩ ys) = do
 \end{code}
 %</eval>
 \begin{code}
-  where open import Data.Maybe.Sugar
+  where
+  open import Data.Maybe.Sugar
+
+open import Data.Maybe.Properties using (discreteMaybe)
+
+Solution : List ℕ → ℕ → Type₀
+\end{code}
+%<*solution-type>
+\begin{code}
+Solution ns n = Σ[ e ⦂ Transformation ns ] (eval (transform ns e) ≡ just n)
+\end{code}
+%</solution-type>
+\begin{code}
+
+solution? : ∀ n → (e : Transformation ns) → Dec (eval (transform ns e) ≡ just n)
+solution? {ns} n e = discreteMaybe discreteℕ (eval (transform ns e)) (just n)
+
+ℰ!⟨Solutions⟩ :
+\end{code}
+%<*finite-solution>
+\begin{code}
+  ℰ! (Solution ns n)
+\end{code}
+%</finite-solution>
+\begin{code}
+ℰ!⟨Solutions⟩ {ns = ns} = filter-subobject (λ _ → isSetMaybe _ _) (solution? {ns = ns} _) (ℰ!⟨Transformation⟩ {ns = ns})
+  where
+  isSetMaybe : isSet (Maybe ℕ)
+  isSetMaybe = Discrete→isSet (discreteMaybe discreteℕ)
 
 data Disp : Type₀ where
   lit : ℕ → Disp
@@ -208,35 +237,29 @@ data Disp : Type₀ where
   _⟨÷⟩_ : Disp → Disp → Disp
 
 appDispOp : Op → Disp → Disp → Disp
-appDispOp +′  = _⟨+⟩_
+appDispOp +′ = _⟨+⟩_
 appDispOp ×′ = _⟨*⟩_
-appDispOp -′   = _⟨-⟩_
-appDispOp ÷′   = _⟨÷⟩_
-
-open import Agda.Builtin.Strict
-
-infixr 0 _$!_
-_$!_ : ∀ {a b} {A : Set a} {B : A → Set b} → (∀ x → B x) → ∀ x → B x
-f $! x = primForce x f
+appDispOp -′ = _⟨-⟩_
+appDispOp ÷′ = _⟨÷⟩_
 
 dispTree : Tree Op ℕ → Disp
-dispTree (leaf x) = lit x
+dispTree (leaf x) = lit $! x
 dispTree (xs ⟨ o ⟩ ys) = (appDispOp o $! dispTree xs) $! dispTree ys
 
-take : ℕ → List A → List A
-take zero _ = []
-take (suc n) [] = []
-take (suc n) (x ∷ xs) = x ∷ take n xs
-
-filter : (A → Bool) → List A → List A
-filter p [] = []
-filter p (x ∷ xs) = if p x then x ∷ filter p xs else filter p xs
-
-open import Data.Maybe using (maybe)
+open import Data.List.Syntax
+\end{code}
+%<*example-solution>
+\begin{code}
+exampleSolutions : ℰ! (Solution [ 1 , 3 , 7 , 10 , 25 , 50 ] 765)
+exampleSolutions = ℰ!⟨Solutions⟩
+\end{code}
+%</example-solution>
+\begin{code}
 
 example : List Disp
-example = map dispTree (take 1 (filter (λ e → maybe 0 id (eval e) ≡ᴮ 765) (map (buildExpr nums) (ℰ!⟨Expr⟩ {ns = nums} .fst))))
-  where
-  nums = (1 ∷ 3 ∷ 7 ∷ 10 ∷ 25 ∷ 50 ∷ [])
+example = map (dispTree ∘ transform [ 1 , 3 , 7 , 10 , 25 , 50 ] ∘ fst) (take 1 (fst exampleSolutions))
 
+-- Uncomment for an error which contains the solution
+-- _ : example ≡ lit 0 ∷ []
+-- _ = refl
 \end{code}

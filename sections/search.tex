@@ -454,6 +454,22 @@ expression like so:
     \ExecuteMetaData[agda/Countdown.tex]{app-op}
   \end{agdalisting}
 \end{multicols}
+
+With this all together, we can finally write down the type of all solutions to a
+given countdown problem.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Countdown.tex]{solution-type}
+\end{agdalisting}
+And, because the predicate here is decidable and a mere proposition, we can
+prove that there are finitely many solutions:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Countdown.tex]{finite-solution}
+\end{agdalisting}
+And we can apply this to a particular problem like so:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Countdown.tex]{example-solution}
+\end{agdalisting}
+
 \section{Automating Proofs}
 
 %%% Local Variables:

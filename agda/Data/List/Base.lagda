@@ -47,4 +47,9 @@ concatMap f = foldr (λ x ys → f x ++ ys) []
 
 map : (A → B) → List A → List B
 map f = foldr (λ x xs → f x ∷ xs) []
+
+take : ℕ → List A → List A
+take zero _ = []
+take (suc n) [] = []
+take (suc n) (x ∷ xs) = x ∷ take n xs
 \end{code}
