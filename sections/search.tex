@@ -542,27 +542,12 @@ And this also changes the idempotency proof to the following:
 Again, there's not any great revelation in ease of use here, but more complex
 examples really benefit.
 Especially when we build the full set of instances: any expression built out of
-
-In Agda, as in Haskell, the problem of overlapping instances often presents
-itself when more complex typeclass-based machinery is used.
-While there are ways to deal with overlapping instances, it is usually better to
-avoid them altogether, which is precisely what we do in our approach.
-We provide instances for the semiring-based combinators we defined in
-\todo[noline]{reference here}
-, and require the user to provide an instance for their own type.
-We don't, for example, provide an instance that itself searches for surjections
-from other instances: this instance is not uniquely determined.
-
-After all of that, the change to our \(\AgdaFunction{∀↯}\) is simple: we just
-change the first parameter from explicit to an instance.
-% \ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{auto-inst}
-
-The change to the \(\AgdaDatatype{Pauli}\) proof of cancellation isn't
-groundbreaking at first:
-\ExecuteMetaData[agda/Data/Pauli.tex]{cancel-auto}
-But the real benefit is now we can automate proofs over \emph{tuples}, allowing
-us to prove, for instance, commutativity.
-\ExecuteMetaData[agda/Data/Pauli.tex]{comm-uncurried}
+products and sums will automatically have an instance.
+This will allow us, for instance, to perform proof search over tuples, which
+gives us some degree of automation for proof search in tuples.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Snippets/Bool.tex]{and-comm}
+\end{agdalisting}
 \subsection{Generic Currying and Uncurrying}
 While we have arguably removed the bulk of the boilerplate from the automated
 proofs, there is still the case of the ugly noise of currying and uncurrying.

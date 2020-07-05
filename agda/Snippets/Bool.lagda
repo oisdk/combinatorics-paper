@@ -97,7 +97,10 @@ open WithInst
 ∧-idem = ∀↯ λ x → x ∧ x ≟ x
 \end{code}
 %</with-inst-proof>
+
+%<*and-comm>
 \begin{code}
 ∧-comm : ∀ x y → x ∧ y ≡ y ∧ x
 ∧-comm = curry (∀↯ (uncurry (λ x y → x ∧ y ≟ y ∧ x )))
 \end{code}
+%</and-comm>

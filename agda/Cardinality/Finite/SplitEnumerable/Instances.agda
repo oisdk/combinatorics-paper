@@ -12,6 +12,31 @@ open import Data.Tuple
 
 import Data.Unit.UniversePolymorphic as Poly
 
+-- So we can definitely do instance search for Π and Σ.
+--
+-- Problem:
+--
+-- * It interferes with instance search for → and ×.
+--
+-- module _ {a b} {A : Type a} (B : A → Type b) where
+--   Im-Type : (xs : List A) → Type (a ℓ⊔ b)
+--   Im-Type = foldr (λ x xs → ℰ! (B x) × xs) Poly.⊤
+
+--   Tup-Im-Lookup : ∀ x (xs : List A) → x ∈ xs → Im-Type xs → ℰ! (B x)
+--   Tup-Im-Lookup x (y ∷ xs) (f0   , y≡x ) (ℰ!⟨By⟩ , _) = subst (ℰ! ∘ B) y≡x ℰ!⟨By⟩
+--   Tup-Im-Lookup x (y ∷ xs) (fs n , x∈ys) (_ , ys) = Tup-Im-Lookup x xs (n , x∈ys) ys
+
+--   Tup-Im-Pi : (xs : ℰ! A) → Im-Type (xs .fst) → ∀ x → ℰ! (B x)
+--   Tup-Im-Pi xs tup x = Tup-Im-Lookup x (xs .fst) (xs .snd x) tup
+
+-- instance
+--   fin-sigma : ⦃ lhs : ℰ! A ⦄ {B : A → Type b} ⦃ rhs : Im-Type B (lhs .fst) ⦄ → ℰ! (Σ A B)
+--   fin-sigma ⦃ lhs ⦄ ⦃ rhs ⦄ = lhs |Σ| Tup-Im-Pi _ lhs rhs
+
+-- instance
+--   fin-pi : ⦃ lhs : ℰ! A ⦄ {B : A → Type b} ⦃ rhs : Im-Type B (lhs .fst) ⦄ → ℰ! ((x : A) → B x)
+--   fin-pi ⦃ lhs ⦄ ⦃ rhs ⦄ = lhs |Π| Tup-Im-Pi _ lhs rhs
+
 instance
   fin-prod : ⦃ lhs : ℰ! A ⦄ ⦃ rhs : ℰ! B ⦄ → ℰ! (A × B)
   fin-prod ⦃ lhs ⦄ ⦃ rhs ⦄ = lhs |×| rhs
