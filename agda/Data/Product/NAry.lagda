@@ -8,31 +8,54 @@ open import Prelude hiding (⊤; tt)
 open import Data.Unit.UniversePolymorphic
 open import Path.Reasoning
 
+\end{code}
+%<*levels>
+\begin{code}
 Levels : ℕ → Type₀
 Levels zero = ⊤
 Levels (suc n) = Level × Levels n
-
+\end{code}
+%</levels>
+%<*max-level>
+\begin{code}
 max-level : ∀ {n} → Levels n → Level
 max-level {zero} _ = ℓzero
-max-level {suc n} (x , xs) = x ℓ⊔ max-level xs
-
+max-level {suc n} (x , xs) =
+  x ℓ⊔ max-level xs
+\end{code}
+%</max-level>
+%<*types>
+\begin{code}
 Types : ∀ n → (ls : Levels n) → Type (ℓsuc (max-level ls))
 Types zero ls = ⊤
 Types (suc n) (l , ls) = Type l × Types n ls
-
+\end{code}
+%</types>
+%<*tuple-plus>
+\begin{code}
 ⦅_⦆⁺ : ∀ {n ls} → Types (suc n) ls → Type (max-level ls)
 ⦅_⦆⁺ {n = zero } (X , Xs) = X
 ⦅_⦆⁺ {n = suc n} (X , Xs) = X × ⦅ Xs ⦆⁺
-
+\end{code}
+%</tuple-plus>
+%<*tuple>
+\begin{code}
 ⦅_⦆ : ∀ {n ls} → Types n ls → Type (max-level ls)
 ⦅_⦆ {n = zero} _ = ⊤
 ⦅_⦆ {n = suc n} = ⦅_⦆⁺ {n = n}
-
+\end{code}
+%</tuple>
+\begin{code}
 map-types : (fn : ∀ {ℓ} → Type ℓ → Type ℓ) → ∀ {n ls} → Types n ls → Types n ls
 map-types fn {zero} xs = xs
 map-types fn {suc n} (x , xs) = fn x , map-types fn xs
-
+\end{code}
+%<*arg-form>
+\begin{code}
 data ArgForm : Type₀ where expl impl inst : ArgForm
+\end{code}
+%</arg-form>
+\begin{code}
 
 infixr 0 _[_]→_
 _[_]→_ : ∀ {ℓ₁ ℓ₂} → Type ℓ₁ → ArgForm → Type ℓ₂ → Type (ℓ₁ ℓ⊔ ℓ₂)
