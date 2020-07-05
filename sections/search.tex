@@ -514,26 +514,34 @@ Here's an example of its use:
   \ExecuteMetaData[agda/Snippets/Bool.tex]{pre-inst-proof}
 \end{agdalisting} \todo{Include counterexample stuff?}
 
-% As a quick aside, when the property is \emph{not} true, for instance:
-% \ExecuteMetaData[agda/Data/Pauli.tex]{contra}
-% Agda will fail by not finding an instance of \(\bot\).
-% The error message specifically is:
-% \begin{displayquote}
-%   \verb+No instance of type ⊥ was found in scope.+
-% \end{displayquote}
-% We can actually display a counterexample, by defining a custom empty type
-% parameterised by the counterexample itself.
-% % \ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{counterexample-def}
-% Combined with some other changes to the combinators, this will give the
-% following more helpful error message:
-% \begin{displayquote}
-%   \verb+No instance of type Counterexample X was found in scope.+
-% \end{displayquote}
 \subsection{Instances}
 One bit of cruft in the above proof is the need to specify the particular
 finiteness proof for bools.
 While this isn't any great burden in this case, it of course becomes more
 difficult in more complex circumstances.
+
+To solve this we can use Agda's instance search.
+This changes the definitions of
+our automation functions to the following:
+
+\begin{minipage}{\linewidth}
+  \begin{multicols}{2}
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable/Search.tex]{forall-zap-inst}
+    \end{agdalisting} \columnbreak
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable/Search.tex]{exists-zap-inst}
+    \end{agdalisting}
+  \end{multicols}
+\end{minipage}
+And this also changes the idempotency proof to the following:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Snippets/Bool.tex]{with-inst-proof}
+\end{agdalisting}
+
+Again, there's not any great revelation in ease of use here, but more complex
+examples really benefit.
+Especially when we build the full set of instances: any expression built out of
 
 In Agda, as in Haskell, the problem of overlapping instances often presents
 itself when more complex typeclass-based machinery is used.

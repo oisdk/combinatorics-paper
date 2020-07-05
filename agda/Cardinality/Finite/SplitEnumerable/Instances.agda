@@ -7,6 +7,10 @@ open import Cardinality.Finite.SplitEnumerable.Inductive
 open import Cardinality.Finite.ManifestBishop using (_|Π|_)
 open import Data.Fin
 open import Prelude
+open import Data.List.Membership
+open import Data.Tuple
+
+import Data.Unit.UniversePolymorphic as Poly
 
 instance
   fin-prod : ⦃ lhs : ℰ! A ⦄ ⦃ rhs : ℰ! B ⦄ → ℰ! (A × B)

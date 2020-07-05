@@ -79,6 +79,27 @@ module PreInst {a p} {A : Type a} {P : A → Type p} where
 \end{code}
 %</exists-zap>
 \begin{code}
+module WithInst {a p} {A : Type a} {P : A → Type p} where
+\end{code}
+%<*forall-zap-inst>
+\begin{code}
+  ∀↯ :  ⦃ ℰ!⟨A⟩ : ℰ! A ⦄ →
+        (P? : ∀ x → Dec (P x)) →
+        ⦃ _ : True (∀? ℰ!⟨A⟩ P?) ⦄ →
+        ∀ x → P x
+  ∀↯ _ ⦃ t ⦄ = toWitness t
+\end{code}
+%</forall-zap-inst>
+%<*exists-zap-inst>
+\begin{code}
+  ∃↯ :  ⦃ ℰ!⟨A⟩ : ℰ! A ⦄ →
+        (P? : ∀ x → Dec (P x)) →
+        ⦃ _ : True (∃? ℰ!⟨A⟩ P?) ⦄ →
+        ∃[ x ] P x
+  ∃↯ _ ⦃ t ⦄ = toWitness t
+\end{code}
+%</exists-zap-inst>
+\begin{code}
 module _ (n : ℕ)
          {ls ℓ}
          {Xs : Types n ls}

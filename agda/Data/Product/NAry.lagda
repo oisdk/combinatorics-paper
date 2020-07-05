@@ -132,6 +132,7 @@ rightInvCurry : ∀ n {ls ℓ} fr {Xs : Types n ls} {Y : Type ℓ} (f : ⦅ Xs �
               → [ n ^ fr $]↑ ([ n ^ fr $]↓ f) ≡ f
 rightInvCurry zero fr f = refl
 rightInvCurry (suc n) fr f = rightInvCurry⁺ n fr f
+
 [_^_$] : ∀ n {ls ℓ} fr {Xs : Types n ls} {Y : Type ℓ}
        → (⦅ Xs ⦆[ fr ]→ Y) ⇔ (⦅ Xs ⦆ → Y)
 [ n ^ fr $] .fun = [ n ^ fr $]↑

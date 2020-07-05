@@ -88,3 +88,16 @@ module PreInst′ where
   ∧-idem = ∀↯ ℰ!⟨2⟩ λ x → x ∧ x ≟ x
 \end{code}
 %</pre-inst-proof>
+\begin{code}
+open WithInst
+\end{code}
+%<*with-inst-proof>
+\begin{code}
+∧-idem : ∀ x → x ∧ x ≡ x
+∧-idem = ∀↯ λ x → x ∧ x ≟ x
+\end{code}
+%</with-inst-proof>
+\begin{code}
+∧-comm : ∀ x y → x ∧ y ≡ y ∧ x
+∧-comm = curry (∀↯ (uncurry (λ x y → x ∧ y ≟ y ∧ x )))
+\end{code}
