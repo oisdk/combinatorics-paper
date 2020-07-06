@@ -612,6 +612,41 @@ We will represent these three different versions with a data type:
 \begin{agdalisting}
   \ExecuteMetaData[agda/Data/Product/NAry.tex]{arg-form}
 \end{agdalisting}
+And then we can make a type for functions in the general sense: a type which has
+this sum type as a parameter.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Data/Product/NAry.tex]{generic-function}
+\end{agdalisting}
+And we can show that this is isomorphic to a normal function:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Data/Product/Nary.tex]{generic-function-iso}
+\end{agdalisting}
+
+This of course is only a representation of \emph{non}-dependent functions.
+Dependent functions are defined in a similar way:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Data/Product/NAry.tex]{pi-iso}
+\end{agdalisting}
+
+Using both of these things, we can now define a generic type for multi-argument
+functions:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Data/Product/NAry.tex]{multi-generic}
+\end{agdalisting}
+We can also define multi-argument dependent functions in a similar way.
+Similarly to how we had to define two tuple types in order to avoid the
+\(\top\)-terminated tuples, we have two definitions for multi-argument dependent
+functions.
+We only include the nonempty version here for brevity.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Data/Product/NAry.tex]{pi-arrs-plus}
+\end{agdalisting}
+
+Finally, this all allows us to define an isomorphism between generic
+multi-argument dependent functions and their uncurried forms.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Data/Product/NAry.tex]{full-iso}
+\end{agdalisting}
 
 What we provide here differs from that work in the following ways:
 \begin{itemize}

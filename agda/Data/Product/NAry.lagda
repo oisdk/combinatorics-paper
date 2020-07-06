@@ -58,12 +58,21 @@ data ArgForm : Type₀ where expl impl inst : ArgForm
 \begin{code}
 
 infixr 0 _[_]→_
-_[_]→_ : ∀ {ℓ₁ ℓ₂} → Type ℓ₁ → ArgForm → Type ℓ₂ → Type (ℓ₁ ℓ⊔ ℓ₂)
+\end{code}
+%<*generic-function>
+\begin{code}
+_[_]→_ : Type a → ArgForm → Type b → Type (a ℓ⊔ b)
 A [ expl  ]→ B =         A    → B
 A [ impl  ]→ B = {  _ :  A }  → B
 A [ inst  ]→ B = ⦃  _ :  A ⦄  → B
-
+\end{code}
+%</generic-function>
+%<*generic-function-iso>
+\begin{code}
 [_$] : ∀ form → (A [ form ]→ B) ⇔ (A → B)
+\end{code}
+%</generic-function-iso>
+\begin{code}
 [ expl $] .fun f = f
 [ impl $] .fun f x = f {x}
 [ inst $] .fun f x = f ⦃ x ⦄
@@ -78,13 +87,19 @@ A [ inst  ]→ B = ⦃  _ :  A ⦄  → B
 [ inst $] .rightInv f = refl
 
 infixr 0 pi-arr
-pi-arr : ∀ {ℓ₁ ℓ₂} → (A : Type ℓ₁) → ArgForm → (A → Type ℓ₂) → Type (ℓ₁ ℓ⊔ ℓ₂)
+pi-arr : (A : Type a) → ArgForm → (A → Type b) → Type (a ℓ⊔ b)
 pi-arr A expl B = (x : A) → B x
 pi-arr A impl B = {x : A} → B x
 pi-arr A inst B = ⦃ x : A ⦄ → B x
 
 syntax pi-arr a f (λ x → b ) = x ⦂ a Π[ f ]→ b
+\end{code}
+%<*pi-iso>
+\begin{code}
 Π[_$] : ∀ {B : A → Type b} fr → (x ⦂ A Π[ fr ]→ B x) ⇔ ((x : A) → B x)
+\end{code}
+%</pi-iso>
+\begin{code}
 Π[ expl $] .fun f = f
 Π[ impl $] .fun f x = f {x}
 Π[ inst $] .fun f x = f ⦃ x ⦄
@@ -99,14 +114,33 @@ syntax pi-arr a f (λ x → b ) = x ⦂ a Π[ f ]→ b
 Π[ inst $] .rightInv f = refl
 
 infixr 0 ⦅_⦆[_]→_
+\end{code}
+%<*multi-generic>
+\begin{code}
 ⦅_⦆[_]→_ : ∀ {n ls ℓ} → Types n ls → ArgForm → Type ℓ → Type (max-level ls ℓ⊔ ℓ)
 ⦅_⦆[_]→_ {n = zero}  Xs fr Y = Y
 ⦅_⦆[_]→_ {n = suc n} (X , Xs) fr Y = X [ fr ]→ ⦅ Xs ⦆[ fr ]→ Y
+\end{code}
+%</multi-generic>
+\begin{code}
 
 infixr 0 pi-arrs-plus
-pi-arrs-plus : ∀ {n ls ℓ} → (Xs : Types (suc n) ls) → ArgForm → (y : ⦅ Xs ⦆⁺ → Type ℓ) → Type (max-level ls ℓ⊔ ℓ)
-pi-arrs-plus {n = zero}  (X , Xs) fr Y = x ⦂ X Π[ fr ]→ Y x
-pi-arrs-plus {n = suc n} (X , Xs) fr Y = x ⦂ X Π[ fr ]→ xs ⦂⦅ Xs ⦆⁺Π[ fr ]→ Y (x , xs)
+\end{code}
+%<*pi-arrs-plus>
+\begin{code}
+pi-arrs-plus :
+  ∀ {n ls ℓ} →
+  (Xs : Types (suc n) ls) →
+  ArgForm →
+  (y : ⦅ Xs ⦆⁺ → Type ℓ) →
+  Type (max-level ls ℓ⊔ ℓ)
+pi-arrs-plus {n = zero   } (X , Xs) fr Y = x ⦂ X Π[ fr ]→ Y x
+pi-arrs-plus {n = suc n  } (X , Xs) fr Y =
+  x ⦂ X Π[ fr ]→ xs ⦂⦅ Xs ⦆⁺Π[ fr ]→ Y (x , xs)
+\end{code}
+%</pi-arrs-plus>
+\begin{code}
+
 syntax pi-arrs-plus Xs fr (λ xs → Y) = xs ⦂⦅ Xs ⦆⁺Π[ fr ]→ Y
 
 pi-arrs : ∀ {n ls ℓ} → (Xs : Types n ls) → ArgForm → (y : ⦅ Xs ⦆ → Type ℓ) → Type (max-level ls ℓ⊔ ℓ)
@@ -204,8 +238,14 @@ rightInvCurryΠ : ∀ n {ls ℓ} fr {Xs : Types n ls} {Y : ⦅ Xs ⦆ → Type �
                → ↑Π[ n ^ fr $] (↓Π[ n ^ fr $] f) ≡ f
 rightInvCurryΠ zero fr f = refl
 rightInvCurryΠ (suc n) fr f = rightInvCurryΠ⁺ n fr f
-Π[_^_$] : ∀ n {ls ℓ} fr {Xs : Types n ls} {Y : ⦅ Xs ⦆ → Type ℓ}
-        → (xs ⦂⦅ Xs ⦆Π[ fr ]→ Y xs) ⇔ ((xs : ⦅ Xs ⦆) → Y xs)
+\end{code}
+%<*full-iso>
+\begin{code}
+Π[_^_$] :  ∀ n {ls ℓ} fr {Xs : Types n ls} {Y : ⦅ Xs ⦆ → Type ℓ} →
+           (xs ⦂⦅ Xs ⦆Π[ fr ]→ Y xs) ⇔ ((xs : ⦅ Xs ⦆) → Y xs)
+\end{code}
+%</full-iso>
+\begin{code}
 Π[ n ^ fr $] .fun = ↑Π[ n ^ fr $]
 Π[ n ^ fr $] .inv = ↓Π[ n ^ fr $]
 Π[ n ^ fr $] .leftInv  = leftInvCurryΠ n fr
