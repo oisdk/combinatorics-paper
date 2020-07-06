@@ -101,10 +101,7 @@ terms of its non-constructiveness, given that it can be derived from LEM but LEM
 cannot be derived from it.
 
 Omniscience implies exhaustibility: we can use the usual rule of \todo{what is
-  this called/from again?}
-\begin{equation}
-  \neg \exists x. P(x) \iff \forall x. \neg P(x)
-\end{equation}
+  this called/from again?} \(\neg \exists x. P(x) \iff \forall x. \neg P(x) \)
 to turn omniscience for some predicate \(P\) into exhaustibility for some
 predicate \(\neg \neg P\).
 Usually we don't have double negation elimination constructively, but since
@@ -131,14 +128,12 @@ others.
 \begin{lemma}
   Kuratowski finiteness implies exhaustibility.
 \end{lemma} \todo{Proof?}
-Manifest enumerability is similarly the weakest of the ordered predicates, so we
-will prove here that it implies omniscience.
+Manifest enumerability is similarly the weakest of the ordered predicates:
 \begin{lemma}
   Manifest enumerability implies omniscience.
 \end{lemma} \todo{proof?}
 
 Finally, there is a form of omniscience which works with Kuratowski finiteness:
-propositional omniscience.
 \begin{agdalisting}
   \ExecuteMetaData[agda/Relation/Nullary/Omniscience.tex]{prop-omniscient}
 \end{agdalisting}
@@ -149,13 +144,12 @@ be pulled out of the Kuratowski finite subset without issue.
   \ExecuteMetaData[agda/Cardinality/Finite/Kuratowski.tex]{kuratowski-prop-omniscient}
 \end{agdalisting}
 \section{Countdown}
+\input{figures/countdown-transformation}
 The Countdown problem~\cite{huttonCountdownProblem2002} is a well-known puzzle
 in functional programming (which was apparently turned into a TV show).
 As a running example in this paper, we will produce a verified program which
 lists all solutions to a given countdown puzzle: here we will briefly explain
 the game and our strategy for solving it.
-
-\input{figures/countdown-transformation}
 
 The idea behind countdown is simple: given a list of numbers, contestants must
 construct an arithmetic expression (using a small set of functions) using some
@@ -548,6 +542,19 @@ gives us some degree of automation for proof search in tuples.
 \begin{agdalisting}
   \ExecuteMetaData[agda/Snippets/Bool.tex]{and-comm}
 \end{agdalisting}
+
+These instances aren't limited to non-dependent sums and products, either: for
+\(\Sigma\), for instance, we already have a proof that
+\(\AgdaFunction{\(\mathcal{E}!\)}\;A \rightarrow (\forall x \rightarrow
+\AgdaFunction{\(\mathcal{E}!\)}\;(B\;x)) \rightarrow
+\AgdaFunction{\(\mathcal{E}!\)}\;(\AgdaDatatype{\(\Sigma\)}\;A\;B)\)
+\todo{reference here}.
+Since \(A\) is finite, we can construct a finite constraint that ``\(B\) is
+finite at all points of \(A\)'', and use that to statically build our instance.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Snippets/Bool.tex]{finite-sigma-inst}
+\end{agdalisting}
+\todo{Explain ``it'' function}
 \subsection{Generic Currying and Uncurrying}
 While we have arguably removed the bulk of the boilerplate from the automated
 proofs, there is still the case of the ugly noise of currying and uncurrying.
@@ -648,53 +655,27 @@ multi-argument dependent functions and their uncurried forms.
   \ExecuteMetaData[agda/Data/Product/NAry.tex]{full-iso}
 \end{agdalisting}
 
-What we provide here differs from that work in the following ways:
-\begin{itemize}
-  \item Our generic representation can handle dependent \(\sum\) and \(\prod\)
-    types (rather than their non-dependent counterparts, \(\times\) and
-    \(\rightarrow\)).
-    This extension was necessary for our use case: it is mentioned in the paper
-    as the obvious next step. 
-  \item We implement the curry-uncurry combinators as (verified) isomorphisms.
-    Since we are in a cubical setting, this gives us equivalences between the
-    types, a feature not available in standard Agda.
-  \item We deal with implicit and instance arguments generically.
-\end{itemize}
-A full explanation of our implementation is beyond the scope of this work, but
-we will mention the key parts here.
-First, we define a function arrow generic over the application method:
-% \ExecuteMetaData[agda/Data/Product/N-ary.tex]{fun-arr}
-Then, we prove that it is isomorphic to the normal function arrow:
-% \ExecuteMetaData[agda/Data/Product/N-ary.tex]{fun-iso}
-This step will allow us to write the curry-uncurry proofs once, and then extend
-them to the three different argument forms without difficulty.
+The use of all of this is that we can take the user-supplied curried version of
+a function and transform it into a version which takes instance arguments for
+each of the types.
 
-We do the same with dependent function types:
-% \ExecuteMetaData[agda/Data/Product/N-ary.tex]{pi-iso}
+\begin{minipage}{\linewidth}
+  \begin{multicols}{2}
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable/Search.tex]{exists-q-n}
+    \end{agdalisting} \columnbreak
+    \begin{agdalisting}
+      \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable/Search.tex]{exists-zap-n}
+    \end{agdalisting}
+  \end{multicols} 
+\end{minipage}
 
-Next, we need to make our machinery for multiple arguments.
-Here we will define a generic tuple, indexed by some \(\Nat\).
-As observed in \cite{allaisGenericLevelPolymorphic2019}, it's important to
-\emph{not} implement this as an inductively defined vector, e.g.
-% \ExecuteMetaData[agda/Data/Vec.tex]{def}
-As this will not give us the correct \(\eta\)-equality we need for unification.
-\todo[noline]{Stick reference to iterated Vec definition}
-Once we have a unification-friendly vector type, we can use it to implement our
-generic (and level-polymorphic) tuples.
-% \ExecuteMetaData[agda/Data/Product/N-ary.tex]{tuple}
-We decided against \(\top\)-terminated tuples, as the actual contents of the
-tuple type are exposed in the interface.
+While the type signatures involved are complex, the usage is not.
+Finally, here is how we can automate the proof of commutativity fully:
 
-Finally, we can prove isomorphisms between the curried and uncurried versions of
-functions:
-% \ExecuteMetaData[agda/Data/Product/N-ary.tex]{curry-n-iso}
-And dependent functions:
-% \ExecuteMetaData[agda/Data/Product/N-ary.tex]{curry-n-pi-iso}
-With these combinators, we can implement the search functions in an
-arity-generic way:
-% \ExecuteMetaData[agda/Cardinality/Finite/Search.tex]{all-nary}
-And automate away our proofs:
-\ExecuteMetaData[agda/Data/Pauli.tex]{prf-curried}
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Snippets/Bool.tex]{and-comm-auto}
+\end{agdalisting}
 
 %%% Local Variables:
 %%% mode: latex

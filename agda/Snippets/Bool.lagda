@@ -97,15 +97,27 @@ open WithInst
 ∧-idem = ∀↯ λ x → x ∧ x ≟ x
 \end{code}
 %</with-inst-proof>
+\begin{code}
+module BadCurrying where
+\end{code}
 %<*and-comm>
 \begin{code}
-∧-comm : ∀ x y → x ∧ y ≡ y ∧ x
-∧-comm = curry (∀↯ (uncurry (λ x y → x ∧ y ≟ y ∧ x )))
+  ∧-comm : ∀ x y → x ∧ y ≡ y ∧ x
+  ∧-comm = curry (∀↯ (uncurry (λ x y → x ∧ y ≟ y ∧ x )))
 \end{code}
 %</and-comm>
 \begin{code}
 open import Data.Fin
-
+\end{code}
+%<*finite-sigma-inst>
+\begin{code}
 _ : ℰ! (Σ[ s ⦂ Bool ] (if s then Fin 3 else Fin 4))
 _ = it
 \end{code}
+%</finite-sigma-inst>
+%<*and-comm-auto>
+\begin{code}
+∧-comm : ∀ x y → x ∧ y ≡ y ∧ x
+∧-comm = ∀↯ⁿ 2 λ x y → x ∧ y ≟ y ∧ x
+\end{code}
+%</and-comm-auto>

@@ -113,7 +113,9 @@ module _ (n : ℕ)
        →  Dec⇔ Π[ n ^ expl $]
        ∘  Omniscient→Exhaustible (ℰ!⇒Omniscient (tup-inst n fs))
        ∘  Π[ n ^ expl $] .fun
-
+\end{code}
+%<*exists-q-n>
+\begin{code}
   ∃?ⁿ  :   ⦅ map-types ℰ! Xs ⦆[ inst ]→
            xs ⦂⦅ Xs ⦆Π[ expl ]→
            Dec (P xs) [ expl ]→
@@ -121,16 +123,21 @@ module _ (n : ℕ)
   ∃?ⁿ  =  [ n ^ inst $] .inv λ fs
        →  ℰ!⇒Omniscient (tup-inst n fs)
        ∘  Π[ n ^ expl $] .fun
-
+\end{code}
+%</exists-q-n>
+\begin{code}
   ∀↯ⁿ : insts ⦂⦅ map-types ℰ! Xs ⦆Π[ inst ]→
       ( (P? : xs ⦂⦅ Xs ⦆Π[ expl ]→ Dec (P xs))
       → ⦃ _ : True (Omniscient→Exhaustible (ℰ!⇒Omniscient (tup-inst n insts)) (Π[ n ^ expl $] .fun P?)) ⦄
       → xs ⦂⦅ Xs ⦆Π[ expl ]→ P xs)
   ∀↯ⁿ = Π[ n ^ inst $] .inv λ fs P? ⦃ p ⦄ → Π[ n ^ expl $] .inv (toWitness p)
-
+\end{code}
+%<*exists-zap-n>
+\begin{code}
   ∃↯ⁿ : insts ⦂⦅ map-types ℰ! Xs ⦆Π[ inst ]→
       ( (P? : xs ⦂⦅ Xs ⦆Π[ expl ]→ Dec (P xs))
       → ⦃ _ : True (ℰ!⇒Omniscient (tup-inst n insts) (Π[ n ^ expl $] .fun P?) ) ⦄
       → Σ ⦅ Xs ⦆ P)
   ∃↯ⁿ = Π[ n ^ inst $] .inv (λ fs P? ⦃ p ⦄ → toWitness p)
 \end{code}
+%</exists-zap-n>
