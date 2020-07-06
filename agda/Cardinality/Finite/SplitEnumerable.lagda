@@ -142,6 +142,10 @@ module _ where
    subst (λ x′ → (xᵢ , yᵢ) ∈ sup-Σ (x′ ∷ xs) ys) (sym x∈xs)
    (map (xᵢ ,_) (ys xᵢ) ◇++ cong-∈ (xᵢ ,_) (ys xᵢ) y∈ys)
 
+ ℰ!⟨Fin⟩ : ∀ {n} → ℰ! (Fin n)
+ ℰ!⟨Fin⟩ .fst = tabulate _ id
+ ℰ!⟨Fin⟩ .snd = fin∈tabulate id
+
  _|Σ|_ : ℰ! A → (∀ x → ℰ! (U x)) → ℰ! (Σ A U)
  (xs |Σ| ys) .fst = sup-Σ (xs .fst) (fst ∘ ys)
  (xs |Σ| ys) .snd (x , y) = cov-Σ x y (xs .fst) (fst ∘ ys) (xs .snd x) (ys x .snd y)

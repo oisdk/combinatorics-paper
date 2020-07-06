@@ -103,10 +103,6 @@ private
 open import Data.List using (tabulate)
 open import Data.List.Membership using (fin∈tabulate)
 
-ℰ!⟨Fin⟩ : ℰ! (Fin n)
-ℰ!⟨Fin⟩ .fst = tabulate _ id
-ℰ!⟨Fin⟩ .snd = fin∈tabulate id
-
 import Data.Unit.UniversePolymorphic as Poly
 
 ℰ!⟨Poly⊤⟩ : ∀ {ℓ} → ℰ! (Poly.⊤ {ℓ})

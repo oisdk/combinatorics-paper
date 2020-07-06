@@ -97,10 +97,15 @@ open WithInst
 ∧-idem = ∀↯ λ x → x ∧ x ≟ x
 \end{code}
 %</with-inst-proof>
-
 %<*and-comm>
 \begin{code}
 ∧-comm : ∀ x y → x ∧ y ≡ y ∧ x
 ∧-comm = curry (∀↯ (uncurry (λ x y → x ∧ y ≟ y ∧ x )))
 \end{code}
 %</and-comm>
+\begin{code}
+open import Data.Fin
+
+_ : ℰ! (Σ[ s ⦂ Bool ] (if s then Fin 3 else Fin 4))
+_ = it
+\end{code}

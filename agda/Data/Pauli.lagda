@@ -13,9 +13,6 @@ open import Cardinality.Finite.ManifestBishop
 open import Data.Fin
 open import Relation.Nullary.Decidable.Logic
 
-it : ⦃ _ : A ⦄ → A
-it ⦃ x ⦄ = x
-
 module Bools where
  infix 4 _≟_
  _≟_ : Discrete (Bool → Bool)
