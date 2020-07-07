@@ -26,6 +26,14 @@ While this initial impression is broadly true, the construction of categories in
 HoTT is unfortunately quite complex and involved (much of the following is a
 summary of \citet[chapter 9]{hottbook}).
 
+\todo{references here are tricky, need to disentangle the contributions quite
+  precisely}
+Much of this section is simply a summary of parts of \citet[chapter
+9]{hottbook}.
+The formal proofs we provide are part translation of those proofs in that
+chapter, part from \cite{iversenFredefoxCat2018}
+\cite{huProofrelevantCategoryTheory2020}, and part our own.
+
 First, we need to think about the type of objects and arrows.
 We cannot, unfortunately, leave them unrestricted: because of the potential for
 higher homotopy in HoTT types \todo{This sentence is a tongue twister}, we have
@@ -50,6 +58,7 @@ category.
 \begin{agdalisting}
   \ExecuteMetaData[agda/Categories.tex]{cat-univalence}
 \end{agdalisting}
+\section{The Category of Sets}
 
 \section{Closure}
 \todo{This is just the closure bits pulled over from the finiteness predicates
