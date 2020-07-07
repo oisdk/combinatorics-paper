@@ -19,6 +19,38 @@ generally.
 This makes it a good basis for an API for building QuickCheck-like generators,
 for example.
 \section{Categories in HoTT}
+At first glance, HoTT seems like a perfect setting for category theory: the
+univalence axiom identifies isomorphisms with equality, a useful tool for
+category theory missing from MLTT.
+While this initial impression is broadly true, the construction of categories in
+HoTT is unfortunately quite complex and involved (much of the following is a
+summary of \citet[chapter 9]{hottbook}).
+
+First, we need to think about the type of objects and arrows.
+We cannot, unfortunately, leave them unrestricted: because of the potential for
+higher homotopy in HoTT types \todo{This sentence is a tongue twister}, we have
+to restrict the type of arrows to just the sets.
+This notion: that of a category with all the usual laws such that arrows are a
+set, is called a \emph{precategory}.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Categories.tex]{precategory}
+\end{agdalisting}
+We will use long arrows to refer to morphisms within a category:
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Categories.tex]{morph-arrow}
+\end{agdalisting}
+
+From here, we can define a notion of isomorphisms.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Categories.tex]{isomorphism}
+\end{agdalisting}
+It's a condition on this type which separates the precategories from the
+categories: if it satisfies a form of univalence, it the precategory is a full
+category.
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Categories.tex]{cat-univalence}
+\end{agdalisting}
+
 \section{Closure}
 \todo{This is just the closure bits pulled over from the finiteness predicates
   section. They need to be reworked to fit in here.}

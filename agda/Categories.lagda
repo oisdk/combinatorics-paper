@@ -1,3 +1,4 @@
+\begin{code}
 {-# OPTIONS --cubical --safe --postfix-projections #-}
 
 module Categories where
@@ -5,23 +6,34 @@ module Categories where
 open import Prelude
 open import Cubical.Foundations.HLevels
 
+\end{code}
+%<*precategory>
+\begin{code}
 record PreCategory ℓ₁ ℓ₂ : Type (ℓsuc (ℓ₁ ℓ⊔ ℓ₂)) where
   field
-    Ob   : Type ℓ₁
-    Hom  : Ob → Ob → Type ℓ₂
-    Id   : ∀ {X} → Hom X X
-    Comp : ∀ {X Y Z} → Hom Y Z → Hom X Y → Hom X Z
-    assoc-Comp : ∀ {W X Y Z}
-                   (f : Hom Y Z)
-                   (g : Hom X Y)
-                   (h : Hom W X) →
-                   Comp f (Comp g h) ≡ Comp (Comp f g) h
-    Comp-Id : ∀ {X Y} (f : Hom X Y) → Comp f Id ≡ f
-    Id-Comp : ∀ {X Y} (f : Hom X Y) → Comp Id f ≡ f
-    Hom-Set : ∀ {X Y} → isSet (Hom X Y)
-
+    Ob    : Type ℓ₁
+    Hom   : Ob → Ob → Type ℓ₂
+    Id    : ∀ {X} → Hom X X
+    Comp  : ∀ {X Y Z} → Hom Y Z → Hom X Y → Hom X Z
+    assoc-Comp : ∀  {W X Y Z}
+                    (f : Hom Y Z)
+                    (g : Hom X Y)
+                    (h : Hom W X) →
+                    Comp f (Comp g h) ≡ Comp (Comp f g) h
+    Comp-Id  : ∀ {X Y} (f : Hom X Y) → Comp f Id ≡ f
+    Id-Comp  : ∀ {X Y} (f : Hom X Y) → Comp Id f ≡ f
+    Hom-Set  : ∀ {X Y} → isSet (Hom X Y)
+\end{code}
+%</precategory>
+\begin{code}
   infixr 0 _⟶_
+\end{code}
+%<*morph-arrow>
+\begin{code}
   _⟶_ = Hom
+\end{code}
+%</morph-arrow>
+\begin{code}
 
   infixl 0 _⟵_
   _⟵_ = flip Hom
@@ -32,12 +44,18 @@ record PreCategory ℓ₁ ℓ₂ : Type (ℓsuc (ℓ₁ ℓ⊔ ℓ₂)) where
   variable
     X Y Z : Ob
 
+  infix 4 _≅_
+  _≅_ : Ob → Ob → Type _
+\end{code}
+%<*isomorphism>
+\begin{code}
   Isomorphism : (X ⟶ Y) → Type ℓ₂
   Isomorphism {X} {Y} f = Σ[ g ⦂ Y ⟶ X ] ((g · f ≡ Id) × (f · g ≡ Id))
 
-  infix 4 _≅_
-  _≅_ : Ob → Ob → Type _
   X ≅ Y = Σ (X ⟶ Y) Isomorphism
+\end{code}
+%</isomorphism>
+\begin{code}
 
   Domain : (X ⟶ Y) → Ob
   Domain {X} {Y} _ = X
@@ -109,7 +127,13 @@ record Category ℓ₁ ℓ₂ : Type (ℓsuc (ℓ₁ ℓ⊔ ℓ₂)) where
     preCategory : PreCategory ℓ₁ ℓ₂
   open PreCategory preCategory public
   field
+\end{code}
+%<*cat-univalence>
+\begin{code}
     univalent : {X Y : Ob} → (X ≡ Y) ≃ (X ≅ Y)
+\end{code}
+%</cat-univalence>
+\begin{code}
 
 module _ {ℓ₁ ℓ₂} (C : Category ℓ₁ ℓ₂) where
   open Category C
@@ -121,3 +145,4 @@ module _ {ℓ₁ ℓ₂} (C : Category ℓ₁ ℓ₂) where
   _[_∘_] : (Y ⟶ Z) → (X ⟶ Y) → (X ⟶ Z)
   _[_∘_] = Comp
   {-# INLINE _[_∘_] #-}
+\end{code}
