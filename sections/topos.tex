@@ -173,13 +173,13 @@ furthermore of all the previous closure proofs.
 \end{proof}
 \subsection{Closure on Cardinal Finiteness}
 Since we don't have a function of type \(\mathcal{C}(A) \rightarrow
-\AgdaDatatype{\ensuremath{\mathcal{B}}}(A)\), closure proofs on \(\AgdaDatatype{\ensuremath{\mathcal{B}}}\) do not transfer over to
+\AgdaDatatype{\ensuremath{\mathcal{B}}}\;A\), closure proofs on \(\AgdaDatatype{\ensuremath{\mathcal{B}}}\) do not transfer over to
 \(\mathcal{C}\) trivially (unlike with \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}\) and \(\AgdaDatatype{\ensuremath{\mathcal{B}}}\)).
 The cases for \(\bot\), \(\top\), and \(\AgdaDatatype{Bool}\) are simple to adapt: we
 can just propositionally truncate their Bishop finiteness proof.
 
 Non-dependent operators like \(\times\), \(\uplus\), and \(\rightarrow\) are
-also relatively straightforward: since \(\lVert {\wc} \rVert\) forms a monad, we
+also relatively straightforward: since \(\AgdaDatatype{\ensuremath{\lVert\_\rVert}}\) forms a monad, we
 can apply \(n\)-ary functions to values inside it, combining them together.
 \begin{agdalisting}
   \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{times-clos-sig}
@@ -195,34 +195,34 @@ same trick does not work.
 We have closure proofs like:
 \begin{equation}
   \frac{
-    \AgdaDatatype{\ensuremath{\mathcal{B}}}(A) \; \; \; \Pi(x : A) , \AgdaDatatype{\ensuremath{\mathcal{B}}}(U(x))
+    \AgdaDatatype{\ensuremath{\mathcal{B}}}\;A \; \; \; ((x : A) \rightarrow \AgdaDatatype{\ensuremath{\mathcal{B}}}\;(U\;x))
   }{
-    \AgdaDatatype{\ensuremath{\mathcal{B}}}(\Pi \; A \; U)
+    \AgdaDatatype{\ensuremath{\mathcal{B}}}\;((x : A) \rightarrow U\;x)
   }
 \end{equation}
 If we apply the monadic truncation trick we can derive closure proofs like the
 following:
 \begin{equation}
   \frac{
-    \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(A) \rVert \; \; \; \lVert \Pi(x : A) , \AgdaDatatype{\ensuremath{\mathcal{B}}}(U(x)) \rVert
+    \AgdaDatatype{\ensuremath{\lVert}}\; \AgdaDatatype{\ensuremath{\mathcal{B}}}\;A \;\AgdaDatatype{\ensuremath{\rVert}} \; \; \; \AgdaDatatype{\ensuremath{\lVert}}\; ((x : A) \rightarrow \AgdaDatatype{\ensuremath{\mathcal{B}}}\;(U\;x)) \;\AgdaDatatype{\ensuremath{\rVert}}
   }{
-    \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(\Pi \; A \; U) \rVert
+    \AgdaDatatype{\ensuremath{\lVert}}\; \AgdaDatatype{\ensuremath{\mathcal{B}}}\;((x : A) \rightarrow U\;x) \;\AgdaDatatype{\ensuremath{\rVert}}
   }
 \end{equation}
 However our \emph{desired} closure proof is the following:
 \begin{equation}
   \frac{
-    \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(A) \rVert \; \; \; \Pi(x : A) , \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(U(x)) \rVert
+    \AgdaDatatype{\ensuremath{\lVert}}\; \AgdaDatatype{\ensuremath{\mathcal{B}}}\;A \;\AgdaDatatype{\ensuremath{\rVert}} \; \; \; ((x : A) \rightarrow \AgdaDatatype{\ensuremath{\lVert}}\; \AgdaDatatype{\ensuremath{\mathcal{B}}}\;(U\;x) \;\AgdaDatatype{\ensuremath{\rVert}})
   }{
-    \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(\Pi \; A \; U) \rVert
+    \AgdaDatatype{\ensuremath{\lVert}}\; \AgdaDatatype{\ensuremath{\mathcal{B}}}\;((x : A) \rightarrow U\;x) \;\AgdaDatatype{\ensuremath{\rVert}}
   }
 \end{equation}
 They don't match!
 
 The solution would be to find a function of the following type:
 \begin{equation}
-  (\Pi(x : A) , \lVert \AgdaDatatype{\ensuremath{\mathcal{B}}}(U(x)) \rVert) \rightarrow
-  \lVert \Pi(x : A) , \AgdaDatatype{\ensuremath{\mathcal{B}}}(U(x)) \rVert
+  ((x : A) \rightarrow \AgdaDatatype{\ensuremath{\lVert}}\; \AgdaDatatype{\ensuremath{\mathcal{B}}}\;(U\;x) \;\AgdaDatatype{\ensuremath{\rVert}}) \rightarrow
+  \AgdaDatatype{\ensuremath{\lVert}}\; (x : A) \rightarrow \AgdaDatatype{\ensuremath{\mathcal{B}}}\;(U\;x) \;\AgdaDatatype{\ensuremath{\rVert}}
 \end{equation}
 However we might be disheartened at realising that this is a required goal: the
 above equation is \emph{extremely} similar to the axiom of choice!
@@ -232,19 +232,19 @@ above equation is \emph{extremely} similar to the axiom of choice!
   For any set \(A\), and a type family \(U\) which is a set at all the points
   of \(A\), the following function exists:
   \begin{equation}
-    \left( \Pi(x : A) ,  \lVert U(x) \rVert \right) \rightarrow \lVert \Pi(x : A) , U(x) \rVert
+    \left( (x : A) \rightarrow  \AgdaDatatype{\ensuremath{\lVert}}\; U(x) \;\AgdaDatatype{\ensuremath{\rVert}} \right) \rightarrow \AgdaDatatype{\ensuremath{\lVert}}\; (x : A) \rightarrow U(x) \;\AgdaDatatype{\ensuremath{\rVert}}
   \end{equation}
 \end{definition}
 Luckily the axiom of choice \emph{does} hold for cardinally finite types,
 allowing us to prove the following:
 \begin{lemma}
   \begin{equation}
-    \mathcal{C}(A) \rightarrow (\Pi(x : A) , \lVert U(x) \rVert) \rightarrow \lVert \Pi(x : A) , U(x) \rVert
+    \agdacal{C}\;A \rightarrow ((x : A) \rightarrow \AgdaDatatype{\ensuremath{\lVert}}\; U(x) \;\AgdaDatatype{\ensuremath{\rVert}}) \rightarrow \AgdaDatatype{\ensuremath{\lVert}}\; (x : A) \rightarrow U(x) \;\AgdaDatatype{\ensuremath{\rVert}}
   \end{equation}
 \end{lemma}
 \begin{proof}
   Let \(A\) be a cardinally finite type, \(U\) be a type family on \(A\), and
-  \(f\) be a dependent function of type \(\Pi(x : A) , \lVert U(x) \rVert\).
+  \(f\) be a dependent function of type \(\Pi(x : A) , \AgdaDatatype{\ensuremath{\lVert}}\; U(x) \;\AgdaDatatype{\ensuremath{\rVert}}\).
 
   First, since our goal is itself propositionally truncated, we have access to
   values under truncations: put another way, in the context of proving our goal,
@@ -254,10 +254,10 @@ allowing us to prove the following:
   is the cardinality of \(A\).
   This changes our goal to the following:
   \begin{equation}
-    \mathbf{Tuple}(n, \lVert \wc \rVert \circ U) \rightarrow \lVert \mathbf{Tuple}(n, U) \rVert
+    \mathbf{Tuple}(n, \AgdaDatatype{\ensuremath{\lVert}}\; \wc \;\AgdaDatatype{\ensuremath{\rVert}} \circ U) \rightarrow \AgdaDatatype{\ensuremath{\lVert}}\; \mathbf{Tuple}(n, U) \;\AgdaDatatype{\ensuremath{\rVert}}
   \end{equation}
-  Since \(\lVert \wc \rVert\) is closed under finite products, this function
-  exists (in fact, using the fact that \(\lVert \wc \rVert\) forms a monad, we
+  Since \(\AgdaDatatype{\ensuremath{\lVert\_ \rVert}}\) is closed under finite products, this function
+  exists (in fact, using the fact that \(\AgdaDatatype{\ensuremath{\lVert\_ \rVert}}\) forms a monad, we
   can recognise this function as \verb+sequenceA+ from the \verb+Traversable+
   class in Haskell).
 \end{proof}
