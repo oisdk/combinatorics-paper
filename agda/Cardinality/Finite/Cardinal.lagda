@@ -97,10 +97,11 @@ xs ∥×∥ ys = do
   x ← xs
   y ← ys
   ∣ x |×| y ∣
-
-𝒞⇒Discrete :
 \end{code}
 %</times-clos-impl>
+\begin{code}
+𝒞⇒Discrete :
+\end{code}
 %<*card-discrete>
 \begin{code}
  𝒞 A → Discrete A

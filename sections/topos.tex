@@ -182,12 +182,13 @@ Non-dependent operators like \(\times\), \(\uplus\), and \(\rightarrow\) are
 also relatively straightforward: since \(\lVert {\wc} \rVert\) forms a monad, we
 can apply \(n\)-ary functions to values inside it, combining them together.
 \begin{agdalisting}
-  The fact that \(\lVert \wc \rVert\) forms a monad means that we can lift
-  \(n\)-ary functions like the following:
   \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{times-clos-sig}
-  Into a truncated context:
+\end{agdalisting}
+Into a truncated context:
+\begin{agdalisting}
   \ExecuteMetaData[agda/Cardinality/Finite/Cardinal.tex]{times-clos-impl}
 \end{agdalisting}
+
 
 Unfortunately, for the dependent type formers like \(\Sigma\) and \(\Pi\), the
 same trick does not work.
