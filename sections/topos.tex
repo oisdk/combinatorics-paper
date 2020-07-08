@@ -59,7 +59,20 @@ category.
   \ExecuteMetaData[agda/Categories.tex]{cat-univalence}
 \end{agdalisting}
 \section{The Category of Sets}
+Next we'll look at how to construct the category of sets (in the HoTT sense).
+Much of this work comes directly from \citet[chapter 10]{hottbook} and
+\citet{rijkeSetsHomotopyType2015}.
+The formalisation, however, is novel, as far as we know.
 
+The objects are represented by a \(\Sigma\):
+\begin{agdalisting}
+  \ExecuteMetaData[agda/Snippets/Category.tex]{hset}
+\end{agdalisting}
+This will be quite similar to our objects for finite sets.
+
+Since sets in HoTT don't form a topos, there are quite a few smaller lemmas we
+need to prove to get as close as we can (a \(\Pi W\)-pretopos): we won't include
+them here, other than the closure proofs in the following section.
 \section{Closure}
 \todo{This is just the closure bits pulled over from the finiteness predicates
   section. They need to be reworked to fit in here.}

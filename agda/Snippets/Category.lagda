@@ -4,18 +4,13 @@
 module Snippets.Category where
 
 open import Level
+open import Data.Sigma
+open import HLevels hiding (hSet)
 
 Ob : Type₁
-Hom : Type₁
-
 \end{code}
-%<*ob-wrong>
+%<*hset>
 \begin{code}
-Ob = Type₀
+Ob = Σ[ t ⦂ Type₀ ] isSet t
 \end{code}
-%</ob-wrong>
-%<*hom-wrong>
-\begin{code}
-Hom = Ob → Ob
-\end{code}
-%</hom-wrong>
+%</hset>
