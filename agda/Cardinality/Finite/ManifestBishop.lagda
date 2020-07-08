@@ -69,7 +69,7 @@ module _ where
 module _ where
   open 𝕃
 
-  open import Cardinality.Finite.SplitEnumerable hiding (_|×|_)
+  open import Cardinality.Finite.SplitEnumerable hiding (_|×|_; ℰ!⟨Tuple⟩)
   import Cardinality.Finite.SplitEnumerable as SplitEnumerable
   open import Cardinality.Finite.SplitEnumerable.Inductive
   open import Cardinality.Finite.SplitEnumerable.Isomorphism
@@ -81,32 +81,49 @@ module _ where
   ℬ⇒Discrete : ℬ A → Discrete A
   ℬ⇒Discrete = ℰ!⇒Discrete ∘ fun 𝕃⇔ℒ⟨ℰ!⟩ ∘ ℬ⇒ℰ!
 
-  ℰ!⇒ℬ : ℰ! A → ℬ A
-  ℰ!⇒ℬ xs = λ where
-      .fst → uniques disc (xs .fst)
-      .snd x → ∈⇒∈! disc x (xs .fst) (xs .snd x)
-    where
-    disc = ℰ!⇒Discrete (𝕃⇔ℒ⟨ℰ!⟩ .fun xs)
+  module SplitEnumToBishop where
+    ℰ!⇒ℬ : ℰ! A → ℬ A
+    ℰ!⇒ℬ xs = λ where
+        .fst → uniques disc (xs .fst)
+        .snd x → ∈⇒∈! disc x (xs .fst) (xs .snd x)
+      where
+      disc = ℰ!⇒Discrete (𝕃⇔ℒ⟨ℰ!⟩ .fun xs)
 
   ℬ⇒Fin≃ : ℬ A → ∃[ n ] (Fin n ≃ A)
   ℬ⇒Fin≃ = ℬ⇔Fin≃ .fun ∘ 𝕃⇔ℒ⟨ℬ⟩ .fun
 
+  private
+    module PiClosNoPoly {A : Type₀} {U : A → Type₀} where
+      open import Data.Tuple.UniverseMonomorphic
+      open TupleUniverseMonomorphic
+      ℰ!⇒ℬ : ℰ! B → _
+      ℰ!⇒ℬ = 𝕃⇔ℒ⟨ℬ⟩ .fun ∘ SplitEnumToBishop.ℰ!⇒ℬ
+
+      _|Π|_ : ℰ! A → ((x : A) → ℰ! (U x)) → ℰ! ((x : A) → U x)
+      _|Π|_ xs =
+        subst
+          (λ t → {A : t → Type _} → ((x : t) → ℰ! (A x)) → ℰ! ((x : t) → (A x)))
+          (ua (ℬ⇔Fin≃ .fun (ℰ!⇒ℬ xs) .snd))
+          (subst ℰ! (isoToPath Tuple⇔ΠFin) ∘ ℰ!⟨Tuple⟩)
+
+  open SplitEnumToBishop public
   isoLift : Lift b A ⇔ A
   isoLift = iso lower lift (λ _ → refl) λ _ → refl
-
   open import Data.Tuple
 
-  
-
-  _|Π|_ : ∀ {u} {A : Type a} {U : A → Type u} →
-          ℰ! A →
-          ((x : A) → ℰ! (U x)) →
-          ℰ! ((x : A) → U x)
-  _|Π|_ {a = a} {u = u} xs =
-    subst
-      (λ t → {A : t → Type _} → ((x : t) → ℰ! (A x)) → ℰ! ((x : t) → (A x)))
-      (ua (isoToEquiv isoLift ⟨ trans-≃ ⟩ ℬ⇔Fin≃ .fun (𝕃⇔ℒ⟨ℬ⟩ .fun (ℰ!⇒ℬ xs)) .snd))
-      (subst ℰ! (isoToPath (isoLift {b = a} ⟨ trans-⇔ ⟩ Tuple⇔ΠFin)) ∘ ℰ!⟨Lift⟩ ∘ ℰ!⟨Tuple⟩)
+  module _ {a} {u} {A : Type a} {U : A → Type u} where
+\end{code}
+%<*pi-clos>
+\begin{code}
+    _|Π|_ : ℰ! A → ((x : A) → ℰ! (U x)) → ℰ! ((x : A) → U x)
+\end{code}
+%</pi-clos>
+\begin{code}
+    _|Π|_ xs =
+      subst
+        (λ t → {A : t → Type _} → ((x : t) → ℰ! (A x)) → ℰ! ((x : t) → (A x)))
+        (ua (isoToEquiv isoLift ⟨ trans-≃ ⟩ ℬ⇔Fin≃ .fun (𝕃⇔ℒ⟨ℬ⟩ .fun (ℰ!⇒ℬ xs)) .snd))
+        (subst ℰ! (isoToPath (isoLift {b = a} ⟨ trans-⇔ ⟩ Tuple⇔ΠFin)) ∘ ℰ!⟨Lift⟩ ∘ SplitEnumerable.ℰ!⟨Tuple⟩)
 
   open import HITs.PropositionalTruncation.Sugar
 

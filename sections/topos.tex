@@ -74,93 +74,45 @@ Since sets in HoTT don't form a topos, there are quite a few smaller lemmas we
 need to prove to get as close as we can (a \(\Pi W\)-pretopos): we won't include
 them here, other than the closure proofs in the following section.
 \section{Closure}
-\todo{This is just the closure bits pulled over from the finiteness predicates
-  section. They need to be reworked to fit in here.}
-\subsection{Split Enumerability Closure}
-Now that we have a suitable definition of finiteness, we will next prove that
-some things are finite.
-With the most basic simple types out of the way, the obvious next choice is the
-(non-dependent) sums and products: \(\uplus\) and \(\times\).
-Both of these types can be constructed from the \emph{dependent} sum, however,
-so that is the type we will prove finite.
-From that we can derive a much wider array of finiteness proofs.
+The two most involved proofs for showing that discrete Kuratowski sets form a
+\(\Pi\)-pretopos are those proofs that show closure under \(\Pi\) and
+\(\Sigma\).
+We will describe them here.
+\subsection{Closure of the Ordered Predicates}
+First, we will show that split enumerability (and, by extension, manifest
+enumerability) are closed under \(\Pi\) and \(\Sigma\).
+This is the first stepping stone on our way to prove that cardinal finiteness is
+closed under the same.
+
+Practically speaking, these proofs also open up a wide number of other closure
+proofs to us.
+By proving that dependent products and sums are finite, we get the non-dependent
+cases for free.
 
 \begin{lemma} \label{split-enum-sigma} \todo{Convert to Agda}
   Split enumerability is closed under \(\Sigma\).
-  \begin{equation}
-    \frac{
-      \AgdaDatatype{\ensuremath{\mathcal{E}!}}\;A \; \; \; (x : A) \rightarrow \AgdaDatatype{\ensuremath{\mathcal{E}!}}(U\;x)
-    }{
-      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(\AgdaDatatype{\ensuremath{\Sigma [}}\;x \AgdaDatatype{:} A \AgdaDatatype{]} U\;x)
-    }
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{split-enum-sigma}
+  \end{agdalisting}
 \end{lemma}
 \begin{proof}
-  Let \(A\) be a type which is split enumerable, and \(U\) be a type family over
-  \(A\) which is split enumerable at every point.
-  Formally, we have the following proofs:
-  \begin{align}
-    \AgdaDatatype{\ensuremath{\mathcal{E}!}}_A &: \AgdaDatatype{\ensuremath{\mathcal{E}!}}(A) \\
-    \AgdaDatatype{\ensuremath{\mathcal{E}!}}_U &: \Pi(x : A) , \AgdaDatatype{\ensuremath{\mathcal{E}!}}(U(x))
-  \end{align}
+  Our task is to construct the two components of the output pair: the support
+  list, and the cover proof.
+  We'll start with the support list: this is constructed by taking the Cartesian
+  product of the input support lists.
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{sup-sigma}
+  \end{agdalisting}
+  We use do notation here because we're working the list monad: this applies the
+  latter function (\(ys\)) to every element of the list \(xs\), and concatenates
+  the results.
 
-  Our task is to construct a proof of type:
-  \begin{equation}
-    \AgdaDatatype{\ensuremath{\mathcal{E}!}}(\Sigma(x : A) , U(x))
-  \end{equation}
-  This proof itself is composed of two components:
-  \begin{align}
-    \mathit{support} &: \AgdaDatatype{List}(\Sigma(x : A) , U(x)) \\
-    \mathit{cover} &: \Pi(x : \Sigma(y : A) , U(y)) , x \in \mathit{support}
-  \end{align}
-  To construct the support list, we apply the function \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}_U\) to
-  every element in the support list of \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}_A\), extract the support
-  lists from the resulting finiteness proofs, and concatenate them.
-
-
-  To prove that this support list does in fact cover the entirety of the type
-  \(\Sigma \; A \; U\), we note that any element of type \(\Sigma \; A \; U\)
-  must have a first component in the support list of \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}_A\), and its
-  second component must be in the result of applying \(\AgdaDatatype{\ensuremath{\mathcal{E}!}}_U\) to that
-  first element (since that support list contains every element of type
-  \(U(x)\)).
-  Therefore, the pair itself must be in our constructed support list.
+  To show that this does indeed cover every element of the target type is a
+  little intricate, but not necessarily difficult. \todo{Should a proof of this
+    be included?}
 \end{proof}
 
-This pattern of applying a function to each element in a list and
-concatenating the result is of course well-known in functional programming,
-and is in fact the pattern that makes lists a monad.
-While this insight isn't strictly relevant to our work here, it does mean
-the implementation of this function can use Agda's do notation, resulting
-in the following extremely clean implementation:
-\begin{agdalisting}
-  \ExecuteMetaData[agda/Cardinality/Finite/SplitEnumerable.tex]{sup-sigma}
-\end{agdalisting}
-
-We now have two components we'll need for the proof that the countdown
-transformation is finite.
-The component we'll look at is step~\ref{countdown-operators}: selection of the
-operators.
-We'll first need a type representing the operators available to us.
-\begin{agdalisting}
-  \ExecuteMetaData[agda/Countdown.tex]{ops-def}
-\end{agdalisting}
-Proving that this type is finite takes much the same form as the proof of
-finiteness for bool.
-\begin{agdalisting} \label{op-fin}
-  \ExecuteMetaData[agda/Countdown.tex]{op-fin}
-\end{agdalisting}
-
-Next, we will need to build a proof of finiteness for vectors of length \(n\).
-This uses the proof of finiteness for \(\Sigma\).
-\begin{agdalisting}
-  \ExecuteMetaData[agda/Countdown.tex]{vec-fin}
-\end{agdalisting}
-
-\subsection{Manifest Bishop Closure Under \(\Pi\)}
-The glaring omission from our closure proofs under type formers so far has been
-the \(\Pi\) type: we have not proved closure under functions, dependent or
-otherwise.
+Next we'll look at closure under \(\Pi\).
 In MLTT, this is of course not provable: since all of the finiteness predicates
 we have seen so far imply decidable equality, and since we don't have any kind
 of decidable equality on functions in MLTT, we know that we won't be able to
@@ -172,19 +124,12 @@ Since we have things like function extensionality and transport, we can indeed
 prove the finiteness of function types.
 Our proof here makes use directly of the univalence axiom, and makes use
 furthermore of all the previous closure proofs.
-We will prove this closure on split enumerability, rather than on manifest
-Bishop finiteness, as it requires slightly less legwork in the proof itself, but
-of course we can derive the proof on manifest Bishop finiteness in a few lines.
 \begin{theorem} \label{split-enum-pi}
-  Split enumerability is closed under dependent functions.
+  Split enumerability is closed under dependent functions
   (\(\Pi\)-types).
-  \begin{equation}
-    \frac{
-      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(A) \; \; \; \Pi {(x : A)} , \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left( U(x) \right)
-    }{
-      \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left(\Pi {(x : A)} , U(x)\right)
-    }
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Cardinality/Finite/ManifestBishop.tex]{pi-clos}
+  \end{agdalisting}
 \end{theorem}
 \begin{proof}
   Let \(A\) be a split enumerable type, and \(U\) be a type family from \(A\),
@@ -197,50 +142,35 @@ of course we can derive the proof on manifest Bishop finiteness in a few lines.
   changing our goal to:
   \begin{equation}
     \frac{
-      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(\AgdaDatatype{Fin}\;n) \; \; \; \Pi (x : \AgdaDatatype{Fin}\;n) , \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left( U(x) \right)
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}\;(\AgdaDatatype{Fin}\;n) \; \; \; \left((x : \AgdaDatatype{Fin}\;n) \rightarrow \AgdaDatatype{\ensuremath{\mathcal{E}!}}\;\left( U\;x \right)\right)
     }{
-      \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left(\Pi (x : \AgdaDatatype{Fin}\;n) , U(x)\right)
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left((x : \AgdaDatatype{Fin}\;n) \rightarrow U\;x\right)
     }
   \end{equation}
   
-  We then define the type of \(n\)-tuples over some type family \(T :
-  \AgdaDatatype{Fin}\;n \rightarrow \mathbf{Type}\).
-  \begin{equation}
-    \begin{alignedat}{3}
-      & \mathbf{Tuple}(0, T)   &&\coloneqq \top \\
-      & \mathbf{Tuple}(n+1, T) &&\coloneqq T(0) \times \mathbf{Tuple}(n, T \circ \text{suc})
-    \end{alignedat}
-  \end{equation}
+  We then define the type of \(n\)-tuples over some type family.
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Data/Tuple/UniverseMonomorphic.tex]{tuple-def}
+  \end{agdalisting}
   We can show that this type is equivalent to functions (proven in our formalisation):
-  \begin{equation}
-    \Pi(x : \AgdaDatatype{Fin}\;n) , U(x) \simeq \mathbf{Tuple}(n, U)
-  \end{equation}
+  \begin{agdalisting}
+    \ExecuteMetaData[agda/Data/Tuple/UniverseMonomorphic.tex]{tuple-iso}
+  \end{agdalisting}
   And therefore we can simplify again our goal to the following:
   \begin{equation}
     \frac{
-      \AgdaDatatype{\ensuremath{\mathcal{E}!}}(\AgdaDatatype{Fin}\;n) \; \; \; \Pi (x : \AgdaDatatype{Fin}\;n) , \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left( U(x) \right)
+      \AgdaDatatype{\ensuremath{\mathcal{E}!}}\;(\AgdaDatatype{Fin}\;n) \; \; \; ((x : \AgdaDatatype{Fin}\;n) \rightarrow \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left( U\;x \right))
     }{
-      \AgdaDatatype{\ensuremath{\mathcal{E}!}}\left(\mathbf{Tuple}(n, U)\right)
+      \AgdaFunction{\ensuremath{\mathcal{E}!}}\;\left(\AgdaFunction{Tuple}\;n\;U\right)
     }
   \end{equation}
   
-  We can prove this goal by showing that \(\mathbf{Tuple}(n, U)\) is split
+  We can prove this goal by showing that \(\AgdaFunction{Tuple}\;n\;U\) is split
   enumerable: it is made up of finitely many products of points of \(U\), which
-  are themselves split enumerable, and \(\top\), which is also split enumerable.
+  are themselves split enumerable, and \agdatop, which is also split enumerable.
   Lemma~\ref{split-enum-sigma} shows us that the product of finitely many split
   enumerable types is itself split enumerable, proving our goal.
 \end{proof}
-
-This proof can again give us insight into how to prove finiteness of our
-countdown transformation.
-In the first step (Fig.~\ref{countdown-selection}), we need to select some
-numbers from an input list: this can be described with a function of type
-\(\AgdaDatatype{Fin}\;n \rightarrow \AgdaDatatype{Bool}\), from indices in the
-original list into whether we keep the values or not.
-We now know that we can prove functions finite without difficulty: in this case,
-we can do it even more simply by proving that an \(n\)-tuple of booleans is
-finite.
-
 \subsection{Closure on Cardinal Finiteness}
 Since we don't have a function of type \(\mathcal{C}(A) \rightarrow
 \AgdaDatatype{\ensuremath{\mathcal{B}}}(A)\), closure proofs on \(\AgdaDatatype{\ensuremath{\mathcal{B}}}\) do not transfer over to

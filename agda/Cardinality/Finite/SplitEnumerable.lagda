@@ -141,14 +141,19 @@ module _ where
  cov-Σ xᵢ yᵢ (x ∷ xs) ys (f0  , x∈xs) y∈ys =
    subst (λ x′ → (xᵢ , yᵢ) ∈ sup-Σ (x′ ∷ xs) ys) (sym x∈xs)
    (map (xᵢ ,_) (ys xᵢ) ◇++ cong-∈ (xᵢ ,_) (ys xᵢ) y∈ys)
+\end{code}
+%<*split-enum-sigma>
+\begin{code}
+ _|Σ|_ : ℰ! A → (∀ x → ℰ! (U x)) → ℰ! (Σ A U)
+\end{code}
+%</split-enum-sigma>
+\begin{code}
+ (xs |Σ| ys) .fst = sup-Σ (xs .fst) (fst ∘ ys)
+ (xs |Σ| ys) .snd (x , y) = cov-Σ x y (xs .fst) (fst ∘ ys) (xs .snd x) (ys x .snd y)
 
  ℰ!⟨Fin⟩ : ∀ {n} → ℰ! (Fin n)
  ℰ!⟨Fin⟩ .fst = tabulate _ id
  ℰ!⟨Fin⟩ .snd = fin∈tabulate id
-
- _|Σ|_ : ℰ! A → (∀ x → ℰ! (U x)) → ℰ! (Σ A U)
- (xs |Σ| ys) .fst = sup-Σ (xs .fst) (fst ∘ ys)
- (xs |Σ| ys) .snd (x , y) = cov-Σ x y (xs .fst) (fst ∘ ys) (xs .snd x) (ys x .snd y)
 
  _|×|_ : ℰ! A → ℰ! B → ℰ! (A × B)
  xs |×| ys = xs |Σ| const ys
@@ -160,6 +165,13 @@ module _ where
 
  _|+|_ : ℰ! A → ℰ! B → ℰ! (Σ[ t ⦂ Bool ] (if t then A else B))
  xs |+| ys = ℰ!⟨2⟩ |Σ| bool ys xs
+
+ module TupleUniverseMonomorphic where
+   open import Data.Tuple.UniverseMonomorphic
+
+   ℰ!⟨Tuple⟩ : ∀ {n} {U : Fin n → Type₀} → (∀ i → ℰ! (U i)) → ℰ! (Tuple n U)
+   ℰ!⟨Tuple⟩ {n = zero}  f = (_ ∷ []) , λ _ → f0 , refl
+   ℰ!⟨Tuple⟩ {n = suc n} f = f f0 |×| ℰ!⟨Tuple⟩ (f ∘ fs)
 
  open import Data.Tuple
 
