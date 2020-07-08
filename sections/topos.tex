@@ -254,7 +254,7 @@ allowing us to prove the following:
   is the cardinality of \(A\).
   This changes our goal to the following:
   \begin{equation}
-    \mathbf{Tuple}(n, \AgdaDatatype{\ensuremath{\lVert}}\; \wc \;\AgdaDatatype{\ensuremath{\rVert}} \circ U) \rightarrow \AgdaDatatype{\ensuremath{\lVert}}\; \mathbf{Tuple}(n, U) \;\AgdaDatatype{\ensuremath{\rVert}}
+    \AgdaFunction{Tuple}\;n\;(\AgdaDatatype{\ensuremath{\lVert\_\rVert}}\;\AgdaFunction{\ensuremath{\circ}}\; U) \rightarrow \AgdaDatatype{\ensuremath{\lVert}}\; \AgdaFunction{Tuple}\;n\;U\;\AgdaDatatype{\ensuremath{\rVert}}
   \end{equation}
   Since \(\AgdaDatatype{\ensuremath{\lVert\_ \rVert}}\) is closed under finite products, this function
   exists (in fact, using the fact that \(\AgdaDatatype{\ensuremath{\lVert\_ \rVert}}\) forms a monad, we
